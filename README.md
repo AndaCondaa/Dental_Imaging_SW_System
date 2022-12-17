@@ -29,11 +29,24 @@
      - 커밋사항에 대한 preview
      - 효과적인 진행상황 관리
      - 과거 코드 추적의 용이성
-   - 'date:  type :  contents' 형식으로 커밋 메세지를 구성합니다. (예: 1218 : feat : Add login widget)
-   - date는 해당 커밋을 올리는 날짜로, mmdd형태로 작성합니다. (예: 09월 01일 -> 0901)
-   - type은 아래 정의된 내용 중 해당되는 내용으로 작성합니다. 
+   - 'type :  contents' 형식으로 커밋 메세지를 구성합니다. (예: feat : Add login widget)
+   - type은 아래 정의된 내용 중 해당되는 내용으로 작성합니다.  (출처: https://cocoon1787.tistory.com/708)
      - feat : 새로운 기능에 대한 커밋
      - fix : 버그 수정에 대한 커밋
+     - docs : 문서 수정
+     - style : 코드 formatting, 세미콜론(;) 누락, 코드 변경이 없는 경우
+     - refactor : 코드 리팩터링
+     - test : 테스트 코드, 리팩터링 테스트 코드 추가(프로덕션 코드 변경 X)
+     - chore : 빌드 업무 수정, 패키지 매니저 수정(프로덕션 코드 변경 X)
+     - design : CSS 등 사용자 UI 디자인 변경
+     - comment : 필요한 주석 추가 및 변경
+     - rename : 파일 혹은 폴더명을 수정하거나 옮기는 작업만인 경우
+     - remove : 파일을 삭제하는 작업만 수행한 경우
+     - !BREAKING CHANGE : 커다란 API 변경의 경우
+     - !HOTFIX : 급하게 치명적인 버그를 고쳐야 하는 경우
+   - contents의 내용은 대문자로 시작하고, 명령형으로 작성합니다.
+   - type과 :(콜론), contents 사이는 한 칸의 공백을 줍니다.
+   - type 뒤에는 괄호를 통해 특정 파일의 이름을 줄 수 있습니다. (예: docs(README.md) : Change the rules)
 
 
 
