@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="QPushButton" name="pushButton">
+    <property name="geometry">
+     <rect>
+      <x>630</x>
+      <y>30</y>
+      <width>131</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>이미지 불러오기</string>
+    </property>
+   </widget>
+   <widget class="QGraphicsView" name="graphicsView">
+    <property name="geometry">
+     <rect>
+      <x>20</x>
+      <y>20</y>
+      <width>601</width>
+      <height>501</height>
+     </rect>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>17</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>도움말</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
+   <addaction name="menu"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionBrush"/>
+   <addaction name="separator"/>
+   <addaction name="actionText"/>
+   <addaction name="separator"/>
+   <addaction name="actionRotation"/>
+   <addaction name="separator"/>
+   <addaction name="actionBrightness"/>
+   <addaction name="separator"/>
+   <addaction name="actionCut"/>
+   <addaction name="separator"/>
+   <addaction name="actionzoomIn"/>
+   <addaction name="separator"/>
+   <addaction name="actionzoomOut"/>
+  </widget>
+  <action name="actionAbout">
+   <property name="text">
+    <string>도움말</string>
+   </property>
+  </action>
+  <action name="actionBrush">
+   <property name="text">
+    <string>브러쉬</string>
+   </property>
+  </action>
+  <action name="actionText">
+   <property name="text">
+    <string>텍스트</string>
+   </property>
+  </action>
+  <action name="actionRotation">
+   <property name="text">
+    <string>회전</string>
+   </property>
+  </action>
+  <action name="actionBrightness">
+   <property name="text">
+    <string>밝기</string>
+   </property>
+  </action>
+  <action name="actionCut">
+   <property name="text">
+    <string>자르기</string>
+   </property>
+  </action>
+  <action name="actionzoomIn">
+   <property name="text">
+    <string>줌인</string>
+   </property>
+  </action>
+  <action name="actionzoomOut">
+   <property name="text">
+    <string>줌아웃</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
