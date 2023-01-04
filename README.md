@@ -2,6 +2,20 @@
 
 <br>
 
+└─Project
+    ├─bin
+    ├─doc
+    ├─lib
+    ├─obj
+    └─src
+        ├─ct
+        ├─imaging
+        ├─network
+        │  ├─main
+        │  └─sub
+        ├─pms
+        └─viewer
+
 <h2>Git Management Rules</h2>
 
 1. Branch
