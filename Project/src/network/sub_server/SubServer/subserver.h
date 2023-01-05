@@ -12,8 +12,7 @@ class QTcpSocket;
 
 typedef enum {
     Test1,
-    Test2
-} Protocol;
+} Protocol_Type;
 
 class SubServer : public QWidget
 {
@@ -22,6 +21,8 @@ class SubServer : public QWidget
 public:
     explicit SubServer(QWidget *parent = nullptr);
     ~SubServer();
+
+    void sendProtocol(QTcpSocket* sock, Protocol_Type type, QString data, int size);
 
 private slots:
     void newClient();
