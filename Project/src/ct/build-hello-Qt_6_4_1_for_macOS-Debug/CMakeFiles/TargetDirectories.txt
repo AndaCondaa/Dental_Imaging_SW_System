@@ -1,0 +1,3 @@
+/Users/bbq/Project/Dental_Imaging_SW_System/Project/src/ct/build-hello-Qt_6_4_1_for_macOS-Debug/CMakeFiles/Hello.dir
+/Users/bbq/Project/Dental_Imaging_SW_System/Project/src/ct/build-hello-Qt_6_4_1_for_macOS-Debug/CMakeFiles/edit_cache.dir
+/Users/bbq/Project/Dental_Imaging_SW_System/Project/src/ct/build-hello-Qt_6_4_1_for_macOS-Debug/CMakeFiles/rebuild_cache.dir
