@@ -11,6 +11,7 @@
 
 #include "controlsocket.h"
 
+
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE

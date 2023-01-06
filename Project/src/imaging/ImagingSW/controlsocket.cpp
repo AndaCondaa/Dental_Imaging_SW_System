@@ -10,6 +10,8 @@
 
 #include <QTcpSocket>
 
+#include "protocol.h"
+
 ControlSocket::ControlSocket(QObject *parent)
     : QObject{parent}
 {
@@ -58,5 +60,8 @@ void ControlSocket::sendSocketToSubServer(QTcpSocket* sock, QString header, QStr
 
 void ControlSocket::receiveSocketFromSubServer()
 {
-
 }
+
+
+
+

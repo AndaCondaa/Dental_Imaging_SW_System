@@ -15,7 +15,8 @@ SOURCES += \
 
 HEADERS += \
     controlsocket.h \
-    mainwindow.h
+    mainwindow.h \
+    protocol.h
 
 FORMS += \
     mainwindow.ui
