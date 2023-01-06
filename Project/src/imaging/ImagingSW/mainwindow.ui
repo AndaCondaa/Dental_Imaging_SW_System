@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1078</width>
-    <height>608</height>
+    <height>644</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -21,7 +21,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>20</y>
+      <y>40</y>
       <width>411</width>
       <height>291</height>
      </rect>
@@ -148,7 +148,7 @@
       </property>
      </item>
     </widget>
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="patientReadyButton">
      <property name="geometry">
       <rect>
        <x>80</x>
@@ -158,10 +158,10 @@
       </rect>
      </property>
      <property name="text">
-      <string>촬영 준비</string>
+      <string>환자 준비</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_2">
+    <widget class="QPushButton" name="deleteButton">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -179,7 +179,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>330</y>
+      <y>360</y>
       <width>411</width>
       <height>261</height>
      </rect>
@@ -190,7 +190,7 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QPushButton" name="pushButton_3">
+    <widget class="QPushButton" name="modalityResetButton">
      <property name="geometry">
       <rect>
        <x>30</x>
@@ -203,7 +203,7 @@
       <string>장비 초기화</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_4">
+    <widget class="QPushButton" name="imagingReadyButton">
      <property name="geometry">
       <rect>
        <x>210</x>
@@ -216,7 +216,7 @@
       <string>촬영 준비</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_5">
+    <widget class="QPushButton" name="imagingStartButton">
      <property name="geometry">
       <rect>
        <x>30</x>
@@ -229,7 +229,7 @@
       <string>촬영 시작</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_6">
+    <widget class="QPushButton" name="imagingStopButton">
      <property name="geometry">
       <rect>
        <x>210</x>
@@ -247,9 +247,9 @@
     <property name="geometry">
      <rect>
       <x>440</x>
-      <y>20</y>
+      <y>40</y>
       <width>621</width>
-      <height>571</height>
+      <height>581</height>
      </rect>
     </property>
     <property name="frameShape">
@@ -258,7 +258,7 @@
     <property name="frameShadow">
      <enum>QFrame::Raised</enum>
     </property>
-    <widget class="QGraphicsView" name="restructureView">
+    <widget class="QGraphicsView" name="reconView">
      <property name="geometry">
       <rect>
        <x>10</x>
@@ -281,7 +281,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_7">
+    <widget class="QPushButton" name="reconButton">
      <property name="geometry">
       <rect>
        <x>480</x>
@@ -294,7 +294,7 @@
       <string>재구성</string>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_9">
+    <widget class="QPushButton" name="reconCancelButton">
      <property name="geometry">
       <rect>
        <x>480</x>
@@ -317,7 +317,7 @@
       </rect>
      </property>
     </widget>
-    <widget class="QPushButton" name="pushButton_10">
+    <widget class="QPushButton" name="saveButton">
      <property name="geometry">
       <rect>
        <x>480</x>
