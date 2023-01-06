@@ -1,3 +1,11 @@
+/*
+ * 프로그램명 : SubServer
+ * 파일명 : subserver.cpp
+ * 설명 : 영상 검사실용 미니 서버 (촬영SW와 Modality의 연결)
+ * 작성자 : 안다미로
+ * 최종 수정일 : 2023.01.06
+ */
+
 #include "subserver.h"
 #include "ui_subserver.h"
 
@@ -15,7 +23,9 @@ SubServer::SubServer(QWidget *parent)
     server = new QTcpServer(this);
     connect(server, SIGNAL(newConnection()), this, SLOT(newClient()));
     if(!server->listen(QHostAddress::Any, 8000)) {
-        ui->logEdit->append("SERVER OPEN!");
+        // 서버 listen 실패
+    } else {
+        //ui->logEdit->append("SERVER OPEN!");
     }
 }
 
@@ -28,40 +38,40 @@ SubServer::~SubServer()
 void SubServer::newClient()
 {
     QTcpSocket *sockConnection = server->nextPendingConnection();
-    connect(sockConnection, SIGNAL(readyRead()), this, SLOT(receiveData()));
-    ui->logEdit->append("New Connection!");
+    connect(sockConnection, SIGNAL(readyRead()), this, SLOT(receiveSocketFromClient()));
 }
 
-void SubServer::receiveData()
-{
-    QTcpSocket *receiveSocket = qobject_cast<QTcpSocket*>(sender());
-
-    QByteArray byteArray = receiveSocket->read(1024);
-    Protocol_Type type;
-    char data[1020];
-    memset(data, 0, 1020);
-
-    QDataStream in(&byteArray, QIODevice::ReadOnly);
-    in.device()->seek(0);
-    in >> type;
-    in.readRawData(data, 1020);
-
-    switch (type) {
-    case Test1:
-        ui->logEdit->append(data);
-        break;
-    }
-
-}
-
-void SubServer::sendProtocol(QTcpSocket* sock, Protocol_Type type, QString data, int size)
+void SubServer::sendSocketToClient(QTcpSocket* sock, QString header, QString event,QString pid)
 {
     QByteArray dataArray;
     QDataStream out(&dataArray, QIODevice::WriteOnly);
     out.device()->seek(0);
-    out << type;
-    out.writeRawData(data.toStdString().data(), size);
+
+    //out.writeRawData(data.toStdString().data(), size);
     sock->write(dataArray);
     sock->flush();
     while(sock->waitForBytesWritten());
 }
+
+void SubServer::receiveSocketFromClient()
+{
+    int size;
+    QStringList receiveMsg;
+
+    QTcpSocket *receiveSocket = qobject_cast<QTcpSocket*>(sender());
+
+    QByteArray byteArray = receiveSocket->readAll();
+    QDataStream in(&byteArray, QIODevice::ReadOnly);
+    in.device()->seek(0);
+    in >> size;
+    in >> receiveMsg;
+
+    if (size == sizeof(receiveMsg)) {
+        qDebug() << "true";
+        // 소켓 확인하고 Ack 보내기
+    } else {
+        qDebug() << "false";
+        // 데이터 손실 관련 Ack 보내기
+    }
+}
+
