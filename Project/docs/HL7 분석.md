@@ -101,7 +101,6 @@
 
 - 메시지를 구성할 때 사용되는 특수문자로서, 세그먼트 구분자, 필드 구분자, 컴포넌트 구분자, 서브컴포넌트 구분자, 그리고 Escape 문자가 있음
 
-  ![메시지 구분자(Message Delimiters)](C:\Users\KOSA\Desktop\Final\Project\docs\images\MessageDelimiters.png)
 
 <br/>
 
