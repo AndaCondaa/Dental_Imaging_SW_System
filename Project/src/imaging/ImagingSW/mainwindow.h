@@ -9,7 +9,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "controlsocket.h"
+#include "networkmanager.h"
 
 
 #include <QMainWindow>
@@ -29,6 +29,6 @@ public:
 private:
     Ui::MainWindow *ui;
 
-    ControlSocket *controlSocket;
+    NetworkManager *networkManager;
 };
 #endif // MAINWINDOW_H

@@ -37,6 +37,7 @@ SubServer::~SubServer()
 
 void SubServer::newClient()
 {
+    qDebug() << "newClient()";
     QTcpSocket *sockConnection = server->nextPendingConnection();
     connect(sockConnection, SIGNAL(readyRead()), this, SLOT(receiveSocketFromClient()));
 }
@@ -55,23 +56,22 @@ void SubServer::sendSocketToClient(QTcpSocket* sock, QString header, QString eve
 
 void SubServer::receiveSocketFromClient()
 {
-    int size;
-    QStringList receiveMsg;
+//    QStringList receiveMsg;
+    QString receiveMsg;
 
     QTcpSocket *receiveSocket = qobject_cast<QTcpSocket*>(sender());
 
     QByteArray byteArray = receiveSocket->readAll();
     QDataStream in(&byteArray, QIODevice::ReadOnly);
     in.device()->seek(0);
-    in >> size;
     in >> receiveMsg;
+    ui->logEdit->append(receiveMsg);
 
-    if (size == sizeof(receiveMsg)) {
-        qDebug() << "true";
-        // 소켓 확인하고 Ack 보내기
-    } else {
-        qDebug() << "false";
-        // 데이터 손실 관련 Ack 보내기
-    }
+//    QString msg0 = receiveMsg[0];
+//    QString msg1 = receiveMsg[1];
+//    QString msg2 = receiveMsg[2];
+//    ui->logEdit->append(msg0);
+//    ui->logEdit->append(msg1);
+//    ui->logEdit->append(msg2);
 }
 
