@@ -7,16 +7,13 @@
  */
 
 #include "networkmanager.h"
-
-#include <QTcpSocket>
-#include <QDataStream>
-
 #include "protocol.h"
 
 NetworkManager::NetworkManager(QObject *parent)
     : QObject{parent}
 {
     controlSocket = new QTcpSocket(this);
+    protocol = new Protocol;
 
     connectToSubServer();
 }
@@ -24,22 +21,20 @@ NetworkManager::NetworkManager(QObject *parent)
 NetworkManager::~NetworkManager()
 {
     controlSocket->close();
-    delete socket;
+    delete controlSocket;
 }
 
 void NetworkManager::connectToSubServer()
 {
     controlSocket->connectToHost("127.0.0.1", 8000);
     if (controlSocket->waitForConnected()) {
-        connect(socket, SIGNAL(readyRead()), SLOT(receiveSocketFromSubServer()));
+        connect(controlSocket, SIGNAL(readyRead()), SLOT(receiveSocketFromSubServer()));
 
-        sendProtocol(sock, Data,"test");
+        protocol->sendProtocolToServer(controlSocket, Data, "header", "event", "msg", "PID");
     } else {
         // 연결 실패 예외처리
     }
 }
-
-
 
 void NetworkManager::receiveSocketFromSubServer()
 {

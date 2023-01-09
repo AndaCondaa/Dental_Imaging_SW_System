@@ -9,8 +9,7 @@
 #include "subserver.h"
 #include "ui_subserver.h"
 
-#include <QTcpServer>
-#include <QTcpSocket>
+#include "protocol.h"
 
 SubServer::SubServer(QWidget *parent)
     : QWidget(parent)
@@ -37,7 +36,6 @@ SubServer::~SubServer()
 
 void SubServer::newClient()
 {
-    qDebug() << "newClient()";
     QTcpSocket *sockConnection = server->nextPendingConnection();
     connect(sockConnection, SIGNAL(readyRead()), this, SLOT(receiveSocketFromClient()));
 }
@@ -47,8 +45,6 @@ void SubServer::sendSocketToClient(QTcpSocket* sock, QString header, QString eve
     QByteArray dataArray;
     QDataStream out(&dataArray, QIODevice::WriteOnly);
     out.device()->seek(0);
-
-    //out.writeRawData(data.toStdString().data(), size);
     sock->write(dataArray);
     sock->flush();
     while(sock->waitForBytesWritten());
@@ -56,22 +52,20 @@ void SubServer::sendSocketToClient(QTcpSocket* sock, QString header, QString eve
 
 void SubServer::receiveSocketFromClient()
 {
-//    QStringList receiveMsg;
     QString receiveMsg;
+    Type type;
 
     QTcpSocket *receiveSocket = qobject_cast<QTcpSocket*>(sender());
 
     QByteArray byteArray = receiveSocket->readAll();
     QDataStream in(&byteArray, QIODevice::ReadOnly);
     in.device()->seek(0);
+    in >> type;
     in >> receiveMsg;
-    ui->logEdit->append(receiveMsg);
 
-//    QString msg0 = receiveMsg[0];
-//    QString msg1 = receiveMsg[1];
-//    QString msg2 = receiveMsg[2];
-//    ui->logEdit->append(msg0);
-//    ui->logEdit->append(msg1);
-//    ui->logEdit->append(msg2);
+    if (type == Data) {
+        ui->logEdit->append(receiveMsg);
+    }
+
 }
 

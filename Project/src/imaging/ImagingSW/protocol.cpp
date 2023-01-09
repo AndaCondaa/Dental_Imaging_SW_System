@@ -1,32 +1,48 @@
 #include "protocol.h"
 
-#include <QTcpSocket>
-#include <QDataStream>
+Protocol::Protocol()
+{
+    memberSocket = new QTcpSocket();
+}
 
-void sendProtocol(QTcpSocket *socket, Type type, QString header, QString event, QString msg, QString PID)
+Protocol::Protocol(QTcpSocket *socket)
+{
+    memberSocket = new QTcpSocket();
+    memberSocket = socket;
+}
+
+Protocol::~Protocol()
+{
+
+}
+
+void Protocol::setSocket(QTcpSocket *socket)
+{
+    memberSocket = socket;
+}
+
+QTcpSocket* Protocol::getSocket()
+{
+    return memberSocket;
+}
+
+
+void Protocol::sendProtocolToServer(QTcpSocket *socket, Type type, QString header, QString event, QString msg, QString PID)
 {
     QStringList dataList;
     dataList << header << event << msg << PID;
-    QString sendData = makeProtocolData(dataList);
 
     QByteArray dataArray;
     QDataStream out(&dataArray, QIODevice::WriteOnly);
     out.device()->seek(0);
-    out << sendData;
+    out << type;
+    out << makeProtocolData(dataList);
     socket->write(dataArray);
     socket->flush();
     while(socket->waitForBytesWritten());
 }
 
-QString makeProtocolData(QStringList dataList)
+QString Protocol::makeProtocolData(QStringList dataList)
 {
-//    QString sendData;
-//    sendData << dataList[0]
-//    sendData << "^";
-//    sendData << dataList[1];
-//    sendData << "<CR>";
-//    sendData << dataList[2];
-//    sendData << "<CR>";
-//    sendData << dataList[3];
-//    sendData << "<END>";
+    return dataList[0] + "^" + dataList[1] + "<CR>" + dataList[2] + "<CR>" + dataList[3] + "<END>";
 }
