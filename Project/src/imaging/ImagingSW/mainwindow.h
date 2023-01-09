@@ -3,11 +3,15 @@
  * 파일명 : mainwindow.h
  * 설명 : 촬영SW의 메인GUI
  * 작성자 : 안다미로
- * 최종 수정일 : 2023.01.06
+ * 최종 수정일 : 2023.01.09
  */
 
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
+
+#include "patientmanager.h"
+#include "controlpanel.h"
+#include "imagingmanager.h"
 
 #include "networkmanager.h"
 
@@ -28,6 +32,9 @@ public:
 private:
     Ui::MainWindow *ui;
 
+    PatientManager *patientManager;
+    ControlPanel *controlPanel;
+    ImagingManager *imagingManager;
     NetworkManager *networkManager;
 };
 #endif // MAINWINDOW_H

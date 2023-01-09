@@ -1,10 +1,5 @@
 #include "protocol.h"
 
-Protocol::Protocol()
-{
-    memberSocket = new QTcpSocket();
-}
-
 Protocol::Protocol(QTcpSocket *socket)
 {
     memberSocket = new QTcpSocket();
@@ -13,7 +8,6 @@ Protocol::Protocol(QTcpSocket *socket)
 
 Protocol::~Protocol()
 {
-
 }
 
 void Protocol::setSocket(QTcpSocket *socket)
@@ -26,8 +20,7 @@ QTcpSocket* Protocol::getSocket()
     return memberSocket;
 }
 
-
-void Protocol::sendProtocolToServer(QTcpSocket *socket, Type type, QString header, QString event, QString msg, QString PID)
+void Protocol::sendProtocolToServer(Type type, QString header, QString event, QString msg, QString PID)
 {
     QStringList dataList;
     dataList << header << event << msg << PID;
@@ -37,9 +30,9 @@ void Protocol::sendProtocolToServer(QTcpSocket *socket, Type type, QString heade
     out.device()->seek(0);
     out << type;
     out << makeProtocolData(dataList);
-    socket->write(dataArray);
-    socket->flush();
-    while(socket->waitForBytesWritten());
+    memberSocket->write(dataArray);
+    memberSocket->flush();
+    while(memberSocket->waitForBytesWritten());
 }
 
 QString Protocol::makeProtocolData(QStringList dataList)
