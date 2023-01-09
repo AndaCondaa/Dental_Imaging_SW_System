@@ -10,9 +10,11 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
+    protocol.cpp \
     subserver.cpp
 
 HEADERS += \
+    protocol.h \
     subserver.h
 
 FORMS += \

@@ -3,9 +3,9 @@
 
 #define MAX_PKT 1024
 
-class QTcpSocket;
-class QString;
-class QStringList;
+#include <QTcpSocket>
+#include <QStringList>
+#include <QDataStream>
 
 typedef enum { Data, Ack } Type;
 
@@ -14,9 +14,25 @@ typedef struct {
     char msg[MAX_PKT];
 } Packet;
 
+class Protocol
+{
+public:
+    Protocol();
+    Protocol(QTcpSocket*);
+    ~Protocol();
 
-void sendProtocolToServer(QTcpSocket *socket, Type type, QString header, QString event, QString msg, QString PID);
-QString makeProtocolData(QStringList dataFromClient);
+    void setSocket(QTcpSocket *socket);
+    QTcpSocket* getSocket();
+
+    void sendProtocolToServer(QTcpSocket *socket, Type type, QString header, QString event, QString msg, QString PID);
+    QString makeProtocolData(QStringList dataList);
+
+    QTcpSocket *memberSocket;
+    Packet *packet;
+};
+
+
+
 
 
 

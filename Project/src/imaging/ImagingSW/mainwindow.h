@@ -11,7 +11,6 @@
 
 #include "networkmanager.h"
 
-
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE

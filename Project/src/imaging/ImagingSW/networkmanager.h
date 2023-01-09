@@ -10,6 +10,8 @@
 #define NETWORKMANAGER_H
 
 #include <QObject>
+#include <QTcpSocket>
+#include <QDataStream>
 
 #include "protocol.h"
 
@@ -30,6 +32,7 @@ private slots:
 
 private:
     QTcpSocket *controlSocket;
+    Protocol *protocol;
 };
 
 #endif // NETWORKMANAGER_H
