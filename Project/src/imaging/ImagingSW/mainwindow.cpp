@@ -15,12 +15,12 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    controlSocket = new ControlSocket(this);
+    networkManager = new NetworkManager(this);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete controlSocket;
+    delete networkManager;
 }
 

@@ -4,8 +4,10 @@
 #define MAX_PKT 1024
 
 class QTcpSocket;
+class QString;
+class QStringList;
 
-typedef enum { data, ack } Type;
+typedef enum { Data, Ack } Type;
 
 typedef struct {
     Type type;
@@ -13,8 +15,8 @@ typedef struct {
 } Packet;
 
 
-void checkType(QTcpSocket* socket);
-
+void sendProtocolToServer(QTcpSocket *socket, Type type, QString header, QString event, QString msg, QString PID);
+QString makeProtocolData(QStringList dataFromClient);
 
 
 
