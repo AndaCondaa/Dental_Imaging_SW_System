@@ -24,7 +24,7 @@ signals:
 
 private slots:
     void connectToSubServer();
-    void sendSocketToSubServer(QTcpSocket* sock, QString header, QString event,QString pid);      // 서브서버로 소켓전송 (명령 or Ack 메시지)
+    void sendSocketToSubServer(QTcpSocket* sock, QString header, QString event, QString pid);      // 서브서버로 소켓전송 (명령 or Ack 메시지)
     void receiveSocketFromSubServer();
 
 private:

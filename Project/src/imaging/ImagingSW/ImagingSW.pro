@@ -11,7 +11,8 @@ CONFIG += c++17
 SOURCES += \
     controlsocket.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    protocol.cpp
 
 HEADERS += \
     controlsocket.h \

@@ -28,7 +28,7 @@ ControlSocket::~ControlSocket()
 
 void ControlSocket::connectToSubServer()
 {
-    socket->connectToHost("192.168.0.46", 8000);
+    socket->connectToHost("127.0.0.1", 8000);
     if (socket->waitForConnected()) {
         qDebug("ControlSocket Connetion Success!");
         connect(socket, SIGNAL(readyRead()), SLOT(receiveSocketFromSubServer()));
@@ -48,14 +48,14 @@ void ControlSocket::sendSocketToSubServer(QTcpSocket* sock, QString header, QStr
     sendMsg << pid;
     int size = sizeof(sendMsg);
 
-    QByteArray dataArray;
-    QDataStream out(&dataArray, QIODevice::WriteOnly);
-    out.device()->seek(0);
-    out << size;
-    out << sendMsg;
-    socket->write(dataArray);
-    socket->flush();
-    while(socket->waitForBytesWritten());
+//    QByteArray dataArray;
+//    QDataStream out(&dataArray, QIODevice::WriteOnly);
+//    out.device()->seek(0);
+//    out << size;
+//    out << sendMsg;
+//    sock->write(dataArray);
+//    sock->flush();
+//    while(sock->waitForBytesWritten());
 }
 
 void ControlSocket::receiveSocketFromSubServer()
