@@ -6,12 +6,18 @@
 #include <QScrollArea>
 #include <QWheelEvent>
 #include <QGraphicsView>
+#include <QObject>
+#include <QListWidgetItem>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow/*, public QGraphicsView*/
+class EditImage;
+class ImageAlbum;
+
+class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -21,15 +27,13 @@ public:
 
 private:
     Ui::MainWindow *ui;
-
     QImage *img;
-
-    void wheelEvent(QWheelEvent* event);
-
+    EditImage* editimage;
+    ImageAlbum* m_memoAlbum;
 
 private slots:
     void ButtonClicked();
-    void zoomIn();
+
 
 };
 #endif // MAINWINDOW_H
