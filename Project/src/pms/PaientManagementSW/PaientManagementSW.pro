@@ -13,19 +13,22 @@ SOURCES += \
     main.cpp \
     medicalinfomanager.cpp \
     paientmanagement.cpp \
-    patientinfomanager.cpp
+    patientinfomanager.cpp \
+    searchenrollmanager.cpp
 
 HEADERS += \
     imagemanager.h \
     medicalinfomanager.h \
     paientmanagement.h \
-    patientinfomanager.h
+    patientinfomanager.h \
+    searchenrollmanager.h
 
 FORMS += \
     imagemanager.ui \
     medicalinfomanager.ui \
     paientmanagement.ui \
-    patientinfomanager.ui
+    patientinfomanager.ui \
+    searchenrollmanager.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
