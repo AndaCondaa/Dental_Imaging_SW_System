@@ -3,7 +3,7 @@
  * 파일명 : controlsocket.h
  * 설명 : 영상장비에 대한 제어명령 전송 구현
  * 작성자 : 안다미로
- * 최종 수정일 : 2023.01.06
+ * 최종 수정일 : 2023.01.09
  */
 
 #ifndef NETWORKMANAGER_H
@@ -27,7 +27,7 @@ public:
 signals:
 
 private slots:
-    void connectToSubServer();
+    void connectToSubServer(QString address, int port);
     void receiveSocketFromSubServer();
 
 private:

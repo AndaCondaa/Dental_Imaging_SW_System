@@ -9,18 +9,27 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    controlpanel.cpp \
+    imagingmanager.cpp \
     main.cpp \
     mainwindow.cpp \
+    patientmanager.cpp \
     protocol.cpp \
     networkmanager.cpp
 
 HEADERS += \
+    controlpanel.h \
+    imagingmanager.h \
     mainwindow.h \
+    patientmanager.h \
     protocol.h \
     networkmanager.h
 
 FORMS += \
-    mainwindow.ui
+    controlpanel.ui \
+    imagingmanager.ui \
+    mainwindow.ui \
+    patientmanager.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
