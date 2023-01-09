@@ -2,6 +2,7 @@
 
 <br>
 
+
 <h2>Git Management Rules</h2>
 
 1. Branch
