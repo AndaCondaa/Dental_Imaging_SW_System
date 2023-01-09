@@ -3,12 +3,20 @@
 
 #define MAX_PKT 1024
 
-typedef enum { dat, ack, nak } Type;
+class QTcpSocket;
+
+typedef enum { data, ack } Type;
 
 typedef struct {
     Type type;
-    unsigned int sequence;
-    char *data;
+    char msg[MAX_PKT];
 } Packet;
+
+
+void checkType(QTcpSocket* socket);
+
+
+
+
 
 #endif // PROTOCOL_H
