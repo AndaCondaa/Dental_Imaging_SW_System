@@ -29,17 +29,29 @@ void NetworkManager::connectToSubServer(QString address, int port)
     controlSocket->connectToHost(address, port);
     if (controlSocket->waitForConnected()) {
         connect(controlSocket, SIGNAL(readyRead()), SLOT(receiveSocketFromSubServer()));
-
-        protocol->sendProtocolToServer(Data, "header", "event", "msg", "PID");
+        protocol->sendProtocolToServer(protocol->makeSendData("Data", "CIN", "1234", "TestData"));
     } else {
         // 연결 실패 예외처리 구현
+
     }
 }
 
 void NetworkManager::receiveSocketFromSubServer()
 {
+    controlSocket = qobject_cast<QTcpSocket*>(sender());
+    QStringList receiveData = protocol->parsingPacket(controlSocket);
 
+    packet.header = receiveData[0];
+    packet.event = receiveData[1];
+    packet.PID = receiveData[2];
+    packet.msg = receiveData[3];
+
+    qDebug() << packet.header;
+    qDebug() << packet.event;
+    qDebug() << packet.PID;
+    qDebug() << packet.msg;
 }
+
 
 
 

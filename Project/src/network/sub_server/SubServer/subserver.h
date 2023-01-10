@@ -13,6 +13,8 @@
 #include <QTcpServer>
 #include <QTcpSocket>
 
+#include "protocol.h"
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class SubServer; }
 QT_END_NAMESPACE
@@ -30,13 +32,14 @@ public:
 
 private slots:
     void newClient();
-    void sendSocketToClient(QTcpSocket* sock, QString header, QString event,QString pid);
     void receiveSocketFromClient();
 
 private:
     Ui::SubServer *ui;
 
     QTcpServer *server;
-    QTcpSocket *sock;
+    QTcpSocket *socket;
+
+    Protocol *protocol;
 };
 #endif // SUBSERVER_H
