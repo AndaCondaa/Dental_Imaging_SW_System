@@ -29,7 +29,7 @@ private slots:
     void receiveSocketFromSubServer();
 
 private:
-    QTcpSocket *controlSocket;
+    QTcpSocket *subSocket;
     Protocol *protocol;
 };
 

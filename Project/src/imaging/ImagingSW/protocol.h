@@ -9,34 +9,19 @@ class PacketData;
 
 class Protocol
 {
-    Q_PROPERTY(QTcpSocket* socket READ socket WRITE setSocket NOTIFY socketChanged)
-
 public:
-    explicit Protocol(QTcpSocket* parentSocket);
+    Protocol();
     ~Protocol();
 
-
-    QTcpSocket* socket();
-    void setSocket(QTcpSocket *socket);
-
-
     // send
-    void sendProtocol(QString event, int pid, QString msg);
+    void sendProtocol(QTcpSocket* soket, QString event, int pid, QString msg);
 
 
 private:
-    QTcpSocket *m_socket;
-    PacketData *packetData;
+    PacketData *m_packetData;
 
 signals:
     void socketChanged();
-
 };
-
-
-
-
-
-
 
 #endif // PROTOCOL_H

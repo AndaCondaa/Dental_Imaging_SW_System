@@ -17,7 +17,7 @@ SubServer::SubServer(QWidget *parent)
 {
     ui->setupUi(this);
     socket = nullptr;
-    protocol = new Protocol(socket);
+    protocol = new Protocol();
 
     // Open Server
     server = new QTcpServer(this);
@@ -43,6 +43,29 @@ void SubServer::newClient()
 
 void SubServer::receiveSocketFromClient()
 {
+    QString event;
+    int pid;
+    QString msg;
 
+    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
+    QByteArray receive = socket->readAll();
+    QDataStream in(&receive, QIODevice::ReadOnly);
+    in.device()->seek(0);
+    in >> event;
+    in >> pid;
+    in >> msg;
+
+    ui->logEdit->append(event);
+    ui->logEdit->append(QString::number(pid));
+    ui->logEdit->append(msg);
+
+    event = "ACK";
+
+    QByteArray sendArray;
+    QDataStream out(&sendArray, QIODevice::WriteOnly);
+    out << event;
+    out << 7777;
+    out << (QString)("ACK MESSAGE");
+    socket->write(sendArray);
 }
 

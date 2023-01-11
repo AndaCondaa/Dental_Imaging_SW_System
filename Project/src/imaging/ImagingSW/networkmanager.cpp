@@ -12,25 +12,25 @@
 NetworkManager::NetworkManager(QObject *parent)
     : QObject{parent}
 {
-    controlSocket = new QTcpSocket(this);
-    protocol = new Protocol(controlSocket);
+    subSocket = new QTcpSocket(this);
+    protocol = new Protocol();
 
     connectToSubServer("127.0.0.1", 8000);
 }
 
 NetworkManager::~NetworkManager()
 {
-    controlSocket->close();
-    delete controlSocket;
+    subSocket->close();
+    delete subSocket;
     delete protocol;
 }
 
 void NetworkManager::connectToSubServer(QString address, int port)
 {
-    controlSocket->connectToHost(address, port);
-    if (controlSocket->waitForConnected()) {
-        connect(controlSocket, SIGNAL(readyRead()), SLOT(receiveSocketFromSubServer()));
-        protocol->sendProtocol("event", 123, "message");
+    subSocket->connectToHost(address, port);
+    if (subSocket->waitForConnected()) {
+        connect(subSocket, SIGNAL(readyRead()), SLOT(receiveSocketFromSubServer()));
+        protocol->sendProtocol(subSocket, "CNT", 12345, "MESSAGE:CONNECT");
     } else {
         // 연결 실패 예외처리 구현
     }
@@ -38,8 +38,22 @@ void NetworkManager::connectToSubServer(QString address, int port)
 
 void NetworkManager::receiveSocketFromSubServer()
 {
-    controlSocket = qobject_cast<QTcpSocket*>(sender());
+    subSocket = qobject_cast<QTcpSocket*>(sender());
 
+    QString event;
+    int pid;
+    QString msg;
+
+    QByteArray receiveArray = subSocket->readAll();
+    QDataStream in(&receiveArray, QIODevice::ReadOnly);
+    in.device()->seek(0);
+    in >> event;
+    in >> pid;
+    in >> msg;
+
+    qDebug() << event;
+    qDebug() << pid;
+    qDebug() << msg;
 }
 
 
