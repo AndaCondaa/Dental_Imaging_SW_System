@@ -1,6 +1,6 @@
 /*
  * 프로그램명 : ImagingSW
- * 파일명 : controlsocket.h
+ * 파일명 : networkmanager.h
  * 설명 : 영상장비에 대한 제어명령 전송 구현
  * 작성자 : 안다미로
  * 최종 수정일 : 2023.01.09

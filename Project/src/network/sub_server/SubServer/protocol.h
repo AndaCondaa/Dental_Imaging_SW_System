@@ -27,8 +27,7 @@ public:
     QTcpSocket* getSocket();
 
     QStringList makeSendData(QString header, QString event, QString PID, QString msg);
-    void sendProtocolToServer(QStringList data);
-    void sendProtocolToClient(QTcpSocket *socket, QStringList data);
+    void sendProtocol(QStringList data);
     QStringList parsingPacket(QTcpSocket* socket);
 
 

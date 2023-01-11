@@ -1,6 +1,6 @@
 /*
  * 프로그램명 : ImagingSW
- * 파일명 : controlsocket.cpp
+ * 파일명 : networkmanager.cpp
  * 설명 : 영상장비에 대한 제어명령 전송 구현
  * 작성자 : 안다미로
  * 최종 수정일 : 2023.01.09
@@ -29,27 +29,16 @@ void NetworkManager::connectToSubServer(QString address, int port)
     controlSocket->connectToHost(address, port);
     if (controlSocket->waitForConnected()) {
         connect(controlSocket, SIGNAL(readyRead()), SLOT(receiveSocketFromSubServer()));
-        protocol->sendProtocolToServer(protocol->makeSendData("Data", "CIN", "1234", "TestData"));
+        protocol->sendProtocol("Data", "CIN", "1234", "TestData");
     } else {
         // 연결 실패 예외처리 구현
-
     }
 }
 
 void NetworkManager::receiveSocketFromSubServer()
 {
     controlSocket = qobject_cast<QTcpSocket*>(sender());
-    QStringList receiveData = protocol->parsingPacket(controlSocket);
 
-    packet.header = receiveData[0];
-    packet.event = receiveData[1];
-    packet.PID = receiveData[2];
-    packet.msg = receiveData[3];
-
-    qDebug() << packet.header;
-    qDebug() << packet.event;
-    qDebug() << packet.PID;
-    qDebug() << packet.msg;
 }
 
 

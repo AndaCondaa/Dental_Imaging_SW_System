@@ -21,29 +21,18 @@ QTcpSocket* Protocol::getSocket()
     return memberSocket;
 }
 
-QStringList makeSendData(QString header, QString event, QString PID, QString data)
+void Protocol::sendProtocol(QString header, QString event, QString PID, QString msg)
 {
-    QStringList sendData;
-    sendData << header << event << PID << data;
-    return sendData;
+
 }
 
-void Protocol::sendProtocolToServer(QStringList sendData)
+void Protocol::parseSocket(QTcpSocket* socket)
 {
-    QByteArray dataArray;
-    QDataStream out(&dataArray, QIODevice::WriteOnly);
-    out.device()->seek(0);
-    out << sendData;
-    memberSocket->write(dataArray);
-    memberSocket->flush();
-    while(memberSocket->waitForBytesWritten());
+
 }
 
-QStringList Protocol::parsingPacket(QTcpSocket* socket)
+char* Protocol::makeSendData()
 {
-    memberSocket = socket;
-    QByteArray receiveArray = memberSocket->readAll();
-    QString receiveData = QString::fromUtf8(receiveArray.toStdString().c_str());
-    QStringList data = receiveData.split("<CR>");
-    return data;
+
+    return
 }

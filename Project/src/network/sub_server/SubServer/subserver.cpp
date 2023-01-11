@@ -41,11 +41,6 @@ void SubServer::newClient()
     connect(sockConnection, SIGNAL(readyRead()), this, SLOT(receiveSocketFromClient()));
 }
 
-void SubServer::sendSocketToClient(QTcpSocket* sock, QString header, QString event, QString pid)
-{
-
-}
-
 void SubServer::receiveSocketFromClient()
 {
 

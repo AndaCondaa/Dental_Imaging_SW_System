@@ -28,7 +28,7 @@ QStringList makeSendData(QString header, QString event, QString PID, QString dat
     return sendData;
 }
 
-void Protocol::sendProtocolToServer(QStringList sendData)
+void Protocol::sendProtocol(QStringList sendData)
 {
     QByteArray dataArray;
     QDataStream out(&dataArray, QIODevice::WriteOnly);
@@ -46,9 +46,4 @@ QStringList Protocol::parsingPacket(QTcpSocket* socket)
     QString receiveData = QString::fromUtf8(receiveArray.toStdString().c_str());
     QStringList data = receiveData.split("<CR>");
     return data;
-}
-
-void Protocol::sendProtocolToClient(QTcpSocket *socket, QStringList sendData)
-{
-
 }

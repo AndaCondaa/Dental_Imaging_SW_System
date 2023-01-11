@@ -4,8 +4,6 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-#define MAX_MSG 1000
-
 #include <QTcpSocket>
 #include <QStringList>
 #include <QDataStream>
@@ -13,7 +11,7 @@
 typedef struct {
     QString header;
     QString event;
-    QString PID;
+    int pid;
     QString msg;
 } Packet;
 
@@ -24,15 +22,21 @@ public:
     ~Protocol();
 
     void setSocket(QTcpSocket *socket);
+    void setData(QStringList data);
+    void setMemberPacket();
     QTcpSocket* getSocket();
+    QStringList getData();
 
-    QStringList makeSendData(QString header, QString event, QString PID, QString msg);
-    void sendProtocolToServer(QStringList data);
-    QStringList parsingPacket(QTcpSocket* socket);
+    // send
+    void sendProtocol(QString header, QString event, QString PID, QString msg);
 
+    // receive
+    void parseSocket(QTcpSocket* socket);
+    void packSocket();
 
     QTcpSocket *memberSocket;
     Packet *packet;
+    QStringList data;
 };
 
 
