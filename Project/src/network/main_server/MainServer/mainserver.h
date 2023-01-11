@@ -23,7 +23,7 @@ signals:
 private slots:
     void newConnection();
     void disconnected();
-    void readyRead();
+    void receiveData();
 
 private:
     Ui::MainServer *ui;

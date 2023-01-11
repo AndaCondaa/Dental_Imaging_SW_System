@@ -9,26 +9,29 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    enrollmanager.cpp \
     imagemanager.cpp \
     main.cpp \
-    medicalinfomanager.cpp \
-    paientmanagement.cpp \
+    mainwindow.cpp \
+    medicalrecordmanager.cpp \
     patientinfomanager.cpp \
-    searchenrollmanager.cpp
+    patientstatusmanager.cpp
 
 HEADERS += \
+    enrollmanager.h \
     imagemanager.h \
-    medicalinfomanager.h \
-    paientmanagement.h \
+    mainwindow.h \
+    medicalrecordmanager.h \
     patientinfomanager.h \
-    searchenrollmanager.h
+    patientstatusmanager.h
 
 FORMS += \
+    enrollmanager.ui \
     imagemanager.ui \
-    medicalinfomanager.ui \
-    paientmanagement.ui \
+    mainwindow.ui \
+    medicalrecordmanager.ui \
     patientinfomanager.ui \
-    searchenrollmanager.ui
+    patientstatusmanager.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
