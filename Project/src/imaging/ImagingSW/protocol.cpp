@@ -1,38 +1,38 @@
 #include "protocol.h"
+#include "packetdata.h"
 
-Protocol::Protocol(QTcpSocket *socket)
+#include <QDataStream>
+
+Protocol::Protocol(QTcpSocket *socket) : m_socket(socket)
 {
-    memberSocket = new QTcpSocket();
-    memberSocket = socket;
+    packetData = new PacketData();
 }
 
 Protocol::~Protocol()
 {
-    memberSocket->close();
+    m_socket->close();
+    delete m_socket;
+    delete packetData;
+}
+
+QTcpSocket* Protocol::socket()
+{
+    return m_socket;
 }
 
 void Protocol::setSocket(QTcpSocket *socket)
 {
-    memberSocket = socket;
+    m_socket = socket;
 }
 
-QTcpSocket* Protocol::getSocket()
+void Protocol::sendProtocol(QString event, int pid, QString msg)
 {
-    return memberSocket;
+    packetData->setEvent(event);
+    packetData->setPid(pid);
+    packetData->setMsg(msg);
+
+    QDataStream *sendData = new QDataStream;
+    sendData = packetData->data();
 }
 
-void Protocol::sendProtocol(QString header, QString event, QString PID, QString msg)
-{
 
-}
-
-void Protocol::parseSocket(QTcpSocket* socket)
-{
-
-}
-
-char* Protocol::makeSendData()
-{
-
-    return
-}

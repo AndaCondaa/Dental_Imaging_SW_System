@@ -24,8 +24,6 @@ public:
     explicit NetworkManager(QObject *parent = nullptr);
     ~NetworkManager();
 
-signals:
-
 private slots:
     void connectToSubServer(QString address, int port);
     void receiveSocketFromSubServer();
@@ -33,8 +31,6 @@ private slots:
 private:
     QTcpSocket *controlSocket;
     Protocol *protocol;
-
-    Packet packet;
 };
 
 #endif // NETWORKMANAGER_H

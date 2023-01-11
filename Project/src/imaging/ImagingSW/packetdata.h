@@ -7,28 +7,33 @@ class PacketData : public QObject
 {
     Q_OBJECT
 
-    Q_PROPERTY(int id READ id WRITE setId NOTIFY idChanged);
-    Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged);
+    Q_PROPERTY(QString event READ event WRITE setEvent NOTIFY eventChanged);
+    Q_PROPERTY(int pid READ pid WRITE setPid NOTIFY pidChanged);
+    Q_PROPERTY(QString msg READ msg WRITE setMsg NOTIFY msgChanged);
 
 public:
-    explicit PacketData(int, QString, QObject* parent = nullptr);
+    explicit PacketData(QString = "", int = 0, QString = "", QObject* parent = nullptr);
 
-    int id();
-    void setId(int = 0);
+    QString event();
+    void setEvent(QString);
 
-    QString name();
-    void setName(QString);
+    int pid();
+    void setPid(int = 0);
+
+    QString msg();
+    void setMsg(QString);
 
     QDataStream& data();
-    void setData(QDataStream);
 
 private:
-    int m_id;
-    QString m_name;
+    QString m_event;
+    int m_pid;
+    QString m_msg;
 
 signals:
-    void idChanged();
-    void nameChanged();
+    void eventChanged();
+    void pidChanged();
+    void msgChanged();
 };
 
 #endif // PACKETDATA_H

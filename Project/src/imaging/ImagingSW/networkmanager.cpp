@@ -22,6 +22,7 @@ NetworkManager::~NetworkManager()
 {
     controlSocket->close();
     delete controlSocket;
+    delete protocol;
 }
 
 void NetworkManager::connectToSubServer(QString address, int port)
@@ -29,7 +30,7 @@ void NetworkManager::connectToSubServer(QString address, int port)
     controlSocket->connectToHost(address, port);
     if (controlSocket->waitForConnected()) {
         connect(controlSocket, SIGNAL(readyRead()), SLOT(receiveSocketFromSubServer()));
-        protocol->sendProtocol("Data", "CIN", "1234", "TestData");
+        protocol->sendProtocol("event", 123, "message");
     } else {
         // 연결 실패 예외처리 구현
     }

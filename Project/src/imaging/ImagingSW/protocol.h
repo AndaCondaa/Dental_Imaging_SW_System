@@ -1,6 +1,3 @@
-// 프로토콜
-// HEADER(3글자)<CR>EVENT(3글자)<CR>PID(5글자예상)<CR>MESSAGE(없을 경우, "NULL")<END>
-
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
@@ -8,35 +5,32 @@
 #include <QStringList>
 #include <QDataStream>
 
-typedef struct {
-    QString header;
-    QString event;
-    int pid;
-    QString msg;
-} Packet;
+class PacketData;
 
 class Protocol
 {
+    Q_PROPERTY(QTcpSocket* socket READ socket WRITE setSocket NOTIFY socketChanged)
+
 public:
-    Protocol(QTcpSocket* parentSocket);
+    explicit Protocol(QTcpSocket* parentSocket);
     ~Protocol();
 
+
+    QTcpSocket* socket();
     void setSocket(QTcpSocket *socket);
-    void setData(QStringList data);
-    void setMemberPacket();
-    QTcpSocket* getSocket();
-    QStringList getData();
+
 
     // send
-    void sendProtocol(QString header, QString event, QString PID, QString msg);
+    void sendProtocol(QString event, int pid, QString msg);
 
-    // receive
-    void parseSocket(QTcpSocket* socket);
-    void packSocket();
 
-    QTcpSocket *memberSocket;
-    Packet *packet;
-    QStringList data;
+private:
+    QTcpSocket *m_socket;
+    PacketData *packetData;
+
+signals:
+    void socketChanged();
+
 };
 
 
