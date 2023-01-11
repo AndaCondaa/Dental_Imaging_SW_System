@@ -16,9 +16,10 @@ SubServer::SubServer(QWidget *parent)
     , ui(new Ui::SubServer)
 {
     ui->setupUi(this);
-    sock = nullptr;
+    socket = nullptr;
+    protocol = new Protocol(socket);
 
-    //OpenServer
+    // Open Server
     server = new QTcpServer(this);
     connect(server, SIGNAL(newConnection()), this, SLOT(newClient()));
     if(!server->listen(QHostAddress::Any, 8000)) {
@@ -40,32 +41,13 @@ void SubServer::newClient()
     connect(sockConnection, SIGNAL(readyRead()), this, SLOT(receiveSocketFromClient()));
 }
 
-void SubServer::sendSocketToClient(QTcpSocket* sock, QString header, QString event,QString pid)
+void SubServer::sendSocketToClient(QTcpSocket* sock, QString header, QString event, QString pid)
 {
-    QByteArray dataArray;
-    QDataStream out(&dataArray, QIODevice::WriteOnly);
-    out.device()->seek(0);
-    sock->write(dataArray);
-    sock->flush();
-    while(sock->waitForBytesWritten());
+
 }
 
 void SubServer::receiveSocketFromClient()
 {
-    QString receiveMsg;
-    Type type;
-
-    QTcpSocket *receiveSocket = qobject_cast<QTcpSocket*>(sender());
-
-    QByteArray byteArray = receiveSocket->readAll();
-    QDataStream in(&byteArray, QIODevice::ReadOnly);
-    in.device()->seek(0);
-    in >> type;
-    in >> receiveMsg;
-
-    if (type == Data) {
-        ui->logEdit->append(receiveMsg);
-    }
 
 }
 

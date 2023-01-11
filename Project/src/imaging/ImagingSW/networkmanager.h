@@ -33,6 +33,8 @@ private slots:
 private:
     QTcpSocket *controlSocket;
     Protocol *protocol;
+
+    Packet packet;
 };
 
 #endif // NETWORKMANAGER_H
