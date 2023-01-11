@@ -13,6 +13,7 @@ SOURCES += \
     imagingmanager.cpp \
     main.cpp \
     mainwindow.cpp \
+    packetdata.cpp \
     patientmanager.cpp \
     protocol.cpp \
     networkmanager.cpp
@@ -21,6 +22,7 @@ HEADERS += \
     controlpanel.h \
     imagingmanager.h \
     mainwindow.h \
+    packetdata.h \
     patientmanager.h \
     protocol.h \
     networkmanager.h

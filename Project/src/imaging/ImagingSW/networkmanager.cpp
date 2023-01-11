@@ -1,6 +1,6 @@
 /*
  * 프로그램명 : ImagingSW
- * 파일명 : controlsocket.cpp
+ * 파일명 : networkmanager.cpp
  * 설명 : 영상장비에 대한 제어명령 전송 구현
  * 작성자 : 안다미로
  * 최종 수정일 : 2023.01.09
@@ -12,44 +12,48 @@
 NetworkManager::NetworkManager(QObject *parent)
     : QObject{parent}
 {
-    controlSocket = new QTcpSocket(this);
-    protocol = new Protocol(controlSocket);
+    subSocket = new QTcpSocket(this);
+    protocol = new Protocol();
 
     connectToSubServer("127.0.0.1", 8000);
 }
 
 NetworkManager::~NetworkManager()
 {
-    controlSocket->close();
-    delete controlSocket;
+    subSocket->close();
+    delete subSocket;
+    delete protocol;
 }
 
 void NetworkManager::connectToSubServer(QString address, int port)
 {
-    controlSocket->connectToHost(address, port);
-    if (controlSocket->waitForConnected()) {
-        connect(controlSocket, SIGNAL(readyRead()), SLOT(receiveSocketFromSubServer()));
-        protocol->sendProtocolToServer(protocol->makeSendData("Data", "CIN", "1234", "TestData"));
+    subSocket->connectToHost(address, port);
+    if (subSocket->waitForConnected()) {
+        connect(subSocket, SIGNAL(readyRead()), SLOT(receiveSocketFromSubServer()));
+        protocol->sendProtocol(subSocket, "CNT", 12345, "MESSAGE:CONNECT");
     } else {
         // 연결 실패 예외처리 구현
-
     }
 }
 
 void NetworkManager::receiveSocketFromSubServer()
 {
-    controlSocket = qobject_cast<QTcpSocket*>(sender());
-    QStringList receiveData = protocol->parsingPacket(controlSocket);
+    subSocket = qobject_cast<QTcpSocket*>(sender());
 
-    packet.header = receiveData[0];
-    packet.event = receiveData[1];
-    packet.PID = receiveData[2];
-    packet.msg = receiveData[3];
+    QString event;
+    int pid;
+    QString msg;
 
-    qDebug() << packet.header;
-    qDebug() << packet.event;
-    qDebug() << packet.PID;
-    qDebug() << packet.msg;
+    QByteArray receiveArray = subSocket->readAll();
+    QDataStream in(&receiveArray, QIODevice::ReadOnly);
+    in.device()->seek(0);
+    in >> event;
+    in >> pid;
+    in >> msg;
+
+    qDebug() << event;
+    qDebug() << pid;
+    qDebug() << msg;
 }
 
 

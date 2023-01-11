@@ -10,10 +10,12 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
+    packetdata.cpp \
     protocol.cpp \
     subserver.cpp
 
 HEADERS += \
+    packetdata.h \
     protocol.h \
     subserver.h
 

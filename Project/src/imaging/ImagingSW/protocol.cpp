@@ -1,49 +1,25 @@
 #include "protocol.h"
+#include "packetdata.h"
 
-Protocol::Protocol(QTcpSocket *socket)
+#include <QByteArray>
+
+Protocol::Protocol()
 {
-    memberSocket = new QTcpSocket();
-    memberSocket = socket;
+    m_packetData = new PacketData();
 }
 
 Protocol::~Protocol()
 {
-    memberSocket->close();
+    delete m_packetData;
 }
 
-void Protocol::setSocket(QTcpSocket *socket)
+void Protocol::sendProtocol(QTcpSocket* socket, QString event, int pid, QString msg)
 {
-    memberSocket = socket;
+    m_packetData->setEvent(event);
+    m_packetData->setPid(pid);
+    m_packetData->setMsg(msg);
+
+    socket->write(m_packetData->makeSendData());
 }
 
-QTcpSocket* Protocol::getSocket()
-{
-    return memberSocket;
-}
 
-QStringList makeSendData(QString header, QString event, QString PID, QString data)
-{
-    QStringList sendData;
-    sendData << header << event << PID << data;
-    return sendData;
-}
-
-void Protocol::sendProtocolToServer(QStringList sendData)
-{
-    QByteArray dataArray;
-    QDataStream out(&dataArray, QIODevice::WriteOnly);
-    out.device()->seek(0);
-    out << sendData;
-    memberSocket->write(dataArray);
-    memberSocket->flush();
-    while(memberSocket->waitForBytesWritten());
-}
-
-QStringList Protocol::parsingPacket(QTcpSocket* socket)
-{
-    memberSocket = socket;
-    QByteArray receiveArray = memberSocket->readAll();
-    QString receiveData = QString::fromUtf8(receiveArray.toStdString().c_str());
-    QStringList data = receiveData.split("<CR>");
-    return data;
-}

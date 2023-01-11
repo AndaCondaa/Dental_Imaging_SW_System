@@ -12,7 +12,6 @@
 #include "patientmanager.h"
 #include "controlpanel.h"
 #include "imagingmanager.h"
-
 #include "networkmanager.h"
 
 #include <QMainWindow>
