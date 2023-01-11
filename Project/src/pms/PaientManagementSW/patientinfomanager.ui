@@ -6,179 +6,93 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>845</width>
-    <height>493</height>
+    <width>293</width>
+    <height>664</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QWidget" name="layoutWidget">
-   <property name="geometry">
-    <rect>
-     <x>30</x>
-     <y>50</y>
-     <width>260</width>
-     <height>478</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout_25">
-    <item row="0" column="0">
-     <layout class="QGridLayout" name="gridLayout_26">
-      <item row="1" column="1">
-       <widget class="QTableWidget" name="tableWidget_12">
-        <column>
-         <property name="text">
-          <string>대기 인원</string>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
-        </column>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QTableWidget" name="tableWidget_13">
-        <column>
-         <property name="text">
-          <string>진료완료 인원</string>
-         </property>
-         <property name="font">
-          <font>
-           <pointsize>9</pointsize>
-          </font>
-         </property>
-        </column>
-       </widget>
-      </item>
-      <item row="0" column="1">
-       <widget class="QLabel" name="label_13">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>대기 정보</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="1">
-       <widget class="QLabel" name="label_14">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>진료 완료 정보</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="0">
-     <layout class="QGridLayout" name="gridLayout_27">
-      <item row="0" column="0">
-       <widget class="QPushButton" name="pushButton_16">
-        <property name="text">
-         <string>진료완료</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="pushButton_17">
-        <property name="text">
-         <string>수납</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget_2">
-   <property name="geometry">
-    <rect>
-     <x>310</x>
-     <y>50</y>
-     <width>258</width>
-     <height>214</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout_28">
-    <item row="0" column="0">
-     <widget class="QLabel" name="label_15">
-      <property name="font">
-       <font>
-        <pointsize>12</pointsize>
-        <bold>true</bold>
-       </font>
-      </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QComboBox" name="comboBox">
+     <item>
       <property name="text">
-       <string>환자 정보</string>
+       <string>환자 번호</string>
       </property>
-     </widget>
-    </item>
-    <item row="1" column="0">
-     <widget class="QTableWidget" name="tableWidget_14"/>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="layoutWidget_3">
-   <property name="geometry">
-    <rect>
-     <x>570</x>
-     <y>50</y>
-     <width>260</width>
-     <height>262</height>
-    </rect>
-   </property>
-   <layout class="QGridLayout" name="gridLayout_29">
-    <item row="0" column="0">
-     <layout class="QGridLayout" name="gridLayout_30">
-      <item row="1" column="0">
-       <widget class="QLabel" name="label_16">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="text">
-         <string>환자 메모</string>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QTableWidget" name="tableWidget_15"/>
-      </item>
-     </layout>
-    </item>
-    <item row="1" column="0">
-     <layout class="QGridLayout" name="gridLayout_31">
-      <item row="2" column="0">
-       <widget class="QPushButton" name="pushButton_18">
-        <property name="text">
-         <string>환자 정보 삭제</string>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QPushButton" name="modifyPatientInfo_pushButton_4">
-        <property name="text">
-         <string>환자 정보 수정</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-   </layout>
-  </widget>
+     </item>
+     <item>
+      <property name="text">
+       <string>환자 이름</string>
+      </property>
+     </item>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="lineEdit"/>
+   </item>
+   <item row="0" column="2">
+    <widget class="QPushButton" name="pushButton">
+     <property name="text">
+      <string>검색</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="text">
+      <string>환자 정보</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="3">
+    <widget class="QTableWidget" name="tableWidget">
+     <row>
+      <property name="text">
+       <string>환자 번호</string>
+      </property>
+     </row>
+     <row>
+      <property name="text">
+       <string>환자 이름</string>
+      </property>
+     </row>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QPushButton" name="modifyPatientInfo_pushButton">
+     <property name="text">
+      <string>환자 정보
+수정</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QPushButton" name="pushButton_6">
+     <property name="text">
+      <string>환자 정보
+삭제</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="2">
+    <widget class="QPushButton" name="pushButton_7">
+     <property name="styleSheet">
+      <string notr="true">QPushButton { background-color: rgb(255, 255, 127)}</string>
+     </property>
+     <property name="text">
+      <string>대기 명단에
+추가</string>
+     </property>
+    </widget>
+   </item>
+  </layout>
  </widget>
  <resources/>
  <connections/>

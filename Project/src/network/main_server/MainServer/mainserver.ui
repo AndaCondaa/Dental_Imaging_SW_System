@@ -13,7 +13,7 @@
   <property name="windowTitle">
    <string>Server</string>
   </property>
-  <widget class="QTextBrowser" name="textBrowser">
+  <widget class="QTextEdit" name="textEdit">
    <property name="geometry">
     <rect>
      <x>10</x>
