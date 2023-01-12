@@ -31,14 +31,15 @@ public slots:
 
 private slots:
     void on_enrollButton_clicked();
-    void sendProtocol(int, char *name);
+    //void sendProtocol(int, char *name);
 
 private:
     Ui::MainWindow *ui;
     QTcpSocket *socket;
     bool fd_flag = false;
     bool send_flag = false;
-    //int cnt = 0;
+    int pid = 1; // 임시
+    char name[10] = "김유선"; //임시
 
     EnrollManager *enrollManager;
     ImageManager *imageManager;

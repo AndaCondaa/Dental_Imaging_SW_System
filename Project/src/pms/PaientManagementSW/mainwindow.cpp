@@ -25,7 +25,7 @@ MainWindow::MainWindow(QWidget *parent)
     //ui->textBrowser->hide();
 
     if(!fd_flag)
-        ui->textBrowser->insertPlainText("Socket connect fail\n");
+        ui->textEdit->insertPlainText("Socket connect fail\n");
 
     imageManager = new ImageManager(this);
     medicalRecordManager = new MedicalRecordManager(this);
@@ -67,7 +67,7 @@ MainWindow::~MainWindow()
 
 bool MainWindow::connectToHost(QString host)
 {
-    socket->connectToHost(host, 8001); // ip address, port
+    socket->connectToHost(host, 8001);
     return socket->waitForConnected();
 }
 
@@ -75,8 +75,8 @@ bool MainWindow::writeData(QByteArray data)
 {
     if(socket->state() == QAbstractSocket::ConnectedState)
     {
-        socket->write(IntToArray(data.size())); // write size of data
-        socket->write(data); // write the data itself
+        socket->write(IntToArray(data.size())); // 데이터 사이즈를 보내줌
+        socket->write(data); // 데이터를 보내줌
         return socket->waitForBytesWritten();
     }
     else
@@ -85,9 +85,8 @@ bool MainWindow::writeData(QByteArray data)
     }
 }
 
-QByteArray IntToArray(qint32 source) // Use qint32 to ensure that the number have 4 bytes
+QByteArray IntToArray(qint32 source)
 {
-    // Avoid use of cast, this is the Qt way to serialize objects
     QByteArray temp;
     QDataStream data(&temp, QIODevice::ReadWrite);
     data << source;
@@ -98,53 +97,31 @@ QByteArray IntToArray(qint32 source) // Use qint32 to ensure that the number hav
 
 void MainWindow::on_enrollButton_clicked()
 {
-    int pid = 1; // 임시
-    char name[10] = "김유선";
-    qDebug("2");
-    sendProtocol(pid, name);
-    qDebug("3");
+//    int pid = 1; // 임시
+//    char name[10] = "김유선";
+//    qDebug("2");
+//    sendProtocol(pid, name);
+//    qDebug("3");
 
 
     enrollManager = new EnrollManager(0);
     enrollManager->show();
 
 
-//    if(fd_flag)
-//    {
-//        //이거는 mainwindow쪽에 보내면 될 듯
-//        QString textData = QString("Modify_PatientInfo Button click\n");
-//        QString sendData = QString("Socket data: patient ID(%1) info changed");
+    if(fd_flag)
+    {
+        QString textData = QString("Enroll_PatientInfo Button click\n");    //MainWindow의 textEdit에 띄울 정보
+        QString sendData = QString("PEN, %1, %2]\n").arg(pid).arg(name); //MainServer의 textEdit에 띄울 정보
 
-//        ui->textBrowser->insertPlainText(textData);
-//        send_flag = writeData(sendData.toStdString().c_str());
+        ui->textEdit->insertPlainText(textData);
+        send_flag = writeData(sendData.toStdString().c_str()); //writeData의 첫 번째 인자는 char *data와 같은 형식임
 
-//        if(!send_flag)
-//            ui->textBrowser->insertPlainText("Socket send fail\n");
-//        else
-//            ;
+        if(!send_flag)
+            ui->textEdit->insertPlainText("Socket send fail\n");
+        else
+            ;
 
-//    }
-    //emit enrollSignal(pid, name);
+    }
 }
 
-void MainWindow::sendProtocol(int pid, char *name)
-{
 
-    QByteArray dateArray;
-    QDataStream out(&dateArray, QIODevice::WriteOnly);
-    qDebug("1");
-    out.device()->seek(0);
-    qDebug("2");
-    out << pid;
-    qDebug("3");
-    out.writeRawData(name, 10);
-    qDebug("4");
-    qDebug(dateArray);
-    qDebug("5");
-
-    PMSocket->write(dateArray);
-    qDebug("6");
-    PMSocket->flush();
-    while(PMSocket->waitForBytesWritten());
-
-}
