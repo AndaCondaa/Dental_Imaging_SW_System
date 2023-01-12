@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+
 namespace Ui {
 class EnrollManager;
 }
@@ -17,6 +18,7 @@ public:
 
 private:
     Ui::EnrollManager *ui;
+
 };
 
 #endif // ENROLLMANAGER_H

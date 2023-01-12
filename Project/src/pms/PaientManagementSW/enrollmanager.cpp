@@ -6,7 +6,7 @@ EnrollManager::EnrollManager(QWidget *parent) :
     ui(new Ui::EnrollManager)
 {
     ui->setupUi(this);
-    this->setFixedSize(550, 250);
+    this->setFixedSize(700, 350);
     ui->birthDateEdit->setCalendarPopup(true);
     ui->birthDateEdit->show();
 }
