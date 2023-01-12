@@ -17,7 +17,7 @@ MainServer::MainServer(QWidget *parent) :
     connect(server, SIGNAL(newConnection()), this, SLOT(newConnection()));
 
     QString socket_data = QString("Listening: %1\n").arg(server->listen(QHostAddress::Any, 8001) ? "true" : "false");
-    ui->textEdit->insertPlainText(socket_data);
+    ui->textEdit->append(socket_data);
 
 }
 
@@ -101,6 +101,8 @@ void MainServer::loadData()
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "Patient");
     db.setDatabaseName("patient.db");
 
+    QString name;
+    QString sex;
     /*DB를 오픈해 새로운 테이블을 만듦*/
     if (db.open( )) {
         query= new QSqlQuery(db);
@@ -120,8 +122,11 @@ void MainServer::loadData()
 
         query->exec("CREATE TABLE IF NOT EXISTS image_relation(report_no VARCHAR(10) Primary Key, image_no VARCHAR(10) Primary Key);");
 
-
+        query->exec("INSERT INTO patient(patient_name, patient_sex) VALUES('" + name + "', 'woman')");
+        query->exec("SELECT * FROM patient where patient_sex = '" + sex + "'");
     }
+
+
 
 
 

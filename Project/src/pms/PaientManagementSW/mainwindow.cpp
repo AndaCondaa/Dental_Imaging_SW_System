@@ -27,11 +27,12 @@ MainWindow::MainWindow(QWidget *parent)
     if(!fd_flag)
         ui->textEdit->insertPlainText("Socket connect fail\n");
 
+
     imageManager = new ImageManager(this);
     medicalRecordManager = new MedicalRecordManager(this);
     patientInfoManager = new PatientInfoManager(this);
     patientStatusManager = new PatientStatusManager(this);
-
+    enrollManager = new EnrollManager(0);
 
     QVBoxLayout *imageLayout = new QVBoxLayout(this);
     QVBoxLayout *recordLayout = new QVBoxLayout(this);
@@ -53,6 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
 //    connect(patientInfoManager, SIGNAL(()),
 //            this, SLOT(()));
 
+    connect(enrollManager, SIGNAL(sendNewData(QString)), this, SLOT(newDataSended(QString)));
 
 
 }
@@ -104,14 +106,22 @@ void MainWindow::on_enrollButton_clicked()
 //    qDebug("3");
 
 
-    enrollManager = new EnrollManager(0);
+
     enrollManager->show();
 
+
+
+
+
+}
+
+void MainWindow::newDataSended(QString newData)
+{
 
     if(fd_flag)
     {
         QString textData = QString("Enroll_PatientInfo Button click\n");    //MainWindow의 textEdit에 띄울 정보
-        QString sendData = QString("PEN, %1, %2\n").arg(pid).arg(name); //MainServer의 textEdit에 띄울 정보
+        QString sendData = newData; //MainServer의 textEdit에 띄울 정보
 
         ui->textEdit->insertPlainText(textData);
         send_flag = writeData(sendData.toStdString().c_str()); //writeData의 첫 번째 인자는 char *data와 같은 형식임
@@ -122,6 +132,5 @@ void MainWindow::on_enrollButton_clicked()
             ;
 
     }
+
 }
-
-
