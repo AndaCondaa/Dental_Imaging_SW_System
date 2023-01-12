@@ -1,9 +1,8 @@
 #ifndef CONTROLPANEL_H
 #define CONTROLPANEL_H
 
-#include "protocol.h"
-
 #include <QWidget>
+#include <QButtonGroup>
 
 namespace Ui {
 class ControlPanel;
@@ -18,9 +17,15 @@ public:
     ~ControlPanel();
 
 private slots:
+    void controlButtonClicked(QAbstractButton*);
 
 private:
     Ui::ControlPanel *ui;
+
+    QButtonGroup *buttonGroup;
+
+signals:
+    void buttonSignal(int);
 };
 
 #endif // CONTROLPANEL_H

@@ -33,6 +33,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->controlFrame->setLayout(controlLayout);
     ui->imagingFrame->setLayout(imagingLayout);
 
+    connect(controlPanel, SIGNAL(buttonSignal(int)), networkManager, SLOT(receiveButtonSignal(int)));
+
 }
 
 MainWindow::~MainWindow()

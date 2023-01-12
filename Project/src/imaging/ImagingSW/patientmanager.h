@@ -15,6 +15,8 @@ public:
     explicit PatientManager(QWidget *parent = nullptr);
     ~PatientManager();
 
+    void setSocketData();
+
 private:
     Ui::PatientManager *ui;
 };

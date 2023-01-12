@@ -25,11 +25,16 @@ public:
     ~NetworkManager();
 
 private slots:
-    void connectToSubServer(QString address, int port);
-    void receiveSocketFromSubServer();
+    void connection(QString address, int port);
+    void receiveSocket();
+    void receiveButtonSignal(int);
+    void receiveFile();
+
 
 private:
     QTcpSocket *subSocket;
+    QTcpSocket *fileSocket;
+
     Protocol *protocol;
 };
 

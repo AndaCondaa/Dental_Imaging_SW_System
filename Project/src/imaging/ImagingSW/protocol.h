@@ -5,6 +5,10 @@
 #include <QStringList>
 #include <QDataStream>
 
+#define SW 0
+#define MODALITY 1
+
+
 class PacketData;
 
 class Protocol
@@ -13,15 +17,16 @@ public:
     Protocol();
     ~Protocol();
 
-    // send
-    void sendProtocol(QTcpSocket* soket, QString event, int pid, QString msg);
+    PacketData* packetData();
 
+    // send
+    void sendProtocol(QTcpSocket* socket, QString event, int pid, QString msg);
+
+    // receive
+    void receiveProtocol(QTcpSocket* socket);
 
 private:
     PacketData *m_packetData;
-
-signals:
-    void socketChanged();
 };
 
 #endif // PROTOCOL_H
