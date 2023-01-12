@@ -2,6 +2,9 @@
 #include "ui_mainserver.h"
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QSqlQuery>
+#include <QSqlDatabase>
+#include <QTableWidget>
 
 static inline qint32 ArrayToInt(QByteArray source);
 
@@ -85,4 +88,42 @@ qint32 ArrayToInt(QByteArray source)
     QDataStream data(&source, QIODevice::ReadWrite);
     data >> temp;
     return temp;
+}
+
+//QString MainServer::makeId()
+//{
+
+//}
+
+void MainServer::loadData()
+{
+    /*DB를 추가하고 DB의 이름을 설정*/
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "Patient");
+    db.setDatabaseName("patient.db");
+
+    /*DB를 오픈해 새로운 테이블을 만듦*/
+    if (db.open( )) {
+        query= new QSqlQuery(db);
+        query->exec("CREATE TABLE IF NOT EXISTS patient(patient_no VARCHAR(10) Primary Key,"
+                    "patient_name VARCHAR(10) NOT NULL, patient_sex VARCHAR(5) NOT NULL, patient_birthdate DATE NOT NULL,"
+                    "patient_tel VARCHAR(15) NOT NULL, patient_address VARCHAR(60) NOT NULL, patient_memo VARCHAR(100));");
+
+        query->exec("CREATE TABLE IF NOT EXISTS dentist(dentist_no VARCHAR(10) Primary Key,"
+                    "dentist_name VARCHAR(10) NOT NULL, dentist_sex VARCHAR(5) NOT NULL), dentist_tel VARCHAR(15) NOT NULL);");
+
+        query->exec("CREATE TABLE IF NOT EXISTS image(image_no VARCHAR(10) Primary Key, patient_no VARCHAR(10) NOT NULL,"
+                    "dentist_no VARCHAR(10) NOT NULL, modality VARCHAR(10) NOT NULL, bodypart_examined VARCHAR(30) NOT NULL,"
+                    "image_date DATE NOT NULL, image_path varchar(300) NOT NULL);");
+
+        query->exec("CREATE TABLE IF NOT EXISTS report(report_no VARCHAR(10) Primary Key, patient_no VARCHAR(10) NOT NULL,"
+                    "dentist_no VARCHAR(10) NOT NULL, report_date DATE NOT NULL, report_note VARCHAR(500) NOT NULL);");
+
+        query->exec("CREATE TABLE IF NOT EXISTS image_relation(report_no VARCHAR(10) Primary Key, image_no VARCHAR(10) Primary Key);");
+
+
+    }
+
+
+
+
 }

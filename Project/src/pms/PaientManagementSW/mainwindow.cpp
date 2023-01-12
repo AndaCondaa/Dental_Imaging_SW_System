@@ -111,7 +111,7 @@ void MainWindow::on_enrollButton_clicked()
     if(fd_flag)
     {
         QString textData = QString("Enroll_PatientInfo Button click\n");    //MainWindow의 textEdit에 띄울 정보
-        QString sendData = QString("PEN, %1, %2]\n").arg(pid).arg(name); //MainServer의 textEdit에 띄울 정보
+        QString sendData = QString("PEN, %1, %2\n").arg(pid).arg(name); //MainServer의 textEdit에 띄울 정보
 
         ui->textEdit->insertPlainText(textData);
         send_flag = writeData(sendData.toStdString().c_str()); //writeData의 첫 번째 인자는 char *data와 같은 형식임
