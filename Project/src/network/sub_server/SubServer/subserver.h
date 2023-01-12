@@ -12,15 +12,21 @@
 #include <QWidget>
 #include <QTcpServer>
 #include <QTcpSocket>
+#include <QMap>
+#include <QFile>
+#include <QFileInfo>
+#include <QFileDialog>
+#include <QProgressDialog>
+
 
 #include "protocol.h"
+
+#define SW 0
+#define MODALITY 1
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class SubServer; }
 QT_END_NAMESPACE
-
-class QTcpServer;
-class QTcpSocket;
 
 class SubServer : public QWidget
 {
@@ -32,13 +38,36 @@ public:
 
 private slots:
     void newClient();
-    void receiveSocketFromClient();
+    void receiveControl();
+
+    void newFileCilent();
+    void recevieFile();
+    void goOnSend(qint64);
+    void sendFile();
+
+    void on_pushButton_clicked();
 
 private:
     Ui::SubServer *ui;
 
-    QTcpServer *server;
-    QTcpSocket *socket;
+    QTcpServer *controlServer;
+    QTcpServer *fileServer;
+    QMap<QTcpSocket*, int> controlSocketMap;    // <socket, SW or MODALITY>
+    QMap<QTcpSocket*, int> fileSocketMap;       // <socket, SW or MODALITY>
+
+
+    QFile* file;                                // File Object for FileSending Protocol
+    QProgressDialog* progressDialog;            // Object for Showing Progress
+    qint64 totalSize;                           // Total size of File that clients are sending
+    qint64 byteReceived = 0;                    // size of File read currently
+    QByteArray inBlock;                         // Units divided to transfer files
+    QString fileName;                           // Receiving FileName
+    QString fileSender;                         // Receiving File's Sender
+    QString checkFileName;                      // Previous File Name for checking new file
+    qint64 loadSize;                // File Size
+    qint64 byteToWrite;             // File Size per a block
+    QByteArray outBlock;            // Block for sending
+
 
     Protocol *protocol;
 };
