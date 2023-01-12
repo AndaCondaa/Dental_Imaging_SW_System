@@ -32,10 +32,10 @@ private slots:
     void receiveFile();
 
 private:
+    Protocol *protocol;
+
     QTcpSocket *subSocket;
     QTcpSocket *fileSocket;
-
-    Protocol *protocol;
 
     QFile* file;                                // File Object for FileSending Protocol
     qint64 totalSize;                           // Total size of File that clients are sending
@@ -47,7 +47,7 @@ private:
 
 
 signals:
-    void buttonSignal(int);
+    void buttonSignal(int);         // 영상 장비로부터 직접 명령이 왔을 때 발생
 };
 
 #endif // NETWORKMANAGER_H
