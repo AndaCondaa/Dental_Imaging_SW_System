@@ -32,6 +32,7 @@ public slots:
 private slots:
     void on_enrollButton_clicked();
     //void sendProtocol(int, char *name);
+    void newDataSended(QString);
 
 private:
     Ui::MainWindow *ui;
@@ -40,6 +41,8 @@ private:
     bool send_flag = false;
     int pid = 1; // 임시
     char name[10] = "김유선"; //임시
+
+
 
     EnrollManager *enrollManager;
     ImageManager *imageManager;
