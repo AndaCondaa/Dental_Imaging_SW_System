@@ -33,13 +33,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->controlFrame->setLayout(controlLayout);
     ui->imagingFrame->setLayout(imagingLayout);
 
-    connect(controlPanel, SIGNAL(buttonSignal(int)), networkManager, SLOT(receiveButtonSignal(int)));
-
+    connect(controlPanel, SIGNAL(buttonSignal(int)), networkManager, SLOT(receiveButtonControl(int)));
+    connect(networkManager, SIGNAL(buttonSignal(int)), controlPanel, SLOT(receiveButtonControl(int)));
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+    delete patientManager;
+    delete controlPanel;
+    delete imagingManager;
     delete networkManager;
 }
-

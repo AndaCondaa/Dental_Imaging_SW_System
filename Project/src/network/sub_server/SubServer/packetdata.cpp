@@ -2,8 +2,8 @@
 
 #include <QIODevice>
 
-PacketData::PacketData(QString event, int pid, QString msg, QObject* parent)
-    : QObject(parent), m_event(event), m_pid(pid), m_msg(msg)
+PacketData::PacketData(QString event, int index, QString msg, QObject* parent)
+    : QObject(parent), m_event(event), m_index(index), m_msg(msg)
 {
 
 }
@@ -21,16 +21,16 @@ void PacketData::setEvent(QString event)
     }
 }
 
-int PacketData::pid()
+int PacketData::index()
 {
-    return m_pid;
+    return m_index;
 }
 
-void PacketData::setPid(int pid)
+void PacketData::setIndex(int index)
 {
-    if(m_pid != pid) {
-        m_pid = pid;
-        emit pidChanged();
+    if(m_index != index) {
+        m_index = index;
+        emit indexChanged();
     }
 }
 
@@ -53,7 +53,7 @@ QByteArray PacketData::makeSendData()
     QDataStream out(&sendArray, QIODevice::WriteOnly);
     out.device()->seek(0);
     out << m_event;
-    out << m_pid;
+    out << m_index;
     out << m_msg;
 
     return sendArray;

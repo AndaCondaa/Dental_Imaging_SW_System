@@ -38,11 +38,14 @@ public:
 
 private slots:
     void newClient();
+    void receiveControl();
+
     void newFileCilent();
-    void receiveSocket();
-    void receiveFile();
+    void recevieFile();
     void goOnSend(qint64);
     void sendFile();
+
+    void on_pushButton_clicked();
 
 private:
     Ui::SubServer *ui;

@@ -18,6 +18,7 @@ public:
 
 private slots:
     void controlButtonClicked(QAbstractButton*);
+    void receiveButtonControl(int);
 
 private:
     Ui::ControlPanel *ui;

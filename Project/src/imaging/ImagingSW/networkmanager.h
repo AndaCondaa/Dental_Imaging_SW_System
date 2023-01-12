@@ -12,10 +12,11 @@
 #include <QObject>
 #include <QTcpSocket>
 #include <QDataStream>
-
-#include "protocol.h"
+#include <QFile>
+#include <QFileInfo>
 
 class QTcpSocket;
+class Protocol;
 
 class NetworkManager : public QObject
 {
@@ -26,16 +27,27 @@ public:
 
 private slots:
     void connection(QString address, int port);
-    void receiveSocket();
-    void receiveButtonSignal(int);
+    void receiveControl();
+    void receiveButtonControl(int);
     void receiveFile();
-
 
 private:
     QTcpSocket *subSocket;
     QTcpSocket *fileSocket;
 
     Protocol *protocol;
+
+    QFile* file;                                // File Object for FileSending Protocol
+    qint64 totalSize;                           // Total size of File that clients are sending
+    qint64 byteReceived = 0;                    // size of File read currently
+    QByteArray inBlock;                         // Units divided to transfer files
+    QString fileName;                           // Receiving FileName
+    QString fileSender;                         // Receiving File's Sender
+    QString checkFileName;                      // Previous File Name for checking new file
+
+
+signals:
+    void buttonSignal(int);
 };
 
 #endif // NETWORKMANAGER_H

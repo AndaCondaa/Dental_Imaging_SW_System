@@ -5,8 +5,18 @@
 #include <QStringList>
 #include <QDataStream>
 
-#define SW 0
-#define MODALITY 1
+
+typedef enum {
+    SW,
+    MODALITY
+} ConnectType;
+
+typedef enum {
+    RESET,
+    READY,
+    START,
+    STOP
+} ControlType;
 
 
 class PacketData;
@@ -20,7 +30,7 @@ public:
     PacketData* packetData();
 
     // send
-    void sendProtocol(QTcpSocket* socket, QString event, int pid, QString msg);
+    void sendProtocol(QTcpSocket* socket, QString event, int type, QString msg);
 
     // receive
     void receiveProtocol(QTcpSocket* socket);

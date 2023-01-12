@@ -16,11 +16,10 @@ PacketData* Protocol::packetData()
     return m_packetData;
 }
 
-
-void Protocol::sendProtocol(QTcpSocket* socket, QString event, int pid, QString msg)
+void Protocol::sendProtocol(QTcpSocket* socket, QString event, int index, QString msg)
 {
     m_packetData->setEvent(event);
-    m_packetData->setPid(pid);
+    m_packetData->setIndex(index);
     m_packetData->setMsg(msg);
 
     socket->write(m_packetData->makeSendData());
@@ -29,17 +28,17 @@ void Protocol::sendProtocol(QTcpSocket* socket, QString event, int pid, QString 
 void Protocol::receiveProtocol(QTcpSocket* socket)
 {
     QString event;
-    int pid;
+    int index;
     QString msg;
 
     QByteArray receiveArray = socket->readAll();
     QDataStream in(&receiveArray, QIODevice::ReadOnly);
     in.device()->seek(0);
     in >> event;
-    in >> pid;
+    in >> index;
     in >> msg;
 
     m_packetData->setEvent(event);
-    m_packetData->setPid(pid);
+    m_packetData->setIndex(index);
     m_packetData->setMsg(msg);
 }

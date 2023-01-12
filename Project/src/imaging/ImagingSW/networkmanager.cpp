@@ -10,9 +10,6 @@
 #include "protocol.h"
 #include "packetdata.h"
 
-#include <windows.h>
-
-
 NetworkManager::NetworkManager(QObject *parent)
     : QObject{parent}
 {
@@ -34,38 +31,69 @@ void NetworkManager::connection(QString address, int port)
 {
     subSocket->connectToHost(address, port);
     if (subSocket->waitForConnected()) {
-        connect(subSocket, SIGNAL(readyRead()), SLOT(receiveSocket()), Qt::DirectConnection);
-        protocol->sendProtocol(subSocket, "NEW", SW, "CONTROL");
+        connect(subSocket, SIGNAL(readyRead()), SLOT(receiveControl()));
+        protocol->sendProtocol(subSocket, "NEW", ConnectType::SW, "SW");
     } else {
         // 연결 실패 예외처리 구현
     }
 
     fileSocket->connectToHost(address, port+1);
     if (fileSocket->waitForConnected()) {
-        connect(fileSocket, SIGNAL(readyRead()), SLOT(receiveFile()), Qt::DirectConnection);
-        protocol->sendProtocol(fileSocket, "NEW", SW, "FILE");
+        connect(fileSocket, SIGNAL(readyRead()), SLOT(receiveFile()));
+        protocol->sendProtocol(fileSocket, "NEW", ConnectType::SW, "SW");
+    } else {
+        // 연결 실패  예외처리 구현
     }
 }
 
-void NetworkManager::receiveSocket()
+void NetworkManager::receiveControl()
 {
     subSocket = dynamic_cast<QTcpSocket*>(sender());
     protocol->receiveProtocol(subSocket);
 
-    qDebug() << protocol->packetData()->event();
-    qDebug() << protocol->packetData()->pid();
-    qDebug() << protocol->packetData()->msg();
+    if (protocol->packetData()->event() == "CTL") {
+        emit buttonSignal(protocol->packetData()->type());
+    }
 }
 
-void NetworkManager::receiveButtonSignal(int buttonIdx)
+void NetworkManager::receiveButtonControl(int buttonIdx)
 {
-    protocol->sendProtocol(subSocket, "CNT", buttonIdx, "Pano or Ceph");
+    protocol->sendProtocol(subSocket, "CTL", buttonIdx, "Pano or Ceph");
 }
 
 void NetworkManager::receiveFile()
 {
+    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
 
+    // Beginning File Transfer
+    if (byteReceived == 0) {        // First Time(Block) , var byteReceived is always zero
+        checkFileName = fileName;
+        QDataStream in(socket);
+        in.device()->seek(0);
+        in >> totalSize >> byteReceived >> fileName >> fileSender;
+        if(checkFileName == fileName) return;
+
+        QFileInfo info(fileName);
+        QString currentFileName = info.fileName();
+        file = new QFile(currentFileName);
+        file->open(QFile::WriteOnly);
+    } else {
+        if(checkFileName == fileName) return;
+        inBlock = socket->readAll();
+
+        byteReceived += inBlock.size();
+        file->write(inBlock);
+        file->flush();
+    }
+
+    if (byteReceived == totalSize) {        // file sending is done
+        qDebug() << QString("%1 receive completed").arg(fileName);
+        inBlock.clear();
+        byteReceived = 0;
+        totalSize = 0;
+        file->close();
+        delete file;
+    }
 }
-
 
 

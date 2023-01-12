@@ -31,3 +31,20 @@ void ControlPanel::controlButtonClicked(QAbstractButton* button)
 {
     emit buttonSignal(buttonGroup->id(button));     // NetworkManager::receiveButtonSignal()
 }
+
+void ControlPanel::receiveButtonControl(int buttonIdx)
+{
+    switch (buttonIdx) {
+    case RESET:
+        break;
+    case READY:
+
+        break;
+    case START:
+
+        break;
+    case STOP:
+
+        break;
+    }
+}

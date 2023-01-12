@@ -5,8 +5,18 @@
 #include <QStringList>
 #include <QDataStream>
 
-#define SW 0
-#define MODALITY 1
+
+typedef enum {
+    SW,
+    MODALITY
+} ConnectType;
+
+typedef enum {
+    RESET,
+    READY,
+    START,
+    STOP
+} ControlType;
 
 class PacketData;
 
