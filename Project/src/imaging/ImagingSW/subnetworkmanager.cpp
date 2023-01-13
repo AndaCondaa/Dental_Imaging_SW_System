@@ -95,5 +95,3 @@ void SubNetworkManager::receiveFile()
         delete file;
     }
 }
-
-

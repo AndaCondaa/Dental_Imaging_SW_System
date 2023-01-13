@@ -2,6 +2,7 @@
 #define PATIENTMANAGER_H
 
 #include <QWidget>
+#include <QTreeWidget>
 
 namespace Ui {
 class PatientManager;
@@ -15,10 +16,18 @@ public:
     explicit PatientManager(QWidget *parent = nullptr);
     ~PatientManager();
 
-    void setSocketData();
+private slots:
+    void receiveWaitPatient(QStringList dataList);
+    void deletePatient();
+    void slotPatientReady();
 
 private:
     Ui::PatientManager *ui;
+
+    QMap<QString, QString> typeMap;
+
+signals:
+    void sendPid(QString);
 };
 
 #endif // PATIENTMANAGER_H

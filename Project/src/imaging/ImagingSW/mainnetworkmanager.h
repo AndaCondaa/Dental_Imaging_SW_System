@@ -14,14 +14,16 @@ public:
 private slots:
     void connection(QString address, int port);
     void sendPacket(QTcpSocket* socket, QString event, QString pid, QString data);
+    QStringList packetParser(QByteArray receiveArray);
     void receivePacket();
+
 
 private:
     QTcpSocket *mainSocket;
     QTcpSocket *fileSocket;
 
 signals:
-
+    void sendWaitPatient(QStringList);
 };
 
 #endif // MAINNETWORKMANAGER_H

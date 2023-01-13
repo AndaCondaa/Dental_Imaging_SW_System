@@ -41,8 +41,8 @@ private slots:
     void receiveControl();
 
     void newFileCilent();
-    void recevieFile();
-    void goOnSend(qint64);
+    void receiveFile();
+    void goOnSend(qint64 numBytes);
     void sendFile();
 
     void on_pushButton_clicked();

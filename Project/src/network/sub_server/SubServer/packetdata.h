@@ -8,7 +8,7 @@ class PacketData : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QString event READ event WRITE setEvent NOTIFY eventChanged);
-    Q_PROPERTY(int index READ index WRITE setIndex NOTIFY indexChanged);
+    Q_PROPERTY(int type READ type WRITE setType NOTIFY typeChanged);
     Q_PROPERTY(QString msg READ msg WRITE setMsg NOTIFY msgChanged);
 
 public:
@@ -17,8 +17,8 @@ public:
     QString event();
     void setEvent(QString);
 
-    int index();
-    void setIndex(int = 0);
+    int type();
+    void setType(int = 0);
 
     QString msg();
     void setMsg(QString);
@@ -27,12 +27,12 @@ public:
 
 private:
     QString m_event;
-    int m_index;
+    int m_type;
     QString m_msg;
 
 signals:
     void eventChanged();
-    void indexChanged();
+    void typeChanged();
     void msgChanged();
 };
 
