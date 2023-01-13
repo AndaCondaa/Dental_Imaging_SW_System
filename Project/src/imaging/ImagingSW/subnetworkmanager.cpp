@@ -6,11 +6,11 @@
  * 최종 수정일 : 2023.01.09
  */
 
-#include "networkmanager.h"
+#include "subnetworkmanager.h"
 #include "protocol.h"
 #include "packetdata.h"
 
-NetworkManager::NetworkManager(QObject *parent)
+SubNetworkManager::SubNetworkManager(QObject *parent)
     : QObject{parent}
 {
     subSocket = new QTcpSocket(this);
@@ -20,14 +20,14 @@ NetworkManager::NetworkManager(QObject *parent)
     connection("127.0.0.1", 8000);
 }
 
-NetworkManager::~NetworkManager()
+SubNetworkManager::~SubNetworkManager()
 {
     subSocket->close();
     delete subSocket;
     delete protocol;
 }
 
-void NetworkManager::connection(QString address, int port)
+void SubNetworkManager::connection(QString address, int port)
 {
     subSocket->connectToHost(address, port);
     if (subSocket->waitForConnected()) {
@@ -46,7 +46,7 @@ void NetworkManager::connection(QString address, int port)
     }
 }
 
-void NetworkManager::receiveControl()
+void SubNetworkManager::receiveControl()
 {
     subSocket = dynamic_cast<QTcpSocket*>(sender());
     protocol->receiveProtocol(subSocket);
@@ -56,12 +56,12 @@ void NetworkManager::receiveControl()
     }
 }
 
-void NetworkManager::receiveButtonControl(int buttonIdx)
+void SubNetworkManager::receiveButtonControl(int buttonIdx)
 {
     protocol->sendProtocol(subSocket, "CTL", buttonIdx, "Pano or Ceph");
 }
 
-void NetworkManager::receiveFile()
+void SubNetworkManager::receiveFile()
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
 

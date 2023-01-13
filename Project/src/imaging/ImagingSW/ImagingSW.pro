@@ -12,20 +12,22 @@ SOURCES += \
     controlpanel.cpp \
     imagingmanager.cpp \
     main.cpp \
+    mainnetworkmanager.cpp \
     mainwindow.cpp \
     packetdata.cpp \
     patientmanager.cpp \
     protocol.cpp \
-    networkmanager.cpp
+    subnetworkmanager.cpp
 
 HEADERS += \
     controlpanel.h \
     imagingmanager.h \
+    mainnetworkmanager.h \
     mainwindow.h \
     packetdata.h \
     patientmanager.h \
     protocol.h \
-    networkmanager.h
+    subnetworkmanager.h
 
 FORMS += \
     controlpanel.ui \

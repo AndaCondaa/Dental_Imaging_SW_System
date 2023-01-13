@@ -19,7 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
     patientManager = new PatientManager(this);
     controlPanel = new ControlPanel(this);
     imagingManager = new ImagingManager(this);
-    networkManager = new NetworkManager(this);
+    mainNetworkManager = new MainNetworkManager(this);
+    subNetworkManager = new SubNetworkManager(this);
 
     QVBoxLayout *patientLayout = new QVBoxLayout();
     QVBoxLayout *controlLayout = new QVBoxLayout();
@@ -33,8 +34,8 @@ MainWindow::MainWindow(QWidget *parent)
     ui->controlFrame->setLayout(controlLayout);
     ui->imagingFrame->setLayout(imagingLayout);
 
-    connect(controlPanel, SIGNAL(buttonSignal(int)), networkManager, SLOT(receiveButtonControl(int)));
-    connect(networkManager, SIGNAL(buttonSignal(int)), controlPanel, SLOT(receiveButtonControl(int)));
+    connect(controlPanel, SIGNAL(buttonSignal(int)), subNetworkManager, SLOT(receiveButtonControl(int)));
+    connect(subNetworkManager, SIGNAL(buttonSignal(int)), controlPanel, SLOT(receiveButtonControl(int)));
 }
 
 MainWindow::~MainWindow()
@@ -43,5 +44,6 @@ MainWindow::~MainWindow()
     delete patientManager;
     delete controlPanel;
     delete imagingManager;
-    delete networkManager;
+    delete mainNetworkManager;
+    delete subNetworkManager;
 }

@@ -78,7 +78,7 @@ void SubServer::receiveControl()
 
     if (event == "NEW") {
         ui->logEdit->append((QString("%1가 연결되었습니다.")).arg(client));
-        //sendFile();
+        sendFile();
     } else if (event == "CTL") {
         int command = protocol->packetData()->index();
         switch (command) {

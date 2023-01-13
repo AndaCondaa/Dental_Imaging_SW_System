@@ -6,8 +6,8 @@
  * 최종 수정일 : 2023.01.09
  */
 
-#ifndef NETWORKMANAGER_H
-#define NETWORKMANAGER_H
+#ifndef SUBNETWORKMANAGER_H
+#define SUBNETWORKMANAGER_H
 
 #include <QObject>
 #include <QTcpSocket>
@@ -18,20 +18,21 @@
 class QTcpSocket;
 class Protocol;
 
-class NetworkManager : public QObject
+class SubNetworkManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit NetworkManager(QObject *parent = nullptr);
-    ~NetworkManager();
+    explicit SubNetworkManager(QObject *parent = nullptr);
+    ~SubNetworkManager();
 
 private slots:
-    void connection(QString address, int port);
     void receiveControl();
     void receiveButtonControl(int);
     void receiveFile();
 
 private:
+    void connection(QString address, int port);
+
     Protocol *protocol;
 
     QTcpSocket *subSocket;
@@ -50,4 +51,4 @@ signals:
     void buttonSignal(int);         // 영상 장비로부터 직접 명령이 왔을 때 발생
 };
 
-#endif // NETWORKMANAGER_H
+#endif // SUBNETWORKMANAGER_H
