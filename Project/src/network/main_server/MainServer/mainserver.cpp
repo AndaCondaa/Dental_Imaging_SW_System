@@ -53,33 +53,19 @@ void MainServer::disconnected()
 void MainServer::receiveData()
 {
 
-    QTcpSocket *socket = static_cast<QTcpSocket*>(sender());
-    QByteArray *buffer = buffers.value(socket);
-        qint32 *s = sizes.value(socket);
-        qint32 size = *s;
-        while (socket->bytesAvailable() > 0)
-        {
-            buffer->append(socket->readAll());
-            while ((size == 0 && buffer->size() >= 4) || (size > 0 && buffer->size() >= size)) //While can process data, process it
-            {
-                if (size == 0 && buffer->size() >= 4) //if size of data has received completely, then store it on our global variable
-                {
-                    size = ArrayToInt(buffer->mid(0, 4));
-                    *s = size;
-                    buffer->remove(0, 4);
-                }
+    socket = static_cast<QTcpSocket*>(sender());
+    buffer = buffers.value(socket);
+    //qint32 *s = sizes.value(socket);
+    //qint32 size = *s;
 
-                if (size > 0 && buffer->size() >= size) // If data has received completely, then emit our SIGNAL with the data
-                {
-                    ui->textEdit->insertPlainText(QString(buffer->data()));
-                    QByteArray data = buffer->mid(0, size);
-                    buffer->remove(0, size);
-                    size = 0;
-                    *s = size;
-                    emit dataReceived(data);
-                }
-            }
-        }
+    buffer->append(socket->readAll());
+    saveData = QString(buffer->data());
+    ui->textEdit->insertPlainText(saveData);
+    ui->textEdit->insertPlainText("\n");
+    buffer->clear();
+
+
+
 }
 
 qint32 ArrayToInt(QByteArray source)
@@ -90,10 +76,12 @@ qint32 ArrayToInt(QByteArray source)
     return temp;
 }
 
-//QString MainServer::makeId()
-//{
-
-//}
+QString MainServer::makeId()
+{
+    QString pid;
+    //if(ui->textEdit->)
+    return pid;
+}
 
 void MainServer::loadData()
 {
@@ -101,13 +89,16 @@ void MainServer::loadData()
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "Patient");
     db.setDatabaseName("patient.db");
 
-    QString name;
-    QString sex;
+
+
+
+    //QString patient_no, patient_name, patient_sex, patient_birthdate, patient_tel, patient_address, patient_memo;
+
     /*DB를 오픈해 새로운 테이블을 만듦*/
     if (db.open( )) {
         query= new QSqlQuery(db);
         query->exec("CREATE TABLE IF NOT EXISTS patient(patient_no VARCHAR(10) Primary Key,"
-                    "patient_name VARCHAR(10) NOT NULL, patient_sex VARCHAR(5) NOT NULL, patient_birthdate DATE NOT NULL,"
+                    "patient_name VARCHAR(10) NOT NULL, patient_sex VARCHAR(5) NOT NULL, patient_birthdate VARCHAR(15) NOT NULL,"
                     "patient_tel VARCHAR(15) NOT NULL, patient_address VARCHAR(60) NOT NULL, patient_memo VARCHAR(100));");
 
         query->exec("CREATE TABLE IF NOT EXISTS dentist(dentist_no VARCHAR(10) Primary Key,"
@@ -115,15 +106,44 @@ void MainServer::loadData()
 
         query->exec("CREATE TABLE IF NOT EXISTS image(image_no VARCHAR(10) Primary Key, patient_no VARCHAR(10) NOT NULL,"
                     "dentist_no VARCHAR(10) NOT NULL, modality VARCHAR(10) NOT NULL, bodypart_examined VARCHAR(30) NOT NULL,"
-                    "image_date DATE NOT NULL, image_path varchar(300) NOT NULL);");
+                    "image_date VARCHAR(15) NOT NULL, image_path varchar(300) NOT NULL);");
 
         query->exec("CREATE TABLE IF NOT EXISTS report(report_no VARCHAR(10) Primary Key, patient_no VARCHAR(10) NOT NULL,"
-                    "dentist_no VARCHAR(10) NOT NULL, report_date DATE NOT NULL, report_note VARCHAR(500) NOT NULL);");
+                    "dentist_no VARCHAR(10) NOT NULL, report_date VARCHAR(15) NOT NULL, report_note VARCHAR(500) NOT NULL);");
 
         query->exec("CREATE TABLE IF NOT EXISTS image_relation(report_no VARCHAR(10) Primary Key, image_no VARCHAR(10) Primary Key);");
 
-        query->exec("INSERT INTO patient(patient_name, patient_sex) VALUES('" + name + "', 'woman')");
-        query->exec("SELECT * FROM patient where patient_sex = '" + sex + "'");
+        QString event = saveData.split("<CR")[0];
+        QString pid = saveData.split("<CR")[1];
+        QString data = saveData.split("<CR")[2];
+
+        if(event == "PER")
+        {
+            query->prepare("INSERT INTO patient (patient_no, patient_name, patient_sex, patient_birthdate,"
+                           "patient_tel, patient_address, patient_memo)"
+                           "VALUES(:patient_no, :patient_name, :patient_sex, :patient_birthdate,"
+                           ":patient_tel, :patient_address, :patient_memo)");
+
+
+            query->bindValue(":patient_no", pid);
+            query->bindValue(":patient_name", data.split("|")[0]);
+            query->bindValue(":patient_sex", data.split("|")[1]);
+            query->bindValue(":patient_birthdate", data.split("|")[2]);
+            query->bindValue(":patient_tel", data.split("|")[3]);
+            query->bindValue(":patient_address", data.split("|")[4]);
+            query->bindValue(":patient_memo", data.split("|")[5]);
+            query->exec();
+
+        }
+//            view->setModel(model);
+//            model->query(Qs("select * from table"));
+//            model->select();
+
+//        query->exec(QString("INSERT INTO patient VALUES (%1, '%2', '%3', '%4', '%5', '%6', '%7')").arg(patient_no)
+//                    .arg(patient_name).arg(patient_sex).arg(patient_birthdate).arg(patient_tel).arg(patient_address)
+//                    .arg(patient_memo));
+
+        //query->exec("SELECT * FROM patient where patient_sex = '" + sex + "'");
     }
 
 
