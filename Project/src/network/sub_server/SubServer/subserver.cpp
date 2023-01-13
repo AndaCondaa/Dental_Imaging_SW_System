@@ -56,7 +56,7 @@ void SubServer::newClient()
 void SubServer::newFileCilent()
 {
     QTcpSocket *fileSocket = fileServer->nextPendingConnection();
-    connect(fileSocket, SIGNAL(readyRead()), this, SLOT(recevieFile()));
+    connect(fileSocket, SIGNAL(readyRead()), this, SLOT(receiveFile()));
     connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
 }
 
@@ -66,7 +66,7 @@ void SubServer::receiveControl()
     protocol->receiveProtocol(socket);
 
     if (!controlSocketMap.contains(socket)) {
-        controlSocketMap.insert(socket, protocol->packetData()->index());    // pid() : SW(100) or MODALITY(101)
+        controlSocketMap.insert(socket, protocol->packetData()->type());    // pid() : SW(100) or MODALITY(101)
     }
 
     QString event = protocol->packetData()->event();
@@ -78,9 +78,8 @@ void SubServer::receiveControl()
 
     if (event == "NEW") {
         ui->logEdit->append((QString("%1가 연결되었습니다.")).arg(client));
-        //sendFile();
     } else if (event == "CTL") {
-        int command = protocol->packetData()->index();
+        int command = protocol->packetData()->type();
         switch (command) {
         case RESET:
             //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", RESET, "");
@@ -102,13 +101,13 @@ void SubServer::receiveControl()
     }
 }
 
-void SubServer::recevieFile()
+void SubServer::receiveFile()
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
 
     // 처음 연결 시, 소켓과 클라이언트 정보를 매핑
     if (!fileSocketMap.contains(socket)) {
-        int id = protocol->packetData()->index();
+        int id = protocol->packetData()->type();
         protocol->receiveProtocol(socket);
         fileSocketMap.insert(socket, id);
         return;
@@ -202,8 +201,6 @@ void SubServer::sendFile()
     }
     qDebug() << QString("Sending file %1").arg(filename);
 }
-
-
 
 void SubServer::on_pushButton_clicked()
 {

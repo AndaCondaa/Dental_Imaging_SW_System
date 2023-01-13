@@ -28,7 +28,7 @@
          </property>
          <column>
           <property name="text">
-           <string>대기순번</string>
+           <string>순번</string>
           </property>
           <property name="font">
            <font>
@@ -48,7 +48,22 @@
          </column>
          <column>
           <property name="text">
-           <string>환자</string>
+           <string>환자ID</string>
+          </property>
+          <property name="textAlignment">
+           <set>AlignCenter</set>
+          </property>
+          <property name="background">
+           <color>
+            <red>100</red>
+            <green>100</green>
+            <blue>100</blue>
+           </color>
+          </property>
+         </column>
+         <column>
+          <property name="text">
+           <string>환자명</string>
           </property>
           <property name="textAlignment">
            <set>AlignCenter</set>
@@ -117,7 +132,15 @@
        </property>
        <row>
         <property name="text">
-         <string>차트 번호</string>
+         <string>ID</string>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+       </row>
+       <row>
+        <property name="text">
+         <string>촬영 타입</string>
         </property>
         <property name="textAlignment">
          <set>AlignCenter</set>
@@ -149,18 +172,12 @@
        </row>
        <row>
         <property name="text">
-         <string>촬영 코드</string>
-        </property>
-        <property name="textAlignment">
-         <set>AlignCenter</set>
+         <string>New Row</string>
         </property>
        </row>
        <row>
         <property name="text">
-         <string>메모</string>
-        </property>
-        <property name="textAlignment">
-         <set>AlignCenter</set>
+         <string>New Row</string>
         </property>
        </row>
        <column>
@@ -171,11 +188,6 @@
          <string/>
         </property>
        </column>
-       <item row="0" column="0">
-        <property name="text">
-         <string/>
-        </property>
-       </item>
       </widget>
      </item>
     </layout>

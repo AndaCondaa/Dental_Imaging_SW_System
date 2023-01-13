@@ -12,20 +12,22 @@ SOURCES += \
     controlpanel.cpp \
     imagingmanager.cpp \
     main.cpp \
+    mainnetworkmanager.cpp \
     mainwindow.cpp \
     packetdata.cpp \
     patientmanager.cpp \
     protocol.cpp \
-    networkmanager.cpp
+    subnetworkmanager.cpp
 
 HEADERS += \
     controlpanel.h \
     imagingmanager.h \
+    mainnetworkmanager.h \
     mainwindow.h \
     packetdata.h \
     patientmanager.h \
     protocol.h \
-    networkmanager.h
+    subnetworkmanager.h
 
 FORMS += \
     controlpanel.ui \
@@ -37,3 +39,11 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../opencv/build/x64/vc15/lib/ -lopencv_world452
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../opencv/build/x64/vc15/lib/ -lopencv_world452d
+
+INCLUDEPATH += $$PWD/../../../../../opencv/build/x64/vc15
+DEPENDPATH += $$PWD/../../../../../opencv/build/x64/vc15
+
+INCLUDEPATH += $$PWD/../../../../../opencv/build/include

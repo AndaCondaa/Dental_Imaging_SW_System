@@ -12,7 +12,8 @@
 #include "patientmanager.h"
 #include "controlpanel.h"
 #include "imagingmanager.h"
-#include "networkmanager.h"
+#include "mainnetworkmanager.h"
+#include "subnetworkmanager.h"
 
 #include <QMainWindow>
 
@@ -34,6 +35,7 @@ private:
     PatientManager *patientManager;
     ControlPanel *controlPanel;
     ImagingManager *imagingManager;
-    NetworkManager *networkManager;
+    MainNetworkManager *mainNetworkManager;
+    SubNetworkManager *subNetworkManager;
 };
 #endif // MAINWINDOW_H
