@@ -14,6 +14,7 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     medicalrecordmanager.cpp \
+    networkmanager.cpp \
     patientinfomanager.cpp \
     patientstatusmanager.cpp
 
@@ -22,6 +23,7 @@ HEADERS += \
     imagemanager.h \
     mainwindow.h \
     medicalrecordmanager.h \
+    networkmanager.h \
     patientinfomanager.h \
     patientstatusmanager.h
 

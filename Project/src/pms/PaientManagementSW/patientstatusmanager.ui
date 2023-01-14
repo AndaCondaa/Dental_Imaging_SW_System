@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>516</width>
-    <height>303</height>
+    <width>576</width>
+    <height>345</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -43,12 +43,22 @@
            </property>
            <column>
             <property name="text">
-             <string>진료대기 목록</string>
+             <string>환자 ID</string>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>환자 이름</string>
             </property>
             <property name="font">
              <font>
               <pointsize>9</pointsize>
              </font>
+            </property>
+           </column>
+           <column>
+            <property name="text">
+             <string>진료 현황</string>
             </property>
            </column>
           </widget>

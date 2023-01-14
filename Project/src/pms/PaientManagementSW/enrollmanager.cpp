@@ -30,7 +30,12 @@ void EnrollManager::on_pushButton_clicked()
 
     pid = "P00001"; //makeID 함수 만들어서 바뀌게 만들어야함
     name = ui->nameLineEdit->text();
-    sex = ui->sexComboBox->currentText();
+    //sex = ui->sexComboBox->currentText();                 //라디오버튼으로바꿈
+    if(ui->maleRadioButton->isChecked()==1)
+        sex = "남성";
+    else if(ui->femaleRadioButton->isChecked()==1)
+        sex = "여성";
+
     date = ui->birthDateEdit->date().toString("yyyy-MM-dd");
     tel = ui->telLineEdit->text();
     address = ui->addressTextEdit->toPlainText();
@@ -38,20 +43,9 @@ void EnrollManager::on_pushButton_clicked()
 
     //qDebug() << sex << "/" << date << "/" << address;
 
-    QString newData = pid + '|' + name + '|' + sex + '|' + date + '|' + tel + '|' + address + '|' + memo;
-
+    QString newData = "PER<CR>" + pid + "<CR>" + name + '|' + sex + '|' + date + '|' + tel + '|' + address + '|' + memo;
 
     emit sendNewData(newData);
 
-
-
-//    if(ui->nameLineEdit->text()=="" || ui->telLineEdit->text()="")
-//    {
-//        return;
-//    }
-    //qDebug()<<ui->sexComboBox->currentText(); //안됨 ㅠㅠ
-
-
-//date = ui->dateEdit->date().toString("yyyy-MM-dd")
 }
 

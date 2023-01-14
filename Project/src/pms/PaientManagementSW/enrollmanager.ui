@@ -288,23 +288,17 @@
             </widget>
            </item>
            <item>
-            <widget class="QComboBox" name="sexComboBox">
-             <property name="minimumSize">
-              <size>
-               <width>0</width>
-               <height>30</height>
-              </size>
+            <widget class="QRadioButton" name="maleRadioButton">
+             <property name="text">
+              <string>남성</string>
              </property>
-             <item>
-              <property name="text">
-               <string>남성</string>
-              </property>
-             </item>
-             <item>
-              <property name="text">
-               <string>여성</string>
-              </property>
-             </item>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="femaleRadioButton">
+             <property name="text">
+              <string>여성</string>
+             </property>
             </widget>
            </item>
           </layout>

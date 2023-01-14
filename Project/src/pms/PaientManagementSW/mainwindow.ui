@@ -20,21 +20,27 @@
       <item>
        <widget class="QFrame" name="patientInfoFrame">
         <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
         <property name="minimumSize">
          <size>
-          <width>140</width>
-          <height>0</height>
+          <width>400</width>
+          <height>800</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>400</width>
+          <height>800</height>
          </size>
         </property>
         <property name="baseSize">
          <size>
-          <width>140</width>
-          <height>0</height>
+          <width>400</width>
+          <height>800</height>
          </size>
         </property>
         <property name="styleSheet">
@@ -120,7 +126,7 @@
           </property>
           <property name="minimumSize">
            <size>
-            <width>330</width>
+            <width>500</width>
             <height>0</height>
            </size>
           </property>
@@ -318,7 +324,7 @@
      <x>0</x>
      <y>0</y>
      <width>1158</width>
-     <height>26</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_2">
