@@ -32,3 +32,14 @@ void PatientInfoManager::on_modifyPatientInfo_pushButton_clicked()
 
     //emit modifyPInfo(pid, textData, sendData); //수정된 정보들 보내줘야 함
 }
+
+void PatientInfoManager::on_pushButton_clicked()
+{
+    int comboBoxIndex = ui->searchComboBox->currentIndex();     //i에 검색콤보박스의 현재인덱스 번호를 저장
+    QString searchInfo = ui->searchLineEdit->text();
+
+    QString searchData = "PSE<CR>" + QString::number(comboBoxIndex) + "<CR>" + searchInfo;
+
+    emit sendSearchData(searchData);
+}
+

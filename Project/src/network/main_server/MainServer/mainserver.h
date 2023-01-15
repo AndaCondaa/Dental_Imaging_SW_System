@@ -41,5 +41,13 @@ private:
     QTcpSocket *socket;
     QByteArray *buffer;
     QString saveData;
+
+    QSqlTableModel *patientModel;
+    QSqlTableModel *dentistModel;
+    QSqlTableModel *imageModel;
+    QSqlTableModel *reporttModel;
+    QSqlTableModel *imageRelationModel;
+
+
 };
 #endif // MAINSERVER_H

@@ -52,6 +52,7 @@ MainWindow::MainWindow(QWidget *parent)
 //            this, SLOT(()));
 
     connect(enrollManager, SIGNAL(sendNewData(QString)), networkManager, SLOT(newDataSended(QString)));
+    connect(patientInfoManager, SIGNAL(sendSearchData(QString)), networkManager, SLOT(newDataSended(QString)));
 
 
 }

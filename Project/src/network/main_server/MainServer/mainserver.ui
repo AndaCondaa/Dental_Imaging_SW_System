@@ -39,7 +39,7 @@
     <attribute name="title">
      <string>patient</string>
     </attribute>
-    <widget class="QTableWidget" name="tableWidget">
+    <widget class="QTableView" name="patientTableView">
      <property name="geometry">
       <rect>
        <x>0</x>
@@ -48,41 +48,6 @@
        <height>531</height>
       </rect>
      </property>
-     <column>
-      <property name="text">
-       <string>patient_no</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>patient_name</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>patient_sex</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>patient_birthdate</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>patient_tel</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>patient_address</string>
-      </property>
-     </column>
-     <column>
-      <property name="text">
-       <string>patient_memo</string>
-      </property>
-     </column>
     </widget>
    </widget>
    <widget class="QWidget" name="dentist">

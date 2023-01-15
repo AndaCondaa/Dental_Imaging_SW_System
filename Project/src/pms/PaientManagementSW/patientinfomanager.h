@@ -25,6 +25,10 @@ private:
 
 private slots:
     void on_modifyPatientInfo_pushButton_clicked();
+    void on_pushButton_clicked();
+
+signals:
+    void sendSearchData(QString);
 };
 
 #endif // PATIENTINFOMANAGER_H
