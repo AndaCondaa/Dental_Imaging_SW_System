@@ -53,6 +53,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(enrollManager, SIGNAL(sendNewData(QString)), networkManager, SLOT(newDataSended(QString)));
     connect(patientInfoManager, SIGNAL(sendSearchData(QString)), networkManager, SLOT(newDataSended(QString)));
+    connect(this, SIGNAL(requestPID(QString)), networkManager, SLOT(newDataSended(QString)));
 
 
 }
@@ -66,6 +67,9 @@ MainWindow::~MainWindow()
 void MainWindow::on_enrollButton_clicked()
 {
     enrollManager->show();
+    QString requestPIDData = "PID<CR>0<CR>0";  //PID라는 이벤트만 전송되면 되는 부분. 나머지 데이터는 0으로 의미없는 데이터를 임의로 보내주었음
+    emit requestPID(requestPIDData);
+
 }
 
 

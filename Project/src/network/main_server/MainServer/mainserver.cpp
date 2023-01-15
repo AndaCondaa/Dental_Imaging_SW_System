@@ -14,12 +14,16 @@ MainServer::MainServer(QWidget *parent) :
 {
     ui->setupUi(this);
     server = new QTcpServer(this);
+    socket = new QTcpSocket(); //될라나
     connect(server, SIGNAL(newConnection()), this, SLOT(newConnection()));
 
     QString socket_data = QString("Listening: %1\n").arg(server->listen(QHostAddress::Any, 8001) ? "true" : "false");
     ui->textEdit->append(socket_data);
 
     this->loadData();
+
+
+    //connect(this, SIGNAL(sendNewPID(QString)), SLOT(sendDataToClient(QString))); //구현 다 한 후에 헤더에 선언하기
 
 }
 
@@ -50,6 +54,36 @@ void MainServer::disconnected()
     socket->deleteLater();
     delete buffer;
     delete s;
+}
+
+bool MainServer::writeData(QByteArray data)
+{
+    if(socket->state() == QAbstractSocket::ConnectedState)
+    {
+        //socket->write(IntToArray(data.size()));
+        socket->write(data); // 데이터를 보내줌
+        return socket->waitForBytesWritten();
+    }
+    else
+    {
+        return false;
+    }
+}
+
+void MainServer::sendDataToClient(QString newData)
+{
+
+
+    if(fd_flag)
+    {
+        QString sendData = newData;
+        send_flag = writeData(sendData.toStdString().c_str()); //writeData의 첫 번째 인자는 char *data와 같은 형식임
+        if(!send_flag)
+            qDebug() << "Socket send fail\n";
+
+    }
+
+
 }
 
 void MainServer::receiveData()
@@ -91,8 +125,19 @@ void MainServer::receiveData()
         query->bindValue(":patient_address", data.split("|")[4]);
         query->bindValue(":patient_memo", data.split("|")[5]);
         query->exec();
-        this->loadData();
 
+        qDebug()<<"새로운 환자 정보 저장 완료";
+        updateRecentData();
+        //this->loadData();
+
+    }
+    else if(event == "PID")
+    {
+        QString newPID = makeId();
+        qDebug() << "newPID: " << newPID;
+        QString sendData = "PID<CR>" + newPID + "<CR>";
+        sendDataToClient(sendData);
+        //emit sendNewPID(newPID);
     }
     else if(event == "PSE")
     {
@@ -102,7 +147,7 @@ void MainServer::receiveData()
         else if(id == "1"){
             query->exec("SELECT * FROM patient WHERE patient_name = '" + data + "'");
         }
-        this->loadData();
+        //this->loadData();
     }
 
 
@@ -136,7 +181,6 @@ void MainServer::loadData()
         query->exec("CREATE TABLE IF NOT EXISTS patient(patient_no VARCHAR(10) Primary Key,"
                     "patient_name VARCHAR(10) NOT NULL, patient_sex VARCHAR(5) NOT NULL, patient_birthdate VARCHAR(15) NOT NULL,"
                     "patient_tel VARCHAR(15) NOT NULL, patient_address VARCHAR(60) NOT NULL, patient_memo VARCHAR(100));");
-
         patientModel = new QSqlTableModel(this, db);
         patientModel->setTable("patient");
         patientModel->select();
@@ -147,22 +191,60 @@ void MainServer::loadData()
         patientModel->setHeaderData(4, Qt::Horizontal, tr("Telephone Number"));
         patientModel->setHeaderData(5, Qt::Horizontal, tr("Address"));
         patientModel->setHeaderData(6, Qt::Horizontal, tr("Memo"));
-
         ui->patientTableView->setModel(patientModel);
 
+        query2 = new QSqlQuery(db);
+        query2->exec("CREATE TABLE IF NOT EXISTS dentist(dentist_no VARCHAR(10) Primary Key,"
+                     "dentist_name VARCHAR(10) NOT NULL, dentist_sex VARCHAR(5) NOT NULL, dentist_tel VARCHAR(15) NOT NULL);");
 
-        //        query->exec("CREATE TABLE IF NOT EXISTS dentist(dentist_no VARCHAR(10) Primary Key,"
+        //        query2->exec("CREATE TABLE IF NOT EXISTS dentist(dentist_no VARCHAR(10) Primary Key,"
         //                    "dentist_name VARCHAR(10) NOT NULL, dentist_sex VARCHAR(5) NOT NULL), dentist_tel VARCHAR(15) NOT NULL);");
+        dentistModel = new QSqlTableModel(this, db);
+        dentistModel->setTable("dentist");
+        dentistModel->select();
+        dentistModel->setHeaderData(0, Qt::Horizontal, tr("No"));
+        dentistModel->setHeaderData(1, Qt::Horizontal, tr("Name"));
+        dentistModel->setHeaderData(2, Qt::Horizontal, tr("Sex"));
+        dentistModel->setHeaderData(3, Qt::Horizontal, tr("Telephone Number"));
+        ui->dentistTableView->setModel(dentistModel);
 
-        //        query->exec("CREATE TABLE IF NOT EXISTS image(image_no VARCHAR(10) Primary Key, patient_no VARCHAR(10) NOT NULL,"
-        //                    "dentist_no VARCHAR(10) NOT NULL, modality VARCHAR(10) NOT NULL, bodypart_examined VARCHAR(30) NOT NULL,"
-        //                    "image_date VARCHAR(15) NOT NULL, image_path varchar(300) NOT NULL);");
+        query3= new QSqlQuery(db);
+        query3->exec("CREATE TABLE IF NOT EXISTS image(image_no VARCHAR(10) Primary Key, patient_no VARCHAR(10) NOT NULL,"
+                    "dentist_no VARCHAR(10) NOT NULL, modality VARCHAR(10) NOT NULL, bodypart_examined VARCHAR(30) NOT NULL,"
+                    "image_date VARCHAR(15) NOT NULL, image_path varchar(300) NOT NULL);");
+        imageModel = new QSqlTableModel(this, db);
+        imageModel->setTable("image");
+        imageModel->select();
+        imageModel->setHeaderData(0, Qt::Horizontal, tr("Image No"));
+        imageModel->setHeaderData(1, Qt::Horizontal, tr("Patient No"));
+        imageModel->setHeaderData(2, Qt::Horizontal, tr("Dentist No"));
+        imageModel->setHeaderData(3, Qt::Horizontal, tr("Modality"));
+        imageModel->setHeaderData(4, Qt::Horizontal, tr("Body Part"));
+        imageModel->setHeaderData(5, Qt::Horizontal, tr("Image Date"));
+        imageModel->setHeaderData(6, Qt::Horizontal, tr("Image Path"));
+        ui->imageTableView->setModel(imageModel);
 
-        //        query->exec("CREATE TABLE IF NOT EXISTS report(report_no VARCHAR(10) Primary Key, patient_no VARCHAR(10) NOT NULL,"
-        //                    "dentist_no VARCHAR(10) NOT NULL, report_date VARCHAR(15) NOT NULL, report_note VARCHAR(500) NOT NULL);");
+        query4= new QSqlQuery(db);
+        query4->exec("CREATE TABLE IF NOT EXISTS report(report_no VARCHAR(10) Primary Key, patient_no VARCHAR(10) NOT NULL,"
+                    "dentist_no VARCHAR(10) NOT NULL, report_date VARCHAR(15) NOT NULL, report_note VARCHAR(500) NOT NULL);");
+        reportModel = new QSqlTableModel(this, db);
+        reportModel->setTable("report");
+        reportModel->select();
+        reportModel->setHeaderData(0, Qt::Horizontal, tr("Report No"));
+        reportModel->setHeaderData(1, Qt::Horizontal, tr("Patient No"));
+        reportModel->setHeaderData(2, Qt::Horizontal, tr("Dentist No"));
+        reportModel->setHeaderData(3, Qt::Horizontal, tr("Report Date"));
+        reportModel->setHeaderData(4, Qt::Horizontal, tr("Report Note"));
+        ui->reportTableView->setModel(reportModel);
 
-        //        query->exec("CREATE TABLE IF NOT EXISTS image_relation(report_no VARCHAR(10) Primary Key, image_no VARCHAR(10) Primary Key);");
-
+        query5= new QSqlQuery(db);
+        query5->exec("CREATE TABLE IF NOT EXISTS image_relation(report_no VARCHAR(10), image_no VARCHAR(10), CONSTRAINT relation Primary Key(report_no, image_no));");
+        imageRelationModel = new QSqlTableModel(this, db);
+        imageRelationModel->setTable("image_relation");
+        imageRelationModel->select();
+        imageRelationModel->setHeaderData(0, Qt::Horizontal, tr("Report No"));
+        imageRelationModel->setHeaderData(1, Qt::Horizontal, tr("Image No"));
+        ui->imageRelationTableView->setModel(imageRelationModel);
 
 
 
@@ -189,12 +271,24 @@ QString MainServer::makeId( )
 {
     int id;
 
+    qDebug()<< "rowCount: " << patientModel->rowCount();
+
     if(patientModel->rowCount() == 0) {
         id = 1;
+        qDebug()<< "it will return rowCount: 1";
         return "P" + QString::number(id).rightJustified(5,'0');
     } else {
-        auto id = patientModel->data(patientModel->index(patientModel->rowCount()-1, 0)).toInt();
+        //auto id = patientModel->data(patientModel->index(patientModel->rowCount()-1, 0)).toInt();
+        //qDebug() << "now" << patientModel->data(patientModel->index(patientModel->rowCount()-1, 0)).toInt();
+        id = patientModel->rowCount();
         id++;
+        qDebug() << "id is not 1, id: " << id;
+        qDebug()<< "it will return rowCount: " << "P" + QString::number(id).rightJustified(5,'0');
         return "P" + QString::number(id).rightJustified(5,'0');
     }
+}
+
+void MainServer::updateRecentData()
+{
+    patientModel->select();
 }

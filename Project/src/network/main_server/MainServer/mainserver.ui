@@ -33,7 +33,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>4</number>
    </property>
    <widget class="QWidget" name="patient">
     <attribute name="title">
@@ -43,7 +43,7 @@
      <property name="geometry">
       <rect>
        <x>0</x>
-       <y>14</y>
+       <y>10</y>
        <width>1001</width>
        <height>531</height>
       </rect>
@@ -54,21 +54,61 @@
     <attribute name="title">
      <string>dentist</string>
     </attribute>
+    <widget class="QTableView" name="dentistTableView">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>10</y>
+       <width>1001</width>
+       <height>531</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="image">
     <attribute name="title">
      <string>image</string>
     </attribute>
-   </widget>
-   <widget class="QWidget" name="imageRelation">
-    <attribute name="title">
-     <string>imageRelation</string>
-    </attribute>
+    <widget class="QTableView" name="imageTableView">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>10</y>
+       <width>1001</width>
+       <height>531</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
    <widget class="QWidget" name="report">
     <attribute name="title">
      <string>report</string>
     </attribute>
+    <widget class="QTableView" name="reportTableView">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>10</y>
+       <width>1001</width>
+       <height>531</height>
+      </rect>
+     </property>
+    </widget>
+   </widget>
+   <widget class="QWidget" name="imageRelation">
+    <attribute name="title">
+     <string>imageRelation</string>
+    </attribute>
+    <widget class="QTableView" name="imageRelationTableView">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>10</y>
+       <width>1001</width>
+       <height>531</height>
+      </rect>
+     </property>
+    </widget>
    </widget>
   </widget>
  </widget>

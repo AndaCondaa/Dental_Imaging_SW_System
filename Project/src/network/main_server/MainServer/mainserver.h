@@ -21,6 +21,7 @@ public:
     explicit MainServer(QWidget *parent = nullptr);
     ~MainServer();
     void loadData();
+    void updateRecentData();
 
 signals:
     //void dataReceived(QByteArray);
@@ -29,6 +30,10 @@ private slots:
     void newConnection();
     void disconnected();
     void receiveData();
+    bool writeData(QByteArray data);
+
+private slots:
+    void sendDataToClient(QString);
 
 private:
     Ui::MainServer *ui;
@@ -37,6 +42,10 @@ private:
     QHash<QTcpSocket*, qint32*> sizes; //We need to store the size to verify if a block has received completely
     QString makeId();
     QSqlQuery *query;
+    QSqlQuery *query2;
+    QSqlQuery *query3;
+    QSqlQuery *query4;
+    QSqlQuery *query5;
 
     QTcpSocket *socket;
     QByteArray *buffer;
@@ -45,9 +54,14 @@ private:
     QSqlTableModel *patientModel;
     QSqlTableModel *dentistModel;
     QSqlTableModel *imageModel;
-    QSqlTableModel *reporttModel;
+    QSqlTableModel *reportModel;
     QSqlTableModel *imageRelationModel;
 
+    bool fd_flag = false;
+    bool send_flag = false;
+
+signals:
+    void sendNewPID(QString);
 
 };
 #endif // MAINSERVER_H
