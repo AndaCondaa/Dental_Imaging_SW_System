@@ -168,7 +168,7 @@ void SubServer::sendFile()
 
         byteToWrite = totalSize = file->size(); // Data remained yet
         loadSize = 1024; // Size of data per a block
-        qDebug("%d", __LINE__);
+
         QDataStream out(&outBlock, QIODevice::WriteOnly);
         out << qint64(0) << qint64(0) << filename << "SERVER";
 
