@@ -15,6 +15,9 @@ public:
     explicit ImagingManager(QWidget *parent = nullptr);
     ~ImagingManager();
 
+private slots:
+    void on_reconCancelButton_clicked();
+
 private:
     Ui::ImagingManager *ui;
 };

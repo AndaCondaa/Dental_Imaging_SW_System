@@ -57,7 +57,6 @@ private:
 
 
     QFile* file;                                // File Object for FileSending Protocol
-    QProgressDialog* progressDialog;            // Object for Showing Progress
     qint64 totalSize;                           // Total size of File that clients are sending
     qint64 byteReceived = 0;                    // size of File read currently
     QByteArray inBlock;                         // Units divided to transfer files

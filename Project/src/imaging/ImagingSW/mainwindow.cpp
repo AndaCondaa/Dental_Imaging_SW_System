@@ -38,6 +38,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(controlPanel, SIGNAL(buttonSignal(int)), subNetworkManager, SLOT(receiveButtonControl(int)));   // 제어명령 전송을 위해 네트워크매니저로 시그널 전송
     connect(subNetworkManager, SIGNAL(buttonSignal(int)), controlPanel, SLOT(receiveButtonControl(int)));   // 장비로부터 제어명령이 들어왔을 경우, 버튼 제어
     connect(mainNetworkManager, SIGNAL(sendWaitPatient(QStringList)), patientManager, SLOT(receiveWaitPatient(QStringList)));   // 촬영의뢰가 들어온 경우, 환자관리 매니저에게 전송
+    connect(patientManager, SIGNAL(sendPid(QString)), mainNetworkManager, SLOT(requestPatientInfo(QString)));   // 환자준비 버튼을 누르면, pid를 서버로 전송하여 환자정보요청
 
     for (int i = 100; i < 999; i+=100) {
         QStringList test;

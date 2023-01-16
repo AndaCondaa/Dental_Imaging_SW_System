@@ -33,10 +33,6 @@ SubServer::SubServer(QWidget *parent)
     if(!fileServer->listen(QHostAddress::Any, 8001)) {
         // 파일 서버 listen 실패
     }
-
-    progressDialog = new QProgressDialog(0);
-    progressDialog->setAutoClose(true);
-    progressDialog->reset();
 }
 
 SubServer::~SubServer()
@@ -115,15 +111,12 @@ void SubServer::receiveFile()
 
     // Beginning File Transfer
     if (byteReceived == 0) {        // First Time(Block) , var byteReceived is always zero
-        progressDialog->reset();
-        progressDialog->show();
         checkFileName = fileName;
         QDataStream in(socket);
         in.device()->seek(0);
         in >> totalSize >> byteReceived >> fileName >> fileSender;
         if(checkFileName == fileName) return;
 
-        progressDialog->setMaximum(totalSize);
         QFileInfo info(fileName);
         QString currentFileName = info.fileName();
         file = new QFile(currentFileName);
@@ -137,14 +130,11 @@ void SubServer::receiveFile()
         file->flush();
     }
 
-    progressDialog->setValue(byteReceived);
     if (byteReceived == totalSize) {        // file sending is done
         qDebug() << QString("%1 receive completed").arg(fileName);
         inBlock.clear();
         byteReceived = 0;
         totalSize = 0;
-        progressDialog->reset();
-        progressDialog->hide();
         file->close();
         delete file;
     }
@@ -157,12 +147,8 @@ void SubServer::goOnSend(qint64 numBytes)
     outBlock = file->read(qMin(byteToWrite, numBytes));
     socket->write(outBlock);
 
-    progressDialog->setMaximum(totalSize);
-    progressDialog->setValue(totalSize-byteToWrite);
-
     if (byteToWrite == 0) { // Send completed
         qDebug("File sending completed!");
-        progressDialog->reset();
     }
 }
 
@@ -173,13 +159,12 @@ void SubServer::sendFile()
     totalSize = 0;
     outBlock.clear();
 
-    QString filename = QFileDialog::getOpenFileName(this);
+    QString filename = QFileDialog::getOpenFileName();
     if(filename.length()) {
         file = new QFile(filename);
         file->open(QFile::ReadOnly);
 
         qDebug() << QString("file %1 is opened").arg(filename);
-        progressDialog->setValue(0); // first time, any data send
 
         byteToWrite = totalSize = file->size(); // Data remained yet
         loadSize = 1024; // Size of data per a block
@@ -194,10 +179,6 @@ void SubServer::sendFile()
         out << totalSize << qint64(outBlock.size());
 
         fileSocketMap.key(SW)->write(outBlock); // Send the read file to the socket
-
-        progressDialog->setMaximum(totalSize);
-        progressDialog->setValue(totalSize-byteToWrite);
-        progressDialog->show();
     }
     qDebug() << QString("Sending file %1").arg(filename);
 }

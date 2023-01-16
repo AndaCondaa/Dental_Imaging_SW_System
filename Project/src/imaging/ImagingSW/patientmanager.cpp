@@ -47,5 +47,5 @@ void PatientManager::deletePatient()
 
 void PatientManager::slotPatientReady()
 {
-    emit sendPid(ui->waitTreeWidget->current)
+    emit sendPid(ui->waitTreeWidget->currentItem()->text(1));
 }
