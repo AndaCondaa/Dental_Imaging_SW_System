@@ -101,6 +101,11 @@
              <height>30</height>
             </size>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
            <property name="readOnly">
             <bool>true</bool>
            </property>
@@ -289,6 +294,11 @@
            </item>
            <item>
             <widget class="QRadioButton" name="maleRadioButton">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
              <property name="text">
               <string>남성</string>
              </property>
@@ -296,6 +306,11 @@
            </item>
            <item>
             <widget class="QRadioButton" name="femaleRadioButton">
+             <property name="font">
+              <font>
+               <pointsize>11</pointsize>
+              </font>
+             </property>
              <property name="text">
               <string>여성</string>
              </property>

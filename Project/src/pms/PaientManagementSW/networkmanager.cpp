@@ -7,10 +7,14 @@
 NetworkManager::NetworkManager(QObject *parent)
     : QObject{parent}
 {
-    socket = new QTcpSocket();
+    socket = new QTcpSocket(this);
     fd_flag = connectToHost("127.0.0.1"); // localhost
     if(!fd_flag)
         qDebug()<<("Socket connect fail\n");
+    else
+        connect(socket, SIGNAL(readyRead()), this, SLOT(receiveData()));
+
+
 
 }
 
@@ -43,6 +47,7 @@ bool NetworkManager::writeData(QByteArray data)
     }
 }
 
+//서버로 보내줄 데이터
 void NetworkManager::newDataSended(QString newData)
 {
 
@@ -57,27 +62,63 @@ void NetworkManager::newDataSended(QString newData)
 
 }
 
+//서버에서 받아올 데이터
 void NetworkManager::receiveData()
 {
-
+    qDebug("%d", __LINE__);
     socket = static_cast<QTcpSocket*>(sender());
-    buffer = buffers.value(socket);
-
-    buffer->append(socket->readAll());
-    saveData = QString(buffer->data());
-
+    //buffer = buffers.value(socket);
+    qDebug("%d", __LINE__);
+    //buffer->append(socket->readAll());
+    QByteArray array = socket->readAll();
+    qDebug("%d", __LINE__);
+//    saveData = QString(buffer->data());
+    saveData = QString(array);
+    qDebug("%d", __LINE__);
 
     //어떤 이벤트인지에 따라 불러올 함수 써주기(각각 이벤트에 대한 함수 만들고 if-else문 타도록 만들자)
     QString event = saveData.split("<CR>")[0];
     QString id = saveData.split("<CR>")[1];
     QString data = saveData.split("<CR>")[2];
+    qDebug("%d", __LINE__);
+    qDebug() << "event: " << event;
 
     if(event == "PID")
     {
         sendedPID = id;
         qDebug() << "sendedPID: " << id;
-        //emit sendNewPID(newPID); //enrollment 클래스로 emit
+        emit sendNewPID(sendedPID); //enrollment 클래스로 emit
+    }
+    else if(event == "PSE")
+    {
+        emit sendSearchResult(id, data);
     }
 
-    buffer->clear(); //버퍼 비워주기
+
+
+//    buffer->clear(); //버퍼 비워주기
+}
+
+void NetworkManager::newConnection()
+{
+    while (server->hasPendingConnections())
+    {
+        QTcpSocket *socket = server->nextPendingConnection();
+        connect(socket, SIGNAL(readyRead()), this, SLOT(receiveData()));
+        connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
+        QByteArray *buffer = new QByteArray();
+        qint32 *s = new qint32(0);
+        buffers.insert(socket, buffer);
+        sizes.insert(socket, s);
+    }
+}
+
+void NetworkManager::disconnected()
+{
+    QTcpSocket *socket = static_cast<QTcpSocket*>(sender());
+    QByteArray *buffer = buffers.value(socket);
+    qint32 *s = sizes.value(socket);
+    socket->deleteLater();
+    delete buffer;
+    delete s;
 }

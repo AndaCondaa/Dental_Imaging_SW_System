@@ -28,6 +28,7 @@ private slots:
     void on_enrollButton_clicked();
     //void sendProtocol(int, char *name);
 
+
 private:
     Ui::MainWindow *ui;
 

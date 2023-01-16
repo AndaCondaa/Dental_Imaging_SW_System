@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="3" column="1">
-    <widget class="QPushButton" name="pushButton_6">
+    <widget class="QPushButton" name="deletePushButton">
      <property name="text">
       <string>환자 정보
 삭제</string>
@@ -23,14 +23,14 @@
     </widget>
    </item>
    <item row="0" column="2">
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="searchPushButton">
      <property name="text">
       <string>검색</string>
      </property>
     </widget>
    </item>
    <item row="3" column="0">
-    <widget class="QPushButton" name="modifyPatientInfo_pushButton">
+    <widget class="QPushButton" name="modifyPushButton">
      <property name="text">
       <string>환자 정보
 수정</string>
@@ -54,7 +54,7 @@
     </widget>
    </item>
    <item row="3" column="2">
-    <widget class="QPushButton" name="pushButton_7">
+    <widget class="QPushButton" name="addWaitPushButton">
      <property name="styleSheet">
       <string notr="true">QPushButton { background-color: rgb(255, 255, 127)}</string>
      </property>
@@ -79,7 +79,16 @@
     </widget>
    </item>
    <item row="2" column="0" colspan="3">
-    <widget class="QTableWidget" name="tableWidget">
+    <widget class="QTableWidget" name="clientInfoTableWidget">
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QTableCornerButton::section {background-color: #FFFFFF;}
+QHeaderView {background-color: #FFFFFF;}</string>
+     </property>
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
@@ -87,42 +96,140 @@
       <property name="text">
        <string>환자 번호</string>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
      </row>
      <row>
       <property name="text">
        <string>환자 이름</string>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
       </property>
      </row>
      <row>
       <property name="text">
        <string>성별</string>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
      </row>
      <row>
       <property name="text">
        <string>생년월일</string>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
       </property>
      </row>
      <row>
       <property name="text">
        <string>전화번호</string>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
      </row>
      <row>
       <property name="text">
        <string>주소</string>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
       </property>
      </row>
      <row>
       <property name="text">
        <string>메모</string>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
      </row>
      <column>
       <property name="text">
        <string>정보</string>
       </property>
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
      </column>
+     <item row="0" column="0">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+     </item>
+     <item row="1" column="0">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+     </item>
+     <item row="2" column="0">
+      <property name="text">
+       <string/>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+     </item>
+     <item row="3" column="0">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+     </item>
+     <item row="4" column="0">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+     </item>
+     <item row="5" column="0">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+     </item>
+     <item row="6" column="0">
+      <property name="font">
+       <font>
+        <pointsize>10</pointsize>
+       </font>
+      </property>
+     </item>
     </widget>
    </item>
   </layout>
