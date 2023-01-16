@@ -5,6 +5,7 @@
 #include <QSqlQuery>
 #include <QSqlDatabase>
 #include <QTableWidget>
+#include <QSqlRecord>
 
 static inline qint32 ArrayToInt(QByteArray source);
 
@@ -14,7 +15,7 @@ MainServer::MainServer(QWidget *parent) :
 {
     ui->setupUi(this);
     server = new QTcpServer(this);
-    socket = new QTcpSocket(); //될라나
+    socket = new QTcpSocket(this); //될라나
     connect(server, SIGNAL(newConnection()), this, SLOT(newConnection()));
 
     QString socket_data = QString("Listening: %1\n").arg(server->listen(QHostAddress::Any, 8001) ? "true" : "false");
@@ -36,7 +37,8 @@ void MainServer::newConnection()
 {
     while (server->hasPendingConnections())
     {
-        QTcpSocket *socket = server->nextPendingConnection();
+        //QTcpSocket *socket = server->nextPendingConnection();
+        socket = server->nextPendingConnection();
         connect(socket, SIGNAL(readyRead()), this, SLOT(receiveData()));
         connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
         QByteArray *buffer = new QByteArray();
@@ -74,14 +76,21 @@ void MainServer::sendDataToClient(QString newData)
 {
 
 
-    if(fd_flag)
-    {
-        QString sendData = newData;
-        send_flag = writeData(sendData.toStdString().c_str()); //writeData의 첫 번째 인자는 char *data와 같은 형식임
-        if(!send_flag)
-            qDebug() << "Socket send fail\n";
+    QString sendData = newData;
+    send_flag = writeData(sendData.toStdString().c_str()); //writeData의 첫 번째 인자는 char *data와 같은 형식임
+    if(!send_flag)
+        qDebug() << "Socket send fail\n";
 
-    }
+
+
+    //    if(fd_flag)
+    //    {
+    //        QString sendData = newData;
+    //        send_flag = writeData(sendData.toStdString().c_str()); //writeData의 첫 번째 인자는 char *data와 같은 형식임
+    //        if(!send_flag)
+    //            qDebug() << "Socket send fail\n";
+
+    //    }
 
 
 }
@@ -136,17 +145,99 @@ void MainServer::receiveData()
         QString newPID = makeId();
         qDebug() << "newPID: " << newPID;
         QString sendData = "PID<CR>" + newPID + "<CR>";
-        sendDataToClient(sendData);
+
+        socket->write(sendData.toStdString().c_str());
+        //sendDataToClient(sendData);
+
         //emit sendNewPID(newPID);
+    }
+    else if(event == "PDE")
+    {
+        query->exec("delete from patient WHERE patient_no = '" + id + "'");
+        patientModel->select();
     }
     else if(event == "PSE")
     {
+        QString sendData ="PSE<CR>";
+
         if(id == "0"){  //환자번호로 검색했을 때
-            query->exec("SELECT * FROM patient WHERE patient_no = '" + data + "'");
+            sendData = sendData + data + "<CR>";
+
+            query->exec("select * from patient WHERE patient_no = '" + data + "'");
+            QSqlRecord rec = query->record();
+            qDebug() << "Number of columns: " << rec.count();
+
+            while (query->next())
+            {
+                for(int i=1; i<rec.count() ; i++)
+                {
+                    qDebug() << "i: " << i << "data: " << query->value(i).toString(); // output all names
+                    QString data = query->value(i).toString() + "|";
+                    sendData += data;
+                    qDebug() << "sendData: " << sendData;
+                }
+            }
+
+            //            qDebug() << query->value(1).toString();
+            //            int patientNoCol = rec.indexOf("patient_no"); // index of the field "patient_no"
+            //            qDebug() << patientNoCol;
+            //            while (query->next())
+            //                qDebug() << query->value(patientNoCol).toString(); // output all names
+
+
+            //            query->exec("SELECT * FROM patient WHERE patient_no = '" + data + "'");
+            //            qDebug() << data;
+
+            //            QSqlRecord rec = query->r
+            //            qDebug() << query->record();
         }
         else if(id == "1"){
-            query->exec("SELECT * FROM patient WHERE patient_name = '" + data + "'");
+
+            query->exec("select * from patient WHERE patient_name = '" + data + "'");
+            QSqlRecord rec = query->record();
+            qDebug() << "Number of columns: " << rec.count();
+
+            while (query->next()){
+                for(int i = 0; i<rec.count() ; i++)
+                {
+                    if(i == 0)
+                    {
+                        qDebug() << "i: " << i << "data: " << query->value(i).toString(); // output all names
+                        QString data = query->value(i).toString() + "<CR>";
+                        sendData += data;
+                        qDebug() << "sendData: " << sendData;
+                    }
+                    else
+                    {
+                    qDebug() << "i: " << i << "data: " << query->value(i).toString(); // output all names
+                    QString data = query->value(i).toString() + "|";
+                    sendData += data;
+                    qDebug() << "sendData: " << sendData;
+                    }
+                }
+
+
+//                qDebug() << query->value(0).toString(); // output all names
+//                QString data = query->value(0).toString() + "<CR>";
+//                sendData += data;
+//                qDebug() << "sendData: " << sendData;
+            }
+
+//            while (query->next())
+//            {
+//                for(int i=1; i<rec.count() ; i++)
+//                {
+//                    qDebug() << "i: " << i << "data: " << query->value(i).toString(); // output all names
+//                    QString data = query->value(i).toString() + "|";
+//                    sendData += data;
+//                    qDebug() << "sendData: " << sendData;
+//                }
+//            }
+
+            //query->exec("SELECT * FROM patient WHERE patient_name = '" + data + "'");
         }
+
+        socket->write(sendData.toStdString().c_str());
         //this->loadData();
     }
 
@@ -210,8 +301,8 @@ void MainServer::loadData()
 
         query3= new QSqlQuery(db);
         query3->exec("CREATE TABLE IF NOT EXISTS image(image_no VARCHAR(10) Primary Key, patient_no VARCHAR(10) NOT NULL,"
-                    "dentist_no VARCHAR(10) NOT NULL, modality VARCHAR(10) NOT NULL, bodypart_examined VARCHAR(30) NOT NULL,"
-                    "image_date VARCHAR(15) NOT NULL, image_path varchar(300) NOT NULL);");
+                     "dentist_no VARCHAR(10) NOT NULL, modality VARCHAR(10) NOT NULL, bodypart_examined VARCHAR(30) NOT NULL,"
+                     "image_date VARCHAR(15) NOT NULL, image_path varchar(300) NOT NULL);");
         imageModel = new QSqlTableModel(this, db);
         imageModel->setTable("image");
         imageModel->select();
@@ -226,7 +317,7 @@ void MainServer::loadData()
 
         query4= new QSqlQuery(db);
         query4->exec("CREATE TABLE IF NOT EXISTS report(report_no VARCHAR(10) Primary Key, patient_no VARCHAR(10) NOT NULL,"
-                    "dentist_no VARCHAR(10) NOT NULL, report_date VARCHAR(15) NOT NULL, report_note VARCHAR(500) NOT NULL);");
+                     "dentist_no VARCHAR(10) NOT NULL, report_date VARCHAR(15) NOT NULL, report_note VARCHAR(500) NOT NULL);");
         reportModel = new QSqlTableModel(this, db);
         reportModel->setTable("report");
         reportModel->select();

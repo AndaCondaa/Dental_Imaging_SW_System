@@ -41,9 +41,22 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>false</bool>
+           </property>
            <column>
             <property name="text">
              <string>환자 ID</string>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
             </property>
            </column>
            <column>
@@ -52,13 +65,18 @@
             </property>
             <property name="font">
              <font>
-              <pointsize>9</pointsize>
+              <pointsize>11</pointsize>
              </font>
             </property>
            </column>
            <column>
             <property name="text">
              <string>진료 현황</string>
+            </property>
+            <property name="font">
+             <font>
+              <pointsize>11</pointsize>
+             </font>
             </property>
            </column>
           </widget>
@@ -95,13 +113,21 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="font">
+            <font>
+             <pointsize>11</pointsize>
+            </font>
+           </property>
+           <property name="alternatingRowColors">
+            <bool>false</bool>
+           </property>
            <column>
             <property name="text">
              <string>수납대기 목록</string>
             </property>
             <property name="font">
              <font>
-              <pointsize>9</pointsize>
+              <pointsize>11</pointsize>
              </font>
             </property>
            </column>

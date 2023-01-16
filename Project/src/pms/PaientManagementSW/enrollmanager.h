@@ -18,12 +18,15 @@ public:
 
 private slots:
     void on_pushButton_clicked();
+    void newPIDSended(QString);
 
 private:
     Ui::EnrollManager *ui;
+    QString newPID;
 
 signals:
     void sendNewData(QString);
+    void sendNewDataForShow(QString, QString);
 
 };
 

@@ -1,5 +1,6 @@
 #include "enrollmanager.h"
 #include "ui_enrollmanager.h"
+#include <QMessageBox>
 
 EnrollManager::EnrollManager(QWidget *parent) :
     QWidget(parent),
@@ -7,6 +8,10 @@ EnrollManager::EnrollManager(QWidget *parent) :
 {
     ui->setupUi(this);
     this->setFixedSize(700, 350);
+
+
+
+
     ui->birthDateEdit->setCalendarPopup(true);
     ui->birthDateEdit->show();
 
@@ -15,20 +20,23 @@ EnrollManager::EnrollManager(QWidget *parent) :
 
 
 
+
 }
 
 EnrollManager::~EnrollManager()
 {
+
+
     delete ui;
 }
 
 void EnrollManager::on_pushButton_clicked()
 {
     //int id = makeID(); //만들어줘야함
-    QString pid, name, sex, date, tel, address, memo;
+    QString /*pid, */name, sex, date, tel, address, memo;
 
 
-    pid = "P00001"; //makeID 함수 만들어서 바뀌게 만들어야함
+
     name = ui->nameLineEdit->text();
     //sex = ui->sexComboBox->currentText();                 //라디오버튼으로바꿈
     if(ui->maleRadioButton->isChecked()==1)
@@ -43,9 +51,38 @@ void EnrollManager::on_pushButton_clicked()
 
     //qDebug() << sex << "/" << date << "/" << address;
 
-    QString newData = "PER<CR>" + pid + "<CR>" + name + '|' + sex + '|' + date + '|' + tel + '|' + address + '|' + memo;
-
+    QString newData = "PER<CR>" + newPID + "<CR>" + name + '|' + sex + '|' + date + '|' + tel + '|' + address + '|' + memo;
     emit sendNewData(newData);
 
+    QString showdata = name + '|' + sex + '|' + date + '|' + tel + '|' + address + '|' + memo;
+    emit sendNewDataForShow(newPID, showdata);
+
+    QMessageBox::information(this, tr("신규환자 등록"), \
+                          tr("신규환자 등록이 완료되었습니다."));
+
+    this->close();
+
+    ui->nameLineEdit->clear();
+
+    ui->maleRadioButton->clearFocus();
+    ui->maleRadioButton->setAutoExclusive(false);
+    ui->maleRadioButton->setChecked(false);
+    ui->maleRadioButton->setAutoExclusive(true);
+
+    ui->femaleRadioButton->clearFocus();
+    ui->femaleRadioButton->setAutoExclusive(false);
+    ui->femaleRadioButton->setChecked(false);
+    ui->femaleRadioButton->setAutoExclusive(true);
+
+    ui->birthDateEdit->clear();
+    ui->telLineEdit->clear();
+    ui->addressTextEdit->clear();
+    ui->memoTextEdit->clear();
 }
 
+void EnrollManager::newPIDSended(QString sendedPID)
+{
+    newPID = sendedPID;
+    qDebug()<<"enroll box - pid : " << newPID;
+    ui->pidLineEdit->setText(newPID);
+}

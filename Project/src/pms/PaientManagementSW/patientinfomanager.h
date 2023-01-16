@@ -22,13 +22,18 @@ private:
 //    bool fd_flag = false;
 //    bool send_flag = false;
 //    int pid = 1; //임시. pid는 최종적으로 P00001과 같은 형태가 되어야 함
+    QString pid, name, sex, birthdate, tel, address, memo;
 
 private slots:
     void on_modifyPatientInfo_pushButton_clicked();
-    void on_pushButton_clicked();
+    void on_searchPushButton_clicked();
+    void searchDataSended(QString, QString);
+
+    void on_deletePushButton_clicked();
 
 signals:
     void sendSearchData(QString);
+    void sendDelData(QString);
 };
 
 #endif // PATIENTINFOMANAGER_H
