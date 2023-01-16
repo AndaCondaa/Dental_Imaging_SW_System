@@ -57,3 +57,27 @@ void NetworkManager::newDataSended(QString newData)
 
 }
 
+void NetworkManager::receiveData()
+{
+
+    socket = static_cast<QTcpSocket*>(sender());
+    buffer = buffers.value(socket);
+
+    buffer->append(socket->readAll());
+    saveData = QString(buffer->data());
+
+
+    //어떤 이벤트인지에 따라 불러올 함수 써주기(각각 이벤트에 대한 함수 만들고 if-else문 타도록 만들자)
+    QString event = saveData.split("<CR>")[0];
+    QString id = saveData.split("<CR>")[1];
+    QString data = saveData.split("<CR>")[2];
+
+    if(event == "PID")
+    {
+        sendedPID = id;
+        qDebug() << "sendedPID: " << id;
+        //emit sendNewPID(newPID); //enrollment 클래스로 emit
+    }
+
+    buffer->clear(); //버퍼 비워주기
+}

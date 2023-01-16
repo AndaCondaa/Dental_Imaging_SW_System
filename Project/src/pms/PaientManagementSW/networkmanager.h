@@ -18,11 +18,19 @@ public slots:
 private slots:
     void newDataSended(QString);
 
+    void receiveData();
+
 private:
     QTcpSocket *socket;
     bool fd_flag = false;
     bool send_flag = false;
     QTcpSocket *PMSocket;
+    QByteArray *buffer;
+    QString saveData;
+
+    QString sendedPID;
+    QHash<QTcpSocket*, QByteArray*> buffers; //We need a buffer to store data until block has completely received
+
 
 };
 

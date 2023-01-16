@@ -41,5 +41,6 @@ private:
 
 signals:
     //void enrollSignal(int, char name[10]);
+    void requestPID(QString);
 };
 #endif // MAINWINDOW_H
