@@ -19,6 +19,7 @@ private slots:
     void on_reconCancelButton_clicked();
     void raw16ToBmp8();
     void simpleStiching();
+//    void reconImage();
 
 private:
     Ui::ImagingManager *ui;

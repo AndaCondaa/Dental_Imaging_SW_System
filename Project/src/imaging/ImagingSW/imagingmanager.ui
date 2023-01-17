@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>625</width>
-    <height>624</height>
+    <height>628</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -18,25 +18,58 @@
     <number>6</number>
    </property>
    <item>
-    <widget class="QGraphicsView" name="reconView">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>350</height>
-      </size>
+    <widget class="QFrame" name="frame_2">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
+     <property name="frameShape">
+      <enum>QFrame::WinPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="reconLabel">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QGraphicsView" name="frameView">
+      <widget class="QFrame" name="frame">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="frameShape">
+        <enum>QFrame::WinPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Raised</enum>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <widget class="QLabel" name="frameLabel">
+          <property name="frameShape">
+           <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="text">
+           <string/>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </item>
      <item>

@@ -8,7 +8,6 @@
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include <cstdio>
-#include <time.h>
 
 using namespace cv;
 using namespace std;
@@ -141,66 +140,5 @@ void ImagingManager::raw16ToBmp8()
 
 void ImagingManager::simpleStiching()
 {
-    int cnt = 0;
-    clock_t p1, p2;
-    QByteArray array;
-    QByteArray addData;
-    QString fileName;
-    QFile file;
-    QByteArray newData;
-    uchar* data;
 
-
-    for (int i = 100; i < 1000; i++) {
-        p1 = clock();
-
-        fileName = QString("./image/0%1.raw").arg(QString::number(i));
-        file.setFileName(fileName);
-        file.open(QIODevice::ReadOnly);
-        newData = file.readAll();
-        file.close();
-
-        for (int j = 0; j < 2400; j++) {
-            if (cnt == 0) {
-                array.append(addData);
-                break;
-            }
-            array.insert((cnt*2)+((cnt+1)*2*j)+1, newData[(j*48*2)]);
-            array.insert((cnt*2)+((cnt+1)*2*j)+2, newData[(j*48*2)+1]);
-        }
-
-        data = (uchar*)(array.data());
-        QImage *img = new QImage(data, cnt, 2400, QImage::Format_Grayscale16);
-        QPixmap buf = QPixmap::fromImage(*img);
-        buf = buf.scaled(cnt, ui->reconView->height(), Qt::KeepAspectRatio);
-
-        QGraphicsScene *scene = new QGraphicsScene;
-        scene->addPixmap(buf);
-        ui->reconView->setScene(scene);
-
-        p2 = clock();
-        qDebug("%d : %lf", cnt, (double)(p2-p1));
-        cnt++;
-//        qDebug("%d", cnt);
-    }
-
-//    QImage *img = new QImage(data, cnt, 2400, QImage::Format_Grayscale16);
-//    QPixmap buf = QPixmap::fromImage(*img);
-//    buf = buf.scaled(cnt, ui->reconView->height(), Qt::KeepAspectRatio);
-
-//    QGraphicsScene *scene = new QGraphicsScene;
-//    scene->addPixmap(buf);
-//    ui->reconView->setScene(scene);
-
-//    int width = 3000;
-//    int height = 2400;
-
-//    uchar *data = (uchar*)(byteArray.data());
-//    QImage *img = new QImage(data, width, height, QImage::Format_Grayscale16);
-//    QPixmap buf = QPixmap::fromImage(*img);
-//    buf = buf.scaled(ui->reconView->width(), ui->reconView->height());
-
-//    QGraphicsScene* scene = new QGraphicsScene;
-//    scene->addPixmap(buf);
-//    ui->reconView->setScene(scene);
 }
