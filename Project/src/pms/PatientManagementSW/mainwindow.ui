@@ -7,11 +7,11 @@
     <x>0</x>
     <y>0</y>
     <width>1158</width>
-    <height>859</height>
+    <height>992</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>PaientManagement</string>
+   <string>PatientManagement</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
@@ -292,6 +292,12 @@
            <width>131</width>
            <height>71</height>
           </rect>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>11</pointsize>
+           <bold>true</bold>
+          </font>
          </property>
          <property name="text">
           <string>신규 환자 등록</string>

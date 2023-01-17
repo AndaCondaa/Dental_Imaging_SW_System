@@ -47,7 +47,7 @@ private:
     QSqlQuery *query4;
     QSqlQuery *query5;
 
-    QTcpSocket *socket;
+    //QTcpSocket *socket;
     QByteArray *buffer;
     QString saveData;
 
