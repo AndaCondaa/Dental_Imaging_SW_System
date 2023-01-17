@@ -3,11 +3,12 @@
 
 #include <QFileDialog>
 #include <QLabel>
+#include <QProgressDialog>
 
 #include <opencv2/opencv.hpp>
 #include <iostream>
 #include <cstdio>
-
+#include <time.h>
 
 using namespace cv;
 using namespace std;
@@ -56,25 +57,140 @@ ImagingManager::~ImagingManager()
 
 void ImagingManager::on_reconCancelButton_clicked()
 {
-//    QString fileName = QFileDialog::getOpenFileName(0,
-//                                                    "Open a file", QDir::homePath(),
-//                                                    "image file(*.raw *.pbm *.pgm *.ppm *.bmp *.jpg *.png)");
+//    raw16ToBmp8();
+    simpleStiching();
+}
 
-//    QFile file(fileName);
-//    file.open(QFile::ReadOnly);
-//    QByteArray byteArray = file.readAll();
-//    file.close();
+#define X_RES 3000
+#define Y_RES 2400
+#define PIXELS 3000 * 2400
+#define Bpp 2
+
+void ImagingManager::raw16ToBmp8()
+{
+    FILE *file;
+    BITMAPFILEHEADER bmpHeader;
+    BITMAPINFOHEADER bmpInfoHeader;
+    RGBQUAD *pal;
+    unsigned char *inImg, *outImg;
+
+    file = fopen("CEPH.raw", "rb");
+
+    if (file == nullptr) {
+        qDebug("ERROR : Failed file openning! %d", __LINE__);
+        return;
+    }
+
+    inImg = (unsigned char*)malloc(sizeof(unsigned char) * PIXELS * Bpp);
+    outImg = (unsigned char*)malloc(sizeof(unsigned char) * PIXELS);
+    pal = (RGBQUAD*)malloc(sizeof(RGBQUAD) * 256);
+    memset(inImg, 0, PIXELS*2);
+    memset(outImg, 0, PIXELS);
+
+    fread(inImg, sizeof(unsigned char) * PIXELS * Bpp, 1, file);
+    fclose(file);
+
+    for (int i = 0; i < 256; i++) {
+        pal[i].rgbBlue = i;
+        pal[i].rgbGreen = i;
+        pal[i].rgbRed = i;
+        pal[i].rgbReserved = i;
+    }
+
+    for (int i = 0; i < PIXELS; i++) {
+        outImg[i] = (unsigned char)(((double)(((inImg[(i*Bpp)] << 8) | (inImg[(i*Bpp)+1])) / 65536)) * 255);
+    }
+
+    bmpHeader.bfType = 0x4D42;
+    bmpHeader.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) * 256
+                                + sizeof(unsigned char) * PIXELS;
+    bmpHeader.bfReserved1 = 0;
+    bmpHeader.bfReserved2 = 0;
+    bmpHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) * 256;
+
+    bmpInfoHeader.biSize = sizeof(BITMAPINFOHEADER);
+    bmpInfoHeader.biWidth = X_RES;
+    bmpInfoHeader.biHeight = Y_RES;
+    bmpInfoHeader.biPlanes = 1;
+    bmpInfoHeader.biBitCount = 8;
+    bmpInfoHeader.biCompression = 0;
+    bmpInfoHeader.SizeImage = sizeof(unsigned char) * PIXELS;
+    bmpInfoHeader.biXPelsPerMeter = X_RES;
+    bmpInfoHeader.biYPelsPerMeter = Y_RES;
+    bmpInfoHeader.biClrUsed = 0;
+    bmpInfoHeader.biClrImportant = 0;
+
+    file = fopen("rawToBMP.bmp", "wb");
+    if (file == nullptr) {
+        qDebug("ERROR : Failed file openning! %d", __LINE__);
+        return;
+    }
+
+    fwrite(&bmpHeader, sizeof(BITMAPFILEHEADER), 1, file);
+    fwrite(&bmpInfoHeader, sizeof(BITMAPINFOHEADER), 1, file);
+    fwrite(pal, sizeof(RGBQUAD), 256, file);
+    fwrite(outImg, sizeof(unsigned char) * PIXELS, 1, file);
+    fclose(file);
+
+    qDebug("END");
+
+    delete inImg;
+    delete outImg;
+    delete pal;
+}
+
+void ImagingManager::simpleStiching()
+{
+    int cnt = 0;
+    clock_t p1, p2;
+    QByteArray array;
+    QByteArray addData;
+    QString fileName;
+    QFile file;
+    QByteArray newData;
+    uchar* data;
 
 
-//    for (int i = 10; i < 1000; i++) {
-//        if (((i / 100) > 0) )
-//            QString fileName = QString("00%1").arg(QString::number(i));
-//        else
-//            QString fileName = QString("0%1").arg(QString::number(i));
+    for (int i = 100; i < 1000; i++) {
+        p1 = clock();
 
-//    }
+        fileName = QString("./image/0%1.raw").arg(QString::number(i));
+        file.setFileName(fileName);
+        file.open(QIODevice::ReadOnly);
+        newData = file.readAll();
+        file.close();
 
+        for (int j = 0; j < 2400; j++) {
+            if (cnt == 0) {
+                array.append(addData);
+                break;
+            }
+            array.insert((cnt*2)+((cnt+1)*2*j)+1, newData[(j*48*2)]);
+            array.insert((cnt*2)+((cnt+1)*2*j)+2, newData[(j*48*2)+1]);
+        }
 
+        data = (uchar*)(array.data());
+        QImage *img = new QImage(data, cnt, 2400, QImage::Format_Grayscale16);
+        QPixmap buf = QPixmap::fromImage(*img);
+        buf = buf.scaled(cnt, ui->reconView->height(), Qt::KeepAspectRatio);
+
+        QGraphicsScene *scene = new QGraphicsScene;
+        scene->addPixmap(buf);
+        ui->reconView->setScene(scene);
+
+        p2 = clock();
+        qDebug("%d : %lf", cnt, (double)(p2-p1));
+        cnt++;
+//        qDebug("%d", cnt);
+    }
+
+//    QImage *img = new QImage(data, cnt, 2400, QImage::Format_Grayscale16);
+//    QPixmap buf = QPixmap::fromImage(*img);
+//    buf = buf.scaled(cnt, ui->reconView->height(), Qt::KeepAspectRatio);
+
+//    QGraphicsScene *scene = new QGraphicsScene;
+//    scene->addPixmap(buf);
+//    ui->reconView->setScene(scene);
 
 //    int width = 3000;
 //    int height = 2400;
@@ -87,69 +203,4 @@ void ImagingManager::on_reconCancelButton_clicked()
 //    QGraphicsScene* scene = new QGraphicsScene;
 //    scene->addPixmap(buf);
 //    ui->reconView->setScene(scene);
-    raw16ToBmp8();
 }
-
-#define X_RES 3000
-#define Y_RES 2400
-#define PIXELS 3000 * 2400
-
-void ImagingManager::raw16ToBmp8()
-{
-    FILE *file;
-    BITMAPFILEHEADER bmpHeader;
-    BITMAPINFOHEADER bmpInfoHeader;
-    RGBQUAD *pal;
-    unsigned char *inImg, *outImg;
-
-    file = fopen("CEPH.raw", "rb");
-    if (file == nullptr) {
-        return;
-    }
-
-    inImg = (unsigned char*)malloc(sizeof(unsigned char) * PIXELS * 2);
-    outImg = (unsigned char*)malloc(sizeof(unsigned char) * PIXELS * 2);
-//    pal = (RGBQUAD*)malloc(sizeof(RGBQUAD) * 256);
-    memset(inImg, 0, PIXELS*2);
-//    memset(outImg, 0, PIXELS*2);
-    fread(inImg, sizeof(unsigned char)*PIXELS*2, 1, file);
-    fclose(file);
-
-    bmpHeader.bfType = 0x4D42;
-    bmpHeader.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + sizeof(unsigned char) * 3000 * 2400 * 2;
-    bmpHeader.bfReserved1 = 0;
-    bmpHeader.bfReserved2 = 0;
-    bmpHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
-
-    bmpInfoHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmpInfoHeader.biWidth = 3000;
-    bmpInfoHeader.biHeight = 2400;
-    bmpInfoHeader.biPlanes = 1;
-    bmpInfoHeader.biBitCount = 16;
-    bmpInfoHeader.biCompression = 0;
-    bmpInfoHeader.SizeImage = sizeof(unsigned char) * 3000 * 2400 * 2;
-    bmpInfoHeader.biXPelsPerMeter = 0;
-    bmpInfoHeader.biYPelsPerMeter = 0;
-    bmpInfoHeader.biClrUsed = 0;
-    bmpInfoHeader.biClrImportant = 0;
-
-
-    file = fopen("result.bmp", "wb");
-    if (file == nullptr) {
-        return;
-    }
-    qDebug("%d", sizeof(BITMAPFILEHEADER));
-    qDebug("%d", sizeof(BITMAPINFOHEADER));
-    fwrite(&bmpHeader, sizeof(BITMAPFILEHEADER), 1, file);
-    fwrite(&bmpInfoHeader, sizeof(BITMAPINFOHEADER), 1, file);
-//    fwrite(pal, sizeof(RGBQUAD), 256, file);
-    fwrite(inImg, sizeof(unsigned char)*3000*2400*2, 1, file);
-    fclose(file);
-
-    qDebug("END");
-
-    delete inImg;
-}
-
-
-
