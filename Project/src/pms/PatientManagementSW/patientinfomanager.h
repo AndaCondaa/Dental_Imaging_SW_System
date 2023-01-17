@@ -31,9 +31,14 @@ private slots:
 
     void on_deletePushButton_clicked();
 
+    void on_WaitPushButton_clicked();
+
 signals:
     void sendSearchData(QString);
     void sendDelData(QString);
+//    void sendWaitInfo(QString, QString);
+    void sendWaitInfo(QString);
+    //void sendWaitToServer(QString);
 };
 
 #endif // PATIENTINFOMANAGER_H

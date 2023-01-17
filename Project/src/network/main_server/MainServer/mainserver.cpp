@@ -6,6 +6,7 @@
 #include <QSqlDatabase>
 #include <QTableWidget>
 #include <QSqlRecord>
+#include <QTcpSocket>
 
 static inline qint32 ArrayToInt(QByteArray source);
 
@@ -15,7 +16,8 @@ MainServer::MainServer(QWidget *parent) :
 {
     ui->setupUi(this);
     server = new QTcpServer(this);
-    socket = new QTcpSocket(this); //될라나
+    //socket = new QTcpSocket(this); //될라나
+    QTcpSocket* socket = (QTcpSocket*)(sender());
     connect(server, SIGNAL(newConnection()), this, SLOT(newConnection()));
 
     QString socket_data = QString("Listening: %1\n").arg(server->listen(QHostAddress::Any, 8001) ? "true" : "false");
@@ -35,6 +37,7 @@ MainServer::~MainServer()
 
 void MainServer::newConnection()
 {
+    QTcpSocket* socket = (QTcpSocket*)(sender());
     while (server->hasPendingConnections())
     {
         //QTcpSocket *socket = server->nextPendingConnection();
@@ -60,6 +63,7 @@ void MainServer::disconnected()
 
 bool MainServer::writeData(QByteArray data)
 {
+    QTcpSocket* socket = (QTcpSocket*)(sender());
     if(socket->state() == QAbstractSocket::ConnectedState)
     {
         //socket->write(IntToArray(data.size()));
@@ -97,6 +101,7 @@ void MainServer::sendDataToClient(QString newData)
 
 void MainServer::receiveData()
 {
+    QTcpSocket* socket = (QTcpSocket*)(sender());
 
     socket = static_cast<QTcpSocket*>(sender());
     buffer = buffers.value(socket);
@@ -118,7 +123,8 @@ void MainServer::receiveData()
 
     qDebug() << "이벤트: " << event;
 
-    if(event == "PER")
+    /*환자관리 SW 이벤트*/
+    if(event == "PER")      //신규환자 등록 끝났을 때: PER(enroll)
     {
         query->prepare("INSERT INTO patient (patient_no, patient_name, patient_sex, patient_birthdate,"
                        "patient_tel, patient_address, patient_memo)"
@@ -140,7 +146,7 @@ void MainServer::receiveData()
         //this->loadData();
 
     }
-    else if(event == "PID")
+    else if(event == "PID")     //신규환자 PID 요청: PID
     {
         QString newPID = makeId();
         qDebug() << "newPID: " << newPID;
@@ -151,16 +157,16 @@ void MainServer::receiveData()
 
         //emit sendNewPID(newPID);
     }
-    else if(event == "PDE")
+    else if(event == "PDE")     //환자 정보 삭제: PDE(delete)
     {
         query->exec("delete from patient WHERE patient_no = '" + id + "'");
         patientModel->select();
     }
-    else if(event == "PSE")
+    else if(event == "PSE")     //검색: PSE(search)         //DB에 없는 환자 검색했을 때 죽는 거 예외처리 해야 함
     {
         QString sendData ="PSE<CR>";
 
-        if(id == "0"){  //환자번호로 검색했을 때
+        if(id == "0"){      //환자번호로 검색했을 때
             sendData = sendData + data + "<CR>";
 
             query->exec("select * from patient WHERE patient_no = '" + data + "'");
@@ -191,7 +197,7 @@ void MainServer::receiveData()
             //            QSqlRecord rec = query->r
             //            qDebug() << query->record();
         }
-        else if(id == "1"){
+        else if(id == "1"){     //환자이름으로 검색했을 때
 
             query->exec("select * from patient WHERE patient_name = '" + data + "'");
             QSqlRecord rec = query->record();
@@ -202,37 +208,37 @@ void MainServer::receiveData()
                 {
                     if(i == 0)
                     {
-                        qDebug() << "i: " << i << "data: " << query->value(i).toString(); // output all names
+                        qDebug() << "i: " << i << "data: " << query->value(i).toString();
                         QString data = query->value(i).toString() + "<CR>";
                         sendData += data;
                         qDebug() << "sendData: " << sendData;
                     }
                     else
                     {
-                    qDebug() << "i: " << i << "data: " << query->value(i).toString(); // output all names
-                    QString data = query->value(i).toString() + "|";
-                    sendData += data;
-                    qDebug() << "sendData: " << sendData;
+                        qDebug() << "i: " << i << "data: " << query->value(i).toString();
+                        QString data = query->value(i).toString() + "|";
+                        sendData += data;
+                        qDebug() << "sendData: " << sendData;
                     }
                 }
 
 
-//                qDebug() << query->value(0).toString(); // output all names
-//                QString data = query->value(0).toString() + "<CR>";
-//                sendData += data;
-//                qDebug() << "sendData: " << sendData;
+                //                qDebug() << query->value(0).toString(); // output all names
+                //                QString data = query->value(0).toString() + "<CR>";
+                //                sendData += data;
+                //                qDebug() << "sendData: " << sendData;
             }
 
-//            while (query->next())
-//            {
-//                for(int i=1; i<rec.count() ; i++)
-//                {
-//                    qDebug() << "i: " << i << "data: " << query->value(i).toString(); // output all names
-//                    QString data = query->value(i).toString() + "|";
-//                    sendData += data;
-//                    qDebug() << "sendData: " << sendData;
-//                }
-//            }
+            //            while (query->next())
+            //            {
+            //                for(int i=1; i<rec.count() ; i++)
+            //                {
+            //                    qDebug() << "i: " << i << "data: " << query->value(i).toString(); // output all names
+            //                    QString data = query->value(i).toString() + "|";
+            //                    sendData += data;
+            //                    qDebug() << "sendData: " << sendData;
+            //                }
+            //            }
 
             //query->exec("SELECT * FROM patient WHERE patient_name = '" + data + "'");
         }
@@ -240,11 +246,56 @@ void MainServer::receiveData()
         socket->write(sendData.toStdString().c_str());
         //this->loadData();
     }
+    else if(event == "PMO")     //환자 정보 수정: PMO(modify)
+    {
+
+    }
+    else if(event == "PFN")     //수납 처리: PFN(finish)
+    {
+
+    }
+    else if(event == "AWL")     //대기 환자 추가: AWL(Add to Wait list)   //환자정보에서는 내부적으로 대기목록에 추가됨. 뷰어로만 보내주면 될 듯(pid랑 이름만).
+                                //=> 환자SW에서 대기 버튼 눌렀다는 정보를 서버에서 받고 해당 환자에 대한 여러가지 정보들을 촬영/뷰어SW로 보냄
+                                //위에 있는 기능은 진료시작/촬영시작에 해당하는 기능인 걸로 결정했음. 여기서는 pid랑 이름만 주기로. 딱 대기목록에 추가될 정보만 보내자
+    {
+        qDebug()<< "받은 진료대기환자 정보: " << saveData;
+        qDebug() << "뷰어쪽으로 보내줄 진료대기환자 정보(촬영SW에는 안 보내줌): " + event + "<CR>" + id + "<CR>" + data.split("|")[0];
+        //socket->write(saveData.toStdString().c_str());  //이 정보는 촬영SW와 뷰어SW쪽으로 보내져야 함.(지금 써져있는 socket은 임시..
+        QString sendWaitData = event + "<CR>" + id + "<CR>" + data.split("|")[0];
+        socket->write(sendWaitData.toStdString().c_str());
+    }
+
+    /*촬영 SW 이벤트*/
+    else if(event == "IPR")     //환자 준비: IPR(patient ready) [받는 정보: 이벤트, ID, 촬영 타입 / 보낼 정보: 이벤트, ID, 촬영 타입, 이름, 생년월일, 성별]
+    {
+
+    }
+    else if(event == "ISV")     //저장 및 전송: ISV(save) [보낼 정보: ID, 촬영 타입, 이름, 생년월일, 성별]
+    {
+
+    }
 
 
+    /*영상 뷰어 SW 이벤트*/
+    else if(event == "VNT")     //처방전 작성: VNT (write note)
+    {
 
+    }
+    else if(event == "VTS")     //진료 시작: VTS(treatment start)
+                                //[받을 정보: 이벤트, pid / 보낼 정보: 이벤트, pid, 이름, 성별, 생년월일, 메모]
+    {
 
+    }
+    else if(event == "VTF")     //진료 완료: VTF(treatment finish) [받을 정보: 이벤트, pid / 보낼 정보: 이벤트, pid]
+    {
+        socket->write(saveData.toStdString().c_str()); //뷰어쪽에서 받은 정보 그대로 환자관리SW에 전송=>환자관리에서는 event가 VTS일 시에 환자 진료 상태 진료중으로 변경해주면 될 듯
+    }
 
+    /*촬영 요청 이벤트(환자SW/뷰어SW->촬영SW)*/
+    else if(event == "SRQ")     //촬영 의뢰: SRQ(shoot request)
+    {
+
+    }
 
     buffer->clear(); //버퍼 비워주기
 }
@@ -298,6 +349,12 @@ void MainServer::loadData()
         dentistModel->setHeaderData(2, Qt::Horizontal, tr("Sex"));
         dentistModel->setHeaderData(3, Qt::Horizontal, tr("Telephone Number"));
         ui->dentistTableView->setModel(dentistModel);
+        //의사 정보는 수정삭제 불가능하게 만들어놨음. 고정된 정보
+        query2->exec("INSERT INTO dentist VALUES ('D00001', '이정연', '여성', '010-1234-5678')");
+        query2->exec("INSERT INTO dentist VALUES ('D00002', '안다미로', '남성', '010-8765-4321')");
+        query2->exec("INSERT INTO dentist VALUES ('D00003', '박병규', '남성', '010-3456-7890')");
+
+
 
         query3= new QSqlQuery(db);
         query3->exec("CREATE TABLE IF NOT EXISTS image(image_no VARCHAR(10) Primary Key, patient_no VARCHAR(10) NOT NULL,"
@@ -371,11 +428,21 @@ QString MainServer::makeId( )
     } else {
         //auto id = patientModel->data(patientModel->index(patientModel->rowCount()-1, 0)).toInt();
         //qDebug() << "now" << patientModel->data(patientModel->index(patientModel->rowCount()-1, 0)).toInt();
-        id = patientModel->rowCount();
-        id++;
-        qDebug() << "id is not 1, id: " << id;
-        qDebug()<< "it will return rowCount: " << "P" + QString::number(id).rightJustified(5,'0');
-        return "P" + QString::number(id).rightJustified(5,'0');
+        //id = patientModel->rowCount();
+        //qDebug() << "last: " << query->
+        //id++;
+
+        int tempPid = patientModel->itemData(patientModel->index(patientModel->rowCount() - 1,0)).value(0).toString().right(5).toInt()+1; //마지막 row의 pid+1 값을 리턴
+        qDebug() << "id is not 1, id: " << tempPid;
+        qDebug()<< "it will return rowCount: " << "P" + QString::number(tempPid).rightJustified(5,'0');
+
+//        qDebug() << "1: " << patientModel->itemData(patientModel->index(patientModel->rowCount() - 1,0));
+//        qDebug() << "2: " << patientModel->itemData(patientModel->index(patientModel->rowCount() - 1,0)).value(0);
+//        qDebug() << "3: " << patientModel->itemData(patientModel->index(patientModel->rowCount() - 1,0)).value(0).toString(); //"P00001"
+//        qDebug() << "4: " <<  patientModel->itemData(patientModel->index(patientModel->rowCount() - 1,0)).value(0).toString().right(5).toInt();
+
+        //return "P" + QString::number(id).rightJustified(5,'0');
+        return "P" + QString::number(tempPid).rightJustified(5,'0');
     }
 }
 

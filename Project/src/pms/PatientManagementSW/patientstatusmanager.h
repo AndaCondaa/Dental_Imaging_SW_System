@@ -2,6 +2,7 @@
 #define PATIENTSTATUSMANAGER_H
 
 #include <QWidget>
+#include <QTreeWidget>
 
 namespace Ui {
 class PatientStatusManager;
@@ -17,6 +18,14 @@ public:
 
 private:
     Ui::PatientStatusManager *ui;
+    QString pid, name;
+
+private slots:
+    //void waitInfoSended(QString, QString);
+    void waitInfoSended(QString);
+    void on_waitPaymentTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
+    void on_waitTreatmentTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
+    void on_shootRequestPushButton_clicked();
 };
 
 #endif // PATIENTSTATUSMANAGER_H

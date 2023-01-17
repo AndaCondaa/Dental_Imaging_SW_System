@@ -30,7 +30,28 @@
       </widget>
      </item>
      <item>
-      <widget class="QTableWidget" name="tableWidget_5"/>
+      <widget class="QTreeWidget" name="recordTreeWidget">
+       <column>
+        <property name="text">
+         <string>진료 날짜</string>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+       </column>
+       <column>
+        <property name="text">
+         <string>담당 의사</string>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+       </column>
+      </widget>
      </item>
     </layout>
    </item>

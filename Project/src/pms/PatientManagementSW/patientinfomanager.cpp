@@ -45,34 +45,28 @@ void PatientInfoManager::on_searchPushButton_clicked()
     emit sendSearchData(searchData);
 }
 
-void PatientInfoManager::on_deletePushButton_clicked()
-{
-    QString delData = "PDE<CR>" + pid + "<CR>0"; //지울 pid를 emit으로 네트워크 매니저로 보냄/네트워크 매니저는 서버로 삭제할 데이터 전달
-    emit sendDelData(delData);
-}
-
-
-
 void PatientInfoManager::searchDataSended(QString id, QString data)
 {
-    qDebug("%d", __LINE__);
+
     pid = id;
-    qDebug("%d", __LINE__);
     name = data.split("|")[0];
-    qDebug("%d", __LINE__);
+qDebug() << "name in searchDataSended: " << name;
     sex = data.split("|")[1];
-    qDebug("%d", __LINE__);
     birthdate = data.split("|")[2];
     tel = data.split("|")[3];
     address = data.split("|")[4];
     memo = data.split("|")[5];
-qDebug("%d", __LINE__);
+
+
+
 
 
 //    QTableWidgetItem *item = new QTableWidgetItem;
 //    item->setText(pid);
     ui->clientInfoTableWidget->setItem(0, 0, new QTableWidgetItem(pid)/*item*/);
     ui->clientInfoTableWidget->setItem(1, 0, new QTableWidgetItem(name));
+//    qDebug() << "name in searchDataSended(in table):" << ui->clientInfoTableWidget->itemAt(1)->currentItem()->row()->text();
+    qDebug() << "name in searchDataSended(in table):"<< ui->clientInfoTableWidget->item(1, 0)->text();
     ui->clientInfoTableWidget->setItem(2, 0, new QTableWidgetItem(sex));
     ui->clientInfoTableWidget->setItem(3, 0, new QTableWidgetItem(birthdate));
     ui->clientInfoTableWidget->setItem(4, 0, new QTableWidgetItem(tel));
@@ -86,4 +80,32 @@ qDebug("%d", __LINE__);
 }
 
 
+void PatientInfoManager::on_deletePushButton_clicked()
+{
+    QString delData = "PDE<CR>" + pid + "<CR>0"; //지울 pid를 emit으로 네트워크 매니저로 보냄/네트워크 매니저는 서버로 삭제할 데이터 전달
+    emit sendDelData(delData);
+}
+
+
+void PatientInfoManager::on_WaitPushButton_clicked()
+{
+    //emit sendWaitInfo(pid, name);   //대기 명단에 추가
+
+    //이름과 pid는 바뀌지 않는 정보지만 나머지 정보는 검색 후에 수정했을 수도 있으니 현재 테이블에 저장되어있던 값을 가지고 와 저장해준후 서버로 보내기
+    qDebug() << "대기명단에 추가한 pid: " << ui->clientInfoTableWidget->itemAt(0,0)->text();
+    pid = ui->clientInfoTableWidget->itemAt(0,0)->text();
+    name = ui->clientInfoTableWidget->item(1, 0)->text();
+    qDebug() << "name: " << ui->clientInfoTableWidget->itemAt(5,0)->text();
+
+    sex = ui->clientInfoTableWidget->item(2,0)->text();
+    birthdate = ui->clientInfoTableWidget->item(3,0)->text();
+    tel = ui->clientInfoTableWidget->item(4,0)->text();
+    address = ui->clientInfoTableWidget->item(5,0)->text();
+    memo = ui->clientInfoTableWidget->item(6,0)->text();
+
+    QString sendData = "AWL<CR>" + pid + "<CR>" + name + "|" + sex + "|" + birthdate + "|" + tel + "|" + address + "|" + memo;
+    qDebug() << "서버로 보낼 대기환자 데이터: " <<sendData;
+    //emit sendWaitToServer(sendData);
+    emit sendWaitInfo(sendData);
+}
 
