@@ -11,6 +11,8 @@ ControlPanel::ControlPanel(QWidget *parent) :
     ui(new Ui::ControlPanel)
 {
     ui->setupUi(this);
+    ui->panoButton->setStyleSheet("background-color: rgb(109, 109, 109)");
+    ui->cephButton->setStyleSheet("background-color: rgb(109, 109, 109)");
 
     buttonGroup = new QButtonGroup(this);
     buttonGroup->addButton(ui->resetButton, RESET);
@@ -29,13 +31,22 @@ ControlPanel::~ControlPanel()
 
 void ControlPanel::controlButtonClicked(QAbstractButton* button)
 {
-    emit buttonSignal(buttonGroup->id(button));     // NetworkManager::receiveButtonSignal()
+    QString modality;
+    if (ui->panoButton->isChecked() && !ui->cephButton->isChecked()) {
+        modality = "PANO";
+    } else if (!ui->panoButton->isChecked() && ui->cephButton->isChecked()) {
+        modality = "CEPH";
+    } else {
+        // 아무것도 선택하지 않았을 경우
+    }
+    emit buttonSignal(buttonGroup->id(button), modality);     // NetworkManager::receiveButtonSignal()
 }
 
 void ControlPanel::receiveButtonControl(int buttonIdx)
 {
     switch (buttonIdx) {
     case RESET:
+
         break;
     case READY:
 
@@ -46,5 +57,19 @@ void ControlPanel::receiveButtonControl(int buttonIdx)
     case STOP:
 
         break;
+    }
+}
+
+void ControlPanel::checkTypeButton(QString type)
+{
+    if (type == "PANO") {
+        ui->panoButton->setStyleSheet("background-color: rgb(0, 150, 0)");         // 녹색
+        ui->cephButton->setStyleSheet("background-color: rgb(109, 109, 109)");
+    } else if (type == "CEPH") {
+        ui->panoButton->setStyleSheet("background-color: rgb(109, 109, 109)");
+        ui->cephButton->setStyleSheet("background-color: rgb(0, 150, 0)");
+    } else if (type == "BOTH") {
+        ui->panoButton->setStyleSheet("background-color: rgb(0, 150, 0)");
+        ui->cephButton->setStyleSheet("background-color: rgb(196, 183, 59)");
     }
 }

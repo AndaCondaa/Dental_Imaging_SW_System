@@ -43,6 +43,7 @@ private:
 
 signals:
     void sendWaitPatient(QStringList);
+    void sendPatientInfo(QStringList);
 };
 
 #endif // MAINNETWORKMANAGER_H
