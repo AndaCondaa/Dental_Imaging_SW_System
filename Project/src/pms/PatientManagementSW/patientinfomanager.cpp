@@ -7,6 +7,7 @@ PatientInfoManager::PatientInfoManager(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->clientInfoTableWidget->setColumnWidth(0,285);
+
 }
 
 PatientInfoManager::~PatientInfoManager()
@@ -15,7 +16,18 @@ PatientInfoManager::~PatientInfoManager()
 }
 
 void PatientInfoManager::on_modifyPatientInfo_pushButton_clicked()
-{
+{   //네트워크쪽으로 정보 넘겨주도록 signal emit하고 mainwindow에서 연결하고 서버에 넘겨서 update문으로 db 테이블 수정
+    pid = ui->clientInfoTableWidget->item(0, 0)->text();
+    name = ui->clientInfoTableWidget->item(1, 0)->text();
+    sex = ui->clientInfoTableWidget->item(2,0)->text();
+    birthdate = ui->clientInfoTableWidget->item(3,0)->text();
+    tel = ui->clientInfoTableWidget->item(4,0)->text();
+    address = ui->clientInfoTableWidget->item(5,0)->text();
+    memo = ui->clientInfoTableWidget->item(6,0)->text();
+
+    QString modifyData = "PMO<CR>" + pid + "<CR>" + name + "|" + sex + "|" + birthdate + "|" + tel + "|" + address + "|" + memo;
+
+
 //    if(fd_flag)
 //    {
         //이거는 mainwindow쪽에 보내면 될 듯
@@ -42,6 +54,8 @@ void PatientInfoManager::on_searchPushButton_clicked()
     qDebug()<< searchInfo;
     QString searchData = "PSE<CR>" + QString::number(comboBoxIndex) + "<CR>" + searchInfo;
 
+    ui->clientInfoTableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
+
     emit sendSearchData(searchData);
 }
 
@@ -58,9 +72,6 @@ qDebug() << "name in searchDataSended: " << name;
     memo = data.split("|")[5];
 
 
-
-
-
 //    QTableWidgetItem *item = new QTableWidgetItem;
 //    item->setText(pid);
     ui->clientInfoTableWidget->setItem(0, 0, new QTableWidgetItem(pid)/*item*/);
@@ -72,7 +83,7 @@ qDebug() << "name in searchDataSended: " << name;
     ui->clientInfoTableWidget->setItem(4, 0, new QTableWidgetItem(tel));
     ui->clientInfoTableWidget->setItem(5, 0, new QTableWidgetItem(address));
     ui->clientInfoTableWidget->setItem(6, 0, new QTableWidgetItem(memo));
-qDebug("%d", __LINE__);
+    qDebug("%d", __LINE__);
 
 
 
@@ -93,7 +104,7 @@ void PatientInfoManager::on_WaitPushButton_clicked()
 
     //이름과 pid는 바뀌지 않는 정보지만 나머지 정보는 검색 후에 수정했을 수도 있으니 현재 테이블에 저장되어있던 값을 가지고 와 저장해준후 서버로 보내기
     qDebug() << "대기명단에 추가한 pid: " << ui->clientInfoTableWidget->itemAt(0,0)->text();
-    pid = ui->clientInfoTableWidget->itemAt(0,0)->text();
+    pid = ui->clientInfoTableWidget->item(0, 0)->text();
     name = ui->clientInfoTableWidget->item(1, 0)->text();
     qDebug() << "name: " << ui->clientInfoTableWidget->itemAt(5,0)->text();
 
