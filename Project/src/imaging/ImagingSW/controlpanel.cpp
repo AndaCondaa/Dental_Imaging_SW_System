@@ -29,13 +29,22 @@ ControlPanel::~ControlPanel()
 
 void ControlPanel::controlButtonClicked(QAbstractButton* button)
 {
-    emit buttonSignal(buttonGroup->id(button));     // NetworkManager::receiveButtonSignal()
+    QString modality;
+    if (ui->panoButton->isChecked() && !ui->cephButton->isChecked()) {
+        modality = "PANO";
+    } else if (!ui->panoButton->isChecked() && ui->cephButton->isChecked()) {
+        modality = "CEPH";
+    } else {
+        // 아무것도 선택하지 않았을 경우
+    }
+    emit buttonSignal(buttonGroup->id(button), modality);     // NetworkManager::receiveButtonSignal()
 }
 
 void ControlPanel::receiveButtonControl(int buttonIdx)
 {
     switch (buttonIdx) {
     case RESET:
+
         break;
     case READY:
 

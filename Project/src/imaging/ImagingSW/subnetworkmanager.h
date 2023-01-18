@@ -27,7 +27,7 @@ public:
 
 private slots:
     void receiveControl();
-    void receiveButtonControl(int);
+    void receiveButtonControl(int, QString);
     void receiveFile();
 
 private:

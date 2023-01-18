@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     controlpanel.cpp \
+    imagethread.cpp \
     imagingmanager.cpp \
     main.cpp \
     mainnetworkmanager.cpp \
@@ -21,6 +22,7 @@ SOURCES += \
 
 HEADERS += \
     controlpanel.h \
+    imagethread.h \
     imagingmanager.h \
     mainnetworkmanager.h \
     mainwindow.h \

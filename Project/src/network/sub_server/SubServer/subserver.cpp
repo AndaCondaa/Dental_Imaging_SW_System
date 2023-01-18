@@ -66,6 +66,7 @@ void SubServer::receiveControl()
     }
 
     QString event = protocol->packetData()->event();
+    QString msg = protocol->packetData()->msg();
     QString client = controlSocketMap.value(socket) ? "영상장비" : "촬영SW";
 
     int receiver;
@@ -78,20 +79,20 @@ void SubServer::receiveControl()
         int command = protocol->packetData()->type();
         switch (command) {
         case RESET:
-            //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", RESET, "");
-            ui->logEdit->append((QString("%1가 장비 초기화 명령을 보냈습니다.")).arg(client));
+            //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", RESET, msg);
+            ui->logEdit->append((QString("%1가 %2 장비 초기화 명령을 보냈습니다.")).arg(client, msg));
             break;
         case READY:
-            //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", READY, "");
-            ui->logEdit->append((QString("%1가 촬영준비 명령을 보냈습니다.")).arg(client));
+            //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", READY, msg);
+            ui->logEdit->append((QString("%1가 %2 촬영준비 명령을 보냈습니다.")).arg(client, msg));
             break;
         case START:
-            //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", START, "");
-            ui->logEdit->append((QString("%1가 촬영시작 명령을 보냈습니다.")).arg(client));
+            //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", START, msg);
+            ui->logEdit->append((QString("%1가 %2 촬영시작 명령을 보냈습니다.")).arg(client, msg));
             break;
         case STOP:
-            //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", STOP, "");
-            ui->logEdit->append((QString("%1가 촬영종료 명령을 보냈습니다.")).arg(client));
+            //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", STOP, msg);
+            ui->logEdit->append((QString("%1가 %2 촬영종료 명령을 보냈습니다.")).arg(client, msg));
             break;
         }
     }

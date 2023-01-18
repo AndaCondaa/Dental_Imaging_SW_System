@@ -1,5 +1,6 @@
 #include "imagingmanager.h"
 #include "ui_imagingmanager.h"
+#include "imagethread.h"
 
 #include <QFileDialog>
 #include <QLabel>
@@ -140,5 +141,9 @@ void ImagingManager::raw16ToBmp8()
 
 void ImagingManager::simpleStiching()
 {
-
+    ui->progressBar->setRange(0, 100);
+    ImageThread *thread = new ImageThread(ui->frameLabel->width(), ui->frameLabel->height(), this);
+    connect(thread, SIGNAL(imageProgressed(int)), ui->progressBar, SLOT(setValue(int)));
+    connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->frameLabel, SLOT(setPixmap(const QPixmap&)));
+    thread->start();
 }

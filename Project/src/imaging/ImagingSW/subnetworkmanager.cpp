@@ -56,9 +56,9 @@ void SubNetworkManager::receiveControl()
     }
 }
 
-void SubNetworkManager::receiveButtonControl(int buttonIdx)
+void SubNetworkManager::receiveButtonControl(int buttonIdx, QString modality)
 {
-    protocol->sendProtocol(subSocket, "CTL", buttonIdx, "Pano or Ceph");
+    protocol->sendProtocol(subSocket, "CTL", buttonIdx, modality);
 }
 
 void SubNetworkManager::receiveFile()

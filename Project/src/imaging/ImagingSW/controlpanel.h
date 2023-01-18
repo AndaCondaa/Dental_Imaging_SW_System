@@ -26,7 +26,7 @@ private:
     QButtonGroup *buttonGroup;
 
 signals:
-    void buttonSignal(int);
+    void buttonSignal(int, QString);
 };
 
 #endif // CONTROLPANEL_H

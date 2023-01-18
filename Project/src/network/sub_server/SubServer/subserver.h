@@ -18,11 +18,7 @@
 #include <QFileDialog>
 #include <QProgressDialog>
 
-
 #include "protocol.h"
-
-#define SW 0
-#define MODALITY 1
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class SubServer; }
@@ -54,7 +50,6 @@ private:
     QTcpServer *fileServer;
     QMap<QTcpSocket*, int> controlSocketMap;    // <socket, SW or MODALITY>
     QMap<QTcpSocket*, int> fileSocketMap;       // <socket, SW or MODALITY>
-
 
     QFile* file;                                // File Object for FileSending Protocol
     qint64 totalSize;                           // Total size of File that clients are sending
