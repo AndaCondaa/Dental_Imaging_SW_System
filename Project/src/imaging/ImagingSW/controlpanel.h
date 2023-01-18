@@ -19,6 +19,7 @@ public:
 private slots:
     void controlButtonClicked(QAbstractButton*);
     void receiveButtonControl(int);
+    void checkTypeButton(QString);
 
 private:
     Ui::ControlPanel *ui;

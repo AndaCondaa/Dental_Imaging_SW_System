@@ -23,14 +23,14 @@ SubServer::SubServer(QWidget *parent)
     // 장비제어 명령 서버 오픈
     controlServer = new QTcpServer();
     connect(controlServer, SIGNAL(newConnection()), this, SLOT(newClient()));
-    if(!controlServer->listen(QHostAddress::Any, 8000)) {
+    if(!controlServer->listen(QHostAddress::Any, 8002)) {
         // 서버 listen 실패
     }
 
     // 이미지 서버 오픈
     fileServer = new QTcpServer();
     connect(fileServer, SIGNAL(newConnection()), this, SLOT(newFileCilent()));
-    if(!fileServer->listen(QHostAddress::Any, 8001)) {
+    if(!fileServer->listen(QHostAddress::Any, 8003)) {
         // 파일 서버 listen 실패
     }
 }
@@ -104,6 +104,7 @@ void SubServer::receiveFile()
 
     // 처음 연결 시, 소켓과 클라이언트 정보를 매핑
     if (!fileSocketMap.contains(socket)) {
+        qDebug("%d", __LINE__);
         int id = protocol->packetData()->type();
         protocol->receiveProtocol(socket);
         fileSocketMap.insert(socket, id);
@@ -111,8 +112,9 @@ void SubServer::receiveFile()
     }
 
     // Beginning File Transfer
-    if (byteReceived == 0) {        // First Time(Block) , var byteReceived is always zero
-        checkFileName = fileName;
+    if (byteReceived == 0) {                                    // First Time(Block) , var byteReceived is always zero
+        checkFileName = fileName;                               // 다음 패킷부터 파일이름으로 구분하기 위해 첫 패킷에서 보낸 파일이름을 임시로 저장
+
         QDataStream in(socket);
         in.device()->seek(0);
         in >> totalSize >> byteReceived >> fileName >> fileSender;
@@ -188,4 +190,3 @@ void SubServer::on_pushButton_clicked()
 {
     sendFile();
 }
-

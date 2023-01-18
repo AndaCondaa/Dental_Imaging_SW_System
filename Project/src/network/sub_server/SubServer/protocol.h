@@ -6,17 +6,18 @@
 #include <QDataStream>
 
 
-typedef enum {  // 첫 연결 시, type 부분에 들어갈 수 있는 enum 클래스
+typedef enum {
     SW,
     MODALITY
 } ConnectType;
 
-typedef enum {  // 명령 전달 시, type 부분에 들어갈 수 있는 enum 클래스
+typedef enum {
     RESET,
     READY,
     START,
     STOP
 } ControlType;
+
 
 class PacketData;
 

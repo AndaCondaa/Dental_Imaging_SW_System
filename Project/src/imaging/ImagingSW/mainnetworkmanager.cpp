@@ -2,8 +2,10 @@
 
 #include <QFileDialog>
 
-// 환자 준비 : IPR
-// 저장 및 전송 : ISV
+// 환자 준비 : IPR<CR>PID<CR>"NULL"
+// 환자 준비 후 정보 리시브 : IPR<CR>PID<CR>"name|sex|birth"
+// 저장 및 전송 : ISV<CR>PID<CR>
+// 촬영의뢰 : SRQ<CR>PID<CR>"name|type"
 
 MainNetworkManager::MainNetworkManager(QObject *parent)
     : QObject{parent}
@@ -11,7 +13,7 @@ MainNetworkManager::MainNetworkManager(QObject *parent)
     mainSocket = new QTcpSocket(this);
     fileSocket = new QTcpSocket(this);
 
-    connection("192.168.0.57", 8001);
+    connection("192.168.0.57", 8000);
 
     progressDialog = new QProgressDialog(0);
     progressDialog->setAutoClose(true);
@@ -25,12 +27,13 @@ MainNetworkManager::~MainNetworkManager()
 
 void MainNetworkManager::connection(QString address, int port)
 {
-//    mainSocket->connectToHost(address, port);
-//    if (mainSocket->waitForConnected()) {
-//        connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
-//    } else {
-//        // 연결 실패 예외처리 구현
-//    }
+    mainSocket->connectToHost(address, port);
+    if (mainSocket->waitForConnected()) {
+        connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
+        sendPacket(mainSocket, "CNT", "IMG", "NULL");
+    } else {
+        // 연결 실패 예외처리 구현
+    }
 
 //    fileSocket->connectToHost(address, port+1);
 //    if (fileSocket->waitForConnected()) {
@@ -53,7 +56,7 @@ QStringList MainNetworkManager::packetParser(QByteArray receiveArray)
     QString receiveData = QString(receiveArray);
 
     QStringList dataList;
-    dataList << receiveData.split("<CR>")[0] << receiveData.split("<CR>")[1] << receiveData.split("<CR>")[3];
+    dataList << receiveData.split("<CR>")[0] << receiveData.split("<CR>")[1] << receiveData.split("<CR>")[2];
 
     return dataList;
 }
@@ -61,15 +64,18 @@ QStringList MainNetworkManager::packetParser(QByteArray receiveArray)
 void MainNetworkManager::receivePacket()
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
-    QStringList dataList = packetParser(socket->readAll());
-    QString event = dataList[0];
-    QString pid = dataList[1];
-    QString data = dataList[2];
+    QStringList packetData = packetParser(socket->readAll());
+    QString event = packetData[0];
+    QString pid = packetData[1];
+    QString data = packetData[2];
 
-    if (event == "VSR") {   // VSR : 촬영의뢰 요청이 들어온 경우
-        QStringList dataList;
-        dataList << pid << data.split("|")[0] << data.split("|")[1];
+    QStringList dataList;
+    if (event == "SRQ") {   // SRQ : 촬영의뢰 요청이 들어온 경우
+        dataList << pid << data.split("|")[0] << data.split("|")[1];        // pid -> name -> type
         emit sendWaitPatient(dataList);
+    } else if (event == "IPR") {
+        dataList << pid << data.split("|")[0] << data.split("|")[1] << data.split("|")[2];        // pid -> name -> sex -> birth
+        emit sendPatientInfo(dataList);
     }
 }
 

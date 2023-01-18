@@ -170,16 +170,6 @@
          <set>AlignCenter</set>
         </property>
        </row>
-       <row>
-        <property name="text">
-         <string>New Row</string>
-        </property>
-       </row>
-       <row>
-        <property name="text">
-         <string>New Row</string>
-        </property>
-       </row>
        <column>
         <property name="text">
          <string>내용</string>
@@ -188,6 +178,61 @@
          <string/>
         </property>
        </column>
+       <item row="0" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="1" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="2" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="3" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
+       <item row="4" column="0">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="textAlignment">
+         <set>AlignCenter</set>
+        </property>
+        <property name="flags">
+         <set>NoItemFlags</set>
+        </property>
+       </item>
       </widget>
      </item>
     </layout>
