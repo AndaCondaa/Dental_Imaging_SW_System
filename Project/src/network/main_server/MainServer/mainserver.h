@@ -48,6 +48,10 @@ private:
     QSqlQuery *query5;
 
     //QTcpSocket *socket;
+    QTcpSocket *pmsSocket;
+    QTcpSocket *imagingSocket;
+    QTcpSocket *viewerSocket;
+
     QByteArray *buffer;
     QString saveData;
 
@@ -59,6 +63,8 @@ private:
 
     bool fd_flag = false;
     bool send_flag = false;
+
+    QMap<QTcpSocket *, QString> sk;
 
 signals:
     void sendNewPID(QString);

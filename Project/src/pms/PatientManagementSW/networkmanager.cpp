@@ -9,18 +9,27 @@ NetworkManager::NetworkManager(QObject *parent)
 {
     socket = new QTcpSocket(this);
     fd_flag = connectToHost("127.0.0.1"); // localhost
+    connect(socket, SIGNAL(readyRead()), this, SLOT(receiveData()));
+    qDebug("%d", __LINE__);
+
     if(!fd_flag)
         qDebug()<<("Socket connect fail\n");
-    else
-        connect(socket, SIGNAL(readyRead()), this, SLOT(receiveData()));
+    else{
+        qDebug("%d", __LINE__);
+        qDebug()<<("Socket connect\n");
+        QString connectData = "CNT<CR>PMS<CR>";
 
-
-
+        qDebug("%d", __LINE__);
+        QByteArray sendTest = connectData.toStdString().c_str();
+        qDebug("%d", __LINE__);
+        socket->write(sendTest);
+        qDebug("%d", __LINE__);
+    }
 }
 
 bool NetworkManager::connectToHost(QString host)
 {
-    socket->connectToHost(host, 8001);
+    socket->connectToHost(host, 8000);
     return socket->waitForConnected();
 }
 
@@ -56,7 +65,7 @@ void NetworkManager::newDataSended(QString newData)
         QString sendData = newData; //MainServer의 textEdit에 띄울 정보
         send_flag = writeData(sendData.toStdString().c_str()); //writeData의 첫 번째 인자는 char *data와 같은 형식임
         if(!send_flag)
-                    qDebug() << "Socket send fail\n";
+            qDebug() << "Socket send fail\n";
 
     }
 
@@ -72,31 +81,34 @@ void NetworkManager::receiveData()
     //buffer->append(socket->readAll());
     QByteArray array = socket->readAll();
     qDebug("%d", __LINE__);
-//    saveData = QString(buffer->data());
+    //    saveData = QString(buffer->data());
     saveData = QString(array);
     qDebug("%d", __LINE__);
 
-    //어떤 이벤트인지에 따라 불러올 함수 써주기(각각 이벤트에 대한 함수 만들고 if-else문 타도록 만들자)
-    QString event = saveData.split("<CR>")[0];
-    QString id = saveData.split("<CR>")[1];
-    QString data = saveData.split("<CR>")[2];
-    qDebug("%d", __LINE__);
-    qDebug() << "event: " << event;
-
-    if(event == "PID")
+    if(saveData.contains("<CR", Qt::CaseInsensitive) == true)
     {
-        sendedPID = id;
-        qDebug() << "sendedPID: " << id;
-        emit sendNewPID(sendedPID); //enrollment 클래스로 emit
+        //어떤 이벤트인지에 따라 불러올 함수 써주기(각각 이벤트에 대한 함수 만들고 if-else문 타도록 만들자)
+        QString event = saveData.split("<CR>")[0];
+        QString id = saveData.split("<CR>")[1];
+        QString data = saveData.split("<CR>")[2];
+        qDebug("%d", __LINE__);
+        qDebug() << "event: " << event;
+
+        if(event == "PID")
+        {
+            sendedPID = id;
+            qDebug() << "sendedPID: " << id;
+            emit sendNewPID(sendedPID); //enrollment 클래스로 emit
+        }
+        else if(event == "PSE")
+        {
+            emit sendSearchResult(id, data);
+        }
+
+
+
+        //    buffer->clear(); //버퍼 비워주기
     }
-    else if(event == "PSE")
-    {
-        emit sendSearchResult(id, data);
-    }
-
-
-
-//    buffer->clear(); //버퍼 비워주기
 }
 
 void NetworkManager::newConnection()

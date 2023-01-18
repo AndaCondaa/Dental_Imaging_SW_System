@@ -26,6 +26,9 @@ private slots:
     void on_waitPaymentTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void on_waitTreatmentTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void on_shootRequestPushButton_clicked();
+
+signals:
+    void sendRequest(QString);
 };
 
 #endif // PATIENTSTATUSMANAGER_H
