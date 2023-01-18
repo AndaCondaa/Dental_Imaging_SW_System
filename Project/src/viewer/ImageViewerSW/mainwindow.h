@@ -9,13 +9,13 @@
 #include <QObject>
 #include <QListWidgetItem>
 
-
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class EditImage;
+class ImageView;
 class ImageAlbum;
+class PatientInfo;
 
 class MainWindow : public QMainWindow
 {
@@ -28,12 +28,9 @@ public:
 private:
     Ui::MainWindow *ui;
     QImage *img;
-    EditImage* editimage;
-    ImageAlbum* m_memoAlbum;
-
-private slots:
-    void ButtonClicked();
-
+    ImageAlbum* m_imageAlbum;
+    PatientInfo* m_patientInfo;
+    ImageView* m_imageView;
 
 };
 #endif // MAINWINDOW_H
