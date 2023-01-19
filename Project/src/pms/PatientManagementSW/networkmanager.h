@@ -40,6 +40,10 @@ private:
 signals:
     void sendNewPID(QString);
     void sendSearchResult(QString, QString);
+    void sendSRQRequest(QString);
+    void sendVTSRequest(QString);
+    void sendISVevent(QString);
+
 };
 
 #endif // NETWORKMANAGER_H

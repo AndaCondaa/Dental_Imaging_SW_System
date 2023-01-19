@@ -20,12 +20,21 @@ private:
     Ui::PatientStatusManager *ui;
     QString pid, name;
 
+    //QTreeWidgetItem* row;
+    QTreeWidgetItem* selectedRow;
+
 private slots:
     //void waitInfoSended(QString, QString);
     void waitInfoSended(QString);
     void on_waitPaymentTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void on_waitTreatmentTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void on_shootRequestPushButton_clicked();
+    //void sendSRQRequest(QString);
+
+
+    //void SRQRequestSended(QString);
+
+    void statusRequestSended(QString);
 
 signals:
     void sendRequest(QString);

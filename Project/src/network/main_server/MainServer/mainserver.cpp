@@ -101,7 +101,7 @@ void MainServer::sendDataToClient(QString newData)
 
 void MainServer::receiveData()
 {
-    QTcpSocket* socket = (QTcpSocket*)(sender());
+    QTcpSocket* socket = dynamic_cast<QTcpSocket*>(sender());
 
 
     
@@ -142,8 +142,9 @@ void MainServer::receiveData()
             /*어떤 모듈과 연관이 있는 소켓인지 알 수 있도록 map에 연결해 저장하는 부분*/
             if(id == "PMS")
             {
+
                 sk.insert(pmsSocket, "PMS");
-                pmsSocket = dynamic_cast<QTcpSocket*>(sender());
+                pmsSocket = socket;
                 qDebug() << "pmsSocket ready";
             }
             else if(id == "IMG")
@@ -159,7 +160,37 @@ void MainServer::receiveData()
                 qDebug() << "viewerSocket ready";
             }
         }
+        else if(event == "VLG")
+        {
+            QString sendData = "VLG<CR>";
 
+            qDebug()<<"Login Data: "<<id << ", " <<data;
+            QModelIndexList indexes = dentistModel->match(dentistModel->index(0, 0), Qt::EditRole, id,
+                                                          -1, Qt::MatchFlags(Qt::MatchCaseSensitive));
+            qDebug() << indexes;
+            QString name;
+            foreach(auto ix, indexes) {
+                /*검색창에서 입력한 값으로 찾은 데이터를 통해 고객 데이터들을 반환*/
+                name = dentistModel->data(ix.siblingAtColumn(1)).toString();
+            }
+            qDebug() << name;
+            if(name == data)
+            {
+                sendData = sendData +id + "<CR>True";
+
+            }
+            else
+            {
+                sendData = sendData +id + "<CR>False";
+            }
+
+            qDebug() << "로그인 sendData: " << sendData;
+            viewerSocket->write(sendData.toStdString().c_str());
+
+
+            //qDebug() << query->exec("select * from (select * from dentist where dentist_no = '" + id + "') where dentist_name = '" + data + "'");
+            //qDebug() << dentistModel->rowCount();
+        }
         /*환자관리 SW 이벤트*/
         else if(event == "PER")      //신규환자 등록 끝났을 때: PER(enroll)
         {
@@ -290,11 +321,28 @@ void MainServer::receiveData()
         }
         else if(event == "PMO")     //환자 정보 수정: PMO(modify)
         {
-            
+            qDebug() << "PMO's saveData: " << saveData;
+
+            QString name = data.split("|")[0];
+            QString sex = data.split("|")[1];
+            QString birthdate = data.split("|")[2];
+            QString tel = data.split("|")[3];
+            QString address = data.split("|")[4];
+            QString memo = data.split("|")[5];
+
+
+            query->exec("update patient set patient_name = '" + name + "', patient_sex = '" + sex +
+                        "', patient_birthdate = '" + birthdate + "', patient_tel = '" + tel +
+                        "', patient_address = '" + address + "', patient_memo = '" + memo +
+                        "'where patient_no = '" + id + "'");
+
+            patientModel->select();
+
         }
-        else if(event == "PFN")     //수납 처리: PFN(finish)
+        else if(event == "PFN")     //수납 처리: PFN(finish)           @@@@@@@@@뷰어와 확인필요@@@@@@@@
         {
-            
+            qDebug() << "PFN's saveData: " << saveData;
+            pmsSocket->write(saveData.toStdString().c_str());
         }
         else if(event == "AWL")     //대기 환자 추가: AWL(Add to Wait list)   //환자정보에서는 내부적으로 대기목록에 추가됨. 뷰어로만 보내주면 될 듯(pid랑 이름만).
             //=> 환자SW에서 대기 버튼 눌렀다는 정보를 서버에서 받고 해당 환자에 대한 여러가지 정보들을 촬영/뷰어SW로 보냄
@@ -308,8 +356,8 @@ void MainServer::receiveData()
             //이거 고치기 socket->write(sendWaitData.toStdString().c_str());
 
 
-            //**********여기는 뷰어SW가 켜져있을 때 다시 주석 풀기************
-            //viewerSocket->write(sendWaitData.toStdString().c_str());
+            //**********여기는 정연이 뷰어SW가 켜져있을 때 다시 주석 풀기************
+            viewerSocket->write(sendWaitData.toStdString().c_str());
 
         }
         
@@ -360,21 +408,30 @@ void MainServer::receiveData()
                 //                qDebug() << "sendData: " << sendData;
             }
             //qDebug() << sendData << "sfdffsdsf";
-            imagingSocket->write(sendData.toStdString().c_str());
+
+
+
+
+            //@@@@@@@@이부분 미로오빠꺼 열리면 주석풀기@@@@@@@@@
+            //imagingSocket->write(sendData.toStdString().c_str());
             //QString sendReadyData = event + "<CR>" + id + "<CR>" + name + birthdate + sex ;
 
             
         }
-        else if(event == "ISV")     //저장 및 전송: ISV(save) [보낼 정보: ID, 촬영 타입, 이름, 생년월일, 성별]
+        //파일소켓으로는 자동으로 이미지가 전송되고 받아지고 할 거고 ISV는 파일이 서버로 보내졌다는 사실만을 알려주는 이벤트임
+        else if(event == "ISV")     //저장 및 전송: ISV(save) [받을 정보, 보낼 정보 동일: 환자 ID, 이름, 촬영 타입] - imaging module에서 클릭될 시에 다른 모듈에서는 진료대기로 바뀜
         {
-            
+            qDebug() << "ISV's saveData: " << saveData;
+            pmsSocket->write(saveData.toStdString().c_str());
+            viewerSocket->write(saveData.toStdString().c_str());
+
         }
         
         
         /*영상 뷰어 SW 이벤트*/
         else if(event == "VNT")     //처방전 작성: VNT (write note)
         {
-            
+
         }
         else if(event == "VTS")     //진료 시작: VTS(treatment start)
             //[받을 정보: 이벤트, pid / 보낼 정보: 이벤트, pid, 이름, 성별, 생년월일, 메모]
@@ -412,6 +469,7 @@ void MainServer::receiveData()
             //qDebug() << sendData << "sfdffsdsf";
             qDebug() << "sendData: " << sendData;
             viewerSocket->write(sendData.toStdString().c_str());
+            pmsSocket->write(sendData.toStdString().c_str());
 
         }
         else if(event == "VTF")     //진료 완료: VTF(treatment finish) [받을 정보: 이벤트, pid / 보낼 정보: 이벤트, pid]
@@ -422,7 +480,14 @@ void MainServer::receiveData()
         /*촬영 요청 이벤트(환자SW/뷰어SW->촬영SW)*/
         else if(event == "SRQ")     //촬영 의뢰: SRQ(shoot request)
         {
-            
+            qDebug() << "saveData: " << saveData;
+
+            //미로오빠 소켓 주석
+            //imagingSocket->write(saveData.toStdString().c_str());
+
+            //정연이 소켓 주석/촬영요청이 pms에서 오든 viewer에서 오든 둘 다 촬영중으로 바뀌었다는 신호를 받아야 하기 때문에 SRQ이벤트를 서버쪽에서 다시 보내주도록 하였음
+            pmsSocket->write(saveData.toStdString().c_str());
+            viewerSocket->write(saveData.toStdString().c_str());
         }
         
         //buffer->clear(); //버퍼 비워주기
@@ -478,10 +543,10 @@ void MainServer::loadData()
         dentistModel->setHeaderData(3, Qt::Horizontal, tr("Telephone Number"));
         ui->dentistTableView->setModel(dentistModel);
         //의사 정보는 수정삭제 불가능하게 만들어놨음. 고정된 정보
-        query2->exec("INSERT INTO dentist VALUES ('D00001', '이정연', '여성', '010-1234-5678')");
+        //query2->exec("INSERT INTO dentist VALUES ('D00001', '이정연', '여성', '010-1234-5678')");
         query2->exec("INSERT INTO dentist VALUES ('D00002', '안다미로', '남성', '010-8765-4321')");
         query2->exec("INSERT INTO dentist VALUES ('D00003', '박병규', '남성', '010-3456-7890')");
-        
+
         
         
         query3= new QSqlQuery(db);

@@ -104,6 +104,21 @@ void NetworkManager::receiveData()
         {
             emit sendSearchResult(id, data);
         }
+        else if(event == "SRQ")
+        {
+            qDebug()<<"SRQ event Received: " << saveData;
+            emit sendSRQRequest(saveData);
+        }
+        else if(event == "VTS")
+        {
+            qDebug()<<"VTS event Received: " << saveData;
+            emit sendVTSRequest(saveData);
+        }
+        else if(event == "ISV")
+        {
+            qDebug()<<"ISV event Received: " << saveData;
+            emit sendISVevent(saveData);
+        }
 
 
 

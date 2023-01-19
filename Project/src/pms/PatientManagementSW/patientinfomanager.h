@@ -25,7 +25,7 @@ private:
     QString pid, name, sex, birthdate, tel, address, memo;
 
 private slots:
-    void on_modifyPatientInfo_pushButton_clicked();
+    //void on_modifyPatientInfo_pushButton_clicked();
     void on_searchPushButton_clicked();
     void searchDataSended(QString, QString);
 
@@ -33,12 +33,15 @@ private slots:
 
     void on_WaitPushButton_clicked();
 
+    void on_modifyPushButton_clicked();
+
 signals:
     void sendSearchData(QString);
     void sendDelData(QString);
 //    void sendWaitInfo(QString, QString);
     void sendWaitInfo(QString);
     //void sendWaitToServer(QString);
+    void sendModifyData(QString);
 };
 
 #endif // PATIENTINFOMANAGER_H

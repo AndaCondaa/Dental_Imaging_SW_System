@@ -15,36 +15,7 @@ PatientInfoManager::~PatientInfoManager()
     delete ui;
 }
 
-void PatientInfoManager::on_modifyPatientInfo_pushButton_clicked()
-{   //네트워크쪽으로 정보 넘겨주도록 signal emit하고 mainwindow에서 연결하고 서버에 넘겨서 update문으로 db 테이블 수정
-    pid = ui->clientInfoTableWidget->item(0, 0)->text();
-    name = ui->clientInfoTableWidget->item(1, 0)->text();
-    sex = ui->clientInfoTableWidget->item(2,0)->text();
-    birthdate = ui->clientInfoTableWidget->item(3,0)->text();
-    tel = ui->clientInfoTableWidget->item(4,0)->text();
-    address = ui->clientInfoTableWidget->item(5,0)->text();
-    memo = ui->clientInfoTableWidget->item(6,0)->text();
 
-    QString modifyData = "PMO<CR>" + pid + "<CR>" + name + "|" + sex + "|" + birthdate + "|" + tel + "|" + address + "|" + memo;
-
-
-//    if(fd_flag)
-//    {
-        //이거는 mainwindow쪽에 보내면 될 듯
-//        QString textData = QString("Modify_PatientInfo Button click: %1\n").arg(pid);
-//        QString sendData = QString("Socket data: patient ID(%1) info changed").arg(pid);
-
-//        ui->textBrowser->insertPlainText(textData);
-//        send_flag = writeData(sendData.toStdString().c_str());
-
-//        if(!send_flag)
-//            ui->textBrowser->insertPlainText("Socket send fail\n");
-//        else
-
-//    }
-
-    //emit modifyPInfo(pid, textData, sendData); //수정된 정보들 보내줘야 함
-}
 
 void PatientInfoManager::on_searchPushButton_clicked()
 {
@@ -64,7 +35,7 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
 
     pid = id;
     name = data.split("|")[0];
-qDebug() << "name in searchDataSended: " << name;
+    qDebug() << "name in searchDataSended: " << name;
     sex = data.split("|")[1];
     birthdate = data.split("|")[2];
     tel = data.split("|")[3];
@@ -72,11 +43,11 @@ qDebug() << "name in searchDataSended: " << name;
     memo = data.split("|")[5];
 
 
-//    QTableWidgetItem *item = new QTableWidgetItem;
-//    item->setText(pid);
+    //    QTableWidgetItem *item = new QTableWidgetItem;
+    //    item->setText(pid);
     ui->clientInfoTableWidget->setItem(0, 0, new QTableWidgetItem(pid)/*item*/);
     ui->clientInfoTableWidget->setItem(1, 0, new QTableWidgetItem(name));
-//    qDebug() << "name in searchDataSended(in table):" << ui->clientInfoTableWidget->itemAt(1)->currentItem()->row()->text();
+    //    qDebug() << "name in searchDataSended(in table):" << ui->clientInfoTableWidget->itemAt(1)->currentItem()->row()->text();
     qDebug() << "name in searchDataSended(in table):"<< ui->clientInfoTableWidget->item(1, 0)->text();
     ui->clientInfoTableWidget->setItem(2, 0, new QTableWidgetItem(sex));
     ui->clientInfoTableWidget->setItem(3, 0, new QTableWidgetItem(birthdate));
@@ -118,5 +89,41 @@ void PatientInfoManager::on_WaitPushButton_clicked()
     qDebug() << "서버로 보낼 대기환자 데이터: " <<sendData;
     //emit sendWaitToServer(sendData);
     emit sendWaitInfo(sendData);
+}
+
+
+void PatientInfoManager::on_modifyPushButton_clicked()
+{
+    //네트워크쪽으로 정보 넘겨주도록 signal emit하고 mainwindow에서 연결하고 서버에 넘겨서 update문으로 db 테이블 수정
+    qDebug()<< "modify Button clicked";
+    pid = ui->clientInfoTableWidget->item(0, 0)->text();
+    name = ui->clientInfoTableWidget->item(1, 0)->text();
+    sex = ui->clientInfoTableWidget->item(2,0)->text();
+    birthdate = ui->clientInfoTableWidget->item(3,0)->text();
+    tel = ui->clientInfoTableWidget->item(4,0)->text();
+    address = ui->clientInfoTableWidget->item(5,0)->text();
+    memo = ui->clientInfoTableWidget->item(6,0)->text();
+
+    QString modifyData = "PMO<CR>" + pid + "<CR>" + name + "|" + sex + "|" + birthdate + "|" + tel + "|" + address + "|" + memo;
+    qDebug()<< "modifyData: " << modifyData;
+    emit sendModifyData(modifyData);
+
+    //    if(fd_flag)
+    //    {
+    //이거는 mainwindow쪽에 보내면 될 듯
+    //        QString textData = QString("Modify_PatientInfo Button click: %1\n").arg(pid);
+    //        QString sendData = QString("Socket data: patient ID(%1) info changed").arg(pid);
+
+    //        ui->textBrowser->insertPlainText(textData);
+    //        send_flag = writeData(sendData.toStdString().c_str());
+
+    //        if(!send_flag)
+    //            ui->textBrowser->insertPlainText("Socket send fail\n");
+    //        else
+
+    //    }
+
+    //emit modifyPInfo(pid, textData, sendData); //수정된 정보들 보내줘야 함
+
 }
 
