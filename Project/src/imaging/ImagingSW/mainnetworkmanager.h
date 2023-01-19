@@ -20,6 +20,8 @@ private slots:
     void receivePacket();
 
     void requestPatientInfo(QString pid);       // 환자매니저에서 환자준비버튼 눌렀을 때, 서버로 패킷전송
+    void endImagingProcess(QString pid);        // 이미징매니저에서 환자 촬영이 끝난 경우, 서버로 패킷전송
+
 
     void goOnSend(qint64 numBytes);
     void sendFile();

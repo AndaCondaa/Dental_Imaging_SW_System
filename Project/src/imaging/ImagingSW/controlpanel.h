@@ -20,6 +20,7 @@ private slots:
     void controlButtonClicked(QAbstractButton*);
     void receiveButtonControl(int);
     void checkTypeButton(QString);
+    void startButtonClicked();
 
 private:
     Ui::ControlPanel *ui;
@@ -28,6 +29,7 @@ private:
 
 signals:
     void buttonSignal(int, QString);
+    void startType(QString);
 };
 
 #endif // CONTROLPANEL_H

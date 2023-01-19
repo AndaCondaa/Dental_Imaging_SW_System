@@ -16,13 +16,23 @@ public:
     ~ImagingManager();
 
 private slots:
+    void setPID(QString);
+    void setType(QString);
+
     void on_reconCancelButton_clicked();
     void raw16ToBmp8();
     void simpleStiching();
-//    void reconImage();
+    void reconImage();
+    void saveButtonSlot();
 
 private:
     Ui::ImagingManager *ui;
+
+    QString m_pid = "NULL";
+    QString m_type = "NULL";
+
+signals:
+    void saveSignal(QString);
 };
 
 #endif // IMAGINGMANAGER_H

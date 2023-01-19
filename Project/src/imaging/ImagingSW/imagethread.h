@@ -8,13 +8,14 @@ class ImageThread : public QThread
     Q_OBJECT
 
 public:
-    explicit ImageThread(int width, int height, QObject *parent = nullptr);
+    explicit ImageThread(int width, int height, QString modeType, QObject *parent = nullptr);
 
 private:
     void run();
 
     int width;
     int height;
+    QString modeType;
 
 signals:
     void imageProgressed(int);
