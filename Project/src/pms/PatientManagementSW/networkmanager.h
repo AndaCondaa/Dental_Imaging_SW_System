@@ -35,9 +35,15 @@ private:
     QTcpServer *server;
     QHash<QTcpSocket*, qint32*> sizes; //We need to store the size to verify if a block has received completely
 
+
+
 signals:
     void sendNewPID(QString);
     void sendSearchResult(QString, QString);
+    void sendSRQRequest(QString);
+    void sendVTSRequest(QString);
+    void sendISVevent(QString);
+
 };
 
 #endif // NETWORKMANAGER_H
