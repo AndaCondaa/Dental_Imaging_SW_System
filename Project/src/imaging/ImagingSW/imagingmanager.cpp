@@ -72,11 +72,6 @@ void ImagingManager::on_reconCancelButton_clicked()
     simpleStiching();
 }
 
-#define X_RES 3000
-#define Y_RES 2400
-#define PIXELS 3000 * 2400
-#define Bpp 2
-
 void ImagingManager::raw16ToBmp8()
 {
     /*
@@ -154,9 +149,18 @@ void ImagingManager::raw16ToBmp8()
 
 void ImagingManager::simpleStiching()
 {
-    ui->progressBar->setRange(0, 1500);
-    ImageThread *thread = new ImageThread(ui->frameLabel->width(), ui->frameLabel->height(), "PANO", this);
-//    ImageThread *thread = new ImageThread(ui->frameLabel->width(), ui->frameLabel->height(), "CEPH", this);
+    m_type = "CEPH";
+
+
+    if (m_type == "CEPH") {
+        ui->progressBar->setRange(0, 900);
+    } else if (m_type == "PANO") {
+        ui->progressBar->setRange(0, 1600);
+    } else {
+        return;
+    }
+
+    ImageThread *thread = new ImageThread(ui->frameLabel->width(), ui->frameLabel->height(), m_type, this);
     connect(thread, SIGNAL(imageProgressed(int)), ui->progressBar, SLOT(setValue(int)));
     connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->frameLabel, SLOT(setPixmap(const QPixmap&)));
     thread->start();
@@ -209,9 +213,6 @@ void ImagingManager::reconImage()
     */
 
 
-
-
-
     FILE *file;
     file = fopen("./image/origin/PANO/0555.raw", "rb");
 
@@ -250,11 +251,9 @@ void ImagingManager::reconImage()
     fwrite(buf, sizeof(unsigned short), 1152 * 64, file);
     fclose(file);
 
-
     file = fopen("./result.raw", "rb");
     fread(data, sizeof(unsigned char), 1152 * 64 * 2, file);
     fclose(file);
-
 
     QImage frameImage(data, 1152, 64, QImage::Format_Grayscale16);
     ui->reconLabel->setPixmap(QPixmap::fromImage(frameImage).scaledToWidth(ui->reconLabel->width()));
