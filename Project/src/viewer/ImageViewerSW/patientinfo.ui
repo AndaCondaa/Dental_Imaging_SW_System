@@ -33,27 +33,13 @@
        <property name="text">
         <string>담당 의사</string>
        </property>
+       <property name="buddy">
+        <cstring>lineEdit</cstring>
+       </property>
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="comboBox_2">
-       <property name="font">
-        <font>
-         <pointsize>10</pointsize>
-         <bold>false</bold>
-        </font>
-       </property>
-       <item>
-        <property name="text">
-         <string>이정연</string>
-        </property>
-       </item>
-       <item>
-        <property name="text">
-         <string>New Item</string>
-        </property>
-       </item>
-      </widget>
+      <widget class="QLineEdit" name="lineEdit"/>
      </item>
      <item>
       <spacer name="verticalSpacer">
@@ -87,7 +73,7 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QTableWidget" name="tableWidget_2">
+    <widget class="QTreeWidget" name="WaitingList">
      <column>
       <property name="text">
        <string>환자 ID</string>
@@ -121,7 +107,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="Treatmentstart">
        <property name="font">
         <font>
          <pointsize>11</pointsize>
@@ -213,7 +199,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
-        <widget class="QCheckBox" name="checkBox_2">
+        <widget class="QCheckBox" name="Ceph">
          <property name="font">
           <font>
            <pointsize>11</pointsize>
@@ -229,7 +215,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="checkBox">
+        <widget class="QCheckBox" name="Pano">
          <property name="font">
           <font>
            <pointsize>11</pointsize>
@@ -260,7 +246,7 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="Camerastart">
        <property name="font">
         <font>
          <pointsize>11</pointsize>

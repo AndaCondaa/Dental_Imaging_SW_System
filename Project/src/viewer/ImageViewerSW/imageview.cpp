@@ -4,30 +4,26 @@
 #include <QTimeLine>
 #include <QPinchGesture>
 #include <QGraphicsItem>
-#include <QMatrix4x4>
-
 #include "imageview.h"
-#include "movableitem.h"
+#include "imagescene.h"
+
 
 ImageView::ImageView(QWidget *parent)
     : QGraphicsView(parent)
 {
-    graphicsScene = new QGraphicsScene(this);
-    setScene(graphicsScene);
+    graphicsScene = new ImageScene(this);
 
     _pan = false;
     _currentStepScaleFactor = 1;
-
-    resetTransform();
-    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
     //펜의 색상, 두께의 초깃값 설정
     m_penColor = Qt::black;
     m_penThickness = 10;
 
-//    F = new MovableItem;
-
+    setScene(graphicsScene);
+    resetTransform();
+    setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 }
 
 void ImageView::ReceiveType(int type)
@@ -53,68 +49,101 @@ void ImageView::mousePressEvent(QMouseEvent *event)
     qDebug("mousePressEvent");
 //    A = mapToScene(event->pos());
 
-
-
-
-
-    switch (count) {
-    case 0:
-        A = mapToScene(event->pos());
-        first = graphicsScene->addEllipse(A.x()-5, A.y()-5, 10, 10,
-                                          QPen(Qt::NoPen),                                          QBrush(m_penColor));
+    switch (m_drawType) {
+    case DrawType::Lines:
+        //일반 선 그리기
+        if (event->button() == Qt::LeftButton) {
+            startPos = mapToScene(event->pos());
+            setCursor(Qt::ClosedHandCursor);
+            _pan = true;
+            event->accept();
+            return;
+        }
         break;
 
-    case 1: {
-        B = mapToScene(event->pos());
-        second = graphicsScene->addEllipse(B.x()-5, B.y()-5, 10, 10,
-                                           QPen(Qt::NoPen),
-                                           QBrush(m_penColor));
-
-        /* Draw AB line */
-        QPainterPath path(A);
-        path.quadTo(A, B);
-        graphicsScene->addPath(path, QColorConstants::Svg::red);
-    }
+    case DrawType::FreeHand:
+        //닫힌 선 그리기
+        if (event->button() == Qt::LeftButton) {
+                A = mapToScene(event->pos());
+            startPos = mapToScene(event->pos());
+            setCursor(Qt::ClosedHandCursor);
+            _pan = true;
+            event->accept();
+            return;
+        }
         break;
-    case 2: {
-        C = mapToScene(event->pos());
-        third = graphicsScene->addEllipse(C.x()-5, C.y()-5, 10, 10,
-                                          QPen(Qt::NoPen),
-                                          QBrush(m_penColor));
 
-        /* Draw BC line */
-        QPainterPath path(B);
-        path.quadTo(B, C);
-        graphicsScene->addPath(path,  QColorConstants::Svg::red);
+    case DrawType::Triangle:
 
-        /* Draw ABBC cubic Bezier curve */
-        QPainterPath path2(C);
-        path2.quadTo(C, A);
+        qDebug() << "첫번째 점";
+        switch (count) {
+        case 0:
+            A = mapToScene(event->pos());
+            first = graphicsScene->addEllipse(A.x()-5, A.y()-5, 10, 10,
+                                              QPen(Qt::NoPen),
+                                              QBrush(m_penColor));
+            break;
 
-        graphicsScene->addPath(path2,  QColorConstants::Svg::red);
-    }
+        case 1: {
+            B = mapToScene(event->pos());
+            second = graphicsScene->addEllipse(B.x()-5, B.y()-5, 10, 10,
+                                               QPen(Qt::NoPen),
+                                               QBrush(m_penColor));
+
+            /* Draw AB line */
+            QPainterPath path(A);
+            path.quadTo(A, B);
+            graphicsScene->addPath(path, QColorConstants::Svg::red);
+        }
+            break;
+        case 2: {
+            C = mapToScene(event->pos());
+            third = graphicsScene->addEllipse(C.x()-5, C.y()-5, 10, 10,
+                                              QPen(Qt::NoPen),
+                                              QBrush(m_penColor));
+            /* Draw BC line */
+            QPainterPath path(B);
+            path.quadTo(B, C);
+            graphicsScene->addPath(path,  QColorConstants::Svg::red);
+
+            /* Draw ABBC cubic Bezier curve */
+            QPainterPath path2(C);
+            path2.quadTo(C, A);
+
+            graphicsScene->addPath(path2,  QColorConstants::Svg::red);
+        }
+            break;
+        default:
+            break;
+        }
+        if (count >= 2) {
+            count = 0;
+        } else {
+            count++;
+        }
         break;
+
     default:
         break;
     }
-    if (count >= 2) {
-        count = 0;
-    } else {
-        count++;
-    }
 
 
-    if (event->button() == Qt::LeftButton) {
-        startPos = mapToScene(event->pos());
-        //        graphicsScene->addRect(startPos.x(), startPos.y(),
-        //                               50, 50,
-        //                               QPen(Qt::NoPen),
-        //                               QBrush(m_penColor));
-        setCursor(Qt::ClosedHandCursor);
-        _pan = true;
-        event->accept();
-        return;
-    }
+
+
+
+
+
+//    if (event->button() == Qt::LeftButton) {
+//        startPos = mapToScene(event->pos());
+//        //        graphicsScene->addRect(startPos.x(), startPos.y(),
+//        //                               50, 50,
+//        //                               QPen(Qt::NoPen),
+//        //                               QBrush(m_penColor));
+//        setCursor(Qt::ClosedHandCursor);
+//        _pan = true;
+//        event->accept();
+//        return;
+//    }
 
     event->ignore();
 }
@@ -145,6 +174,9 @@ void ImageView::mouseReleaseEvent(QMouseEvent *event)
         }
         break;
 
+    case DrawType::Triangle:
+        break;
+
     default:
         break;
     }
@@ -163,13 +195,42 @@ void ImageView::mouseMoveEvent(QMouseEvent *event)
     this->setDragMode(QGraphicsView::NoDrag);
     QPointF newPos = mapToScene(event->pos());
 
-    if(_pan){
-//        graphicsScene->addLine(startPos.x(), startPos.y(),
-//                               newPos.x(), newPos.y(),
-//                               QPen(m_penColor, m_penThickness, Qt::SolidLine, Qt::RoundCap));
-//        first->setPos(mapToScene(event->pos().x(), event->pos().y()));
-        event->accept();
+    switch (m_drawType) {
+    case DrawType::Lines:
+        //일반 선 그리기
+        if(_pan){
+            graphicsScene->addLine(startPos.x(), startPos.y(),
+                                   newPos.x(), newPos.y(),
+                                   QPen(m_penColor, m_penThickness, Qt::SolidLine, Qt::RoundCap));
+            event->accept();
+        }
+        break;
+
+    case DrawType::FreeHand:
+        //닫힌 선 그리기
+        if(_pan){
+            graphicsScene->addLine(startPos.x(), startPos.y(),
+                                   newPos.x(), newPos.y(),
+                                   QPen(m_penColor, m_penThickness, Qt::SolidLine, Qt::RoundCap));
+            event->accept();
+        }
+        break;
+
+    case DrawType::Triangle:
+        break;
+
+
+    default:
+        break;
     }
+
+//    if(_pan){
+////        graphicsScene->addLine(startPos.x(), startPos.y(),
+////                               newPos.x(), newPos.y(),
+////                               QPen(m_penColor, m_penThickness, Qt::SolidLine, Qt::RoundCap));
+////        first->setPos(mapToScene(event->pos().x(), event->pos().y()));
+//        event->accept();
+//    }
 
     event->ignore();
     startPos = newPos;

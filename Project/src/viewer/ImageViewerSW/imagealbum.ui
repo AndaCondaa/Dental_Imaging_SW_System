@@ -152,7 +152,7 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="0">
+       <item row="9" column="0">
         <widget class="QLabel" name="label">
          <property name="text">
           <string>밝기</string>
@@ -162,7 +162,7 @@
          </property>
         </widget>
        </item>
-       <item row="8" column="1">
+       <item row="9" column="1">
         <widget class="QSlider" name="horizontalSlider">
          <property name="minimum">
           <number>-60</number>
@@ -178,7 +178,7 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="0">
+       <item row="10" column="0">
         <widget class="QLabel" name="label_2">
          <property name="text">
           <string>대비</string>
@@ -188,7 +188,7 @@
          </property>
         </widget>
        </item>
-       <item row="9" column="1">
+       <item row="10" column="1">
         <widget class="QDoubleSpinBox" name="Contrast">
          <property name="maximum">
           <double>5.000000000000000</double>
@@ -201,7 +201,7 @@
          </property>
         </widget>
        </item>
-       <item row="10" column="0">
+       <item row="11" column="0">
         <widget class="QLabel" name="label_3">
          <property name="text">
           <string>펜 두께</string>
@@ -211,10 +211,24 @@
          </property>
         </widget>
        </item>
-       <item row="10" column="1">
+       <item row="11" column="1">
         <widget class="QSpinBox" name="Thickness">
          <property name="value">
           <number>10</number>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QToolButton" name="TextBox">
+         <property name="text">
+          <string>텍스트</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0">
+        <widget class="QToolButton" name="Triangle">
+         <property name="text">
+          <string>삼각형</string>
          </property>
         </widget>
        </item>
@@ -268,7 +282,7 @@
    <item row="1" column="1">
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="Prescription">
        <property name="text">
         <string>처방전
 작성</string>

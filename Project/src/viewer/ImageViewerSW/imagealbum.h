@@ -17,6 +17,8 @@ class QGraphicsScene;
 class QListWidget;
 class QListWidgetItem;
 class QGroupBox;
+class ImageScene;
+class Prescription;
 
 
 namespace Ui {
@@ -37,12 +39,19 @@ private:
     QListWidget* listWidget;
     QGroupBox* groupBox;
     ImageView* imageView;
-    QListWidgetItem* origImage;
-
+    QListWidgetItem* orignal;
+    QImage* origImage;
     QImage* selectImage;
     QImage* origBrightness;
     QColor paintColor;
     int penThickness;
+
+    Prescription* m_prescription;
+    QString DoctorID;
+    QString DoctorName;
+    QString PatientID;
+    QString PatientName;
+
 
 public slots:
     void reloadImages();
@@ -65,12 +74,20 @@ public slots:
     void Thickness(int);
     void Lines();
     void Freehand();
+    void Triangle();
+
+    void receiveDoctorInfo(QString, QString);
+    void receivePatientInfo(QString, QString);
 
 
 signals:
     void SendBrushColor(QColor);
     void SendThickness(int);
     void SendType(int);
+    void sendPrescription(QString, QString, QString, QString);
+
+private slots:
+    void on_Prescription_clicked();
 };
 
 #endif // IMAGEALBUM_H

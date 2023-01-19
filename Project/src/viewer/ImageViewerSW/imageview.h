@@ -11,12 +11,8 @@ class QPinchGesture;
 class QGestureEvent;
 class ImageAlbum;
 class MovableItem;
+class ImageScene;
 
-
-enum DrawType {
-    Lines,
-    FreeHand
-};
 
 class ImageView : public QGraphicsView
 {
@@ -30,7 +26,7 @@ public:
     void mouseReleaseEvent(QMouseEvent *event) Q_DECL_OVERRIDE;
     void wheelEvent(QWheelEvent *event) Q_DECL_OVERRIDE;
     bool event(QEvent *event) Q_DECL_OVERRIDE;
-    QGraphicsScene* graphicsScene;  
+    ImageScene* graphicsScene;
 
 private:
     void pinchTriggered(QPinchGesture *gesture);
