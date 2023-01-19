@@ -2,13 +2,11 @@
 #include "ui_imagingmanager.h"
 #include "imagethread.h"
 
-#include <QFileDialog>
-#include <QLabel>
 #include <QProgressDialog>
 
 #include <opencv2/opencv.hpp>
-#include <iostream>
-#include <cstdio>
+#include <stdio.h>
+
 
 using namespace cv;
 using namespace std;
@@ -48,6 +46,9 @@ ImagingManager::ImagingManager(QWidget *parent) :
     ui(new Ui::ImagingManager)
 {
     ui->setupUi(this);
+
+    connect(ui->reconButton, SIGNAL(clicked()), this, SLOT(reconImage()));
+    connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveButtonSlot()));
 }
 
 ImagingManager::~ImagingManager()
@@ -55,9 +56,19 @@ ImagingManager::~ImagingManager()
     delete ui;
 }
 
+
+void ImagingManager::setPID(QString pid)
+{
+    m_pid = pid;
+}
+
+void ImagingManager::setType(QString type)
+{
+    m_type = type;
+}
+
 void ImagingManager::on_reconCancelButton_clicked()
 {
-//    raw16ToBmp8();
     simpleStiching();
 }
 
@@ -68,6 +79,7 @@ void ImagingManager::on_reconCancelButton_clicked()
 
 void ImagingManager::raw16ToBmp8()
 {
+    /*
     FILE *file;
     BITMAPFILEHEADER bmpHeader;
     BITMAPINFOHEADER bmpInfoHeader;
@@ -137,13 +149,123 @@ void ImagingManager::raw16ToBmp8()
     delete inImg;
     delete outImg;
     delete pal;
+    */
 }
 
 void ImagingManager::simpleStiching()
 {
-    ui->progressBar->setRange(0, 900);
-    ImageThread *thread = new ImageThread(ui->frameLabel->width(), ui->frameLabel->height(), this);
+    ui->progressBar->setRange(0, 1500);
+    ImageThread *thread = new ImageThread(ui->frameLabel->width(), ui->frameLabel->height(), "PANO", this);
+//    ImageThread *thread = new ImageThread(ui->frameLabel->width(), ui->frameLabel->height(), "CEPH", this);
     connect(thread, SIGNAL(imageProgressed(int)), ui->progressBar, SLOT(setValue(int)));
-    connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->reconLabel, SLOT(setPixmap(const QPixmap&)));
+    connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->frameLabel, SLOT(setPixmap(const QPixmap&)));
     thread->start();
+}
+
+void ImagingManager::reconImage()
+{
+    // 스티칭
+    /*
+    vector<Mat> imgs;
+    int cnt = 0;
+    for(int i = 100; i < 1000; i++)
+    {
+        QString fileName = QString("./CEPH/0%1.raw").arg(i);
+//        QString fileName = QString("./image/0350.raw");
+        QFile file(fileName);
+        file.open(QIODevice::ReadOnly);
+        QByteArray array = file.readAll();
+        file.close();
+
+        uchar* data = (uchar*)array.data();
+
+        Mat mat(2400, 48, CV_16UC1, data);
+//        Mat rotateMat(1152, 64, CV_16UC1);
+//        rotate(mat, rotateMat, cv::ROTATE_90_CLOCKWISE);
+        Mat beforeMat(2400, 48, CV_8UC1);
+        mat.convertTo(beforeMat, CV_8UC1);
+        Mat his(2400, 48, CV_8UC1);
+        equalizeHist(beforeMat, his);
+
+        imgs.push_back(his);
+        cnt++;
+        qDebug("%d", cnt);
+    }
+
+    Ptr<Stitcher> stitcher = Stitcher::create();
+
+    Mat dst(2400, 3000, CV_8UC1);
+    qDebug("%d", __LINE__);
+    Stitcher::Status status = stitcher->stitch(imgs, dst);
+    qDebug("%d", __LINE__);
+    if (status != Stitcher::Status::OK) {
+        qDebug() << "Error on stitching!";
+        return;
+    }
+    imshow("dst", dst);
+    waitKey();
+//    QImage frameImage(dst.data, dst.cols, dst.rows, dst.step ,QImage::Format_Grayscale8);
+//    ui->reconLabel->setPixmap(QPixmap::fromImage(frameImage).scaledToWidth(ui->reconLabel->width()));
+    */
+
+
+
+
+
+    FILE *file;
+    file = fopen("./image/origin/PANO/0555.raw", "rb");
+
+    if (file == nullptr) {
+        qDebug() << "open is failed";
+        return;
+    }
+
+    unsigned short *buf;
+    unsigned char *data;
+    buf = (unsigned short*)malloc(sizeof(unsigned short) * 1152 * 64);
+    data = (unsigned char*)malloc(sizeof(unsigned char) * 1152 * 64 * 2);
+
+    fread(buf, sizeof(unsigned short), 1152 * 64, file);
+    fclose(file);
+
+    int temp = 0;
+    int min = 65535;
+    int max = 0;
+    int range;
+
+    for (int i = 0; i < 1152 * 64; i++) {
+        temp = buf[i];
+        if (min > temp)
+            min = temp;
+        else if (max < temp)
+            max = temp;
+    }
+
+    range = max - min;
+    for (int i = 0; i < 1152 * 64; i++) {
+        buf[i] = ~(unsigned short)(((double)(buf[i] - min) / (double)(range)) * 65535);
+    }
+
+    file = fopen("./result.raw", "wb");
+    fwrite(buf, sizeof(unsigned short), 1152 * 64, file);
+    fclose(file);
+
+
+    file = fopen("./result.raw", "rb");
+    fread(data, sizeof(unsigned char), 1152 * 64 * 2, file);
+    fclose(file);
+
+
+    QImage frameImage(data, 1152, 64, QImage::Format_Grayscale16);
+    ui->reconLabel->setPixmap(QPixmap::fromImage(frameImage).scaledToWidth(ui->reconLabel->width()));
+}
+
+
+
+
+
+
+void ImagingManager::saveButtonSlot()
+{
+    emit saveSignal(m_pid);
 }

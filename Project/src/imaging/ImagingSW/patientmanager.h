@@ -31,6 +31,7 @@ private:
 signals:
     void sendPid(QString);
     void sendType(QString);
+    void sendPidToImagingManager(QString);
 
 };
 
