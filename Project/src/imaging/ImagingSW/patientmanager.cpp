@@ -1,6 +1,7 @@
 #include "patientmanager.h"
 #include "ui_patientmanager.h"
 
+#include <QMessageBox>
 
 PatientManager::PatientManager(QWidget *parent) :
     QWidget(parent),
@@ -50,6 +51,14 @@ void PatientManager::receiveWaitPatient(QStringList dataList)
 
 void PatientManager::deletePatient()
 {
+    QMessageBox deleteBox(QMessageBox::Warning, "DELETE",
+                          QString("%1 환자를 대기목록에서 삭제하시겠습니까?").arg(ui->waitTreeWidget->currentItem()->text(2)),
+                          QMessageBox::Yes | QMessageBox::No, this, Qt::Dialog);
+    deleteBox.exec();
+
+    if (deleteBox.clickedButton()->text() == "&No") return;
+
+
     if (ui->waitTreeWidget->currentItem()->text(1) == ui->infoTableWidget->item(0,0)->text()) {
         delete ui->infoTableWidget->takeItem(0,0);
         delete ui->infoTableWidget->takeItem(0,1);

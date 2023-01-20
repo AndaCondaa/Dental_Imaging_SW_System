@@ -53,3 +53,6 @@ INCLUDEPATH += $$PWD/../../../../../../../../opencv/build/x64/vc15
 DEPENDPATH += $$PWD/../../../../../../../../opencv/build/x64/vc15
 
 INCLUDEPATH += $$PWD/../../../../../../../../opencv/build/include
+
+RESOURCES += \
+    resource.qrc
