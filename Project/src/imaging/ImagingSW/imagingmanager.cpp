@@ -56,7 +56,6 @@ ImagingManager::~ImagingManager()
     delete ui;
 }
 
-
 void ImagingManager::setPID(QString pid)
 {
     m_pid = pid;
@@ -65,11 +64,7 @@ void ImagingManager::setPID(QString pid)
 void ImagingManager::setType(QString type)
 {
     m_type = type;
-}
-
-void ImagingManager::on_reconCancelButton_clicked()
-{
-    simpleStiching();
+    qDebug() << m_type;
 }
 
 void ImagingManager::raw16ToBmp8()
@@ -147,10 +142,9 @@ void ImagingManager::raw16ToBmp8()
     */
 }
 
-void ImagingManager::simpleStiching()
+void ImagingManager::loadImage()
 {
-    m_type = "CEPH";
-
+    m_type = "PANO";
 
     if (m_type == "CEPH") {
         ui->progressBar->setRange(0, 900);
@@ -258,11 +252,6 @@ void ImagingManager::reconImage()
     QImage frameImage(data, 1152, 64, QImage::Format_Grayscale16);
     ui->reconLabel->setPixmap(QPixmap::fromImage(frameImage).scaledToWidth(ui->reconLabel->width()));
 }
-
-
-
-
-
 
 void ImagingManager::saveButtonSlot()
 {

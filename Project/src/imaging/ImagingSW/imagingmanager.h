@@ -19,9 +19,8 @@ private slots:
     void setPID(QString);
     void setType(QString);
 
-    void on_reconCancelButton_clicked();
     void raw16ToBmp8();
-    void simpleStiching();
+    void loadImage();
     void reconImage();
     void saveButtonSlot();
 

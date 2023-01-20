@@ -21,6 +21,7 @@ ControlPanel::ControlPanel(QWidget *parent) :
     buttonGroup->addButton(ui->stopButton, STOP);
 
     connect(buttonGroup, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(controlButtonClicked(QAbstractButton*)));
+    connect(ui->readyButton, SIGNAL(clicked()), this, SLOT(readyButtonClicked()));
     connect(ui->startButton, SIGNAL(clicked()), this, SLOT(startButtonClicked()));
 }
 
@@ -74,7 +75,12 @@ void ControlPanel::checkTypeButton(QString type)
     }
 }
 
+void ControlPanel::readyButtonClicked()
+{
+    emit readyType("CEPH");     // 촬영 시작 시, 이미지클래스에게 타입 전송, 타입에 맞는 전송사진 출력을 하기 위함
+}
+
 void ControlPanel::startButtonClicked()
 {
-    emit startType("CEPH");     // 촬영 시작 시, 이미지클래스에게 타입 전송, 타입에 맞는 전송사진 출력을 하기 위함
+    emit startSignal();
 }
