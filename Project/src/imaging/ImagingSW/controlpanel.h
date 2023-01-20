@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include <QButtonGroup>
+#include <QImage>
 
 namespace Ui {
 class ControlPanel;
@@ -17,20 +18,25 @@ public:
     ~ControlPanel();
 
 private slots:
+    void checkTypeButton(QString);
     void controlButtonClicked(QAbstractButton*);
     void receiveButtonControl(int);
-    void checkTypeButton(QString);
+    void resetButtonClicked();
     void readyButtonClicked();
-    void startButtonClicked();
-
+    bool startButtonClicked();
+    void stopButtonClicked();
 private:
     Ui::ControlPanel *ui;
 
-    QButtonGroup *buttonGroup;
+    QString currentType = "NULL";
+    QButtonGroup *controlButtonGroup;
+
+    QImage panoAct;
+
 
 signals:
     void buttonSignal(int, QString);
-    void readyType(QString);
+    void readySignal(QString);
     void startSignal();
 };
 

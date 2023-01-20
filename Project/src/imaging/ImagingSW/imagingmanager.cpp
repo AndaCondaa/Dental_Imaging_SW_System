@@ -61,12 +61,6 @@ void ImagingManager::setPID(QString pid)
     m_pid = pid;
 }
 
-void ImagingManager::setType(QString type)
-{
-    m_type = type;
-    qDebug() << m_type;
-}
-
 void ImagingManager::raw16ToBmp8()
 {
     /*
@@ -141,22 +135,25 @@ void ImagingManager::raw16ToBmp8()
     delete pal;
     */
 }
+void ImagingManager::setType(QString type)
+{
+    m_type = type;
+}
 
 void ImagingManager::loadImage()
 {
     m_type = "PANO";
-
     if (m_type == "CEPH") {
-        ui->progressBar->setRange(0, 900);
+        ui->progressBar->setRange(0, 866);
     } else if (m_type == "PANO") {
         ui->progressBar->setRange(0, 1600);
     } else {
-        return;
+//        return;
     }
 
-    ImageThread *thread = new ImageThread(ui->frameLabel->width(), ui->frameLabel->height(), m_type, this);
+    ImageThread *thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), m_type, this);
     connect(thread, SIGNAL(imageProgressed(int)), ui->progressBar, SLOT(setValue(int)));
-    connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->frameLabel, SLOT(setPixmap(const QPixmap&)));
+    connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
     thread->start();
 }
 
@@ -250,7 +247,7 @@ void ImagingManager::reconImage()
     fclose(file);
 
     QImage frameImage(data, 1152, 64, QImage::Format_Grayscale16);
-    ui->reconLabel->setPixmap(QPixmap::fromImage(frameImage).scaledToWidth(ui->reconLabel->width()));
+    ui->viewLabel->setPixmap(QPixmap::fromImage(frameImage).scaledToWidth(ui->viewLabel->width()));
 }
 
 void ImagingManager::saveButtonSlot()

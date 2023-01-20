@@ -63,6 +63,7 @@ void ImageThread::run()
                 fileName = QString("./image/origin/CEPH/0%1.raw").arg(k);
             else
                 fileName = QString("./image/origin/CEPH/00%1.raw").arg(k);
+
             qDebug() << fileName;
             file = fopen(fileName.toStdString().c_str(), "rb");
             memset(buf, 0, pixels);
@@ -86,7 +87,7 @@ void ImageThread::run()
 
             range = max - min;
             for (int i = 0; i < pixels; i++) {
-                buf[i] = ~(unsigned short)(((double)(buf[i] - min) / (double)(range)) * valueMax);
+                buf[i] = (unsigned short)(((double)(buf[i] - min) / (double)(range)) * valueMax);
             }
 
 //            int hist[sizeof(unsigned short)];
@@ -112,8 +113,8 @@ void ImageThread::run()
             flip(mat, dst, 0);
 
             QImage frameImage(dst.data, dst.cols, dst.rows, QImage::Format_Grayscale16);
-            painter.drawImage((width/4) + cnt*(0.25), 0, frameImage.scaledToHeight(height));
-            qDebug("%d", __LINE__);
+            painter.drawImage((width/5) + cnt*((double)(width*3/5)/900), 0, frameImage.scaledToHeight(height));
+
             emit imageProgressed(cnt);
             emit processFinished(pixmap);
             cnt++;
@@ -131,6 +132,7 @@ void ImageThread::run()
                 fileName = QString("./image/origin/PANO/%1.raw").arg(k);
             }
 
+            qDebug() << fileName;
             file = fopen(fileName.toStdString().c_str(), "rb");
             memset(buf, 0, pixels);
             fread(buf, sizeof(unsigned short), pixels, file);
@@ -161,7 +163,7 @@ void ImageThread::run()
             rotate(mat, rotateMat, cv::ROTATE_90_CLOCKWISE);
 
             QImage frameImage(rotateMat.data, rotateMat.cols, rotateMat.rows , QImage::Format_Grayscale16);
-            painter.drawImage(cnt*(0.3), 0, frameImage.scaledToHeight(height));
+            painter.drawImage(cnt*((double)width/1590), height/8, frameImage.scaledToHeight(height*3/4));
             emit imageProgressed(cnt);
             emit processFinished(pixmap);
             cnt++;

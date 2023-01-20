@@ -16,10 +16,11 @@ public:
     ~ImagingManager();
 
 private slots:
+    void raw16ToBmp8();
+
     void setPID(QString);
     void setType(QString);
 
-    void raw16ToBmp8();
     void loadImage();
     void reconImage();
     void saveButtonSlot();
