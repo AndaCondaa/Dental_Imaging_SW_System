@@ -80,7 +80,7 @@ void SubServer::receiveControl()
         switch (command) {
         case RESET:
             //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", RESET, msg);
-            ui->logEdit->append((QString("%1가 장비 초기화 명령을 보냈습니다.")).arg(client, msg));
+            ui->logEdit->append((QString("%1가 장비 초기화 명령을 보냈습니다.")).arg(client));
             break;
         case READY:
             //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", READY, msg);

@@ -38,10 +38,10 @@
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 20pt; color: black; background-color: rgb(109, 109, 109);</string>
+      <string notr="true"/>
      </property>
      <property name="text">
-      <string>CEPH</string>
+      <string/>
      </property>
      <property name="checkable">
       <bool>false</bool>
@@ -172,11 +172,10 @@
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">font: 20pt; color: black; background-color: rgb(109, 109, 109);
-</string>
+      <string notr="true"/>
      </property>
      <property name="text">
-      <string>PANO</string>
+      <string/>
      </property>
      <property name="checkable">
       <bool>false</bool>

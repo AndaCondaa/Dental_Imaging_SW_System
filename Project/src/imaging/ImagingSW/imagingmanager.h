@@ -24,6 +24,9 @@ private slots:
     void loadImage();
     void reconImage();
     void saveButtonSlot();
+    void stopButtonSlot();
+
+    void isProgressMaximum(int);
 
 private:
     Ui::ImagingManager *ui;

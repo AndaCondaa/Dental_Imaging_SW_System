@@ -49,6 +49,7 @@ ImagingManager::ImagingManager(QWidget *parent) :
 
     connect(ui->reconButton, SIGNAL(clicked()), this, SLOT(reconImage()));
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveButtonSlot()));
+    connect(ui->progressBar, SIGNAL(valueChanged(int)), this, SLOT(isProgressMaximum(int)));
 }
 
 ImagingManager::~ImagingManager()
@@ -148,7 +149,7 @@ void ImagingManager::loadImage()
     } else if (m_type == "PANO") {
         ui->progressBar->setRange(0, 1600);
     } else {
-//        return;
+        return;
     }
 
     ImageThread *thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), m_type, this);
@@ -253,4 +254,22 @@ void ImagingManager::reconImage()
 void ImagingManager::saveButtonSlot()
 {
     emit saveSignal(m_pid);
+}
+
+void ImagingManager::stopButtonSlot()
+{
+    ImageThread *current = (ImageThread*)ImageThread::currentThread();
+
+    current->terminate();
+    current->quit();
+    current->wait(5000);
+    //    current->exit();
+}
+
+void ImagingManager::isProgressMaximum(int value)
+{
+    qDebug("%d , %d", value, ui->progressBar->maximum());
+    if (value == ui->progressBar->maximum()) {
+        qDebug("MAX !!! : %d", value);
+    }
 }
