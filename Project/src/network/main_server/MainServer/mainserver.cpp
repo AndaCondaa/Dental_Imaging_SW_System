@@ -235,8 +235,33 @@ void MainServer::receiveData()
         else if(event == "PSE")     //검색: PSE(search)         //DB에 없는 환자 검색했을 때 죽는 거 예외처리 해야 함
         {
             qDebug() << "savedata: " << saveData;
+
+            qDebug() << data;
+            QString reportData ="<NEL>";
+            query4->exec("select * from report WHERE patient_no = '"+data +"'");
+            QSqlRecord reportRec =query4->record();
+            qDebug()<<"Number of columns: "<<reportRec.count();
+            qDebug() << "report value: " << query4->value(3);
+
+
+            while(query4->next())
+            {
+                for(int i=0;i<reportRec.count();i++)
+                {
+                    //qDebug()<<"report i: "<<i <<"report data: "<<query4->value(i).toString();//output all names
+                    QString tmpData = query4->value(i).toString()+"|";
+                    reportData +=tmpData;
+                    qDebug()<<"reportData : "<<reportData ;
+
+                }
+                query4->nextResult();
+                reportData += "<NEL>";
+            }
+
+
+
             QString sendData ="PSE<CR>";
-            
+
             if(id == "0"){      //환자번호로 검색했을 때
                 sendData = sendData + data + "<CR>";
                 
@@ -254,22 +279,35 @@ void MainServer::receiveData()
                         qDebug() << "sendData: " << sendData;
                     }
                 }
-                
-                //            qDebug() << query->value(1).toString();
-                //            int patientNoCol = rec.indexOf("patient_no"); // index of the field "patient_no"
-                //            qDebug() << patientNoCol;
-                //            while (query->next())
-                //                qDebug() << query->value(patientNoCol).toString(); // output all names
-                
-                
-                //            query->exec("SELECT * FROM patient WHERE patient_no = '" + data + "'");
-                //            qDebug() << data;
-                
-                //            QSqlRecord rec = query->r
-                //            qDebug() << query->record();
+
+
+                QString reportData ="<NEL>";
+                query4->exec("select * from report WHERE patient_no = '"+data +"'");
+                QSqlRecord reportRec =query4->record();
+                qDebug()<<"Number of columns: "<<reportRec.count();
+                qDebug() << "report value: " << query4->value(3);
+
+
+                while(query4->next())
+                {
+                    for(int i=0;i<reportRec.count();i++)
+                    {
+                        //qDebug()<<"report i: "<<i <<"report data: "<<query4->value(i).toString();//output all names
+                        QString tmpData = query4->value(i).toString()+"|";
+                        reportData +=tmpData;
+                        qDebug()<<"reportData : "<<reportData ;
+
+                    }
+                    query4->nextResult();
+                    reportData += "<NEL>";
+                }
+
+                sendData += reportData;
+
             }
             else if(id == "1"){     //환자이름으로 검색했을 때
-                
+                QString pid;
+
                 query->exec("select * from patient WHERE patient_name = '" + data + "'");
                 QSqlRecord rec = query->record();
                 qDebug() << "Number of columns: " << rec.count();
@@ -280,9 +318,14 @@ void MainServer::receiveData()
                         if(i == 0)
                         {
                             qDebug() << "i: " << i << "data: " << query->value(i).toString();
-                            QString data = query->value(i).toString() + "<CR>";
+                            QString data = query->value(i).toString();
+                            pid = data; //pid만 저장해줌
+
+                            data += "<CR>"; //구분자 붙임
                             sendData += data;
                             qDebug() << "sendData: " << sendData;
+
+
                         }
                         else
                         {
@@ -291,30 +334,39 @@ void MainServer::receiveData()
                             sendData += data;
                             qDebug() << "sendData: " << sendData;
                         }
-                    }
-                    
-                    
-                    //                qDebug() << query->value(0).toString(); // output all names
-                    //                QString data = query->value(0).toString() + "<CR>";
-                    //                sendData += data;
-                    //                qDebug() << "sendData: " << sendData;
+                    }             
                 }
                 
-                //            while (query->next())
-                //            {
-                //                for(int i=1; i<rec.count() ; i++)
-                //                {
-                //                    qDebug() << "i: " << i << "data: " << query->value(i).toString(); // output all names
-                //                    QString data = query->value(i).toString() + "|";
-                //                    sendData += data;
-                //                    qDebug() << "sendData: " << sendData;
-                //                }
-                //            }
-                
-                //query->exec("SELECT * FROM patient WHERE patient_name = '" + data + "'");
+                qDebug()<<"pid: "<<pid;
+                QString reportData ="<NEL>";
+                query4->exec("select * from report WHERE patient_no = '"+ pid +"'");
+                QSqlRecord reportRec =query4->record();
+                qDebug()<<"Number of columns: "<<reportRec.count();
+                qDebug() << "report value: " << query4->value(3);
+
+
+                while(query4->next())
+                {
+                    for(int i=0;i<reportRec.count();i++)
+                    {
+                        //qDebug()<<"report i: "<<i <<"report data: "<<query4->value(i).toString();//output all names
+                        QString tmpData = query4->value(i).toString()+"|";
+                        reportData +=tmpData;
+                        qDebug()<<"reportData : "<<reportData ;
+
+                    }
+                    query4->nextResult();
+                    reportData += "<NEL>";
+                }
+                sendData += reportData;
+
             }
             
             // 이거 고치기 socket->write(sendData.toStdString().c_str());
+//            qDebug() << "PSE's Info Data: " << sendData;
+//            qDebug() << "PSE's Report List: " << reportData;
+
+            qDebug() << "PSE's sendData: " << sendData;
             pmsSocket->write(sendData.toStdString().c_str());
 
             //this->loadData();
@@ -360,7 +412,7 @@ void MainServer::receiveData()
             viewerSocket->write(sendWaitData.toStdString().c_str());
 
         }
-        
+
         /*촬영 SW 이벤트*/
         else if(event == "IPR")     //환자 준비: IPR(patient ready) [받는 정보: 이벤트, ID / 보낼 정보: 이벤트, ID, 이름, 생년월일, 성별]
         {
@@ -416,27 +468,54 @@ void MainServer::receiveData()
             //imagingSocket->write(sendData.toStdString().c_str());
             //QString sendReadyData = event + "<CR>" + id + "<CR>" + name + birthdate + sex ;
 
-            
+
         }
         //파일소켓으로는 자동으로 이미지가 전송되고 받아지고 할 거고 ISV는 파일이 서버로 보내졌다는 사실만을 알려주는 이벤트임
-        else if(event == "ISV")     //저장 및 전송: ISV(save) [받을 정보, 보낼 정보 동일: 환자 ID, 이름, 촬영 타입] - imaging module에서 클릭될 시에 다른 모듈에서는 진료대기로 바뀜
+        else if(event == "ISV")     //저장 및 전송: ISV(save) [받을 정보, 보낼 정보 동일: 이미지 No, 환자 ID, 이름, 촬영 타입] - imaging module에서 클릭될 시에 다른 모듈에서는 진료대기로 바뀜
         {
             qDebug() << "ISV's saveData: " << saveData;
             pmsSocket->write(saveData.toStdString().c_str());
             viewerSocket->write(saveData.toStdString().c_str());
 
         }
-        
-        
+
+
         /*영상 뷰어 SW 이벤트*/
         else if(event == "VNT")     //처방전 작성: VNT (write note)
+            //받을 정보: VNT<CR>PID<CR>환자이름|의사번호|의사이름|진료날짜|진료내용(처방내용)
+            //보낼 정보: VNT<CR>PID<CR>진료차트 번호(이거는 내가 계산)|환자이름|의사번호|의사이름|진료날짜|진료내용(처방내용)
         {
+            qDebug()<< saveData;
+            //QString rpReportNo = makeReportNo();
+            //QString rpPID = id;
+            //QString rpPName = data.split("|")[0];
+            //QString rpDID = data.split("|")[1];
+            //QString rpDName = data.split("|")[2];
+            //QString rpDate = data.split("|")[3];
+            //QString rpNote = data.split("|")[4];
+
+            query4->prepare("INSERT INTO report (report_no, patient_no, dentist_no, report_date, report_note)"
+                            "VALUES(:report_no, :patient_no, :dentist_no, :report_date, :report_note)");
+
+            query4->bindValue(":report_no", makeReportNo());    //오류있는듯 P00001 대신 R00001대야함
+            query4->bindValue(":patient_no", data.split("|")[0]);
+            query4->bindValue(":dentist_no", data.split("|")[2]);
+            query4->bindValue(":report_date", data.split("|")[3]);
+            query4->bindValue(":report_note", data.split("|")[4]);
+            query4->exec();
+
+            qDebug()<<"새로운 진료기록 정보 저장 완료";
+
+            reportModel->select();
+            pmsSocket->write(saveData.toStdString().c_str());
+
+
 
         }
         else if(event == "VTS")     //진료 시작: VTS(treatment start)
             //[받을 정보: 이벤트, pid / 보낼 정보: 이벤트, pid, 이름, 성별, 생년월일, 메모]
         {
-            
+
             QString sendData ="VTS<CR>";
             sendData = sendData + id + "<CR>";
             qDebug("%d", __LINE__);
@@ -474,9 +553,10 @@ void MainServer::receiveData()
         }
         else if(event == "VTF")     //진료 완료: VTF(treatment finish) [받을 정보: 이벤트, pid / 보낼 정보: 이벤트, pid]
         {
-            socket->write(saveData.toStdString().c_str()); //뷰어쪽에서 받은 정보 그대로 환자관리SW에 전송=>환자관리에서는 event가 VTS일 시에 환자 진료 상태 진료중으로 변경해주면 될 듯
+            saveData = saveData + "|";  //pms의 statusRequestSended함수에서 name에 해당하는 부분을 |로 나누어주기 때문에 필요한 부분
+            pmsSocket->write(saveData.toStdString().c_str()); //뷰어쪽에서 받은 정보 그대로 환자관리SW에 전송=>환자관리에서는 event가 VTS일 시에 환자 진료 상태 진료중으로 변경해주면 될 듯
         }
-        
+
         /*촬영 요청 이벤트(환자SW/뷰어SW->촬영SW)*/
         else if(event == "SRQ")     //촬영 의뢰: SRQ(shoot request)
         {
@@ -489,7 +569,7 @@ void MainServer::receiveData()
             pmsSocket->write(saveData.toStdString().c_str());
             viewerSocket->write(saveData.toStdString().c_str());
         }
-        
+
         //buffer->clear(); //버퍼 비워주기
     }
 }
@@ -577,6 +657,15 @@ void MainServer::loadData()
         reportModel->setHeaderData(3, Qt::Horizontal, tr("Report Date"));
         reportModel->setHeaderData(4, Qt::Horizontal, tr("Report Note"));
         ui->reportTableView->setModel(reportModel);
+
+        /*임시로 데이터 넣어둔 것. 나중에 지워도 무관*/
+//        query4->exec("INSERT INTO report VALUES ('R00001', 'P00001', 'D00002', '2023-01-19', '19일 처방전')");
+//        query4->exec("INSERT INTO report VALUES ('R00002', 'P00001', 'D00002', '2023-01-20', '20일 처방전')");
+//        query4->exec("INSERT INTO report VALUES ('R00003', 'P00001', 'D00003', '2023-01-21', '21일 처방전')");
+//        reportModel->select();
+
+
+
         
         query5= new QSqlQuery(db);
         query5->exec("CREATE TABLE IF NOT EXISTS image_relation(report_no VARCHAR(10), image_no VARCHAR(10), CONSTRAINT relation Primary Key(report_no, image_no));");
@@ -639,6 +728,26 @@ QString MainServer::makeId( )
     }
 }
 
+QString MainServer::makeReportNo()
+{
+    int id;
+
+    qDebug()<< "reportModel rowCount: " << reportModel->rowCount();
+
+    if(reportModel->rowCount() == 0) {
+        id = 1;
+        qDebug()<< "it will return report rowCount: 1";
+        return "R" + QString::number(id).rightJustified(5,'0');
+    } else {
+        int tempReportNo= reportModel->itemData(reportModel->index(reportModel->rowCount() - 1,0)).value(0).toString().right(5).toInt()+1; //마지막 row의 pid+1 값을 리턴
+        qDebug() << "report no is not 1, no: " << tempReportNo;
+        qDebug()<< "it will return report rowCount: " << "R" + QString::number(tempReportNo).rightJustified(5,'0');
+
+        return "R" + QString::number(tempReportNo).rightJustified(5,'0');
+    }
+}
+
+//그냥 함수 지우고 저 select문만 다시 써주면 더 나을 듯. 나중에 기능구현 다 하구 지울 것!
 void MainServer::updateRecentData()
 {
     patientModel->select();
