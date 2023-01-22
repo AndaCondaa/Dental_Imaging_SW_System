@@ -33,6 +33,16 @@
       <widget class="QTreeWidget" name="recordTreeWidget">
        <column>
         <property name="text">
+         <string>차트 번호</string>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>11</pointsize>
+         </font>
+        </property>
+       </column>
+       <column>
+        <property name="text">
          <string>진료 날짜</string>
         </property>
         <property name="font">

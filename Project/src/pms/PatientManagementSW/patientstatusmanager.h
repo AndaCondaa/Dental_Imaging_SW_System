@@ -18,10 +18,10 @@ public:
 
 private:
     Ui::PatientStatusManager *ui;
-    QString pid, name;
+    QString treatPID, treatName, payPID, payName;
 
     //QTreeWidgetItem* row;
-    QTreeWidgetItem* selectedRow;
+    QTreeWidgetItem* selectedTreatRow, *selectedPayRow;
 
 private slots:
     //void waitInfoSended(QString, QString);
@@ -35,6 +35,8 @@ private slots:
     //void SRQRequestSended(QString);
 
     void statusRequestSended(QString);
+
+    void on_paymentPushButton_clicked();
 
 signals:
     void sendRequest(QString);
