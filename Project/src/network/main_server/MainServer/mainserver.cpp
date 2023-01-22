@@ -287,19 +287,32 @@ void MainServer::receiveData()
                 qDebug()<<"Number of columns: "<<reportRec.count();
                 qDebug() << "report value: " << query4->value(3);
 
-
+                QString dentistID, dentistName;
                 while(query4->next())
                 {
                     for(int i=0;i<reportRec.count();i++)
                     {
+                        if(i==2)
+                        {
+                            dentistID = query4->value(i).toString();
+                            qDebug()<<"doctorID: " << dentistID;
+                        }
                         //qDebug()<<"report i: "<<i <<"report data: "<<query4->value(i).toString();//output all names
                         QString tmpData = query4->value(i).toString()+"|";
                         reportData +=tmpData;
                         qDebug()<<"reportData : "<<reportData ;
 
                     }
+query2->exec("select * from dentist WHERE dentist_no = '"+ dentistID +"'");
+while(query2->next())
+{
+dentistName = query2->value(1).toString();
+qDebug() << "Dentist Name: " <<dentistName;
+}
+
+
                     query4->nextResult();
-                    reportData += "<NEL>";
+                    reportData += dentistName + "<NEL>";
                 }
 
                 sendData += reportData;
@@ -312,6 +325,7 @@ void MainServer::receiveData()
                 QSqlRecord rec = query->record();
                 qDebug() << "Number of columns: " << rec.count();
                 
+
                 while (query->next()){
                     for(int i = 0; i<rec.count() ; i++)
                     {
@@ -345,18 +359,34 @@ void MainServer::receiveData()
                 qDebug() << "report value: " << query4->value(3);
 
 
+                QString dentistID, dentistName;
                 while(query4->next())
                 {
+
                     for(int i=0;i<reportRec.count();i++)
                     {
+                        if(i==2)
+                        {
+                            dentistID = query4->value(i).toString();
+                            qDebug()<<"doctorID: " << dentistID;
+                        }
+
                         //qDebug()<<"report i: "<<i <<"report data: "<<query4->value(i).toString();//output all names
                         QString tmpData = query4->value(i).toString()+"|";
                         reportData +=tmpData;
                         qDebug()<<"reportData : "<<reportData ;
 
                     }
+
+                    query2->exec("select * from dentist WHERE dentist_no = '"+ dentistID +"'");
+                    while(query2->next())
+                    {
+                    dentistName = query2->value(1).toString();
+                    qDebug() << "Dentist Name: " <<dentistName;
+                    }
+
                     query4->nextResult();
-                    reportData += "<NEL>";
+                    reportData += dentistName + "<NEL>";
                 }
                 sendData += reportData;
 

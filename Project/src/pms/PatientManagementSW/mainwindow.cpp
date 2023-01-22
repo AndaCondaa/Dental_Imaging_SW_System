@@ -75,6 +75,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(networkManager, SIGNAL(sendISVevent(QString)), patientStatusManager, SLOT(statusRequestSended(QString)));
 
 
+    connect(networkManager, SIGNAL(sendVTFevent(QString)), patientStatusManager, SLOT(statusRequestSended(QString)));
+
+    connect(networkManager, SIGNAL(sendSearchResult(QString, QString)), medicalRecordManager, SLOT(recordDataSended(QString, QString)));
+
 }
 
 MainWindow::~MainWindow()

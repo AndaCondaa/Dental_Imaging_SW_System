@@ -15,6 +15,9 @@ public:
     explicit MedicalRecordManager(QWidget *parent = nullptr);
     ~MedicalRecordManager();
 
+private slots:
+    void recordDataSended(QString, QString);
+
 private:
     Ui::MedicalRecordManager *ui;
 };

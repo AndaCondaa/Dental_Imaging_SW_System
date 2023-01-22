@@ -19,8 +19,8 @@ private slots:
     void newDataSended(QString);
 
     void receiveData();
-    void newConnection();
-    void disconnected();
+//    void newConnection();
+//    void disconnected();
 
 private:
     QTcpSocket *socket;
@@ -43,6 +43,10 @@ signals:
     void sendSRQRequest(QString);
     void sendVTSRequest(QString);
     void sendISVevent(QString);
+    void sendVTFevent(QString);
+
+
+
 
 };
 

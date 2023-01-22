@@ -102,7 +102,8 @@ void NetworkManager::receiveData()
         }
         else if(event == "PSE")
         {
-            emit sendSearchResult(id, data);
+            qDebug() << "PSE data: " << data;
+            emit sendSearchResult(id, data);    //patientInfoManager 클래스와 medicalRecordManager 클래스 두 곳으로 모두 보내줘야 함
         }
         else if(event == "SRQ")
         {
@@ -119,6 +120,12 @@ void NetworkManager::receiveData()
             qDebug()<<"ISV event Received: " << saveData;
             emit sendISVevent(saveData);
         }
+        else if(event == "VTF")
+        {
+            qDebug()<<"VTF event Received: " << saveData;
+            emit sendVTFevent(saveData);
+        }
+
 
 
 
@@ -126,26 +133,26 @@ void NetworkManager::receiveData()
     }
 }
 
-void NetworkManager::newConnection()
-{
-    while (server->hasPendingConnections())
-    {
-        QTcpSocket *socket = server->nextPendingConnection();
-        connect(socket, SIGNAL(readyRead()), this, SLOT(receiveData()));
-        connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
-        QByteArray *buffer = new QByteArray();
-        qint32 *s = new qint32(0);
-        buffers.insert(socket, buffer);
-        sizes.insert(socket, s);
-    }
-}
+//void NetworkManager::newConnection()
+//{
+//    while (server->hasPendingConnections())
+//    {
+//        QTcpSocket *socket = server->nextPendingConnection();
+//        connect(socket, SIGNAL(readyRead()), this, SLOT(receiveData()));
+//        connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
+//        QByteArray *buffer = new QByteArray();
+//        qint32 *s = new qint32(0);
+//        buffers.insert(socket, buffer);
+//        sizes.insert(socket, s);
+//    }
+//}
 
-void NetworkManager::disconnected()
-{
-    QTcpSocket *socket = static_cast<QTcpSocket*>(sender());
-    QByteArray *buffer = buffers.value(socket);
-    qint32 *s = sizes.value(socket);
-    socket->deleteLater();
-    delete buffer;
-    delete s;
-}
+//void NetworkManager::disconnected()
+//{
+//    QTcpSocket *socket = static_cast<QTcpSocket*>(sender());
+//    QByteArray *buffer = buffers.value(socket);
+//    qint32 *s = sizes.value(socket);
+//    socket->deleteLater();
+//    delete buffer;
+//    delete s;
+//}

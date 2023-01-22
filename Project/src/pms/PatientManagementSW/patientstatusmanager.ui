@@ -47,6 +47,9 @@
          <property name="alternatingRowColors">
           <bool>false</bool>
          </property>
+         <property name="rootIsDecorated">
+          <bool>false</bool>
+         </property>
          <column>
           <property name="text">
            <string>환자 ID</string>
@@ -178,6 +181,12 @@
          <property name="alternatingRowColors">
           <bool>false</bool>
          </property>
+         <property name="rootIsDecorated">
+          <bool>false</bool>
+         </property>
+         <property name="uniformRowHeights">
+          <bool>false</bool>
+         </property>
          <column>
           <property name="text">
            <string>환자 ID</string>
@@ -208,7 +217,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_3">
+        <widget class="QPushButton" name="paymentPushButton">
          <property name="sizePolicy">
           <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
            <horstretch>1</horstretch>
