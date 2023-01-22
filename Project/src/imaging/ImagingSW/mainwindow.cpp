@@ -44,7 +44,9 @@ MainWindow::MainWindow(QWidget *parent)
     connect(patientManager, SIGNAL(sendPidToImagingManager(QString)), imagingManager, SLOT(setPID(QString)));   // 촬영준비 시, 이미징클래스에 현재환자번호 저장
     connect(controlPanel, SIGNAL(readySignal(QString)), imagingManager, SLOT(setType(QString)));        // ready버튼 클릭 시, 이미징클래스에 타입 전송
     connect(controlPanel, SIGNAL(startSignal()), imagingManager, SLOT(loadImage()));            // 촬영시작 버튼 클릭 시, 이미지 로드 시작
+    connect(controlPanel, SIGNAL(stopSignal()), imagingManager, SLOT(stopButtonSlot()));    // 촬영중단 시, 이미징클래스에서 스레드 종료
     connect(imagingManager, SIGNAL(saveSignal(QString)), mainNetworkManager, SLOT(endImagingProcess(QString)));     // 촬영종료 시, 소켓 전송
+
 }
 
 MainWindow::~MainWindow()

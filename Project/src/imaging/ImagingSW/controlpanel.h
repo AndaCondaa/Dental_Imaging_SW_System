@@ -25,19 +25,18 @@ private slots:
     void readyButtonClicked();
     bool startButtonClicked();
     void stopButtonClicked();
+
 private:
     Ui::ControlPanel *ui;
 
     QString currentType = "NULL";
     QButtonGroup *controlButtonGroup;
 
-    QImage panoAct;
-
-
 signals:
     void buttonSignal(int, QString);
     void readySignal(QString);
     void startSignal();
+    void stopSignal();
 };
 
 #endif // CONTROLPANEL_H

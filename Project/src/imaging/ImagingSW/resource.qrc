@@ -1,5 +1,10 @@
 <RCC>
     <qresource prefix="/">
-        <file>icon/pano.PNG</file>
+        <file>icon/CEPH.png</file>
+        <file>icon/PANO.png</file>
+        <file>icon/CEPH_ACT.png</file>
+        <file>icon/PANO_ACT.png</file>
+        <file>icon/CEPH_DIS.png</file>
+        <file>icon/PANO_DIS.png</file>
     </qresource>
 </RCC>

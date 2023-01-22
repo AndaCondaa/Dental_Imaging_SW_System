@@ -14,10 +14,10 @@ ControlPanel::ControlPanel(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    panoAct.load(":/icon/pano.png");
-
-    ui->panoButton->setStyleSheet("font: 20pt; color: black; background-color: rgb(109, 109, 109); image: url(:/icon/pano.PNG);");
-    ui->cephButton->setStyleSheet("font: 20pt; color: black; background-color: rgb(109, 109, 109);");
+    ui->panoButton->setStyleSheet("QRadioButton::indicator::checked {image: url(:/icon/PANO_ACT.png)}"
+                                  "QRadioButton::indicator::unchecked {image: url(:/icon/PANO_DIS.png)};");
+    ui->cephButton->setStyleSheet("QRadioButton::indicator::checked {image: url(:/icon/CEPH_ACT.png)}"
+                                  "QRadioButton::indicator::unchecked {image: url(:/icon/CEPH_DIS.png)};");
 
     controlButtonGroup = new QButtonGroup(this);
     controlButtonGroup->addButton(ui->resetButton, RESET);
@@ -47,24 +47,18 @@ void ControlPanel::checkTypeButton(QString type)
         ui->cephButton->setCheckable(false);
         ui->panoButton->setChecked(true);
         ui->cephButton->setChecked(false);
-        ui->panoButton->setStyleSheet("font: 20pt; color: black; background-color: rgb(0, 150, 0);");         // 녹색
-        ui->cephButton->setStyleSheet("font: 20pt; color: black; background-color: rgb(109, 109, 109);");
     } else if (type == "CEPH") {
         currentType = "CEPH";
         ui->panoButton->setCheckable(false);
         ui->cephButton->setCheckable(true);
         ui->panoButton->setChecked(false);
         ui->cephButton->setChecked(true);
-        ui->panoButton->setStyleSheet("font: 20pt; color: black; background-color: rgb(109, 109, 109);");
-        ui->cephButton->setStyleSheet("font: 20pt; color: black; background-color: rgb(0, 150, 0);");
     } else if (type == "BOTH") {
         currentType = "PANO";
         ui->panoButton->setCheckable(true);
         ui->cephButton->setCheckable(true);
         ui->panoButton->setChecked(true);
         ui->cephButton->setChecked(false);
-        ui->panoButton->setStyleSheet("font: 20pt; color: black; background-color: rgb(0, 150, 0);");
-        ui->cephButton->setStyleSheet("font: 20pt; color: black; background-color: rgb(196, 183, 59);");
     }
 }
 
@@ -122,6 +116,7 @@ void ControlPanel::readyButtonClicked()
 
 bool ControlPanel::startButtonClicked()
 {
+    currentType = "PANO";
     if (ui->panoButton->isChecked())
         currentType = "PANO";
     else if (ui->cephButton->isChecked())
@@ -150,4 +145,5 @@ void ControlPanel::stopButtonClicked()
     ui->readyButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
+    emit stopSignal();
 }
