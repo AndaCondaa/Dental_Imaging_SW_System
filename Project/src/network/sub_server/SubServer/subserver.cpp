@@ -11,6 +11,7 @@
 
 #include "protocol.h"
 #include "packetdata.h"
+#include "filesendingthread.h"
 
 SubServer::SubServer(QWidget *parent)
     : QWidget(parent)
@@ -53,7 +54,6 @@ void SubServer::newFileCilent()
 {
     QTcpSocket *fileSocket = fileServer->nextPendingConnection();
     connect(fileSocket, SIGNAL(readyRead()), this, SLOT(receiveFile()));
-    connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
 }
 
 void SubServer::receiveControl()
@@ -104,10 +104,10 @@ void SubServer::receiveFile()
 
     // 처음 연결 시, 소켓과 클라이언트 정보를 매핑
     if (!fileSocketMap.contains(socket)) {
-        qDebug("%d", __LINE__);
         int id = protocol->packetData()->type();
         protocol->receiveProtocol(socket);
         fileSocketMap.insert(socket, id);
+        connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(goOnSend(qint64)));
         return;
     }
 
@@ -117,7 +117,7 @@ void SubServer::receiveFile()
 
         QDataStream in(socket);
         in.device()->seek(0);
-        in >> totalSize >> byteReceived >> fileName >> fileSender;
+        in >> totalSize >> byteReceived >> fileName;
         if(checkFileName == fileName) return;
 
         QFileInfo info(fileName);
@@ -145,6 +145,7 @@ void SubServer::receiveFile()
 
 void SubServer::goOnSend(qint64 numBytes)
 {
+    qDebug("%d", __LINE__);
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
     byteToWrite -= numBytes; // Remaining data size
     outBlock = file->read(qMin(byteToWrite, numBytes));
@@ -157,6 +158,7 @@ void SubServer::goOnSend(qint64 numBytes)
 
 void SubServer::sendFile()
 {
+    qDebug("%d", __LINE__);
     loadSize = 0;
     byteToWrite = 0;
     totalSize = 0;
@@ -180,7 +182,7 @@ void SubServer::sendFile()
 
         out.device()->seek(0);
         out << totalSize << qint64(outBlock.size());
-
+        qDebug("%d", __LINE__);
         fileSocketMap.key(SW)->write(outBlock); // Send the read file to the socket
     }
     qDebug() << QString("Sending file %1").arg(filename);
@@ -188,5 +190,9 @@ void SubServer::sendFile()
 
 void SubServer::on_pushButton_clicked()
 {
-    sendFile();
+//    sendFile();
+    FileSendingThread *sendingThread = new FileSendingThread(fileSocketMap.key(SW));
+
+    sendingThread->start();
+
 }

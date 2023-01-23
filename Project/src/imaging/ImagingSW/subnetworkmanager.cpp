@@ -37,13 +37,13 @@ void SubNetworkManager::connection(QString address, int port)
         // 연결 실패 예외처리 구현
     }
 
-//    fileSocket->connectToHost(address, port+1);
-//    if (fileSocket->waitForConnected()) {
-//        connect(fileSocket, SIGNAL(readyRead()), SLOT(receiveFile()));
-//        protocol->sendProtocol(fileSocket, "NEW", ConnectType::SW, "SW");
-//    } else {
-//        // 연결 실패  예외처리 구현
-//    }
+    fileSocket->connectToHost(address, port+1);
+    if (fileSocket->waitForConnected()) {
+        connect(fileSocket, SIGNAL(readyRead()), SLOT(receiveFile()));
+        protocol->sendProtocol(fileSocket, "NEW", ConnectType::SW, "SW");
+    } else {
+        // 연결 실패  예외처리 구현
+    }
 }
 
 void SubNetworkManager::receiveControl()
