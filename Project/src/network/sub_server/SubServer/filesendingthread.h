@@ -20,7 +20,7 @@ private:
     QTcpSocket *m_socket;
 
 signals:
-
+    void sendingBlock(QByteArray);
 };
 
 #endif // FILESENDINGTHREAD_H

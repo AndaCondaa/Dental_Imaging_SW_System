@@ -121,7 +121,8 @@ void SubServer::receiveFile()
         if(checkFileName == fileName) return;
 
         QFileInfo info(fileName);
-        QString currentFileName = info.fileName();
+        QString currentFileName = "./receive/" + info.fileName();
+        qDebug() << currentFileName;
         file = new QFile(currentFileName);
         file->open(QFile::WriteOnly);
     } else {
@@ -175,14 +176,14 @@ void SubServer::sendFile()
         loadSize = 1024; // Size of data per a block
 
         QDataStream out(&outBlock, QIODevice::WriteOnly);
-        out << qint64(0) << qint64(0) << filename << "SERVER";
+        out << qint64(0) << qint64(0) << filename;
 
         totalSize += outBlock.size();
         byteToWrite += outBlock.size();
 
         out.device()->seek(0);
         out << totalSize << qint64(outBlock.size());
-        qDebug("%d", __LINE__);
+
         fileSocketMap.key(SW)->write(outBlock); // Send the read file to the socket
     }
     qDebug() << QString("Sending file %1").arg(filename);
@@ -190,9 +191,6 @@ void SubServer::sendFile()
 
 void SubServer::on_pushButton_clicked()
 {
-//    sendFile();
     FileSendingThread *sendingThread = new FileSendingThread(fileSocketMap.key(SW));
-
     sendingThread->start();
-
 }

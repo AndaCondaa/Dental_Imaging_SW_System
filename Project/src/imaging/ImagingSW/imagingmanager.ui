@@ -157,28 +157,6 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="reconCancelButton">
-           <property name="enabled">
-            <bool>false</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>50</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>재구성 취소</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="saveButton">
            <property name="enabled">
             <bool>false</bool>
