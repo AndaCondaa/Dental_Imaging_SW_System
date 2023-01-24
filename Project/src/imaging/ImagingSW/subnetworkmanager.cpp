@@ -29,13 +29,13 @@ SubNetworkManager::~SubNetworkManager()
 
 void SubNetworkManager::connection(QString address, int port)
 {
-    subSocket->connectToHost(address, port);
-    if (subSocket->waitForConnected()) {
-        connect(subSocket, SIGNAL(readyRead()), SLOT(receiveControl()));
-        protocol->sendProtocol(subSocket, "NEW", ConnectType::SW, "SW");
-    } else {
-        // 연결 실패 예외처리 구현
-    }
+//    subSocket->connectToHost(address, port);
+//    if (subSocket->waitForConnected()) {
+//        connect(subSocket, SIGNAL(readyRead()), SLOT(receiveControl()));
+//        protocol->sendProtocol(subSocket, "NEW", ConnectType::SW, "SW");
+//    } else {
+//        // 연결 실패 예외처리 구현
+//    }
 
 //    fileSocket->connectToHost(address, port+1);
 //    if (fileSocket->waitForConnected()) {
@@ -70,7 +70,7 @@ void SubNetworkManager::receiveFile()
         checkFileName = fileName;
         QDataStream in(socket);
         in.device()->seek(0);
-        in >> totalSize >> byteReceived >> fileName >> fileSender;
+        in >> totalSize >> byteReceived >> fileName;
         if(checkFileName == fileName) return;
 
         QFileInfo info(fileName);

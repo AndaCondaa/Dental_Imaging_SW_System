@@ -13,11 +13,7 @@ MainNetworkManager::MainNetworkManager(QObject *parent)
     mainSocket = new QTcpSocket(this);
     fileSocket = new QTcpSocket(this);
 
-    connection("192.168.0.57", 8000);
-
-    progressDialog = new QProgressDialog(0);
-    progressDialog->setAutoClose(true);
-    progressDialog->reset();
+    connection("127.0.0.1", 8000);
 }
 
 MainNetworkManager::~MainNetworkManager()
@@ -35,13 +31,13 @@ void MainNetworkManager::connection(QString address, int port)
 //        // 연결 실패 예외처리 구현
 //    }
 
-//    fileSocket->connectToHost(address, port+1);
-//    if (fileSocket->waitForConnected()) {
-//        //connect(fileSocket, SIGNAL(readyRead()), this, SLOT(recevieFile()));
-//        connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
-//    } else {
-//        // 연결 실패  예외처리 구현
-//    }
+    fileSocket->connectToHost(address, port+1);
+    if (fileSocket->waitForConnected()) {
+//        sendPacket(fileSocket, "FIL", "IMG", "NULL");
+        connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
+    } else {
+        // 연결 실패  예외처리 구현
+    }
 }
 
 void MainNetworkManager::sendPacket(QTcpSocket* socket, QString event, QString pid, QString data)
@@ -87,6 +83,7 @@ void MainNetworkManager::requestPatientInfo(QString pid)
 void MainNetworkManager::endImagingProcess(QString pid)
 {
     sendPacket(mainSocket, "ISV", pid, "NULL");     // 촬영 종료 안내 패킷
+    sendFile();
 }
 
 void MainNetworkManager::goOnSend(qint64 numBytes)
@@ -96,12 +93,8 @@ void MainNetworkManager::goOnSend(qint64 numBytes)
     outBlock = file->read(qMin(byteToWrite, numBytes));
     socket->write(outBlock);
 
-    progressDialog->setMaximum(totalSize);
-    progressDialog->setValue(totalSize-byteToWrite);
-
     if (byteToWrite == 0) { // Send completed
         qDebug("File sending completed!");
-        progressDialog->reset();
     }
 }
 
@@ -118,13 +111,12 @@ void MainNetworkManager::sendFile()
         file->open(QFile::ReadOnly);
 
         qDebug() << QString("file %1 is opened").arg(filename);
-        progressDialog->setValue(0); // first time, any data send
 
         byteToWrite = totalSize = file->size(); // Data remained yet
         loadSize = 1024; // Size of data per a block
 
         QDataStream out(&outBlock, QIODevice::WriteOnly);
-        out << qint64(0) << qint64(0) << filename << "SERVER";
+        out << qint64(0) << qint64(0) << filename;
 
         totalSize += outBlock.size();
         byteToWrite += outBlock.size();
@@ -133,10 +125,6 @@ void MainNetworkManager::sendFile()
         out << totalSize << qint64(outBlock.size());
 
         fileSocket->write(outBlock); // Send the read file to the socket
-
-        progressDialog->setMaximum(totalSize);
-        progressDialog->setValue(totalSize-byteToWrite);
-        progressDialog->show();
     }
     qDebug() << QString("Sending file %1").arg(filename);
 }

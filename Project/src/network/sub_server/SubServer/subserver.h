@@ -18,7 +18,7 @@
 #include <QFileDialog>
 #include <QProgressDialog>
 
-#include "protocol.h"
+class Protocol;
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class SubServer; }
@@ -36,7 +36,7 @@ private slots:
     void newClient();
     void receiveControl();
 
-    void newFileCilent();
+    void newFileClient();
     void receiveFile();
     void goOnSend(qint64 numBytes);
     void sendFile();
@@ -56,12 +56,10 @@ private:
     qint64 byteReceived = 0;                    // size of File read currently
     QByteArray inBlock;                         // Units divided to transfer files
     QString fileName;                           // Receiving FileName
-    QString fileSender;                         // Receiving File's Sender
     QString checkFileName;                      // Previous File Name for checking new file
     qint64 loadSize;                // File Size
     qint64 byteToWrite;             // File Size per a block
     QByteArray outBlock;            // Block for sending
-
 
     Protocol *protocol;
 };

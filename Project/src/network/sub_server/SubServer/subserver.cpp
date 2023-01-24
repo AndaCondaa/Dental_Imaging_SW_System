@@ -11,6 +11,7 @@
 
 #include "protocol.h"
 #include "packetdata.h"
+#include "filesendingthread.h"
 
 SubServer::SubServer(QWidget *parent)
     : QWidget(parent)
@@ -29,7 +30,7 @@ SubServer::SubServer(QWidget *parent)
 
     // 이미지 서버 오픈
     fileServer = new QTcpServer();
-    connect(fileServer, SIGNAL(newConnection()), this, SLOT(newFileCilent()));
+    connect(fileServer, SIGNAL(newConnection()), this, SLOT(newFileClient()));
     if(!fileServer->listen(QHostAddress::Any, 8003)) {
         // 파일 서버 listen 실패
     }
@@ -49,11 +50,10 @@ void SubServer::newClient()
     connect(newSocket, SIGNAL(readyRead()), this, SLOT(receiveControl()));
 }
 
-void SubServer::newFileCilent()
+void SubServer::newFileClient()
 {
     QTcpSocket *fileSocket = fileServer->nextPendingConnection();
     connect(fileSocket, SIGNAL(readyRead()), this, SLOT(receiveFile()));
-    connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
 }
 
 void SubServer::receiveControl()
@@ -104,10 +104,10 @@ void SubServer::receiveFile()
 
     // 처음 연결 시, 소켓과 클라이언트 정보를 매핑
     if (!fileSocketMap.contains(socket)) {
-        qDebug("%d", __LINE__);
         int id = protocol->packetData()->type();
         protocol->receiveProtocol(socket);
         fileSocketMap.insert(socket, id);
+        connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(goOnSend(qint64)));
         return;
     }
 
@@ -117,11 +117,12 @@ void SubServer::receiveFile()
 
         QDataStream in(socket);
         in.device()->seek(0);
-        in >> totalSize >> byteReceived >> fileName >> fileSender;
+        in >> totalSize >> byteReceived >> fileName;
         if(checkFileName == fileName) return;
 
         QFileInfo info(fileName);
-        QString currentFileName = info.fileName();
+        QString currentFileName = "./receive/" + info.fileName();
+        qDebug() << currentFileName;
         file = new QFile(currentFileName);
         file->open(QFile::WriteOnly);
     } else {
@@ -145,6 +146,7 @@ void SubServer::receiveFile()
 
 void SubServer::goOnSend(qint64 numBytes)
 {
+    qDebug("%d", __LINE__);
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
     byteToWrite -= numBytes; // Remaining data size
     outBlock = file->read(qMin(byteToWrite, numBytes));
@@ -157,6 +159,7 @@ void SubServer::goOnSend(qint64 numBytes)
 
 void SubServer::sendFile()
 {
+    qDebug("%d", __LINE__);
     loadSize = 0;
     byteToWrite = 0;
     totalSize = 0;
@@ -173,7 +176,7 @@ void SubServer::sendFile()
         loadSize = 1024; // Size of data per a block
 
         QDataStream out(&outBlock, QIODevice::WriteOnly);
-        out << qint64(0) << qint64(0) << filename << "SERVER";
+        out << qint64(0) << qint64(0) << filename;
 
         totalSize += outBlock.size();
         byteToWrite += outBlock.size();
@@ -188,5 +191,6 @@ void SubServer::sendFile()
 
 void SubServer::on_pushButton_clicked()
 {
-    sendFile();
+    FileSendingThread *sendingThread = new FileSendingThread(fileSocketMap.key(SW));
+    sendingThread->start();
 }
