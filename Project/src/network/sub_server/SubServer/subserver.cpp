@@ -11,7 +11,6 @@
 
 #include "protocol.h"
 #include "packetdata.h"
-#include "filesendingthread.h"
 
 SubServer::SubServer(QWidget *parent)
     : QWidget(parent)
@@ -117,7 +116,7 @@ void SubServer::receiveFile()
 
         QDataStream in(socket);
         in.device()->seek(0);
-        in >> totalSize >> byteReceived >> fileName;
+        in >> totalSize >> byteReceived >> PID >>fileName;
         if(checkFileName == fileName) return;
 
         QFileInfo info(fileName);
@@ -146,37 +145,43 @@ void SubServer::receiveFile()
 
 void SubServer::goOnSend(qint64 numBytes)
 {
-    qDebug("%d", __LINE__);
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
     byteToWrite -= numBytes; // Remaining data size
     outBlock = file->read(qMin(byteToWrite, numBytes));
     socket->write(outBlock);
 
     if (byteToWrite == 0) { // Send completed
-        qDebug("File sending completed!");
+        if (count < 100) {
+            count++;
+            sendFile(count);
+        }
     }
 }
 
-void SubServer::sendFile()
+void SubServer::sendFile(int num)
 {
-    qDebug("%d", __LINE__);
+    QString fileName;
+    if (num >= 100)
+        fileName = QString("./receive/0%1.raw").arg(num);
+    else
+        fileName = QString("./receive/00%1.raw").arg(num);
+
     loadSize = 0;
     byteToWrite = 0;
     totalSize = 0;
     outBlock.clear();
 
-    QString filename = QFileDialog::getOpenFileName();
-    if(filename.length()) {
-        file = new QFile(filename);
+    if(fileName.length()) {
+        file = new QFile(fileName);
         file->open(QFile::ReadOnly);
 
-        qDebug() << QString("file %1 is opened").arg(filename);
+        qDebug() << QString("file %1 is opened").arg(fileName);
 
         byteToWrite = totalSize = file->size(); // Data remained yet
         loadSize = 1024; // Size of data per a block
 
         QDataStream out(&outBlock, QIODevice::WriteOnly);
-        out << qint64(0) << qint64(0) << filename;
+        out << qint64(0) << qint64(0) << fileName;
 
         totalSize += outBlock.size();
         byteToWrite += outBlock.size();
@@ -186,11 +191,11 @@ void SubServer::sendFile()
 
         fileSocketMap.key(SW)->write(outBlock); // Send the read file to the socket
     }
-    qDebug() << QString("Sending file %1").arg(filename);
+    qDebug() << QString("Sending file %1").arg(fileName);
 }
 
 void SubServer::on_pushButton_clicked()
 {
-    FileSendingThread *sendingThread = new FileSendingThread(fileSocketMap.key(SW));
-    sendingThread->start();
+    count = 10;
+    sendFile(count);
 }

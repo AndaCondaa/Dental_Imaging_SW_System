@@ -58,6 +58,9 @@ void SubNetworkManager::receiveControl()
 
 void SubNetworkManager::sendButtonControl(int buttonIdx, QString modality)
 {
+    if (buttonIdx == 1 || buttonIdx == 2)   // 1: RESET , 2: START
+        currentType = modality;
+
     protocol->sendProtocol(subSocket, "CTL", buttonIdx, modality);
 }
 
@@ -74,7 +77,7 @@ void SubNetworkManager::receiveFile()
         if(checkFileName == fileName) return;
 
         QFileInfo info(fileName);
-        QString currentFileName = info.fileName();
+        QString currentFileName = QString("./image/%1/").arg(currentType) + info.fileName();
         file = new QFile(currentFileName);
         file->open(QFile::WriteOnly);
     } else {

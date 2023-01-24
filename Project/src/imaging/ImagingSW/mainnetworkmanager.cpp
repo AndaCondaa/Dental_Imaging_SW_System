@@ -31,13 +31,13 @@ void MainNetworkManager::connection(QString address, int port)
 //        // 연결 실패 예외처리 구현
 //    }
 
-    fileSocket->connectToHost(address, port+1);
-    if (fileSocket->waitForConnected()) {
-//        sendPacket(fileSocket, "FIL", "IMG", "NULL");
-        connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
-    } else {
-        // 연결 실패  예외처리 구현
-    }
+//    fileSocket->connectToHost(address, port+1);
+//    if (fileSocket->waitForConnected()) {
+////        sendPacket(fileSocket, "FIL", "IMG", "NULL");
+//        connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
+//    } else {
+//        // 연결 실패  예외처리 구현
+//    }
 }
 
 void MainNetworkManager::sendPacket(QTcpSocket* socket, QString event, QString pid, QString data)

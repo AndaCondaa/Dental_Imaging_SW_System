@@ -22,8 +22,8 @@ private slots:
     void controlButtonClicked(QAbstractButton*);
     void receiveButtonControl(int);
     void resetButtonClicked();
-    void readyButtonClicked();
-    bool startButtonClicked();
+    bool readyButtonClicked();
+    void startButtonClicked();
     void stopButtonClicked();
 
 private:

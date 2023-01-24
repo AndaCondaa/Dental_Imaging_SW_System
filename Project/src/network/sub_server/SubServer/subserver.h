@@ -39,12 +39,13 @@ private slots:
     void newFileClient();
     void receiveFile();
     void goOnSend(qint64 numBytes);
-    void sendFile();
+    void sendFile(int);
 
     void on_pushButton_clicked();
 
 private:
     Ui::SubServer *ui;
+    int count = 0;
 
     QTcpServer *controlServer;
     QTcpServer *fileServer;

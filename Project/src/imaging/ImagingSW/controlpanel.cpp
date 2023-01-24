@@ -26,11 +26,6 @@ ControlPanel::ControlPanel(QWidget *parent) :
     controlButtonGroup->addButton(ui->stopButton, STOP);
 
     connect(controlButtonGroup, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(controlButtonClicked(QAbstractButton*)));
-
-//    connect(ui->resetButton, SIGNAL(clicked()), this, SLOT(resetButtonClicked()));
-//    connect(ui->readyButton, SIGNAL(clicked()), this, SLOT(readyButtonClicked()));
-//    connect(ui->startButton, SIGNAL(clicked()), this, SLOT(startButtonClicked()));
-//    connect(ui->stopButton, SIGNAL(clicked()), this, SLOT(stopButtonClicked()));
 }
 
 ControlPanel::~ControlPanel()
@@ -69,10 +64,10 @@ void ControlPanel::controlButtonClicked(QAbstractButton* button)
         resetButtonClicked();
         break;
     case READY:
-        readyButtonClicked();
+        if (!readyButtonClicked()) return;
         break;
     case START:
-        if (!startButtonClicked()) return;
+        startButtonClicked();
         break;
     case STOP:
         stopButtonClicked();
@@ -102,41 +97,53 @@ void ControlPanel::receiveButtonControl(int buttonIdx)
 
 void ControlPanel::resetButtonClicked()
 {
+    checkTypeButton("BOTH");
+
     ui->resetButton->setEnabled(true);
     ui->readyButton->setEnabled(true);
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
 }
 
-void ControlPanel::readyButtonClicked()
+bool ControlPanel::readyButtonClicked()
 {
+    if (ui->panoButton->isChecked()) {
+        currentType = "PANO";
+        ui->panoButton->setChecked(true);
+        ui->cephButton->setChecked(false);
+        ui->cephButton->setCheckable(false);
+    }
+    else if (ui->cephButton->isChecked()) {
+        currentType = "CEPH";
+        ui->cephButton->setChecked(true);
+        ui->panoButton->setChecked(false);
+        ui->panoButton->setCheckable(false);
+    }
+    else {
+        qDebug("%d : 타입을 선택하고 ready버튼을 누르세요.", __LINE__);
+        return false;
+    }
+
     ui->readyButton->setEnabled(false);
     ui->startButton->setEnabled(true);
+
+    return true;
 }
 
-bool ControlPanel::startButtonClicked()
+void ControlPanel::startButtonClicked()
 {
-    currentType = "PANO";
-    if (ui->panoButton->isChecked())
-        currentType = "PANO";
-    else if (ui->cephButton->isChecked())
-        currentType = "CEPH";
-//    else
-//        return false;
-
     QMessageBox startBox(QMessageBox::NoIcon, "START",
                          QString("%1 촬영을 시작하시겠습니까?").arg(currentType),
                          QMessageBox::Yes|QMessageBox::No, this, Qt::Dialog);
     startBox.exec();
 
-    if(startBox.clickedButton()->text() == "&No") return false;
+    if(startBox.clickedButton()->text() == "&No") return;
 
     ui->resetButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(true);
 
     emit startSignal();
-    return true;
 }
 
 void ControlPanel::stopButtonClicked()
