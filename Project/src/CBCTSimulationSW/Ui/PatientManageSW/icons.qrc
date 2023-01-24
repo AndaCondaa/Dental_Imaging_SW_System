@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>뷰어.png</file>
+        <file>촬영.png</file>
+        <file>환자.png</file>
+        <file>CT.png</file>
+    </qresource>
+</RCC>
