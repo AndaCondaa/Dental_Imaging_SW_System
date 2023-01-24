@@ -70,7 +70,7 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
 
 void PatientInfoManager::on_deletePushButton_clicked()
 {
-    QString delData = "PDE<CR>" + pid + "<CR>0"; //지울 pid를 emit으로 네트워크 매니저로 보냄/네트워크 매니저는 서버로 삭제할 데이터 전달
+    QString delData = "PDE<CR>" + pid + "<CR> "; //지울 pid를 emit으로 네트워크 매니저로 보냄/네트워크 매니저는 서버로 삭제할 데이터 전달
     emit sendDelData(delData);
 }
 
