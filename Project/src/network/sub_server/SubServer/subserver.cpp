@@ -63,7 +63,7 @@ void SubServer::receiveControl()
     protocol->receiveProtocol(socket);
 
     if (!controlSocketMap.contains(socket)) {
-        controlSocketMap.insert(socket, protocol->packetData()->type());    // pid() : SW(100) or MODALITY(101)
+        controlSocketMap.insert(socket, protocol->packetData()->type());
     }
 
     QString event = protocol->packetData()->event();
@@ -129,7 +129,7 @@ void SubServer::receiveFile()
 
         QFileInfo info(fileName);
         QString currentFileName = dir.path() + info.fileName();
-        qDebug() << currentFileName;
+
         file = new QFile(currentFileName);
         file->open(QFile::WriteOnly);
     } else {

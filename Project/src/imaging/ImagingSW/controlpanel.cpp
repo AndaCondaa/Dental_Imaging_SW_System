@@ -37,21 +37,21 @@ ControlPanel::~ControlPanel()
 void ControlPanel::checkTypeButton(QString data)
 {
     currentPID = data.split("|")[0];
-    QString type = data.split("|")[1];
+    requestType = data.split("|")[1];
 
-    if (type == "PANO") {
+    if (requestType == "PANO") {
         currentType = "PANO";
         ui->panoButton->setCheckable(true);
         ui->cephButton->setCheckable(false);
         ui->panoButton->setChecked(true);
         ui->cephButton->setChecked(false);
-    } else if (type == "CEPH") {
+    } else if (requestType == "CEPH") {
         currentType = "CEPH";
         ui->panoButton->setCheckable(false);
         ui->cephButton->setCheckable(true);
         ui->panoButton->setChecked(false);
         ui->cephButton->setChecked(true);
-    } else if (type == "BOTH") {
+    } else if (requestType == "BOTH") {
         currentType = "PANO";
         ui->panoButton->setCheckable(true);
         ui->cephButton->setCheckable(true);
@@ -130,6 +130,8 @@ bool ControlPanel::readyButtonClicked()
     ui->readyButton->setEnabled(false);
     ui->startButton->setEnabled(true);
 
+    emit readySignal(currentType);
+
     return true;
 }
 
@@ -157,4 +159,9 @@ void ControlPanel::stopButtonClicked()
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
     emit stopSignal();
+}
+
+void ControlPanel::shootingEndSlot(QString type)
+{
+//    ui->
 }

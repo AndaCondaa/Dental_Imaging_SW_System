@@ -41,9 +41,9 @@ void ImageThread::run()
         buf = (unsigned short*)malloc(sizeof(unsigned short) * pixels);
         for(int k = 110; k < 1700; k++) {
             if (k < 1000) {
-                fileName = QString("./image/origin/PANO/0%1.raw").arg(k);
+                fileName = QString("./PANO/0%1.raw").arg(k);
             } else {
-                fileName = QString("./image/origin/PANO/%1.raw").arg(k);
+                fileName = QString("./PANO/%1.raw").arg(k);
             }
 
             qDebug() << fileName;
@@ -107,9 +107,9 @@ void ImageThread::run()
             painter.drawImage(cnt*(0.2), 0, frameImage.scaledToHeight(height));
             */
             if (k >= 100)
-                fileName = QString("./image/origin/CEPH/0%1.raw").arg(k);
+                fileName = QString("./CEPH/0%1.raw").arg(k);
             else
-                fileName = QString("./image/origin/CEPH/00%1.raw").arg(k);
+                fileName = QString("./CEPH/00%1.raw").arg(k);
 
             qDebug() << fileName;
             file = fopen(fileName.toStdString().c_str(), "rb");

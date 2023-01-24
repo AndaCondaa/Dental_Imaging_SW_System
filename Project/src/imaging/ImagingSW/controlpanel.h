@@ -26,9 +26,12 @@ private slots:
     bool startButtonClicked();
     void stopButtonClicked();
 
+    void shootingEndSlot(QString);
+
 private:
     Ui::ControlPanel *ui;
 
+    QString requestType = "NULL";
     QString currentPID = "NULL";
     QString currentType = "NULL";
     QButtonGroup *controlButtonGroup;
