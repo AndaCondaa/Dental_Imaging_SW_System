@@ -30,7 +30,7 @@ SubServer::SubServer(QWidget *parent)
 
     // 이미지 서버 오픈
     fileServer = new QTcpServer();
-    connect(fileServer, SIGNAL(newConnection()), this, SLOT(newFileCilent()));
+    connect(fileServer, SIGNAL(newConnection()), this, SLOT(newFileClient()));
     if(!fileServer->listen(QHostAddress::Any, 8003)) {
         // 파일 서버 listen 실패
     }
@@ -50,7 +50,7 @@ void SubServer::newClient()
     connect(newSocket, SIGNAL(readyRead()), this, SLOT(receiveControl()));
 }
 
-void SubServer::newFileCilent()
+void SubServer::newFileClient()
 {
     QTcpSocket *fileSocket = fileServer->nextPendingConnection();
     connect(fileSocket, SIGNAL(readyRead()), this, SLOT(receiveFile()));

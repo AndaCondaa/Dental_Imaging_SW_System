@@ -36,7 +36,7 @@ private slots:
     void newClient();
     void receiveControl();
 
-    void newFileCilent();
+    void newFileClient();
     void receiveFile();
     void goOnSend(qint64 numBytes);
     void sendFile();
