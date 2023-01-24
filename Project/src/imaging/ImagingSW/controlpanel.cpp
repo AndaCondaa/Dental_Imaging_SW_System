@@ -34,8 +34,11 @@ ControlPanel::~ControlPanel()
 }
 
 //촬영요청 타입확인 후 , 촬영타입에 따라서 타입버튼 조작
-void ControlPanel::checkTypeButton(QString type)
+void ControlPanel::checkTypeButton(QString data)
 {
+    currentPID = data.split("|")[0];
+    QString type = data.split("|")[1];
+
     if (type == "PANO") {
         currentType = "PANO";
         ui->panoButton->setCheckable(true);
@@ -67,14 +70,14 @@ void ControlPanel::controlButtonClicked(QAbstractButton* button)
         if (!readyButtonClicked()) return;
         break;
     case START:
-        startButtonClicked();
+        if (!startButtonClicked()) return;
         break;
     case STOP:
         stopButtonClicked();
         break;
     }
 
-    emit buttonSignal(controlButtonGroup->id(button), currentType);
+    emit buttonSignal(controlButtonGroup->id(button), currentPID + "|" + currentType);
 }
 
 void ControlPanel::receiveButtonControl(int buttonIdx)
@@ -97,7 +100,7 @@ void ControlPanel::receiveButtonControl(int buttonIdx)
 
 void ControlPanel::resetButtonClicked()
 {
-    checkTypeButton("BOTH");
+    checkTypeButton("P0001|BOTH");
 
     ui->resetButton->setEnabled(true);
     ui->readyButton->setEnabled(true);
@@ -130,20 +133,21 @@ bool ControlPanel::readyButtonClicked()
     return true;
 }
 
-void ControlPanel::startButtonClicked()
+bool ControlPanel::startButtonClicked()
 {
     QMessageBox startBox(QMessageBox::NoIcon, "START",
-                         QString("%1 촬영을 시작하시겠습니까?").arg(currentType),
+                         QString("%1의 %2 촬영을 시작하시겠습니까?").arg(currentPID, currentType),
                          QMessageBox::Yes|QMessageBox::No, this, Qt::Dialog);
     startBox.exec();
 
-    if(startBox.clickedButton()->text() == "&No") return;
+    if(startBox.clickedButton()->text() == "&No") return false;
 
     ui->resetButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(true);
 
     emit startSignal();
+    return true;
 }
 
 void ControlPanel::stopButtonClicked()

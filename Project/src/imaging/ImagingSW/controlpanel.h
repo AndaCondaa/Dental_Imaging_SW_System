@@ -23,12 +23,13 @@ private slots:
     void receiveButtonControl(int);
     void resetButtonClicked();
     bool readyButtonClicked();
-    void startButtonClicked();
+    bool startButtonClicked();
     void stopButtonClicked();
 
 private:
     Ui::ControlPanel *ui;
 
+    QString currentPID = "NULL";
     QString currentType = "NULL";
     QButtonGroup *controlButtonGroup;
 

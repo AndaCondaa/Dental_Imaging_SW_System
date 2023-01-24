@@ -45,6 +45,9 @@ private slots:
 
 private:
     Ui::SubServer *ui;
+
+    QString currentPID = "NULL";
+    QString currentType = "NULL";
     int count = 0;
 
     QTcpServer *controlServer;

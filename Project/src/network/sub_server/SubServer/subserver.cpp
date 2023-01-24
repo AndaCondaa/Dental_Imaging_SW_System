@@ -12,6 +12,8 @@
 #include "protocol.h"
 #include "packetdata.h"
 
+#include <QDir>
+
 SubServer::SubServer(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::SubServer)
@@ -76,6 +78,8 @@ void SubServer::receiveControl()
         ui->logEdit->append((QString("%1가 연결되었습니다.")).arg(client));
     } else if (event == "CTL") {
         int command = protocol->packetData()->type();
+        currentPID = msg.split("|")[0];
+        currentType = msg.split("|")[1];
         switch (command) {
         case RESET:
             //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", RESET, msg);
@@ -83,15 +87,15 @@ void SubServer::receiveControl()
             break;
         case READY:
             //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", READY, msg);
-            ui->logEdit->append((QString("%1가 %2 촬영준비 명령을 보냈습니다.")).arg(client, msg));
+            ui->logEdit->append((QString("%1가 %2의 %3 촬영준비 명령을 보냈습니다.")).arg(client, currentPID, currentType));
             break;
         case START:
             //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", START, msg);
-            ui->logEdit->append((QString("%1가 %2 촬영시작 명령을 보냈습니다.")).arg(client, msg));
+            ui->logEdit->append((QString("%1가 %2의 %3 촬영시작 명령을 보냈습니다.")).arg(client, currentPID, currentType));
             break;
         case STOP:
             //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", STOP, msg);
-            ui->logEdit->append((QString("%1가 %2 촬영종료 명령을 보냈습니다.")).arg(client, msg));
+            ui->logEdit->append((QString("%1가 %2의 %3 촬영종료 명령을 보냈습니다.")).arg(client, currentPID, currentType));
             break;
         }
     }
@@ -116,11 +120,15 @@ void SubServer::receiveFile()
 
         QDataStream in(socket);
         in.device()->seek(0);
-        in >> totalSize >> byteReceived >> PID >>fileName;
+        in >> totalSize >> byteReceived >> fileName;
         if(checkFileName == fileName) return;
 
+        QDir dir(QString("./receive/%1/%2/").arg(currentPID, currentType));
+        if (!dir.exists())
+            dir.mkpath(".");
+
         QFileInfo info(fileName);
-        QString currentFileName = "./receive/" + info.fileName();
+        QString currentFileName = dir.path() + info.fileName();
         qDebug() << currentFileName;
         file = new QFile(currentFileName);
         file->open(QFile::WriteOnly);

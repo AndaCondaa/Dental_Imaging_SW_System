@@ -10,6 +10,8 @@
 #include "protocol.h"
 #include "packetdata.h"
 
+#include <QDir>
+
 SubNetworkManager::SubNetworkManager(QObject *parent)
     : QObject{parent}
 {
@@ -29,21 +31,21 @@ SubNetworkManager::~SubNetworkManager()
 
 void SubNetworkManager::connection(QString address, int port)
 {
-//    subSocket->connectToHost(address, port);
-//    if (subSocket->waitForConnected()) {
-//        connect(subSocket, SIGNAL(readyRead()), SLOT(receiveControl()));
-//        protocol->sendProtocol(subSocket, "NEW", ConnectType::SW, "SW");
-//    } else {
-//        // 연결 실패 예외처리 구현
-//    }
+    subSocket->connectToHost(address, port);
+    if (subSocket->waitForConnected()) {
+        connect(subSocket, SIGNAL(readyRead()), SLOT(receiveControl()));
+        protocol->sendProtocol(subSocket, "NEW", ConnectType::SW, "SW");
+    } else {
+        // 연결 실패 예외처리 구현
+    }
 
-//    fileSocket->connectToHost(address, port+1);
-//    if (fileSocket->waitForConnected()) {
-//        connect(fileSocket, SIGNAL(readyRead()), SLOT(receiveFile()));
-//        protocol->sendProtocol(fileSocket, "NEW", ConnectType::SW, "SW");
-//    } else {
-//        // 연결 실패  예외처리 구현
-//    }
+    fileSocket->connectToHost(address, port+1);
+    if (fileSocket->waitForConnected()) {
+        connect(fileSocket, SIGNAL(readyRead()), SLOT(receiveFile()));
+        protocol->sendProtocol(fileSocket, "NEW", ConnectType::SW, "SW");
+    } else {
+        // 연결 실패  예외처리 구현
+    }
 }
 
 void SubNetworkManager::receiveControl()
@@ -56,12 +58,14 @@ void SubNetworkManager::receiveControl()
     }
 }
 
-void SubNetworkManager::sendButtonControl(int buttonIdx, QString modality)
+void SubNetworkManager::sendButtonControl(int buttonIdx, QString data)
 {
-    if (buttonIdx == 1 || buttonIdx == 2)   // 1: RESET , 2: START
-        currentType = modality;
+    if (buttonIdx == 1 || buttonIdx == 2) {   // 1: RESET , 2: START
+        currentPID = data.split("|")[0];
+        currentType = data.split("|")[1];
+    }
 
-    protocol->sendProtocol(subSocket, "CTL", buttonIdx, modality);
+    protocol->sendProtocol(subSocket, "CTL", buttonIdx, data);
 }
 
 void SubNetworkManager::receiveFile()
@@ -76,8 +80,14 @@ void SubNetworkManager::receiveFile()
         in >> totalSize >> byteReceived >> fileName;
         if(checkFileName == fileName) return;
 
+        QDir dir(QString("image/%1/%2/").arg(currentPID, currentType));
+        if (!dir.exists())
+            dir.mkpath(".");
+
         QFileInfo info(fileName);
-        QString currentFileName = QString("./image/%1/").arg(currentType) + info.fileName();
+        QString currentFileName = dir.path() + "/"+ info.fileName();
+        qDebug() << info.fileName();
+        qDebug() << currentFileName;
         file = new QFile(currentFileName);
         file->open(QFile::WriteOnly);
     } else {
