@@ -11,13 +11,14 @@
 #include <QList>
 #include <QTransform>
 #include <qstring.h>
-
+#include <qevent.h>
+#include <QThread>
 /* 3D .Obj Visualization */
 
 #include <vtkRenderWindow.h>
 #include<vtkOBJExporter.h>
-
-
+#include <vtkPlaneSource.h>
+#include <vtkAxesActor.h>
 #include <vtkOBJImporter.h>
 #include <vtkObject.h>
 #include <vtkOBJReader.h>
@@ -50,121 +51,25 @@
 #include <InteractionContext.h>
 #include <QDebug>
 
+
+//#define USE_DISPLAY_GLOBALAXIS
+
 MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent), ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-
-	/* 가시화 파이프라인 순서도 */
-	/* PolyData -> Mapper -> Actor -> Renderer -> RenderWindow */
-
-	/* 상부, 하부, 파노라마, 세팔로좌+우 총 4개 모듈 */
-
-	/* Load Source */
-	QStringList FilePath;
-	FilePath << "lowerbody.obj";
-	FilePath << "upperbody.obj";
-	FilePath << "panomodule.obj";
-	FilePath << "cephmodule.obj";
-
-	QStringList MtlFilePath;
-	MtlFilePath << "lowerbody.mtl";
-	MtlFilePath << "upperbody.mtl";
-	MtlFilePath << "panomodule.mtl";
-	MtlFilePath << "cephmodule.mtl";
-
-	Load_OBJFile(FilePath, MtlFilePath, m_vecdata);
-
-	/* Create Mapper & Actor */
-	Create_Mapper(m_vecdata, m_mapper_All);
-	Create_Mapper(m_vecdata, m_mapper_Main);
-	Create_Mapper(m_vecdata, m_mapper_Sub);
-
-	Create_Actor(m_mapper_All, "All", m_actor_All);
-	Create_Actor(m_mapper_Main, "Main", m_actor_Main);
-	Create_Actor(m_mapper_Sub, "Sub", m_actor_Sub);
-
-
-	/* Starting Location */
-#if USE_TRANSFORM
-	vtkSmartPointer<vtkTransform> transformLowerBodyAll = vtkSmartPointer<vtkTransform>::New();
-	transformLowerBodyAll->Translate(0.0, -1000.0, 10.0);
-	transformLowerBodyAll->RotateWXYZ(5, 0.0, 1.0, 0.0);
-	actorLowerBodyAll->SetUserTransform(transformLowerBodyAll);
-	transformLowerBodyAll->Update();
-
-	vtkSmartPointer<vtkTransform> transformUpperBodyAll = vtkSmartPointer<vtkTransform>::New();
-	transformUpperBodyAll->Translate(0.0, -1000.0, 10.0);
-	transformUpperBodyAll->RotateWXYZ(5, 0.0, 1.0, 0.0);
-	actorUpperBodyAll->SetUserTransform(transformUpperBodyAll);
-	transformUpperBodyAll->Update();
-
-	vtkSmartPointer<vtkTransform> transformPanoModuleAll = vtkSmartPointer<vtkTransform>::New();
-	transformPanoModuleAll->Translate(0.0, -1000.0, 10.0);
-	transformPanoModuleAll->RotateWXYZ(5, 0.0, 1.0, 0.0);
-	actorPanoModuleAll->SetUserTransform(transformPanoModuleAll);
-	transformPanoModuleAll->Update();
-
-	vtkSmartPointer<vtkTransform> transformCephModuleAll = vtkSmartPointer<vtkTransform>::New();
-	transformCephModuleAll->Translate(0.0, -1000.0, 10.0);
-	transformCephModuleAll->RotateWXYZ(5, 0.0, 1.0, 0.0);
-	actorCephModuleAll->SetUserTransform(transformCephModuleAll);
-	transformCephModuleAll->Update();
-
-	vtkSmartPointer<vtkTransform> transformMain = vtkSmartPointer<vtkTransform>::New();
-	transformMain->Translate(0.0, -200.0, 100.0);
-	transformMain->RotateWXYZ(10, 0.0, 1.0, 1.0);
-	actorLowerBodyMain->SetUserTransform(transformMain);
-	actorUpperBodyMain->SetUserTransform(transformMain);
-	actorPanoModuleMain->SetUserTransform(transformMain);
-	actorCephModuleMain->SetUserTransform(transformMain);
-	transformMain->Update();
-
-	vtkSmartPointer<vtkTransform> transformSub = vtkSmartPointer<vtkTransform>::New();
-	transformSub->Translate(100.0, -100.0, -500.0);
-	transformSub->RotateWXYZ(10, 5.0, 10.0, 5.0);
-	actorLowerBodySub->SetUserTransform(transformSub);
-	actorUpperBodySub->SetUserTransform(transformSub);
-	actorPanoModuleSub->SetUserTransform(transformSub);
-	actorCephModuleSub->SetUserTransform(transformSub);
-	transformSub->Update();
-
-	vtkSmartPointer<vtkTransformPolyDataFilter> transformFilterLowerBodyAll = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
-	//     transformFilterAll->SetInputConnection(readerObjAll->GetOutputPort());
-	transformFilterLowerBodyAll->SetInputConnection(readerOBJLowerBodyAll->GetOutputPort());
-	transformFilterLowerBodyAll->SetInputConnection(readerOBJUpperBodyAll->GetOutputPort());
-	transformFilterLowerBodyAll->SetInputConnection(readerOBJPanoModuleAll->GetOutputPort());
-	transformFilterLowerBodyAll->SetInputConnection(readerOBJCephModuleAll->GetOutputPort());
-
-	transformFilterLowerBodyAll->SetTransform(transformLowerBodyAll);
-	transformFilterLowerBodyAll->SetTransform(transformUpperBodyAll);
-	transformFilterLowerBodyAll->SetTransform(transformPanoModuleAll);
-	transformFilterLowerBodyAll->SetTransform(transformCephModuleAll);
-
-
-	transformFilterLowerBodyAll->Update();
-#endif
-	/* Visualize with Cam */
-
-	m_renderwindow.push_back(Create_Render(m_actor_All));
-	m_renderwindow.push_back(Create_Render(m_actor_Main));
-	m_renderwindow.push_back(Create_Render(m_actor_Sub));
-
-
-	ui->openGLWidget_All->setRenderWindow(m_renderwindow[0]);
-	ui->openGLWidget_Main->setRenderWindow(m_renderwindow[1]);
-	ui->openGLWidget_Sub->setRenderWindow(m_renderwindow[2]);
-
-	ui->openGLWidget_All->interactor()->ProcessEvents();
-	ui->openGLWidget_Main->interactor()->ProcessEvents();
-	ui->openGLWidget_Sub->interactor()->ProcessEvents();
-
-	for (auto win : m_renderwindow)
-		win->Render();
 	
+	// Model Controller 생성. 
+	m_modelController = new CBCTModelController(ui);
+	if (!m_modelController->initialize())
+		qDebug() << "CBCTModelController initialize Fail ! ";
 
-	connect(ui->MainPushButton, SIGNAL(clicked()), this, SLOT(on_MainPushButton_Clicked()));
-	connect(ui->SubPushButton, SIGNAL(clicked()), this, SLOT(on_SubPushButton_Clicked()));
+	connect(ui->MainPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_MainPushButton_clicked()));
+	connect(ui->SubPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_SubPushButton_clicked()));
+
+	connect(ui->AscendingPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_AscendingPushButton_pressed()));
+	connect(ui->DescendingPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_DescendingPushButton_pressed()));
+
 	connect(ui->CaptureResetPushButton, SIGNAL(clicked()), this, SLOT(on_CaptureResetPushButton_clicked()));
 	connect(ui->CaptureReadyPushButton, SIGNAL(clicked()), this, SLOT(on_CaptureReadyPushButton_clicked()));
 	connect(ui->CaptureStartPushButton, SIGNAL(clicked()), this, SLOT(on_CaptureStartPushButton_clicked()));
@@ -217,6 +122,14 @@ void MainWindow::on_STARTPushButton_clicked()
 void MainWindow::on_STOPPushButton_clicked()
 {
 	emit STOPSignal(STOP);
+}
+
+void MainWindow::resizeEvent(QResizeEvent* event)
+{
+	auto Size = event->size();
+
+	//ui->openGLWidget_All->resize(Size);
+	QMainWindow::resizeEvent(event);
 }
 
 void MainWindow::Load_OBJFile(QStringList paths, QStringList mtls, std::vector<vtkSmartPointer<vtkPolyData>>& objs)
@@ -294,23 +207,6 @@ void MainWindow::Load_OBJFile(QStringList paths, QStringList mtls, std::vector<v
 
 }
 
-vtkSmartPointer<vtkPolyData> MainWindow::Load_OBJFile(DataType type)
-{
-	switch (type)
-	{
-	case Lower:
-	{
-		vtkSmartPointer<vtkOBJReader> reader = vtkSmartPointer<vtkOBJReader>::New();
-		reader->SetFileName("");
-		reader->Update();
-		return reader->GetOutput();
-	}
-	default:
-		break;
-	}
-	return vtkSmartPointer<vtkPolyData>();
-}
-
 void MainWindow::Create_Mapper(const std::vector<vtkSmartPointer<vtkPolyData>>& objs, std::vector<vtkSmartPointer<vtkMapper>>& mapper)
 {
 	for (auto data : objs)
@@ -332,14 +228,14 @@ void MainWindow::Create_Actor(const std::vector<vtkSmartPointer<vtkMapper>>& map
 		vtkSmartPointer<vtkNamedColors> color = vtkSmartPointer<vtkNamedColors>::New();
 		if (Color == "All")
 		{
-            //actor->GetProperty()->SetDiffuseColor(color->GetColor3d("Light Gray").GetData());
+			actor->GetProperty()->SetDiffuseColor(color->GetColor3d("Light Gray").GetData());
 		}
 		else if (Color == "Main")
 		{
-            //actor->GetProperty()->SetDiffuseColor(color->GetColor3d("Light Gray").GetData());
+			actor->GetProperty()->SetDiffuseColor(color->GetColor3d("Light Gray").GetData());
 		}
 		else if (Color == "Sub") {
-            //actor->GetProperty()->SetDiffuseColor(color->GetColor3d("Light Gray").GetData());
+			actor->GetProperty()->SetDiffuseColor(color->GetColor3d("Light Gray").GetData());
 		}
 
 		actor->GetProperty()->SetSpecular(5.0);
@@ -355,6 +251,15 @@ vtkSmartPointer<vtkGenericOpenGLRenderWindow> MainWindow::Create_Render(const st
 
 	for (auto actor : Actors)
 		Renderer->AddActor(actor);
+
+#ifdef USE_DISPLAY_GLOBALAXIS
+	vtkNew<vtkTransform> transform;
+	transform->Translate(0.0, 0.0, 0.0);
+
+	vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
+	axes->SetTotalLength(700, 700, 700);
+	Renderer->AddActor(axes);
+#endif
 
 	Renderer->SetBackground(colors->GetColor3d("Black").GetData());
 	Renderer->ResetCamera();
@@ -417,6 +322,7 @@ void MainWindow::on_CaptureStopPushButton_clicked()
 {
 	m_rawImageViewer->stopPanoTimer();
 	m_rawImageViewer->stopCephTimer();
+
 }
 
 void MainWindow::slot_panoImage(QImage* pImg)
@@ -454,76 +360,11 @@ void MainWindow::slot_cephImage(QImage* cImg)
 
 }
 
-void MainWindow::on_MainPushButton_clicked()
+
+
+void MainWindow::on_openGLWidget_All_resized()
 {
-	qDebug() << "Main Push Btn!!";
-	auto center = m_actor_Main[3]->GetCenter();
-	
-	vtkSmartPointer<vtkTransform> transformPanoModuleAll = vtkSmartPointer<vtkTransform>::New();
-	transformPanoModuleAll->Translate(center[0], center[1]-10, center[2]);
-	transformPanoModuleAll->RotateWXYZ(0, 1.0, 1.0, 1.0);
-	m_actor_Main[3]->SetUserTransform(transformPanoModuleAll);
-	transformPanoModuleAll->Update();
-	m_renderwindow[1]->Render();
-
-
-	//for (int i = 360; i > 0; i--)
-	//{
-	//	Sleep(50);
-
-	//	vtkSmartPointer<vtkTransform> transformPanoModuleAll = vtkSmartPointer<vtkTransform>::New();
-	//	transformPanoModuleAll->RotateWXYZ(i, 0.0, 1.0, 0.0);
-	//	m_actor_Main[2]->SetUserTransform(transformPanoModuleAll);
-	//	transformPanoModuleAll->Update();
-
-	//	for (auto win : m_renderwindow)
-	//		win->Render();
-	//}
-
-}
-
-void MainWindow::on_SubPushButton_clicked()
-{
-	qDebug() << "Sub Push Btn!!";
-	vtkSmartPointer<vtkTransform> transformPanoModuleAll = vtkSmartPointer<vtkTransform>::New();
-	for (int i = 360; i > 0; i--)
-	{
-		Sleep(10);
-		transformPanoModuleAll->RotateWXYZ(i, 0.0, 1.0, 0.0);
-		m_actor_Main[2]->SetUserTransform(transformPanoModuleAll);
-		transformPanoModuleAll->Update();
-		m_renderwindow[1]->Render();
-		ui->openGLWidget_Main->update();
-	}
-}
-
-void MainWindow::resizeEvent(QResizeEvent* event)
-{
-   //auto Size = event->size();
-   //ui->openGLWidget_All->resize();
-
-}
-
-/* 상하 이동 시 LowBodyModule 제외 모든 모듈이 같은 좌표대로 이동 */
-void ModuleAscending()
-{
-
-}
-
-void ModuleDescending()
-{
-
-}
-
-/* 앞뒤 이동 시 CephModule 만 이동 */
-void CephBackandForth()
-{
-
-}
-
-/* 회전 이동 시 PanoModule 만 이동 */
-void PanoRotation()
-{
-
+	auto size = this->size();
+	ui->openGLWidget_All->resize(size);
 }
 

@@ -23,7 +23,6 @@ CBCTRawImageViewer::CBCTRawImageViewer()
     cephImageIterator = new QDirIterator(cephFolder, QDirIterator::Subdirectories);
     cephImageTimer = new QTimer(this);
     connect(cephImageTimer, &QTimer::timeout, this, &CBCTRawImageViewer::timeoutCephTimer);
-
 }
 
 
