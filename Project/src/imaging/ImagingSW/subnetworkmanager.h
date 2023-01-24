@@ -33,6 +33,9 @@ private slots:
 private:
     void connection(QString address, int port);
 
+    QString currentPID = "NULL";
+    QString currentType = "NULL";
+
     Protocol *protocol;
 
     QTcpSocket *subSocket;

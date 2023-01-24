@@ -11,7 +11,8 @@
 
 #include "protocol.h"
 #include "packetdata.h"
-#include "filesendingthread.h"
+
+#include <QDir>
 
 SubServer::SubServer(QWidget *parent)
     : QWidget(parent)
@@ -77,6 +78,8 @@ void SubServer::receiveControl()
         ui->logEdit->append((QString("%1가 연결되었습니다.")).arg(client));
     } else if (event == "CTL") {
         int command = protocol->packetData()->type();
+        currentPID = msg.split("|")[0];
+        currentType = msg.split("|")[1];
         switch (command) {
         case RESET:
             //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", RESET, msg);
@@ -84,15 +87,15 @@ void SubServer::receiveControl()
             break;
         case READY:
             //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", READY, msg);
-            ui->logEdit->append((QString("%1가 %2 촬영준비 명령을 보냈습니다.")).arg(client, msg));
+            ui->logEdit->append((QString("%1가 %2의 %3 촬영준비 명령을 보냈습니다.")).arg(client, currentPID, currentType));
             break;
         case START:
             //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", START, msg);
-            ui->logEdit->append((QString("%1가 %2 촬영시작 명령을 보냈습니다.")).arg(client, msg));
+            ui->logEdit->append((QString("%1가 %2의 %3 촬영시작 명령을 보냈습니다.")).arg(client, currentPID, currentType));
             break;
         case STOP:
             //protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", STOP, msg);
-            ui->logEdit->append((QString("%1가 %2 촬영종료 명령을 보냈습니다.")).arg(client, msg));
+            ui->logEdit->append((QString("%1가 %2의 %3 촬영종료 명령을 보냈습니다.")).arg(client, currentPID, currentType));
             break;
         }
     }
@@ -120,8 +123,12 @@ void SubServer::receiveFile()
         in >> totalSize >> byteReceived >> fileName;
         if(checkFileName == fileName) return;
 
+        QDir dir(QString("./receive/%1/%2/").arg(currentPID, currentType));
+        if (!dir.exists())
+            dir.mkpath(".");
+
         QFileInfo info(fileName);
-        QString currentFileName = "./receive/" + info.fileName();
+        QString currentFileName = dir.path() + info.fileName();
         qDebug() << currentFileName;
         file = new QFile(currentFileName);
         file->open(QFile::WriteOnly);
@@ -146,37 +153,43 @@ void SubServer::receiveFile()
 
 void SubServer::goOnSend(qint64 numBytes)
 {
-    qDebug("%d", __LINE__);
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
     byteToWrite -= numBytes; // Remaining data size
     outBlock = file->read(qMin(byteToWrite, numBytes));
     socket->write(outBlock);
 
     if (byteToWrite == 0) { // Send completed
-        qDebug("File sending completed!");
+        if (count < 100) {
+            count++;
+            sendFile(count);
+        }
     }
 }
 
-void SubServer::sendFile()
+void SubServer::sendFile(int num)
 {
-    qDebug("%d", __LINE__);
+    QString fileName;
+    if (num >= 100)
+        fileName = QString("./receive/0%1.raw").arg(num);
+    else
+        fileName = QString("./receive/00%1.raw").arg(num);
+
     loadSize = 0;
     byteToWrite = 0;
     totalSize = 0;
     outBlock.clear();
 
-    QString filename = QFileDialog::getOpenFileName();
-    if(filename.length()) {
-        file = new QFile(filename);
+    if(fileName.length()) {
+        file = new QFile(fileName);
         file->open(QFile::ReadOnly);
 
-        qDebug() << QString("file %1 is opened").arg(filename);
+        qDebug() << QString("file %1 is opened").arg(fileName);
 
         byteToWrite = totalSize = file->size(); // Data remained yet
         loadSize = 1024; // Size of data per a block
 
         QDataStream out(&outBlock, QIODevice::WriteOnly);
-        out << qint64(0) << qint64(0) << filename;
+        out << qint64(0) << qint64(0) << fileName;
 
         totalSize += outBlock.size();
         byteToWrite += outBlock.size();
@@ -186,11 +199,11 @@ void SubServer::sendFile()
 
         fileSocketMap.key(SW)->write(outBlock); // Send the read file to the socket
     }
-    qDebug() << QString("Sending file %1").arg(filename);
+    qDebug() << QString("Sending file %1").arg(fileName);
 }
 
 void SubServer::on_pushButton_clicked()
 {
-    FileSendingThread *sendingThread = new FileSendingThread(fileSocketMap.key(SW));
-    sendingThread->start();
+    count = 10;
+    sendFile(count);
 }

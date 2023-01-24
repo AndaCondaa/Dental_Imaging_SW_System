@@ -106,7 +106,7 @@ void PatientManager::receivePatientInfo(QStringList dataList)           // pid -
     ui->infoTableWidget->setItem(0, 3, sex);
     ui->infoTableWidget->setItem(0, 4, birth);
 
-    emit sendType(typeMap.value(dataList[0]));
+    emit sendType(dataList[0] + "|" + typeMap.value(dataList[0]));
     emit sendPidToImagingManager(dataList[0]);
 }
 
