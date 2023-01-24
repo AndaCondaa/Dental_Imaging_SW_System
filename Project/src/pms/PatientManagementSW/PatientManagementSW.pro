@@ -13,6 +13,7 @@ SOURCES += \
     imagemanager.cpp \
     main.cpp \
     mainwindow.cpp \
+    medicalchart.cpp \
     medicalrecordmanager.cpp \
     networkmanager.cpp \
     patientinfomanager.cpp \
@@ -22,6 +23,7 @@ HEADERS += \
     enrollmanager.h \
     imagemanager.h \
     mainwindow.h \
+    medicalchart.h \
     medicalrecordmanager.h \
     networkmanager.h \
     patientinfomanager.h \
@@ -31,6 +33,7 @@ FORMS += \
     enrollmanager.ui \
     imagemanager.ui \
     mainwindow.ui \
+    medicalchart.ui \
     medicalrecordmanager.ui \
     patientinfomanager.ui \
     patientstatusmanager.ui

@@ -303,12 +303,13 @@ void MainServer::receiveData()
                         qDebug()<<"reportData : "<<reportData ;
 
                     }
-query2->exec("select * from dentist WHERE dentist_no = '"+ dentistID +"'");
-while(query2->next())
-{
-dentistName = query2->value(1).toString();
-qDebug() << "Dentist Name: " <<dentistName;
-}
+
+                    query2->exec("select * from dentist WHERE dentist_no = '"+ dentistID +"'");
+                    while(query2->next())
+                    {
+                        dentistName = query2->value(1).toString();
+                        qDebug() << "Dentist Name: " <<dentistName;
+                    }
 
 
                     query4->nextResult();
@@ -348,7 +349,7 @@ qDebug() << "Dentist Name: " <<dentistName;
                             sendData += data;
                             qDebug() << "sendData: " << sendData;
                         }
-                    }             
+                    }
                 }
                 
                 qDebug()<<"pid: "<<pid;
@@ -381,8 +382,8 @@ qDebug() << "Dentist Name: " <<dentistName;
                     query2->exec("select * from dentist WHERE dentist_no = '"+ dentistID +"'");
                     while(query2->next())
                     {
-                    dentistName = query2->value(1).toString();
-                    qDebug() << "Dentist Name: " <<dentistName;
+                        dentistName = query2->value(1).toString();
+                        qDebug() << "Dentist Name: " <<dentistName;
                     }
 
                     query4->nextResult();
@@ -393,8 +394,8 @@ qDebug() << "Dentist Name: " <<dentistName;
             }
             
             // 이거 고치기 socket->write(sendData.toStdString().c_str());
-//            qDebug() << "PSE's Info Data: " << sendData;
-//            qDebug() << "PSE's Report List: " << reportData;
+            //            qDebug() << "PSE's Info Data: " << sendData;
+            //            qDebug() << "PSE's Report List: " << reportData;
 
             qDebug() << "PSE's sendData: " << sendData;
             pmsSocket->write(sendData.toStdString().c_str());
@@ -439,7 +440,9 @@ qDebug() << "Dentist Name: " <<dentistName;
 
 
             //**********여기는 정연이 뷰어SW가 켜져있을 때 다시 주석 풀기************
+            qDebug() << "정연이 소켓 있는지 확인: " << viewerSocket->isValid();
             viewerSocket->write(sendWaitData.toStdString().c_str());
+
 
         }
 
@@ -689,10 +692,10 @@ void MainServer::loadData()
         ui->reportTableView->setModel(reportModel);
 
         /*임시로 데이터 넣어둔 것. 나중에 지워도 무관*/
-//        query4->exec("INSERT INTO report VALUES ('R00001', 'P00001', 'D00002', '2023-01-19', '19일 처방전')");
-//        query4->exec("INSERT INTO report VALUES ('R00002', 'P00001', 'D00002', '2023-01-20', '20일 처방전')");
-//        query4->exec("INSERT INTO report VALUES ('R00003', 'P00001', 'D00003', '2023-01-21', '21일 처방전')");
-//        reportModel->select();
+                query4->exec("INSERT INTO report VALUES ('R00001', 'P00001', 'D00002', '2023-01-19', '19일 처방전')");
+                query4->exec("INSERT INTO report VALUES ('R00002', 'P00001', 'D00002', '2023-01-20', '20일 처방전')");
+                query4->exec("INSERT INTO report VALUES ('R00003', 'P00002', 'D00003', '2023-01-21', '21일 처방전')");
+                reportModel->select();
 
 
 
