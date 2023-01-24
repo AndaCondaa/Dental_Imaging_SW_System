@@ -49,6 +49,7 @@ ImagingManager::ImagingManager(QWidget *parent) :
 
     connect(ui->reconButton, SIGNAL(clicked()), this, SLOT(reconImage()));
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveButtonSlot()));
+    connect(ui->finishButton, SIGNAL(clicked()), this, SLOT(finishButtonSlot()));
     connect(ui->progressBar, SIGNAL(valueChanged(int)), this, SLOT(isProgressMaximum(int)));
 }
 
@@ -59,7 +60,12 @@ ImagingManager::~ImagingManager()
 
 void ImagingManager::setPID(QString pid)
 {
-    m_pid = pid;
+    currentPID = pid;
+}
+
+void ImagingManager::setType(QString type)
+{
+    currentType = type;
 }
 
 void ImagingManager::raw16ToBmp8()
@@ -136,108 +142,57 @@ void ImagingManager::raw16ToBmp8()
     delete pal;
     */
 }
-void ImagingManager::setType(QString type)
-{
-    m_type = type;
-}
+
 
 void ImagingManager::loadImage()
 {
-    m_type = "PANO";
-    if (m_type == "CEPH") {
-        ui->progressBar->setRange(0, 866);
-    } else if (m_type == "PANO") {
-        ui->progressBar->setRange(0, 1600);
+    if (currentType == "CEPH") {
+        ui->progressBar->setRange(0, 865);
+    } else if (currentType == "PANO") {
+        ui->progressBar->setRange(0, 1589);
     } else {
         return;
     }
 
-    ImageThread *thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), m_type, this);
+    ImageThread *thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), currentType, this);
     connect(thread, SIGNAL(imageProgressed(int)), ui->progressBar, SLOT(setValue(int)));
     connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
     thread->start();
 }
 
 void ImagingManager::reconImage()
-{
-    // 스티칭
-    /*
-    vector<Mat> imgs;
-    int cnt = 0;
-    for(int i = 100; i < 1000; i++)
-    {
-        QString fileName = QString("./CEPH/0%1.raw").arg(i);
-//        QString fileName = QString("./image/0350.raw");
-        QFile file(fileName);
-        file.open(QIODevice::ReadOnly);
-        QByteArray array = file.readAll();
-        file.close();
-
-        uchar* data = (uchar*)array.data();
-
-        Mat mat(2400, 48, CV_16UC1, data);
-//        Mat rotateMat(1152, 64, CV_16UC1);
-//        rotate(mat, rotateMat, cv::ROTATE_90_CLOCKWISE);
-        Mat beforeMat(2400, 48, CV_8UC1);
-        mat.convertTo(beforeMat, CV_8UC1);
-        Mat his(2400, 48, CV_8UC1);
-        equalizeHist(beforeMat, his);
-
-        imgs.push_back(his);
-        cnt++;
-        qDebug("%d", cnt);
-    }
-
-    Ptr<Stitcher> stitcher = Stitcher::create();
-
-    Mat dst(2400, 3000, CV_8UC1);
-    qDebug("%d", __LINE__);
-    Stitcher::Status status = stitcher->stitch(imgs, dst);
-    qDebug("%d", __LINE__);
-    if (status != Stitcher::Status::OK) {
-        qDebug() << "Error on stitching!";
-        return;
-    }
-    imshow("dst", dst);
-    waitKey();
-//    QImage frameImage(dst.data, dst.cols, dst.rows, dst.step ,QImage::Format_Grayscale8);
-//    ui->reconLabel->setPixmap(QPixmap::fromImage(frameImage).scaledToWidth(ui->reconLabel->width()));
-    */
-
+{   
+    int count = 0;
 
     FILE *file;
-    file = fopen("./image/origin/PANO/0555.raw", "rb");
 
-    if (file == nullptr) {
-        qDebug() << "open is failed";
-        return;
+    unsigned short *buf = new unsigned short[48*2400];
+    unsigned short *outImg = new unsigned short[3000*2400];
+//    inImg = (unsigned short*)malloc(sizeof(unsigned short) * 48 * 2400);
+//    outImg = (unsigned short*)malloc(sizeof(unsigned short) * 3000 * 2400);
+
+    for (int k = 21; k < 1021; k++) {
+        QString fileName;
+        if (k < 100)
+            fileName = QString("./PANO/00%1.raw").arg(k);
+        else if (k >= 100 && k < 1000)
+            fileName = QString("./PANO/0%1.raw").arg(k);
+        else if (k > 1000)
+            fileName = QString("./PANO/%1.raw").arg(k);
+
+        file = fopen("./CEPH/0555.raw", "rb");
+
+        if (file == nullptr) {
+            qDebug() << "open is failed";
+            return;
+        }
+        fread(buf, sizeof(unsigned short), 48*2400, file);
+        fclose(file);
+
+
+        count++;
     }
 
-    unsigned short *buf;
-    unsigned char *data;
-    buf = (unsigned short*)malloc(sizeof(unsigned short) * 1152 * 64);
-    data = (unsigned char*)malloc(sizeof(unsigned char) * 1152 * 64 * 2);
-
-    fread(buf, sizeof(unsigned short), 1152 * 64, file);
-    fclose(file);
-
-    int temp = 0;
-    int min = 65535;
-    int max = 0;
-    int range;
-
-    for (int i = 0; i < 1152 * 64; i++) {
-        temp = buf[i];
-        if (min > temp)
-            min = temp;
-        else if (max < temp)
-            max = temp;
-    }
-
-    range = max - min;
-    for (int i = 0; i < 1152 * 64; i++) {
-        buf[i] = ~(unsigned short)(((double)(buf[i] - min) / (double)(range)) * 65535);
-    }
 
     file = fopen("./result.raw", "wb");
     fwrite(buf, sizeof(unsigned short), 1152 * 64, file);
@@ -249,11 +204,12 @@ void ImagingManager::reconImage()
 
     QImage frameImage(data, 1152, 64, QImage::Format_Grayscale16);
     ui->viewLabel->setPixmap(QPixmap::fromImage(frameImage).scaledToWidth(ui->viewLabel->width()));
+
 }
 
-void ImagingManager::saveButtonSlot()
+void ImagingManager::finishButtonSlot()
 {
-    emit saveSignal(m_pid);
+    emit finishSignal(currentPID);
 }
 
 void ImagingManager::stopButtonSlot()
@@ -268,8 +224,14 @@ void ImagingManager::stopButtonSlot()
 
 void ImagingManager::isProgressMaximum(int value)
 {
-    qDebug("%d , %d", value, ui->progressBar->maximum());
     if (value == ui->progressBar->maximum()) {
-        qDebug("MAX !!! : %d", value);
+        qDebug("촬영 종료");
+        ui->reconButton->setEnabled(true);
+        emit shootingEndSignal(currentType);
     }
+}
+
+void ImagingManager::saveButtonSlot()
+{
+    emit saveSignal(currentPID + "|" + currentType);
 }

@@ -24,6 +24,8 @@ private slots:
     void loadImage();
     void reconImage();
     void saveButtonSlot();
+    void finishButtonSlot();
+
     void stopButtonSlot();
 
     void isProgressMaximum(int);
@@ -31,11 +33,15 @@ private slots:
 private:
     Ui::ImagingManager *ui;
 
-    QString m_pid = "NULL";
-    QString m_type = "NULL";
+    QString currentPID = "NULL";
+    QString currentType = "NULL";
 
 signals:
+    void shootingEndSignal(QString);
     void saveSignal(QString);
+    void finishSignal(QString);
+
+
 };
 
 #endif // IMAGINGMANAGER_H

@@ -80,10 +80,14 @@ void MainNetworkManager::requestPatientInfo(QString pid)
     sendPacket(mainSocket, "IPR", pid, "NULL");     // 서버로 환자정보 요청
 }
 
+void MainNetworkManager::saveSlot(QString)
+{
+    sendFile();
+}
+
 void MainNetworkManager::endImagingProcess(QString pid)
 {
     sendPacket(mainSocket, "ISV", pid, "NULL");     // 촬영 종료 안내 패킷
-    sendFile();
 }
 
 void MainNetworkManager::goOnSend(qint64 numBytes)
@@ -128,3 +132,5 @@ void MainNetworkManager::sendFile()
     }
     qDebug() << QString("Sending file %1").arg(filename);
 }
+
+
