@@ -16,6 +16,10 @@ int main(int argc, char *argv[])
     //widget.show();
     
     MainWindow MainWindow;
+    MainWindow.setMinimumSize(100, 100);
+    MainWindow.resize(1920, 1200);
+    MainWindow.showMaximized();
     MainWindow.show();
+
     return CTApp.exec();
 }
