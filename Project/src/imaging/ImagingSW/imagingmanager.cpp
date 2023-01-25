@@ -167,43 +167,60 @@ void ImagingManager::reconImage()
     FILE *file;
 
     unsigned short *buf = new unsigned short[48*2400];
-    unsigned short *outImg = new unsigned short[3000*2400];
-//    inImg = (unsigned short*)malloc(sizeof(unsigned short) * 48 * 2400);
-//    outImg = (unsigned short*)malloc(sizeof(unsigned short) * 3000 * 2400);
+    unsigned short *out = new unsigned short[3000*2400];
+
 
     for (int k = 21; k < 1021; k++) {
         QString fileName;
         if (k < 100)
-            fileName = QString("./PANO/00%1.raw").arg(k);
+            fileName = QString("./CEPH/00%1.raw").arg(k);
         else if (k >= 100 && k < 1000)
-            fileName = QString("./PANO/0%1.raw").arg(k);
-        else if (k > 1000)
-            fileName = QString("./PANO/%1.raw").arg(k);
+            fileName = QString("./CEPH/0%1.raw").arg(k);
+        else if (k >= 1000)
+            fileName = QString("./CEPH/%1.raw").arg(k);
 
-        file = fopen("./CEPH/0555.raw", "rb");
-
+        file = fopen(fileName.toStdString().c_str(), "rb");
+        qDebug() << fileName;
         if (file == nullptr) {
             qDebug() << "open is failed";
             return;
         }
-        fread(buf, sizeof(unsigned short), 48*2400, file);
+
+        fread(buf, sizeof(unsigned short), 48 * 2400, file);
         fclose(file);
 
-
+        for (int y = 0; y < 2400; y++) {
+            for (int x = 0; x < 3; x++) {
+                out[(x+count*3)+y*3000] = buf[(23+x)+y*48];
+            }
+        }
         count++;
     }
 
+    for (int i = 0; i < 3000*2400; i++) {
+        if (out[i]*500 > 65535) {
+            out[i] = 65535;
+        } else {
+            out[i] *= 500;
+        }
+        out[i] = ~out[i];
+    }
 
     file = fopen("./result.raw", "wb");
-    fwrite(buf, sizeof(unsigned short), 1152 * 64, file);
+    fwrite(out, sizeof(unsigned short), 3000*2400, file);
     fclose(file);
 
-    file = fopen("./result.raw", "rb");
-    fread(data, sizeof(unsigned char), 1152 * 64 * 2, file);
-    fclose(file);
 
-    QImage frameImage(data, 1152, 64, QImage::Format_Grayscale16);
-    ui->viewLabel->setPixmap(QPixmap::fromImage(frameImage).scaledToWidth(ui->viewLabel->width()));
+//    file = fopen("./result.raw", "wb");
+//    fwrite(buf, sizeof(unsigned short), 1152 * 64, file);
+//    fclose(file);
+
+//    file = fopen("./result.raw", "rb");
+//    fread(data, sizeof(unsigned char), 1152 * 64 * 2, file);
+//    fclose(file);
+
+//    QImage frameImage(data, 1152, 64, QImage::Format_Grayscale16);
+//    ui->viewLabel->setPixmap(QPixmap::fromImage(frameImage).scaledToWidth(ui->viewLabel->width()));
 
 }
 
