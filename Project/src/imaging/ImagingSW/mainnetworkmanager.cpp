@@ -13,7 +13,7 @@ MainNetworkManager::MainNetworkManager(QObject *parent)
     mainSocket = new QTcpSocket(this);
     fileSocket = new QTcpSocket(this);
 
-    connection("127.0.0.1", 8000);
+    connection("192.168.0.39", 8000);
 }
 
 MainNetworkManager::~MainNetworkManager()
@@ -33,7 +33,7 @@ void MainNetworkManager::connection(QString address, int port)
 
 //    fileSocket->connectToHost(address, port+1);
 //    if (fileSocket->waitForConnected()) {
-////        sendPacket(fileSocket, "FIL", "IMG", "NULL");
+//        sendPacket(fileSocket, "CNT", "IMG", "NULL");
 //        connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
 //    } else {
 //        // 연결 실패  예외처리 구현
