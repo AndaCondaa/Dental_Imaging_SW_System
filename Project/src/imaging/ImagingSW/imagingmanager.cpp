@@ -7,7 +7,7 @@
 #include <opencv2/opencv.hpp>
 #include <stdio.h>
 
-
+/*
 using namespace cv;
 using namespace std;
 
@@ -39,7 +39,7 @@ typedef struct {
     unsigned char rgbRed;
     unsigned char rgbReserved;
 } RGBQUAD;
-
+*/
 
 ImagingManager::ImagingManager(QWidget *parent) :
     QWidget(parent),
@@ -143,7 +143,6 @@ void ImagingManager::raw16ToBmp8()
     */
 }
 
-
 void ImagingManager::loadImage()
 {
     if (currentType == "CEPH") {
@@ -157,103 +156,8 @@ void ImagingManager::loadImage()
     ImageThread *thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), currentType, this);
     connect(thread, SIGNAL(imageProgressed(int)), ui->progressBar, SLOT(setValue(int)));
     connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
+    connect(this, SIGNAL(stopThread()), thread, SLOT(terminate()));
     thread->start();
-}
-
-void ImagingManager::reconImage()
-{   
-    int count = 0;
-
-    FILE *file;
-
-    unsigned short *buf = new unsigned short[48*2400];
-<<<<<<< HEAD
-    unsigned short *out = new unsigned short[3000*2400];
-
-=======
-    unsigned short *outImg = new unsigned short[3000*2400];
->>>>>>> f6808b9633e4330703dfbdc99093caefade8b6fc
-
-    for (int k = 21; k < 1021; k++) {
-        memset(buf, 0, 48*2400);
-        QString fileName;
-        if (k < 100)
-            fileName = QString("./CEPH/00%1.raw").arg(k);
-        else if (k >= 100 && k < 1000)
-<<<<<<< HEAD
-            fileName = QString("./CEPH/0%1.raw").arg(k);
-        else if (k >= 1000)
-            fileName = QString("./CEPH/%1.raw").arg(k);
-=======
-            fileName = QString("./PANO/0%1.raw").arg(k);
-        else if (k > 1000)
-            fileName = QString("./PANO/%1.raw").arg(k);
-
-        file = fopen(fileName.toStdString().c_str(), "rb");
->>>>>>> f6808b9633e4330703dfbdc99093caefade8b6fc
-
-        file = fopen(fileName.toStdString().c_str(), "rb");
-        qDebug() << fileName;
-        if (file == nullptr) {
-            qDebug() << "open is failed";
-            return;
-        }
-
-        fread(buf, sizeof(unsigned short), 48 * 2400, file);
-        fclose(file);
-
-<<<<<<< HEAD
-        for (int y = 0; y < 2400; y++) {
-            for (int x = 0; x < 3; x++) {
-                out[(x+count*3)+y*3000] = buf[(23+x)+y*48];
-            }
-        }
-=======
-
-
-
-
-
->>>>>>> f6808b9633e4330703dfbdc99093caefade8b6fc
-        count++;
-    }
-
-    for (int i = 0; i < 3000*2400; i++) {
-        if (out[i]*500 > 65535) {
-            out[i] = 65535;
-        } else {
-            out[i] *= 500;
-        }
-        out[i] = ~out[i];
-    }
-
-<<<<<<< HEAD
-    file = fopen("./result.raw", "wb");
-    fwrite(out, sizeof(unsigned short), 3000*2400, file);
-    fclose(file);
-
-
-//    file = fopen("./result.raw", "wb");
-//    fwrite(buf, sizeof(unsigned short), 1152 * 64, file);
-//    fclose(file);
-
-//    file = fopen("./result.raw", "rb");
-//    fread(data, sizeof(unsigned char), 1152 * 64 * 2, file);
-//    fclose(file);
-
-=======
-//    file = fopen("./result.raw", "wb");
-//    fwrite(buf, sizeof(unsigned short), 1152 * 64, file);
-//    fclose(file);
-
-//    file = fopen("./result.raw", "rb");
-//    fread(data, sizeof(unsigned char), 1152 * 64 * 2, file);
-//    fclose(file);
-
->>>>>>> f6808b9633e4330703dfbdc99093caefade8b6fc
-//    QImage frameImage(data, 1152, 64, QImage::Format_Grayscale16);
-//    ui->viewLabel->setPixmap(QPixmap::fromImage(frameImage).scaledToWidth(ui->viewLabel->width()));
-
 }
 
 void ImagingManager::finishButtonSlot()
@@ -263,12 +167,7 @@ void ImagingManager::finishButtonSlot()
 
 void ImagingManager::stopButtonSlot()
 {
-    ImageThread *current = (ImageThread*)ImageThread::currentThread();
-
-    current->terminate();
-    current->quit();
-    current->wait(5000);
-    //    current->exit();
+    emit stopThread();
 }
 
 void ImagingManager::isProgressMaximum(int value)
@@ -284,3 +183,81 @@ void ImagingManager::saveButtonSlot()
 {
     emit saveSignal(currentPID + "|" + currentType);
 }
+
+void ImagingManager::reconImage()
+{
+    int count = 0;
+
+    FILE *file;
+
+    unsigned short *buf = new unsigned short[48*2400];
+    unsigned short *out = new unsigned short[3000*2400];
+
+    for (int k = 21; k < 1021; k++) {
+        memset(buf, 0, 48*2400);
+        QString fileName;
+        if (k < 100)
+            fileName = QString("./CEPH/00%1.raw").arg(k);
+        else if (k >= 100 && k < 1000)
+            fileName = QString("./CEPH/0%1.raw").arg(k);
+        else if (k >= 1000)
+            fileName = QString("./CEPH/%1.raw").arg(k);
+
+        file = fopen(fileName.toStdString().c_str(), "rb");
+        qDebug() << fileName;
+        if (file == nullptr) {
+            qDebug() << "open is failed";
+            return;
+        }
+
+        fread(buf, sizeof(unsigned short), 48 * 2400, file);
+        fclose(file);
+
+        for (int y = 0; y < 2400; y++) {
+            for (int x = 0; x < 3; x++) {
+                out[(x+count*3)+y*3000] = buf[(23+x)+y*48];
+            }
+        }
+
+        count++;
+    }
+
+    file = fopen("./result1.raw", "wb");
+    fwrite(out, sizeof(unsigned short), 3000*2400, file);
+    fclose(file);
+
+    delete[] buf;
+    delete[] out;
+}
+
+void ImagingManager::on_filter1Button_clicked()
+{
+    FILE *file;
+    unsigned short *img = new unsigned short[3000*2400];
+
+    file = fopen("./result1.raw", "rb");
+    fread(img, sizeof(unsigned short), 3000*2400, file);
+    fclose(file);
+
+//    for (int i = 0; i < 3000*2400; i++) {
+//        if (img[i]*50 > 65535) {
+//            img[i] = 65535;
+//        } else {
+//            img[i] *= 50;
+//        }
+//    }
+
+    file = fopen("./result2.raw", "wb");
+    fwrite(img, sizeof(unsigned short), 3000*2400, file);
+    fclose(file);
+
+    qDebug() << "filter1 end";
+    delete[] img;
+}
+
+
+void ImagingManager::on_filter2Button_2_clicked()
+{
+
+}
+
