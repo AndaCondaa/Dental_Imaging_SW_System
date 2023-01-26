@@ -157,6 +157,20 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="filter1Button">
+           <property name="text">
+            <string>filter1</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="filter2Button_2">
+           <property name="text">
+            <string>filter2</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="saveButton">
            <property name="enabled">
             <bool>false</bool>

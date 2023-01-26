@@ -88,24 +88,6 @@ void ImageThread::run()
         buf = (unsigned short*)malloc(sizeof(unsigned short) * pixels);
 
         for(int k = 876; k > 10; k--) {
-            /*
-            QString fileName = QString("./image/origin/CEPH/0%1.raw").arg(i);
-            QFile file(fileName);
-            file.open(QIODevice::ReadOnly);
-            QByteArray array = file.readAll();
-            file.close();
-
-            uchar* data = (uchar*)array.data();
-
-            Mat mat(rows, cols, CV_16UC1, data);
-            Mat beforeMat(rows, cols, CV_8UC1);
-            mat.convertTo(beforeMat, CV_8UC1);
-            Mat his(rows, cols, CV_8UC1);
-            equalizeHist(beforeMat, his);
-
-            QImage frameImage(his.data, his.cols, his.rows, his.step, QImage::Format_Grayscale8);
-            painter.drawImage(cnt*(0.2), 0, frameImage.scaledToHeight(height));
-            */
             if (k >= 100)
                 fileName = QString("./CEPH/0%1.raw").arg(k);
             else
