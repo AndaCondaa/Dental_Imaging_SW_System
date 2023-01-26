@@ -239,26 +239,13 @@ void ImagingManager::on_filter1Button_clicked()
     fread(img, sizeof(unsigned short), 3000*2400, file);
     fclose(file);
 
-
-    unsigned short min, max, tmp;
-    min = 65535;
-    max = 0;
-
-    for (int i = 0; i < 3000*2400; i++) {
-        tmp = img[i];
-        if (tmp < min)
-            min = tmp;
-        if (tmp > max)
-            max = tmp;
-        if (tmp == 0)
-            qDebug("%d", i);
-        if (img[i]*50 > 65535) {
-            img[i] = 65535;
-        } else {
-            img[i] *= 50;
-        }
-    }
-    qDebug("min: %d, max: %d", min, max);
+//    for (int i = 0; i < 3000*2400; i++) {
+//        if (img[i]*50 > 65535) {
+//            img[i] = 65535;
+//        } else {
+//            img[i] *= 50;
+//        }
+//    }
 
     file = fopen("./result2.raw", "wb");
     fwrite(img, sizeof(unsigned short), 3000*2400, file);
