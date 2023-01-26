@@ -239,13 +239,42 @@ void ImagingManager::on_filter1Button_clicked()
     fread(img, sizeof(unsigned short), 3000*2400, file);
     fclose(file);
 
-//    for (int i = 0; i < 3000*2400; i++) {
-//        if (img[i]*50 > 65535) {
-//            img[i] = 65535;
-//        } else {
-//            img[i] *= 50;
+    for (int i = 0; i < 3000*2400; i++) {
+        if (img[i]*50 >65535) {
+            img[i] = 65535;
+        } else {
+            img[i] *= 50;
+        }
+    }
+
+    int xkernel[3][3] = {
+        {-1, 0, 1},
+        {-2, 0, 2},
+        {-1, 0, 1}
+    };
+    int ykernel[3][3] = {
+        {1, 2, 1},
+        {0, 0, 0},
+        {-1, -2, -1}
+    };
+
+//    float xsum = 0;
+//    float ysum = 0;
+//    for (int y = 1; y < 2399; y++) {
+//        for (int x = 1; x < 2999; x++) {
+//            xsum = 0;
+//            ysum = 0;
+//            for (int a = -1; a < 2; a++) {
+//                for (int b = -1; b < 2; b++) {
+//                    xsum += xkernel[a+1][b+1] * (img[x+a+((y+b)*3000)]);
+//                    ysum += ykernel[a+1][b+1] * (img[x+a+((y+b)*3000)]);
+//                }
+//            }
+//            int value = sqrt((xsum*xsum)+(ysum*ysum));
+//            img[x+(y*3000)] = value;
 //        }
 //    }
+
 
     file = fopen("./result2.raw", "wb");
     fwrite(img, sizeof(unsigned short), 3000*2400, file);
