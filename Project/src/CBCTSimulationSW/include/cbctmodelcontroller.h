@@ -105,7 +105,7 @@ private slots:
 
 public:
 	bool initialize();
-
+	void test();
 private:
 	class Internal;
 	Internal* PData;

@@ -1,0 +1,1839 @@
+{
+	"artifacts" : 
+	[
+		{
+			"path" : "Debug/Qt_VTK_CT.exe"
+		},
+		{
+			"path" : "Debug/Qt_VTK_CT.pdb"
+		}
+	],
+	"backtrace" : 1,
+	"backtraceGraph" : 
+	{
+		"commands" : 
+		[
+			"add_executable",
+			"target_link_libraries",
+			"set_target_properties",
+			"include",
+			"find_package",
+			"find_dependency",
+			"_qt_internal_find_qt_dependencies",
+			"include_directories"
+		],
+		"files" : 
+		[
+			"CMakeLists.txt",
+			"C:/Program Files/VTK/lib/cmake/vtk-9.2/VTK-targets.cmake",
+			"C:/Program Files/VTK/lib/cmake/vtk-9.2/vtk-config.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6Quick/Qt6QuickTargets.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6Quick/Qt6QuickConfig.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6/Qt6Config.cmake",
+			"C:/Program Files/VTK/lib/cmake/vtk-9.2/VTK-vtk-module-find-packages.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6OpenGL/Qt6OpenGLTargets.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6OpenGL/Qt6OpenGLConfig.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6Gui/Qt6GuiTargets.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6Gui/Qt6GuiConfig.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6Network/Qt6NetworkVersionlessTargets.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6Network/Qt6NetworkConfig.cmake",
+			"C:/Program Files/CMake/share/cmake-3.25/Modules/CMakeFindDependencyMacro.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6/QtPublicDependencyHelpers.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6Qml/Qt6QmlDependencies.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6Qml/Qt6QmlConfig.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6Quick/Qt6QuickDependencies.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6Core/Qt6CoreTargets.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6Core/Qt6CoreConfig.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateTargets.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6EntryPointPrivate/Qt6EntryPointPrivateConfig.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6Core/Qt6CoreDependencies.cmake",
+			"C:/Qt/6.4.1/msvc2019_64/lib/cmake/Qt6Qml/Qt6QmlTargets.cmake"
+		],
+		"nodes" : 
+		[
+			{
+				"file" : 0
+			},
+			{
+				"command" : 0,
+				"file" : 0,
+				"line" : 46,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 58,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 59,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 61,
+				"parent" : 0
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 62,
+				"parent" : 0
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 20,
+				"parent" : 0
+			},
+			{
+				"file" : 2,
+				"parent" : 6
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 138,
+				"parent" : 7
+			},
+			{
+				"file" : 1,
+				"parent" : 8
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 803,
+				"parent" : 9
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 1270,
+				"parent" : 9
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 628,
+				"parent" : 9
+			},
+			{
+				"command" : 1,
+				"file" : 0,
+				"line" : 60,
+				"parent" : 0
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 1278,
+				"parent" : 9
+			},
+			{
+				"command" : 3,
+				"file" : 2,
+				"line" : 152,
+				"parent" : 7
+			},
+			{
+				"file" : 6,
+				"parent" : 15
+			},
+			{
+				"command" : 4,
+				"file" : 6,
+				"line" : 491,
+				"parent" : 16
+			},
+			{
+				"file" : 5,
+				"parent" : 17
+			},
+			{
+				"command" : 4,
+				"file" : 5,
+				"line" : 157,
+				"parent" : 18
+			},
+			{
+				"file" : 4,
+				"parent" : 19
+			},
+			{
+				"command" : 3,
+				"file" : 4,
+				"line" : 52,
+				"parent" : 20
+			},
+			{
+				"file" : 3,
+				"parent" : 21
+			},
+			{
+				"command" : 2,
+				"file" : 3,
+				"line" : 56,
+				"parent" : 22
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 14,
+				"parent" : 0
+			},
+			{
+				"file" : 8,
+				"parent" : 24
+			},
+			{
+				"command" : 3,
+				"file" : 8,
+				"line" : 52,
+				"parent" : 25
+			},
+			{
+				"file" : 7,
+				"parent" : 26
+			},
+			{
+				"command" : 2,
+				"file" : 7,
+				"line" : 56,
+				"parent" : 27
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 13,
+				"parent" : 0
+			},
+			{
+				"file" : 10,
+				"parent" : 29
+			},
+			{
+				"command" : 3,
+				"file" : 10,
+				"line" : 52,
+				"parent" : 30
+			},
+			{
+				"file" : 9,
+				"parent" : 31
+			},
+			{
+				"command" : 2,
+				"file" : 9,
+				"line" : 56,
+				"parent" : 32
+			},
+			{
+				"command" : 3,
+				"file" : 4,
+				"line" : 40,
+				"parent" : 20
+			},
+			{
+				"file" : 17,
+				"parent" : 34
+			},
+			{
+				"command" : 6,
+				"file" : 17,
+				"line" : 39,
+				"parent" : 35
+			},
+			{
+				"command" : 5,
+				"file" : 14,
+				"line" : 108,
+				"parent" : 36
+			},
+			{
+				"command" : 4,
+				"file" : 13,
+				"line" : 47,
+				"parent" : 37
+			},
+			{
+				"file" : 16,
+				"parent" : 38
+			},
+			{
+				"command" : 3,
+				"file" : 16,
+				"line" : 40,
+				"parent" : 39
+			},
+			{
+				"file" : 15,
+				"parent" : 40
+			},
+			{
+				"command" : 6,
+				"file" : 15,
+				"line" : 39,
+				"parent" : 41
+			},
+			{
+				"command" : 5,
+				"file" : 14,
+				"line" : 108,
+				"parent" : 42
+			},
+			{
+				"command" : 4,
+				"file" : 13,
+				"line" : 47,
+				"parent" : 43
+			},
+			{
+				"file" : 12,
+				"parent" : 44
+			},
+			{
+				"command" : 3,
+				"file" : 12,
+				"line" : 55,
+				"parent" : 45
+			},
+			{
+				"file" : 11,
+				"parent" : 46
+			},
+			{
+				"command" : 2,
+				"file" : 11,
+				"line" : 56,
+				"parent" : 47
+			},
+			{
+				"command" : 4,
+				"file" : 0,
+				"line" : 12,
+				"parent" : 0
+			},
+			{
+				"file" : 19,
+				"parent" : 49
+			},
+			{
+				"command" : 3,
+				"file" : 19,
+				"line" : 52,
+				"parent" : 50
+			},
+			{
+				"file" : 18,
+				"parent" : 51
+			},
+			{
+				"command" : 2,
+				"file" : 18,
+				"line" : 56,
+				"parent" : 52
+			},
+			{
+				"command" : 3,
+				"file" : 19,
+				"line" : 40,
+				"parent" : 50
+			},
+			{
+				"file" : 22,
+				"parent" : 54
+			},
+			{
+				"command" : 6,
+				"file" : 22,
+				"line" : 39,
+				"parent" : 55
+			},
+			{
+				"command" : 5,
+				"file" : 14,
+				"line" : 108,
+				"parent" : 56
+			},
+			{
+				"command" : 4,
+				"file" : 13,
+				"line" : 47,
+				"parent" : 57
+			},
+			{
+				"file" : 21,
+				"parent" : 58
+			},
+			{
+				"command" : 3,
+				"file" : 21,
+				"line" : 52,
+				"parent" : 59
+			},
+			{
+				"file" : 20,
+				"parent" : 60
+			},
+			{
+				"command" : 2,
+				"file" : 20,
+				"line" : 56,
+				"parent" : 61
+			},
+			{
+				"command" : 3,
+				"file" : 16,
+				"line" : 52,
+				"parent" : 39
+			},
+			{
+				"file" : 23,
+				"parent" : 63
+			},
+			{
+				"command" : 2,
+				"file" : 23,
+				"line" : 56,
+				"parent" : 64
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 322,
+				"parent" : 9
+			},
+			{
+				"command" : 2,
+				"file" : 1,
+				"line" : 94,
+				"parent" : 9
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 29,
+				"parent" : 0
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 30,
+				"parent" : 0
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 31,
+				"parent" : 0
+			},
+			{
+				"command" : 7,
+				"file" : 0,
+				"line" : 32,
+				"parent" : 0
+			}
+		]
+	},
+	"compileGroups" : 
+	[
+		{
+			"compileCommandFragments" : 
+			[
+				{
+					"fragment" : "/DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -MDd"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "-Zc:__cplusplus"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "-permissive-"
+				},
+				{
+					"backtrace" : 2,
+					"fragment" : "-utf-8"
+				},
+				{
+					"fragment" : "-std:c++17"
+				}
+			],
+			"defines" : 
+			[
+				{
+					"backtrace" : 5,
+					"define" : "DIY_NO_THREADS"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "FMT_SHARED"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "H5_BUILT_AS_DYNAMIC_LIB"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "KISSFFT_DLL_IMPORT=1"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "LZ4_DLL_IMPORT=1"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "QT_CORE_LIB"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "QT_GUI_LIB"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "QT_NETWORK_LIB"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "QT_OPENGLWIDGETS_LIB"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "QT_OPENGL_LIB"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "QT_QMLINTEGRATION_LIB"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "QT_QMLMODELS_LIB"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "QT_QML_LIB"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "QT_QUICK_LIB"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "QT_SQL_LIB"
+				},
+				{
+					"backtrace" : 13,
+					"define" : "QT_WIDGETS_LIB"
+				},
+				{
+					"backtrace" : 3,
+					"define" : "QT_XML_LIB"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "UNICODE"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "VTK_HAS_OGGTHEORA_SUPPORT"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "WIN32"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "WIN64"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "_ENABLE_EXTENDED_ALIGNED_STORAGE"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "_UNICODE"
+				},
+				{
+					"backtrace" : 2,
+					"define" : "_WIN64"
+				},
+				{
+					"backtrace" : 5,
+					"define" : "kiss_fft_scalar=double"
+				}
+			],
+			"includes" : 
+			[
+				{
+					"path" : "C:/Qt_VTK_CT/build"
+				},
+				{
+					"path" : "C:/Qt_VTK_CT"
+				},
+				{
+					"backtrace" : 0,
+					"path" : "C:/Qt_VTK_CT/build/Qt_VTK_CT_autogen/include_Debug"
+				},
+				{
+					"backtrace" : 68,
+					"path" : "C:/Qt_VTK_CT/forms"
+				},
+				{
+					"backtrace" : 69,
+					"path" : "C:/Qt_VTK_CT/include"
+				},
+				{
+					"backtrace" : 70,
+					"path" : "C:/Qt_VTK_CT/src"
+				},
+				{
+					"backtrace" : 71,
+					"path" : "/resources"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.4.1/msvc2019_64/include/QtOpenGL"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.4.1/msvc2019_64/include"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.4.1/msvc2019_64/include/QtCore"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.4.1/msvc2019_64/mkspecs/win32-msvc"
+				},
+				{
+					"backtrace" : 2,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.4.1/msvc2019_64/include/QtGui"
+				},
+				{
+					"backtrace" : 3,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.4.1/msvc2019_64/include/QtXml"
+				},
+				{
+					"backtrace" : 13,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.4.1/msvc2019_64/include/QtWidgets"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Program Files/VTK/include/vtk-9.2"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.4.1/msvc2019_64/include/QtOpenGLWidgets"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Program Files/VTK/include/vtk-9.2/vtkfreetype/include"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Program Files/VTK/include/vtk-9.2/vtkhdf5"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Program Files/VTK/include/vtk-9.2/vtkhdf5/src"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Program Files/VTK/include/vtk-9.2/vtkhdf5/hl/src"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Program Files/VTK/include/vtk-9.2/vtknlohmannjson/include"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Program Files/VTK/include/vtk-9.2/vtkogg/include"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Program Files/VTK/include/vtk-9.2/vtklibproj/src"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Program Files/VTK/include/vtk-9.2/vtklibxml2/include"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.4.1/msvc2019_64/include/QtSql"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.4.1/msvc2019_64/include/QtQuick"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.4.1/msvc2019_64/include/QtQml"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.4.1/msvc2019_64/include/QtQmlIntegration"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.4.1/msvc2019_64/include/QtNetwork"
+				},
+				{
+					"backtrace" : 5,
+					"isSystem" : true,
+					"path" : "C:/Qt/6.4.1/msvc2019_64/include/QtQmlModels"
+				}
+			],
+			"language" : "CXX",
+			"languageStandard" : 
+			{
+				"backtraces" : 
+				[
+					2,
+					5,
+					5
+				],
+				"standard" : "17"
+			},
+			"sourceIndexes" : 
+			[
+				0,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20
+			]
+		}
+	],
+	"dependencies" : 
+	[
+		{
+			"id" : "ZERO_CHECK::@6890427a1f51a3e7e1df"
+		}
+	],
+	"id" : "Qt_VTK_CT::@6890427a1f51a3e7e1df",
+	"link" : 
+	{
+		"commandFragments" : 
+		[
+			{
+				"fragment" : "/DWIN32 /D_WINDOWS /GR /EHsc /Zi /Ob0 /Od /RTC1 -MDd",
+				"role" : "flags"
+			},
+			{
+				"fragment" : "/machine:x64 /debug /INCREMENTAL /subsystem:windows",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-DYNAMICBASE",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-NXCOMPAT",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "-LARGEADDRESSAWARE",
+				"role" : "flags"
+			},
+			{
+				"backtrace" : 3,
+				"fragment" : "C:\\Qt\\6.4.1\\msvc2019_64\\lib\\Qt6Xmld.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "opengl32.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 4,
+				"fragment" : "glu32.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkWrappingTools-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkViewsQt-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkViewsInfovis-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkViewsContext2D-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkTestingRendering-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingQt-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingVolumeOpenGL2-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingLabel-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingLOD-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingLICOpenGL2-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingImage-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingContextOpenGL2-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOVeraOut-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOTecplotTable-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOSegY-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOParallelXML-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOParallel-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOPLY-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOOggTheora-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtktheora-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkogg-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIONetCDF-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOMotionFX-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOMINC-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOLSDyna-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOInfovis-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtklibxml2-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOImport-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOIOSS-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkioss-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOVideo-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOMovie-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOExportPDF-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOExportGL2PS-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingGL2PSOpenGL2-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkgl2ps-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOExport-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingVtkJS-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingSceneGraph-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOExodus-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOEnSight-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOCityGML-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOChemistry-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOCesium3DTiles-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOGeometry-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOCONVERGECFD-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOHDF-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOCGNSReader-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOAsynchronous-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOAMR-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkInteractionImage-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkImagingStencil-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkImagingStatistics-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkImagingMorphological-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkImagingMath-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkImagingFourier-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkGUISupportQtSQL-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOSQL-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkGUISupportQtQuick-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkGUISupportQt-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkGeovisCore-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkInfovisLayout-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkViewsCore-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkInteractionWidgets-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingVolume-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingAnnotation-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkImagingHybrid-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkImagingColor-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkInteractionStyle-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersTopology-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersSelection-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersSMP-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersProgrammable-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersPoints-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersVerdict-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkverdict-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersParallelImaging-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersImaging-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkImagingGeneral-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersGeneric-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersFlowPaths-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersAMR-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersParallel-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersTexture-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersModeling-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkDomainsChemistryOpenGL2-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingOpenGL2-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingHyperTreeGrid-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingUI-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersHyperTree-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersHybrid-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkDomainsChemistry-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkChartsCore-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkInfovisCore-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersExtraction-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkParallelDIY-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOXML-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOXMLParser-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkexpat-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkParallelCore-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOLegacy-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOCore-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkdoubleconversion-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtklz4-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtklzma-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersStatistics-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkImagingSources-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkIOImage-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkDICOMParser-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkmetaio-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtktiff-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingContext2D-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingFreeType-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkfreetype-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkRenderingCore-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersSources-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkImagingCore-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersGeometry-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersGeneral-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkCommonComputationalGeometry-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkFiltersCore-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkCommonExecutionModel-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtklibharu-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkjsoncpp-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkexodusII-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtknetcdf-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkcgns-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 10,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkhdf5_hl-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 10,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkhdf5-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 11,
+				"fragment" : "C:\\Qt\\6.4.1\\msvc2019_64\\lib\\Qt6Sqld.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 12,
+				"fragment" : "C:\\Qt\\6.4.1\\msvc2019_64\\lib\\Qt6OpenGLWidgetsd.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 13,
+				"fragment" : "C:\\Qt\\6.4.1\\msvc2019_64\\lib\\Qt6Widgetsd.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 14,
+				"fragment" : "C:\\Qt\\6.4.1\\msvc2019_64\\lib\\Qt6Quickd.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 23,
+				"fragment" : "C:\\Qt\\6.4.1\\msvc2019_64\\lib\\Qt6QmlModelsd.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 2,
+				"fragment" : "C:\\Qt\\6.4.1\\msvc2019_64\\lib\\Qt6OpenGLd.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 28,
+				"fragment" : "C:\\Qt\\6.4.1\\msvc2019_64\\lib\\Qt6Guid.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 33,
+				"fragment" : "d3d11.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 33,
+				"fragment" : "dxgi.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 33,
+				"fragment" : "dxguid.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 23,
+				"fragment" : "user32.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 14,
+				"fragment" : "C:\\Qt\\6.4.1\\msvc2019_64\\lib\\Qt6Qmld.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 48,
+				"fragment" : "C:\\Qt\\6.4.1\\msvc2019_64\\lib\\Qt6Networkd.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 28,
+				"fragment" : "C:\\Qt\\6.4.1\\msvc2019_64\\lib\\Qt6Cored.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 53,
+				"fragment" : "mpr.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 53,
+				"fragment" : "userenv.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 62,
+				"fragment" : "C:\\Qt\\6.4.1\\msvc2019_64\\lib\\Qt6EntryPointd.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 65,
+				"fragment" : "shell32.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtklibproj-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtksqlite-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkpng-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkjpeg-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkglew-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 66,
+				"fragment" : "opengl32.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkzlib-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkCommonColor-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkfmt-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkCommonDataModel-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkpugixml-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkCommonSystem-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkCommonMisc-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkCommonTransforms-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkCommonMath-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkkissfft-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkCommonCore-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtkloguru-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 5,
+				"fragment" : "\"C:\\Program Files\\VTK\\lib\\vtksys-9.2d.lib\"",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 67,
+				"fragment" : "ws2_32.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 67,
+				"fragment" : "dbghelp.lib",
+				"role" : "libraries"
+			},
+			{
+				"backtrace" : 67,
+				"fragment" : "psapi.lib",
+				"role" : "libraries"
+			},
+			{
+				"fragment" : "kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib",
+				"role" : "libraries"
+			}
+		],
+		"language" : "CXX"
+	},
+	"name" : "Qt_VTK_CT",
+	"nameOnDisk" : "Qt_VTK_CT.exe",
+	"paths" : 
+	{
+		"build" : ".",
+		"source" : "."
+	},
+	"sourceGroups" : 
+	[
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
+				0,
+				11,
+				12,
+				13,
+				14,
+				15,
+				16,
+				17,
+				18,
+				19,
+				20
+			]
+		},
+		{
+			"name" : "",
+			"sourceIndexes" : 
+			[
+				1,
+				22
+			]
+		},
+		{
+			"name" : "Header Files",
+			"sourceIndexes" : 
+			[
+				2,
+				3,
+				4,
+				5,
+				6,
+				7,
+				8,
+				9,
+				10,
+				21
+			]
+		},
+		{
+			"name" : "CMake Rules",
+			"sourceIndexes" : 
+			[
+				23
+			]
+		}
+	],
+	"sources" : 
+	[
+		{
+			"backtrace" : 0,
+			"compileGroupIndex" : 0,
+			"isGenerated" : true,
+			"path" : "build/Qt_VTK_CT_autogen/mocs_compilation_Debug.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "forms/mainwindow.ui",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/cbctfiletransfer.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/cbctlogthread.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/cbctmodelcontroller.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/cbctrawimageviewer.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/controlpanel.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/fileprotocol.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/mainwindow.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/packetdata.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/protocol.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/cbctfiletransfer.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/cbctlogthread.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/cbctmodelcontroller.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/cbctrawimageviewer.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/controlpanel.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/fileprotocol.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/main.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/mainwindow.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/packetdata.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "src/protocol.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "build/Qt_VTK_CT_autogen/include_Debug/forms/ui_mainwindow.h",
+			"sourceGroupIndex" : 2
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "build/Qt_VTK_CT_autogen/autouic_Debug.stamp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 0,
+			"isGenerated" : true,
+			"path" : "build/CMakeFiles/ad2bb5735d44f4e49d9056eebdd5021f/autouic_(CONFIG).stamp.rule",
+			"sourceGroupIndex" : 3
+		}
+	],
+	"type" : "EXECUTABLE"
+}

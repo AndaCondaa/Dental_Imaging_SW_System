@@ -1,2 +1,0 @@
-build.zip filter=lfs diff=lfs merge=lfs -text
-patn filter=lfs diff=lfs merge=lfs -text
