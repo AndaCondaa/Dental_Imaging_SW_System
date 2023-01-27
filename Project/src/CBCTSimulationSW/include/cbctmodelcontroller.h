@@ -2,7 +2,7 @@
 #define CBCTMODELCONTROLLER_H
 
 #include <QObject>
-#include "mainwindow.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -102,6 +102,8 @@ private slots:
 	// 하강 Btn : Lower Body Obj File 만 빼고 Y Axis 기준 -Lo Min을 벗어나면 안된다. 
 	void on_DescendingPushButton_pressed();
 
+
+    void on_CaptureResetPushButton_clicked();
 
 public:
 	bool initialize();
