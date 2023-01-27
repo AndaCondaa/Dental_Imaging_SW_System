@@ -268,7 +268,7 @@ public:
         }
     }
 
-void _on_CapturePushButton_clicked()
+void _on_CaptureResetPushButton_VTK_clicked()
 {
     vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
     m_curPositionX = 0;
@@ -298,6 +298,10 @@ void _on_CapturePushButton_clicked()
 
 }
 
+void _on_CaptureReadyPushButton_VTK_clicked()
+{
+
+}
 
     // Internal Methods must be used in the Internal.
 private:
@@ -483,7 +487,12 @@ void CBCTModelController::on_DescendingPushButton_pressed()
     PData->_on_DescendingPushButton_pressed();
 }
 
-void CBCTModelController::on_CaptureResetPushButton_clicked()
+void CBCTModelController::on_CaptureResetPushButton_VTK_clicked()
 {
-    PData->_on_CapturePushButton_clicked();
+    PData->_on_CaptureResetPushButton_VTK_clicked();
+}
+
+void CBCTModelController::on_CaptureReadyPushButton_VTK_clicked()
+{
+    PData->_on_CaptureReadyPushButton_VTK_clicked();
 }

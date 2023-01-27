@@ -64,29 +64,27 @@ MainWindow::MainWindow(QWidget* parent)
 	if (!m_modelController->initialize())
 		qDebug() << "CBCTModelController initialize Fail ! ";
 
+    connect(ui->AscendingPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_AscendingPushButton_pressed()));
+    connect(ui->DescendingPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_DescendingPushButton_pressed()));
 	connect(ui->MainPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_MainPushButton_clicked()));
 	connect(ui->SubPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_SubPushButton_clicked()));
-
-	connect(ui->AscendingPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_AscendingPushButton_pressed()));
-	connect(ui->DescendingPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_DescendingPushButton_pressed()));
-    connect(ui->CaptureResetPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_CaptureResetPushButton_clicked()));
-    connect(ui->CaptureReadyPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_CaptureReadyPushButton_clicked()));
+    connect(ui->CaptureResetPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_CaptureResetPushButton_VTK_clicked()));
+    connect(ui->CaptureReadyPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_CaptureReadyPushButton_VTK_clicked()));
 
     connect(ui->CaptureResetPushButton, SIGNAL(clicked()), this, SLOT(on_CaptureResetPushButton_clicked()));
 	connect(ui->CaptureReadyPushButton, SIGNAL(clicked()), this, SLOT(on_CaptureReadyPushButton_clicked()));
 	connect(ui->CaptureStartPushButton, SIGNAL(clicked()), this, SLOT(on_CaptureStartPushButton_clicked()));
 	connect(ui->CaptureStopPushButton, SIGNAL(clicked()), this, SLOT(on_CaptureStopPushButton_clicked()));
 
-
 	m_rawImageViewer = new CBCTRawImageViewer();
 	connect(m_rawImageViewer, SIGNAL(signals_panoImage(QImage*)), this, SLOT(slot_panoImage(QImage*)));
 	connect(m_rawImageViewer, SIGNAL(signals_cephImage(QImage*)), this, SLOT(slot_cephImage(QImage*)));
 
 	m_fileTransfer = new CBCTFileTransfer(this);
-	connect(ui->CaptureReadyPushButton, SIGNAL(clicked), m_fileTransfer, SLOT(on_READYPushButton_clicked()));
-	connect(ui->CaptureResetPushButton, SIGNAL(clicked), m_fileTransfer, SLOT(on_RESETPushButton_clicked()));
-	connect(ui->CaptureStartPushButton, SIGNAL(clicked), m_fileTransfer, SLOT(on_STARTPushButton_clicked()));
-	connect(ui->CaptureStartPushButton, SIGNAL(clicked), m_fileTransfer, SLOT(on_STOPPushButton_clicked()));
+    connect(ui->CaptureReadyPushButton, SIGNAL(clicked), m_fileTransfer, SLOT());
+    connect(ui->CaptureResetPushButton, SIGNAL(clicked), m_fileTransfer, SLOT());
+    connect(ui->CaptureStartPushButton, SIGNAL(clicked), m_fileTransfer, SLOT());
+    connect(ui->CaptureStartPushButton, SIGNAL(clicked), m_fileTransfer, SLOT());
 
 	connect(m_fileTransfer, SIGNAL(READYSignal(ControlType)), this, SLOT(sendControl(ControlType)));
 	connect(m_fileTransfer, SIGNAL(RESETSignal(ControlType)), this, SLOT(sendControl(ControlType)));
@@ -98,7 +96,6 @@ MainWindow::MainWindow(QWidget* parent)
 	connect(this, SIGNAL(READYSignal(ControlType)), m_fileTransfer, SLOT(sendControl(ControlType)));
 	connect(this, SIGNAL(READYSignal(ControlType)), m_fileTransfer, SLOT(sendControl(ControlType)));
 
-	//connect(CBCTFileTransfer, SIGNAL(sendButtonSignal()), this, SLOT(()));
 }
 
 MainWindow::~MainWindow()
@@ -117,7 +114,6 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 
 void MainWindow::on_CaptureResetPushButton_clicked()
 {
-   // m_modelController->initialize();
     emit RESETSignal(RESET);
 
 }

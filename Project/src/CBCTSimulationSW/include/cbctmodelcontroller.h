@@ -103,7 +103,8 @@ private slots:
 	void on_DescendingPushButton_pressed();
 
 
-    void on_CaptureResetPushButton_clicked();
+    void on_CaptureResetPushButton_VTK_clicked();
+    void on_CaptureReadyPushButton_VTK_clicked();
 
 public:
 	bool initialize();
