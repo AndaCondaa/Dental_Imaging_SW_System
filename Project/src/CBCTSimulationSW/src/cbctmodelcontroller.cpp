@@ -14,338 +14,440 @@
 #include "vtkCamera.h"
 #include "vtkCylinderSource.h"
 #include "vtkRendererCollection.h"
+#include <vtkQuaternion.h>
+#include <vtkMatrix4x4.h>
+#include <vtkSphereSource.h>
+#include <QThread>
+
+
 #include "ui_mainwindow.h"
 #include <qdebug.h>
 
 #define USE_DISPLAY_GLOBALAXIS
 
+
+
 class CBCTModelController::Internal {
 public:
-	Ui::MainWindow* m_parentUI = nullptr;
-	CBCTModelController* m_Owner = nullptr;
+    Ui::MainWindow* m_parentUI = nullptr;
+    CBCTModelController* m_Owner = nullptr;
 
-
-	// 멤버 변수들은 은닉화를 위해 Private 선언. 
+    // Member Variable Concealment.
 private:
+    QMap<QString, vtkSmartPointer<vtkPolyData>> m_dataMap;
 
-	std::vector<vtkSmartPointer<vtkPolyData>> m_vecdata;
-	std::vector<vtkSmartPointer<vtkMapper>> m_mapper_All;
-	std::vector<vtkSmartPointer<vtkMapper>> m_mapper_Main;
-	std::vector<vtkSmartPointer<vtkMapper>> m_mapper_Sub;
+    std::vector<vtkSmartPointer<vtkPolyData>> m_vecdata;
+    std::vector<vtkSmartPointer<vtkMapper>> m_mapper_All;
+    std::vector<vtkSmartPointer<vtkMapper>> m_mapper_Main;
+    std::vector<vtkSmartPointer<vtkMapper>> m_mapper_Sub;
 
-	std::vector<vtkSmartPointer<vtkActor>> m_actor_All;
-	std::vector<vtkSmartPointer<vtkActor>> m_actor_Main;
-	std::vector<vtkSmartPointer<vtkActor>> m_actor_Sub;
+    std::vector<vtkSmartPointer<vtkActor>> m_actor_All;
+    std::vector<vtkSmartPointer<vtkActor>> m_actor_Main;
+    std::vector<vtkSmartPointer<vtkActor>> m_actor_Sub;
 
-	std::vector< vtkSmartPointer<vtkGenericOpenGLRenderWindow>> m_renderwindow;
+    std::vector< vtkSmartPointer<vtkGenericOpenGLRenderWindow>> m_renderwindow;
+    int m_curPositionX = 0;
+    int m_curPositionY = 0; // current Y Position Value
+    int m_curPositionZ = 0; // cuttent Z Position Value
 
-	int m_curPositionY = 0; // 현재 Y Position Value
-	double m_curAngle = 0;
-	double m_PanoCenter[3];
+    double m_curAngle = 0;
+    double m_PanoCenter[3];
+
 
 public:
-	Internal(CBCTModelController* owner)
-		: m_Owner(owner)
-	{
+    Internal(CBCTModelController* owner)
+        : m_Owner(owner)
+    {
 
 
+    }
 
-	}
+    // CBCTModelController Reset method.
+    bool _initialize() {
+        ///* Load Source */
+        QStringList FilePath;
+        FilePath << "lowerbody.obj";
+        FilePath << "upperbody.obj";
+        FilePath << "panomodule.obj";
+        FilePath << "cephmodule.obj";
 
-	// CBCTModelController 초기화 작업 진행. 
-	bool _initialize() {
-		///* Load Source */
-		QStringList FilePath;
-		FilePath << "lowerbody.obj";
-		FilePath << "upperbody.obj";
-		FilePath << "panomodule.obj";
-		FilePath << "cephmodule.obj";
+        QStringList MtlFilePath;
+        MtlFilePath << "lowerbody.mtl";
+        MtlFilePath << "upperbody.mtl";
+        MtlFilePath << "panomodule.mtl";
+        MtlFilePath << "cephmodule.mtl";
 
-		QStringList MtlFilePath;
-		MtlFilePath << "lowerbody.mtl";
-		MtlFilePath << "upperbody.mtl";
-		MtlFilePath << "panomodule.mtl";
-		MtlFilePath << "cephmodule.mtl";
+        /*
+        file:  "lowerbody.obj" Center : 294.314 767.177 - 473.419
+        file : "upperbody.obj" Center : -66.1935 1499.9 - 24.4806
+        file : "panomodule.obj" Center : 644.717 1888.39 328.713
+        file : "cephmodule.obj" Center : -552.515 1682.58 - 205.5
+        */
 
-		/*
-		file:  "lowerbody.obj" Center : 294.314 767.177 - 473.419
-		file : "upperbody.obj" Center : -66.1935 1499.9 - 24.4806
-		file : "panomodule.obj" Center : 644.717 1888.39 328.713
-		file : "cephmodule.obj" Center : -552.515 1682.58 - 205.5
-		*/
+        _load_objfile(FilePath, MtlFilePath, m_vecdata);
 
-		_load_objfile(FilePath, MtlFilePath, m_vecdata);
+        ///* Create Mapper & Actor */
+        _create_mapper(m_vecdata, m_mapper_All);
+        _create_mapper(m_vecdata, m_mapper_Main);
+        _create_mapper(m_vecdata, m_mapper_Sub);
 
-		///* Create Mapper & Actor */
-		_create_mapper(m_vecdata, m_mapper_All);
-		_create_mapper(m_vecdata, m_mapper_Main);
-		_create_mapper(m_vecdata, m_mapper_Sub);
+        _create_actor(m_mapper_All, "All", m_actor_All);
+        _create_actor(m_mapper_Main, "Main", m_actor_Main);
+        _create_actor(m_mapper_Sub, "Sub", m_actor_Sub);
 
-		_create_actor(m_mapper_All, "All", m_actor_All);
-		_create_actor(m_mapper_Main, "Main", m_actor_Main);
-		_create_actor(m_mapper_Sub, "Sub", m_actor_Sub);
+        m_renderwindow.push_back(_create_render(m_actor_All));
+        m_renderwindow.push_back(_create_render(m_actor_Main));
+        m_renderwindow.push_back(_create_render(m_actor_Sub));
 
-		m_renderwindow.push_back(_create_render(m_actor_All));
-		m_renderwindow.push_back(_create_render(m_actor_Main));
-		m_renderwindow.push_back(_create_render(m_actor_Sub));
+        _register_window();
 
-		_register_window();
-
-		_update_render();
-
-		auto cen = m_actor_Main[2]->GetCenter();
-		m_PanoCenter[0] = cen[0];
-		m_PanoCenter[1] = cen[1];
-		m_PanoCenter[2] = cen[2];
-		return true;
-	}
-
-	void _on_AscendingPushButton_pressed() {
-
-		if (m_curPositionY >= 0)
-		{
-			m_curPositionY = 0;
-			qDebug() << "현재 Axis 최대 위치입니다.";
-			return;
-		}
-		else {
-			m_curPositionY += 10;
-
-			vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-			transform->Translate(0, m_curPositionY, 0);
-
-			// All
-			m_actor_All[1]->SetUserTransform(transform);
-			m_actor_All[2]->SetUserTransform(transform);
-			m_actor_All[3]->SetUserTransform(transform);
-
-			// Main
-			m_actor_Main[1]->SetUserTransform(transform);
-			m_actor_Main[2]->SetUserTransform(transform);
-			m_actor_Main[3]->SetUserTransform(transform);
-
-			// Sub
-			m_actor_Sub[1]->SetUserTransform(transform);
-			m_actor_Sub[2]->SetUserTransform(transform);
-			m_actor_Sub[3]->SetUserTransform(transform);
-
-			transform->Update();
-
-			_update_render();
-		}
-
-	}
-
-	void _on_DescendingPushButton_pressed() {
-		if (m_curPositionY < -580)
-		{
-			m_curPositionY = -580;
-			qDebug() << "현재 Axis 최소 위치입니다.";
-			return;
-		}
-		else {
-			m_curPositionY -= 10;
-			vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
-			transform->Translate(0, m_curPositionY, 0);
+        _update_render();
 
 
-			// All
-			m_actor_All[1]->SetUserTransform(transform);
-			m_actor_All[2]->SetUserTransform(transform);
-			m_actor_All[3]->SetUserTransform(transform);
+        auto cen = m_actor_Main[2]->GetCenter();
 
-			// Main
-			m_actor_Main[1]->SetUserTransform(transform);
-			m_actor_Main[2]->SetUserTransform(transform);
-			m_actor_Main[3]->SetUserTransform(transform);
+        m_PanoCenter[0] = cen[0];
+        m_PanoCenter[1] = cen[1];
+        m_PanoCenter[2] = cen[2];
+        return true;
+    }
 
-			// Sub
-			m_actor_Sub[1]->SetUserTransform(transform);
-			m_actor_Sub[2]->SetUserTransform(transform);
-			m_actor_Sub[3]->SetUserTransform(transform);
 
-			transform->Update();
+    void _on_AscendingPushButton_pressed() {
+        if (m_curPositionY >= 0)
+        {
+            m_curPositionY = 0;
+            qDebug() << QString::fromLocal8Bit("Y Axis Maximum value");
+            return;
+        }
+        else {
+            m_curPositionY += 10;
 
-			_update_render();
+            vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+            transform->Translate(0, m_curPositionY, 0);
 
-			qDebug() << m_curPositionY;
-		}
-	}
+            // All
+            m_actor_All[1]->SetUserTransform(transform);
+            m_actor_All[2]->SetUserTransform(transform);
+            m_actor_All[3]->SetUserTransform(transform);
 
-	void _on_MainPushButton_clicked() {
-		if (m_curAngle >= 360)
-			m_curAngle = 0;
-		else {
-			m_curAngle += 10;
-			vtkSmartPointer<vtkCylinderSource> cylinderSource = vtkSmartPointer<vtkCylinderSource>::New();
-			cylinderSource->SetCenter(m_PanoCenter);
-			cylinderSource->SetRadius(5.0);
-			cylinderSource->SetHeight(1000);
-			cylinderSource->SetResolution(100);
-			cylinderSource->Update();
+            // Main
+            m_actor_Main[1]->SetUserTransform(transform);
+            m_actor_Main[2]->SetUserTransform(transform);
+            m_actor_Main[3]->SetUserTransform(transform);
 
-			vtkSmartPointer<vtkPolyDataMapper> map = vtkSmartPointer<vtkPolyDataMapper>::New();
-			map->SetInputData(cylinderSource->GetOutput());
-			map->Update();
-			vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-			actor->SetMapper(map);
-			m_renderwindow[1]->GetRenderers()->GetFirstRenderer()->AddActor(actor);
+            // Sub
+            m_actor_Sub[1]->SetUserTransform(transform);
+            m_actor_Sub[2]->SetUserTransform(transform);
+            m_actor_Sub[3]->SetUserTransform(transform);
 
-			vtkSmartPointer<vtkTransform> transformPanoModuleAll = vtkSmartPointer<vtkTransform>::New();
-			transformPanoModuleAll->RotateWXYZ(m_curAngle, m_PanoCenter[0], m_PanoCenter[1], m_PanoCenter[2]);
-			m_actor_Main[2]->SetUserTransform(transformPanoModuleAll);
-			transformPanoModuleAll->Update();
-			m_renderwindow[1]->Render();
-			m_parentUI->openGLWidget_Main->update();
-			qDebug() << m_curAngle;
-		}
-	}
-	// Internal 내에 함수에서 사용되는 함수들은 internal 내에서만 조작. 
+            transform->Update();
+
+            _update_render();
+        }
+
+    }
+
+    void _on_DescendingPushButton_pressed() {
+        if (m_curPositionY < -580)
+        {
+            m_curPositionY = -580;
+            qDebug() << "Y Axis Minimum value";
+            return;
+        }
+        else {
+            m_curPositionY -= 10;
+            vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+            transform->Translate(0, m_curPositionY, 0);
+
+            // All
+            m_actor_All[1]->SetUserTransform(transform);
+            m_actor_All[2]->SetUserTransform(transform);
+            m_actor_All[3]->SetUserTransform(transform);
+
+            // Main
+            m_actor_Main[1]->SetUserTransform(transform);
+            m_actor_Main[2]->SetUserTransform(transform);
+            m_actor_Main[3]->SetUserTransform(transform);
+
+            // Sub
+            m_actor_Sub[1]->SetUserTransform(transform);
+            m_actor_Sub[2]->SetUserTransform(transform);
+            m_actor_Sub[3]->SetUserTransform(transform);
+
+            transform->Update();
+
+            _update_render();
+            qDebug() << m_curPositionY;
+        }
+    }
+
+    void _on_MainPushButton_clicked() {
+
+        for (int i = 0; i <= 360; i++)
+        {
+            vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+
+            transform->PostMultiply();
+            transform->Translate(-m_PanoCenter[0], -m_PanoCenter[1], -m_PanoCenter[2]);
+            transform->RotateY(i);
+            transform->Translate(m_PanoCenter);
+            transform->Translate(0, m_curPositionY, 0);
+            m_actor_Main[2]->SetUserTransform(transform);
+            transform->Update();
+            m_renderwindow[1]->Render();
+            m_parentUI->openGLWidget_Main->update();
+            qDebug() << i;
+            _update_render();
+        }
+    }
+    void _on_SubPushButton_clicked()
+    {
+        // max 260;
+        // min 270;
+        for (int i = 0; i < 52; i++)
+        {
+            m_curPositionZ = m_curPositionZ + 5;
+
+            vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+            transform->Translate(0, m_curPositionY, m_curPositionZ);
+
+            // Sub
+            m_actor_Sub[3]->SetUserTransform(transform);
+
+            transform->Update();
+            qDebug() << "position Z : " << m_curPositionZ;
+            _update_render();
+        }
+        for (int i = 0; i < 130; i++)
+        {
+            m_curPositionZ = m_curPositionZ - 2;
+
+            vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+            transform->Translate(0, m_curPositionY, m_curPositionZ);
+
+            // Sub
+
+
+            m_actor_Sub[3]->SetUserTransform(transform);
+
+            transform->Update();
+            qDebug() << "position Z : " << m_curPositionZ;
+            _update_render();
+        }
+        for (int i = 0; i < 130; i++)
+        {
+            m_curPositionZ = m_curPositionZ - 2;
+
+            vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+            transform->Translate(0, m_curPositionY, m_curPositionZ);
+
+            // Sub
+
+
+            m_actor_Sub[3]->SetUserTransform(transform);
+
+            transform->Update();
+            qDebug() << "position Z : " << m_curPositionZ;
+            _update_render();
+        }
+        for (int i = 0; i < 52; i++)
+        {
+            m_curPositionZ = m_curPositionZ + 5;
+
+            vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+            transform->Translate(0, m_curPositionY, m_curPositionZ);
+
+            // Sub
+
+            m_actor_Sub[3]->SetUserTransform(transform);
+
+            transform->Update();
+            qDebug() << "position Z : " << m_curPositionZ;
+            _update_render();
+        }
+    }
+
+void _on_CaptureResetPushButton_VTK_clicked()
+{
+    vtkSmartPointer<vtkTransform> transform = vtkSmartPointer<vtkTransform>::New();
+    m_curPositionX = 0;
+    m_curPositionY = 0;
+    m_curPositionZ = 0;
+    transform->Translate(m_curPositionX, m_curPositionY, m_curPositionZ);
+
+
+    // All
+    m_actor_All[1]->SetUserTransform(transform);
+    m_actor_All[2]->SetUserTransform(transform);
+    m_actor_All[3]->SetUserTransform(transform);
+
+    // Main
+    m_actor_Main[1]->SetUserTransform(transform);
+    m_actor_Main[2]->SetUserTransform(transform);
+    m_actor_Main[3]->SetUserTransform(transform);
+
+    // Sub
+    m_actor_Sub[1]->SetUserTransform(transform);
+    m_actor_Sub[2]->SetUserTransform(transform);
+    m_actor_Sub[3]->SetUserTransform(transform);
+
+    transform->Update();
+
+    _update_render();
+
+}
+
+void _on_CaptureReadyPushButton_VTK_clicked()
+{
+
+}
+
+    // Internal Methods must be used in the Internal.
 private:
-	void _load_objfile(QStringList paths, QStringList mtls, std::vector<vtkSmartPointer<vtkPolyData>>& objs)
-	{
-		// TODO : vtkObjImport를 사용하여 MTL을 넣을 수 있긴하나 쫌 이상함. 
-		// 바로 Render를 연결해줘야 하는 시스템으로 PolyData를 가져오려면 Mapper를 통해 접근해야 함. 
-		for (int i = 0; i < paths.size(); i++)
-		{
-			vtkSmartPointer<vtkOBJReader> reader = vtkSmartPointer<vtkOBJReader>::New();
-			reader->SetFileName(paths[i].toStdString().c_str());
-			//reader->SetFileNameMTL(mtls[i].toStdString().c_str());
-			reader->Update();
+    void _load_objfile(QStringList paths, QStringList mtls, std::vector<vtkSmartPointer<vtkPolyData>>& objs)
+    {
+        for (int i = 0; i < paths.size(); i++)
+        {
+            vtkSmartPointer<vtkOBJReader> reader = vtkSmartPointer<vtkOBJReader>::New();
+            reader->SetFileName(paths[i].toStdString().c_str());
+            //reader->SetFileNameMTL(mtls[i].toStdString().c_str());
+            reader->Update();
 
-			objs.push_back(reader->GetOutput());
-		}
+            objs.push_back(reader->GetOutput());
+        }
 
 #if USE_VTKOBJIMPORT
-		for (int i = 0; i < paths.size(); i++)
-		{
-			vtkSmartPointer<vtkOBJImporter> reader = vtkSmartPointer<vtkOBJImporter>::New();
-			reader->SetFileName(paths[i].toStdString().c_str());
-			reader->SetFileNameMTL(mtls[i].toStdString().c_str());
-			reader->Update();
+        for (int i = 0; i < paths.size(); i++)
+        {
+            vtkSmartPointer<vtkOBJImporter> reader = vtkSmartPointer<vtkOBJImporter>::New();
+            reader->SetFileName(paths[i].toStdString().c_str());
+            reader->SetFileNameMTL(mtls[i].toStdString().c_str());
+            reader->Update();
 
-			vtkNew<vtkNamedColors> colors;
+            vtkNew<vtkNamedColors> colors;
 
-			vtkNew<vtkRenderer> renderer;
-			vtkNew<vtkRenderWindow> renWin;
-			vtkNew<vtkRenderWindowInteractor> iren;
+            vtkNew<vtkRenderer> renderer;
+            vtkNew<vtkRenderWindow> renWin;
+            vtkNew<vtkRenderWindowInteractor> iren;
 
-			renderer->SetBackground2(colors->GetColor3d("Silver").GetData());
-			renderer->SetBackground(colors->GetColor3d("Gold").GetData());
-			renderer->GradientBackgroundOn();
-			renWin->AddRenderer(renderer);
-			renderer->UseHiddenLineRemovalOn();
-			renWin->AddRenderer(renderer);
-			renWin->SetSize(640, 480);
-			renWin->SetWindowName("OBJImporter");
+            renderer->SetBackground2(colors->GetColor3d("Silver").GetData());
+            renderer->SetBackground(colors->GetColor3d("Gold").GetData());
+            renderer->GradientBackgroundOn();
+            renWin->AddRenderer(renderer);
+            renderer->UseHiddenLineRemovalOn();
+            renWin->AddRenderer(renderer);
+            renWin->SetSize(640, 480);
+            renWin->SetWindowName("OBJImporter");
 
-			iren->SetRenderWindow(renWin);
-			reader->SetRenderWindow(renWin);
-			reader->Update();
+            iren->SetRenderWindow(renWin);
+            reader->SetRenderWindow(renWin);
+            reader->Update();
 
-			auto actors = renderer->GetActors();
-			actors->InitTraversal();
-			std::cout << "There are " << actors->GetNumberOfItems() << " actors"
-				<< std::endl;
+            auto actors = renderer->GetActors();
+            actors->InitTraversal();
+            std::cout << "There are " << actors->GetNumberOfItems() << " actors"
+                      << std::endl;
 
-			for (vtkIdType a = 0; a < actors->GetNumberOfItems(); ++a)
-			{
-				std::cout << reader->GetOutputDescription(a) << std::endl;
+            for (vtkIdType a = 0; a < actors->GetNumberOfItems(); ++a)
+            {
+                std::cout << reader->GetOutputDescription(a) << std::endl;
 
-				vtkActor* actor = actors->GetNextActor();
+                vtkActor* actor = actors->GetNextActor();
 
-				// OBJImporter turns texture interpolation off
-				if (actor->GetTexture())
-				{
-					std::cout << "Has texture\n";
-					//actor->GetTexture()->InterpolateOn();
-				}
+                // OBJImporter turns texture interpolation off
+                if (actor->GetTexture())
+                {
+                    std::cout << "Has texture\n";
+                    //actor->GetTexture()->InterpolateOn();
+                }
 
-				vtkPolyData* pd =
-					dynamic_cast<vtkPolyData*>(actor->GetMapper()->GetInput());
+                vtkPolyData* pd =
+                        dynamic_cast<vtkPolyData*>(actor->GetMapper()->GetInput());
 
-				vtkPolyDataMapper* mapper =
-					dynamic_cast<vtkPolyDataMapper*>(actor->GetMapper());
-				mapper->SetInputData(pd);
-				objs.push_back(pd);
-			}
+                vtkPolyDataMapper* mapper =
+                        dynamic_cast<vtkPolyDataMapper*>(actor->GetMapper());
+                mapper->SetInputData(pd);
+                objs.push_back(pd);
+            }
 
 
 
-		}
+        }
 #endif
-	}
+    }
 
-	void _create_mapper(const std::vector<vtkSmartPointer<vtkPolyData>>& objs, std::vector<vtkSmartPointer<vtkMapper>>& mapper)
-	{
-		for (auto data : objs)
-		{
-			vtkSmartPointer<vtkPolyDataMapper> map = vtkSmartPointer<vtkPolyDataMapper>::New();
-			map->SetInputData(data);
-			map->Update();
-			mapper.push_back(map);
-		}
-	}
+    void _create_mapper(const std::vector<vtkSmartPointer<vtkPolyData>>& objs, std::vector<vtkSmartPointer<vtkMapper>>& mapper)
+    {
+        for (auto data : objs)
+        {
+            vtkSmartPointer<vtkPolyDataMapper> map = vtkSmartPointer<vtkPolyDataMapper>::New();
+            map->SetInputData(data);
+            map->Update();
+            mapper.push_back(map);
+        }
+    }
 
-	void _create_actor(const std::vector<vtkSmartPointer<vtkMapper>>& mappers, const QString& Color, std::vector<vtkSmartPointer<vtkActor>>& actors)
-	{
-		for (auto map : mappers)
-		{
-			vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
-			actor->SetMapper(map);
-			actors.push_back(actor);
-		}
-	}
+    void _create_actor(const std::vector<vtkSmartPointer<vtkMapper>>& mappers, const QString& Color, std::vector<vtkSmartPointer<vtkActor>>& actors)
+    {
+        for (auto map : mappers)
+        {
+            vtkSmartPointer<vtkActor> actor = vtkSmartPointer<vtkActor>::New();
+            actor->SetMapper(map);
+            actors.push_back(actor);
+        }
+    }
 
-	vtkSmartPointer<vtkGenericOpenGLRenderWindow> _create_render(const std::vector<vtkSmartPointer<vtkActor>>& Actors)
-	{
-		vtkSmartPointer<vtkNamedColors> colors = vtkSmartPointer<vtkNamedColors>::New();
-		vtkSmartPointer<vtkRenderer> Renderer = vtkSmartPointer<vtkRenderer>::New();
+    vtkSmartPointer<vtkGenericOpenGLRenderWindow> _create_render(const std::vector<vtkSmartPointer<vtkActor>>& Actors)
+    {
+        vtkSmartPointer<vtkNamedColors> colors = vtkSmartPointer<vtkNamedColors>::New();
+        vtkSmartPointer<vtkRenderer> Renderer = vtkSmartPointer<vtkRenderer>::New();
 
-		for (auto actor : Actors)
-			Renderer->AddActor(actor);
+        for (auto actor : Actors)
+            Renderer->AddActor(actor);
 
 #ifdef USE_DISPLAY_GLOBALAXIS
-		vtkNew<vtkTransform> transform;
-		transform->Translate(0.0, 0.0, 0.0);
-
-		vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
-		axes->SetTotalLength(700, 700, 700);
-		Renderer->AddActor(axes);
+        vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
+        axes->SetTotalLength(700, 700, 700);
+        auto cen = axes->GetCenter();
+        qDebug() << "Axis Center : " << cen[0] << cen[1] << cen[2];
+        Renderer->AddActor(axes);
 #endif
 
-		Renderer->SetBackground(colors->GetColor3d("Black").GetData());
-		Renderer->ResetCamera();
-		Renderer->LightFollowCameraOn();
-		Renderer->ResetCameraClippingRange();
-		Renderer->ResetCamera();
-		vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
-		renderWindow->AddRenderer(Renderer);
-		return renderWindow;
-	}
+        Renderer->SetBackground(colors->GetColor3d("Black").GetData());
+        Renderer->ResetCamera();
+        /*Renderer->LightFollowCameraOn();
+        Renderer->ResetCameraClippingRange();*/
+        Renderer->ResetCamera();
+        vtkSmartPointer<vtkGenericOpenGLRenderWindow> renderWindow = vtkSmartPointer<vtkGenericOpenGLRenderWindow>::New();
+        renderWindow->AddRenderer(Renderer);
+        return renderWindow;
+    }
 
-	void _register_window()
-	{
-		m_parentUI->openGLWidget_All->setRenderWindow(m_renderwindow[GeometryViewType::All]);
-		m_parentUI->openGLWidget_Main->setRenderWindow(m_renderwindow[GeometryViewType::Main]);
-		m_parentUI->openGLWidget_Sub->setRenderWindow(m_renderwindow[GeometryViewType::Sub]);
+    void _register_window()
+    {
+        m_parentUI->openGLWidget_All->setRenderWindow(m_renderwindow[GeometryViewType::All]);
+        m_parentUI->openGLWidget_Main->setRenderWindow(m_renderwindow[GeometryViewType::Main]);
+        m_parentUI->openGLWidget_Sub->setRenderWindow(m_renderwindow[GeometryViewType::Sub]);
 
-		m_parentUI->openGLWidget_All->interactor()->ProcessEvents();
-		m_parentUI->openGLWidget_Main->interactor()->ProcessEvents();
-		m_parentUI->openGLWidget_Sub->interactor()->ProcessEvents();
-	}
+        m_parentUI->openGLWidget_All->interactor()->ProcessEvents();
+        m_parentUI->openGLWidget_Main->interactor()->ProcessEvents();
+        m_parentUI->openGLWidget_Sub->interactor()->ProcessEvents();
+    }
 
-	void _update_render() {
-		for (auto win : m_renderwindow)
-			win->Render();
-	}
+    void _update_render()
+    {
+        for (auto win : m_renderwindow)
+            win->Render();
+        QApplication::processEvents();
+    }
 
 };
 
 CBCTModelController::CBCTModelController(Ui::MainWindow* parentUI)
-	: PData(new Internal(this))
+    : PData(new Internal(this))
 {
-	PData->m_parentUI = parentUI;
+    PData->m_parentUI = parentUI;
 }
 
 CBCTModelController::~CBCTModelController()
@@ -354,38 +456,43 @@ CBCTModelController::~CBCTModelController()
 
 bool CBCTModelController::initialize()
 {
-	return PData->_initialize();
+    return PData->_initialize();
 }
-
+void CBCTModelController::test()
+{
+    PData->_on_SubPushButton_clicked();
+}
 
 void CBCTModelController::on_MainPushButton_clicked()
 {
-	qDebug() << "Main Push Btn!!";
-	PData->_on_MainPushButton_clicked();
+    qDebug() << "Main Push Btn!!";
+    PData->_on_MainPushButton_clicked();
 }
 
 void CBCTModelController::on_SubPushButton_clicked()
 {
-	qDebug() << "Sub Push Btn!!";
-	/*vtkSmartPointer<vtkTransform> transformPanoModuleAll = vtkSmartPointer<vtkTransform>::New();
-	for (int i = 360; i > 0; i--)
-	{
-		Sleep(10);
-		transformPanoModuleAll->RotateWXYZ(i, 0.0, 1.0, 0.0);
-		m_actor_Main[2]->SetUserTransform(transformPanoModuleAll);
-		transformPanoModuleAll->Update();
-		m_renderwindow[1]->Render();
-		ui->openGLWidget_Main->update();
-	}*/
+    //PData->myThread.start();
+
+    qDebug() << "Sub Push Btn!!";
+    PData->_on_SubPushButton_clicked();
 }
 
 void CBCTModelController::on_AscendingPushButton_pressed()
 {
-	PData->_on_AscendingPushButton_pressed();
+    PData->_on_AscendingPushButton_pressed();
 }
 
 void CBCTModelController::on_DescendingPushButton_pressed()
 {
-	PData->_on_DescendingPushButton_pressed();
+    PData->_on_DescendingPushButton_pressed();
 }
 
+void CBCTModelController::on_CaptureResetPushButton_VTK_clicked()
+{
+    PData->_on_CaptureResetPushButton_VTK_clicked();
+}
+
+void CBCTModelController::on_CaptureReadyPushButton_VTK_clicked()
+{
+    PData->_on_CaptureReadyPushButton_VTK_clicked();
+}

@@ -1,0 +1,63 @@
+Performing C SOURCE FILE Test CMAKE_HAVE_LIBC_PTHREAD failed with the following output:
+Change Dir: C:/Qt_VTK_CT/build/CMakeFiles/CMakeScratch/TryCompile-tr2x58
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe cmTC_7caa3.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=16.0 /v:m && .NET Framework용 Microsoft (R) Build Engine 버전 16.11.2+f32259642
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  Microsoft (R) C/C++ 최적화 컴파일러 버전 19.29.30147(x64)
+  Copyright (c) Microsoft Corporation. All rights reserved.
+  src.c
+  cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CMAKE_HAVE_LIBC_PTHREAD /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_7caa3.dir\Debug\\" /Fd"cmTC_7caa3.dir\Debug\vc142.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\Qt_VTK_CT\build\CMakeFiles\CMakeScratch\TryCompile-tr2x58\src.c"
+C:\Qt_VTK_CT\build\CMakeFiles\CMakeScratch\TryCompile-tr2x58\src.c(1,10): fatal error C1083: 포함 파일을 열 수 없습니다. 'pthread.h': No such file or directory [C:\Qt_VTK_CT\build\CMakeFiles\CMakeScratch\TryCompile-tr2x58\cmTC_7caa3.vcxproj]
+
+
+Source file was:
+#include <pthread.h>
+
+static void* test_func(void* data)
+{
+  return data;
+}
+
+int main(void)
+{
+  pthread_t thread;
+  pthread_create(&thread, NULL, test_func, NULL);
+  pthread_detach(thread);
+  pthread_cancel(thread);
+  pthread_join(thread, NULL);
+  pthread_atfork(NULL, NULL, NULL);
+  pthread_exit(NULL);
+
+  return 0;
+}
+
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: C:/Qt_VTK_CT/build/CMakeFiles/CMakeScratch/TryCompile-3vcosi
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe cmTC_22879.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=16.0 /v:m && .NET Framework용 Microsoft (R) Build Engine 버전 16.11.2+f32259642
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  Microsoft (R) C/C++ 최적화 컴파일러 버전 19.29.30147(x64)
+  Copyright (c) Microsoft Corporation. All rights reserved.
+  CheckFunctionExists.c
+  cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_22879.dir\Debug\\" /Fd"cmTC_22879.dir\Debug\vc142.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\Qt_VTK_CT\build\CMakeFiles\CMakeScratch\TryCompile-3vcosi\CheckFunctionExists.c"
+LINK : fatal error LNK1104: 'pthreads.lib' 파일을 열 수 없습니다. [C:\Qt_VTK_CT\build\CMakeFiles\CMakeScratch\TryCompile-3vcosi\cmTC_22879.vcxproj]
+
+
+
+Determining if the function pthread_create exists in the pthread failed with the following output:
+Change Dir: C:/Qt_VTK_CT/build/CMakeFiles/CMakeScratch/TryCompile-1mbaq7
+
+Run Build Command(s):C:/Program Files (x86)/Microsoft Visual Studio/2019/Community/MSBuild/Current/Bin/MSBuild.exe cmTC_9daa1.vcxproj /p:Configuration=Debug /p:Platform=x64 /p:VisualStudioVersion=16.0 /v:m && .NET Framework용 Microsoft (R) Build Engine 버전 16.11.2+f32259642
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+  Microsoft (R) C/C++ 최적화 컴파일러 버전 19.29.30147(x64)
+  Copyright (c) Microsoft Corporation. All rights reserved.
+  CheckFunctionExists.c
+  cl /c /Zi /W1 /WX- /diagnostics:column /Od /Ob0 /D _MBCS /D WIN32 /D _WINDOWS /D CHECK_FUNCTION_EXISTS=pthread_create /D "CMAKE_INTDIR=\"Debug\"" /Gm- /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"cmTC_9daa1.dir\Debug\\" /Fd"cmTC_9daa1.dir\Debug\vc142.pdb" /external:W1 /Gd /TC /errorReport:queue "C:\Qt_VTK_CT\build\CMakeFiles\CMakeScratch\TryCompile-1mbaq7\CheckFunctionExists.c"
+LINK : fatal error LNK1104: 'pthread.lib' 파일을 열 수 없습니다. [C:\Qt_VTK_CT\build\CMakeFiles\CMakeScratch\TryCompile-1mbaq7\cmTC_9daa1.vcxproj]
+
+
+

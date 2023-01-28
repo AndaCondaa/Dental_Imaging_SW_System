@@ -2,7 +2,7 @@
 #define CBCTMODELCONTROLLER_H
 
 #include <QObject>
-#include "mainwindow.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -103,9 +103,12 @@ private slots:
 	void on_DescendingPushButton_pressed();
 
 
+    void on_CaptureResetPushButton_VTK_clicked();
+    void on_CaptureReadyPushButton_VTK_clicked();
+
 public:
 	bool initialize();
-
+	void test();
 private:
 	class Internal;
 	Internal* PData;

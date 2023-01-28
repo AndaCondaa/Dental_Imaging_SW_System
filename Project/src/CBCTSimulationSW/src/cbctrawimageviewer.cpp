@@ -29,46 +29,11 @@ CBCTRawImageViewer::CBCTRawImageViewer()
 
 QPixmap CBCTRawImageViewer::PanoImageViewer()
 {
-//    QString panoPath = "C:/Qt_VTK_CT/build/Debug/Pano_Frame(1152x64)/0001.raw";
-//    QFile panoFile(panoPath);
-//    if (!panoFile.open(QFile::ReadOnly))
-//        return QPixmap();
-//    //int PanoNum = 1249;
-//    QByteArray ba = panoFile.readAll();
-//    const uchar* data = (const uchar*) ba.constData();;
-//    panoFile.close();
-//    //QImage image(data, 30, 30, QImage::Format_RGB32);
-//    QImage* panoImage = new QImage(data, 150, 470, QImage::Format_RGB555);
-//    QImage pano_Image(*panoImage);
-//    QPixmap panoPix;
-//    panoPix = QPixmap::fromImage(pano_Image,Qt::AutoColor);
-//    return panoPix;
     return QPixmap();
 }
 
 QPixmap CBCTRawImageViewer::CephImageViewer()
 {
-//    QString folder = "C:/Qt_VTK_CT/build/Debug/Pano_Frame(1152x64)/0001.raw";
-//    cephImageIterator = new QDirIterator(folder, QDirIterator::Subdirectories);
-
-//    cephImageTimer = new QTimer(this);
-//    connect(cephImageTimer, &QTimer::timeout, this, &CBCTRawImageViewer::ShowNextCephImage);
-//    cephImageTimer->start(10);
-
-//    if (cephImageIterator->hasNext())
-//    {
-//        cephImageIterator->next();
-
-//        qDebug() << __FUNCTION__ << cephImageIterator->filePath();
-
-//       // QPixmap panoPix = PanoImageViewer(cephImageIterator->filePath());
-//        QPixmap cephPix(cephImageIterator->filePath());
-//        return cephPix;
-//    }
-//    else
-//    {
-//        //imageIterator->rewind();
-//    }
     return QPixmap();
 }
 
