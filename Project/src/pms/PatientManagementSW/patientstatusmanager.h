@@ -22,7 +22,7 @@ private:
 
     //QTreeWidgetItem* row;
     QTreeWidgetItem* selectedTreatRow, *selectedPayRow;
-
+    QString tempTreatPID;
 private slots:
     //void waitInfoSended(QString, QString);
     void waitInfoSended(QString);
@@ -38,8 +38,11 @@ private slots:
 
     void on_paymentPushButton_clicked();
 
+    void PIDsendedtoWaitList(QString);
+
 signals:
     void sendRequest(QString);
+    void inWaitListSignal(int);
 };
 
 #endif // PATIENTSTATUSMANAGER_H

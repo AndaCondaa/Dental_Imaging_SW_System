@@ -32,19 +32,44 @@ PatientStatusManager::~PatientStatusManager()
 //        row->setText(2, "대기");
 //}
 
+void PatientStatusManager::PIDsendedtoWaitList(QString sendedTempPID)
+{
+
+    int inWaitListOrNot = ui->waitTreatmentTreeWidget->findItems(sendedTempPID, Qt::MatchFlags(Qt::MatchCaseSensitive)).count();
+    qDebug() << "patientStatus inwaitlist: " << inWaitListOrNot;
+emit inWaitListSignal(inWaitListOrNot);
+}
+
 void PatientStatusManager::waitInfoSended(QString waitInfoSended){
-    qDebug()<<"대기리스트에 올릴 환자 정보: " << waitInfoSended;
+    //qDebug()<<"대기리스트에 올릴 환자 정보: " << waitInfoSended;
+
+
     treatPID = waitInfoSended.split("<CR>")[1];
     QString data = waitInfoSended.split("<CR>")[2];
     treatName = data.split("|")[0];
 
     qDebug() << "pid, name: " << treatPID << ", " << treatName;
-    qDebug("%d", __LINE__);
+    //qDebug("%d", __LINE__);
+
+    qDebug() << "정보 이미 있는지 확인: " << ui->waitTreatmentTreeWidget->findItems(tempTreatPID, Qt::MatchFlags(Qt::MatchCaseSensitive)).count();
+//    int inWaitListOrNot = ui->waitTreatmentTreeWidget->findItems(tempTreatPID, Qt::MatchFlags(Qt::MatchCaseSensitive)).count();
+//    qDebug() << "patientStatus inwaitlist: " << inWaitListOrNot;
+//emit inWaitListSignal(inWaitListOrNot);
+
+//    if(inWaitListOrNot != 0)
+//    {
+//        QMessageBox::critical(this, tr("경고"), \
+//                              tr("이미 대기명단에 있는 환자입니다."));
+
+//        return;
+//    }
     QTreeWidgetItem* row = new QTreeWidgetItem;
     ui->waitTreatmentTreeWidget->addTopLevelItem(row);
     row->setText(0, treatPID);
     row->setText(1, treatName);
     row->setText(2, "대기중");
+
+    //ui->waitTreatmentTreeWidget->findItems()
     qDebug("%d", __LINE__);
 }
 
@@ -84,6 +109,8 @@ void PatientStatusManager::on_paymentPushButton_clicked()
         ui->waitPaymentTreeWidget->takeTopLevelItem(ui->waitPaymentTreeWidget->indexOfTopLevelItem(selectedPayRow));
 
         ui->waitPaymentTreeWidget->update();                               //treeWidget 업데이트
+        QMessageBox::information(this, tr("정보"), \
+                              tr("수납 처리가 완료되었습니다."));
     }
 
 }

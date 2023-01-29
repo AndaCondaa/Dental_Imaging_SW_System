@@ -6,6 +6,7 @@ MedicalChart::MedicalChart(QWidget *parent) :
     ui(new Ui::MedicalChart)
 {
     ui->setupUi(this);
+    this->setFixedSize(610, 645);
 }
 
 MedicalChart::~MedicalChart()
