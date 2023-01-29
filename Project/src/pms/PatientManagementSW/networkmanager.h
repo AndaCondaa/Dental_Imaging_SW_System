@@ -12,19 +12,22 @@ public:
     NetworkManager(QObject *parent = nullptr);
 
 public slots:
-    bool connectToHost(QString host);
+    bool connectToMainHost(QString host);
+    bool connectToFileHost(QString host);
     bool writeData(QByteArray data);
 
 private slots:
     void newDataSended(QString);
 
     void receiveData();
+    void receiveFile();
 //    void newConnection();
 //    void disconnected();
 
 private:
     QTcpSocket *socket;
     bool fd_flag = false;
+    bool file_flag = false;
     bool send_flag = false;
     QTcpSocket *PMSocket;
     QByteArray *buffer;
@@ -36,6 +39,15 @@ private:
     QHash<QTcpSocket*, qint32*> sizes; //We need to store the size to verify if a block has received completely
 
 
+
+    QTcpSocket *fileSocket;
+    qint64 totalSize;
+    qint64 byteReceived = 0;
+    QString fileName;                           // Receiving FileName
+    QString checkFileName;
+    QFile* file;
+    QByteArray inBlock;
+    QString currentPID = "NULL";
 
 signals:
     void sendNewPID(QString);

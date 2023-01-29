@@ -135,7 +135,7 @@ border-style: solid;
 border-radius: 0px;</string>
     </property>
     <property name="text">
-     <string>환자성명</string>
+     <string>환자이름</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -186,6 +186,9 @@ border-radius: 0px;</string>
      <font>
       <pointsize>11</pointsize>
      </font>
+    </property>
+    <property name="frame">
+     <bool>true</bool>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -475,7 +478,7 @@ border-style: solid;
 border-radius: 0px;</string>
     </property>
     <property name="text">
-     <string>담당의사명</string>
+     <string>담당의사</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>
@@ -525,7 +528,7 @@ border-style: solid;
 border-radius: 0px;</string>
     </property>
     <property name="text">
-     <string>진로 소견</string>
+     <string>진로소견</string>
     </property>
     <property name="alignment">
      <set>Qt::AlignCenter</set>

@@ -3,34 +3,115 @@
 #include <QBoxLayout>
 #include <QDataStream>
 #include <QTcpSocket>
+#include <QFileDialog>
+#include <QFile>
+#include <QFileInfo>
 
 NetworkManager::NetworkManager(QObject *parent)
     : QObject{parent}
 {
     socket = new QTcpSocket(this);
-    fd_flag = connectToHost("127.0.0.1"); // localhost
+    fd_flag = connectToMainHost("127.0.0.1"); // localhost
     connect(socket, SIGNAL(readyRead()), this, SLOT(receiveData()));
-    qDebug("%d", __LINE__);
 
     if(!fd_flag)
-        qDebug()<<("Socket connect fail\n");
+        qDebug()<<("DataSocket connect fail\n");
     else{
-        qDebug("%d", __LINE__);
-        qDebug()<<("Socket connect\n");
+        qDebug()<<("DataSocket connect\n");
         QString connectData = "CNT<CR>PMS<CR>";
 
-        qDebug("%d", __LINE__);
         QByteArray sendTest = connectData.toStdString().c_str();
-        qDebug("%d", __LINE__);
         socket->write(sendTest);
-        qDebug("%d", __LINE__);
     }
+
+
+    fileSocket = new QTcpSocket(this);
+    fileSocket->connectToHost("127.0.0.1", 8001);
+    //file_flag = connectToFileHost("127.0.0.1");
+
+    connect(fileSocket, SIGNAL(readyRead()), this, SLOT(receiveFile()));
+
+    if(fileSocket->waitForConnected())
+        fileSocket->write("CNT<CR>PMS<CR>NULL");
+    else
+        qDebug()<<("FileServer connect failed\n");
+
+
+
+    //QByteArray sendFileTest = connectFileData.toStdString().c_str();
+    //fileSocket->write(sendFileTest);
 }
 
-bool NetworkManager::connectToHost(QString host)
+
+
+
+
+bool NetworkManager::connectToMainHost(QString host)
 {
     socket->connectToHost(host, 8000);
     return socket->waitForConnected();
+}
+
+
+//지워도 될 듯
+bool NetworkManager::connectToFileHost(QString host)
+{
+    socket->connectToHost(host, 8001);
+    return socket->waitForConnected();
+}
+
+void NetworkManager::receiveFile()
+{
+    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
+
+    if (fileSocket != socket) {
+        QByteArray arr = socket->readAll();
+        QString id = QString(arr).split("<CR>")[1];
+        if (id == "PMS") {  //근데 여기서는 굳이 소켓을 멤버변수로 설정하지는 않아도 될 것 같음. 소켓이 하나밖에 없어서..
+            fileSocket = socket;
+        }
+        return;
+    }
+
+
+    if (byteReceived == 0) {                                    // First Time(Block) , var byteReceived is always zero
+        checkFileName = fileName;                               // 다음 패킷부터 파일이름으로 구분하기 위해 첫 패킷에서 보낸 파일이름을 임시로 저장
+
+        QDataStream in(fileSocket);
+        in.device()->seek(0);
+        in >> totalSize >> byteReceived >> fileName;
+        if(checkFileName == fileName) return;
+
+        QFileInfo info(fileName);
+        currentPID = info.fileName();
+
+        QDir dir(QString("./Image/%1").arg(currentPID.first(6)));   //ex.P00001
+        if (!dir.exists())
+            dir.mkpath(".");
+
+        QString currentFileName = dir.path() + "/" +info.fileName();
+
+
+
+        file = new QFile(currentFileName);
+        file->open(QFile::WriteOnly);
+    } else {
+        if(checkFileName == fileName) return;
+        inBlock = fileSocket->readAll();
+
+        byteReceived += inBlock.size();
+        file->write(inBlock);
+        file->flush();
+    }
+
+    if (byteReceived == totalSize) {        // file sending is done
+        qDebug() << QString("%1 receive completed").arg(fileName);
+        inBlock.clear();
+        byteReceived = 0;
+        totalSize = 0;
+        file->close();
+        delete file;
+    }
 }
 
 //QByteArray IntToArray(qint32 source)
