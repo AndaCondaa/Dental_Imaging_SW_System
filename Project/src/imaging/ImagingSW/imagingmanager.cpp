@@ -193,7 +193,7 @@ void ImagingManager::reconImage()
     unsigned short *buf = new unsigned short[48*2400];
     unsigned short *out = new unsigned short[3000*2400];
 
-    for (int k = 21; k < 1021; k++) {
+    for (int k = 1020; k > 20; k--) {
         memset(buf, 0, 48*2400);
         QString fileName;
         if (k < 100)
@@ -214,9 +214,9 @@ void ImagingManager::reconImage()
         fclose(file);
 
         for (int y = 0; y < 2400; y++) {
-            for (int x = 0; x < 3; x++) {
-                out[(x+count*3)+y*3000] = buf[(23+x)+y*48];
-            }
+                out[(count*3)+y*3000] = buf[(25)+(2400-(y+1))*48];
+                out[(count*3)+y*3000+1] = buf[(24)+(2400-(y+1))*48];
+                out[(count*3)+y*3000+2] = buf[(23)+(2400-(y+1))*48];
         }
 
         count++;
@@ -240,44 +240,24 @@ void ImagingManager::on_filter1Button_clicked()
     fclose(file);
 
     for (int i = 0; i < 3000*2400; i++) {
-        if (img[i]*50 >65535) {
+        if (img[i] * 200 > 65535){
             img[i] = 65535;
         } else {
-            img[i] *= 50;
+            img[i] *= 200;
         }
     }
 
-    int xkernel[3][3] = {
-        {-1, 0, 1},
-        {-2, 0, 2},
-        {-1, 0, 1}
-    };
-    int ykernel[3][3] = {
-        {1, 2, 1},
-        {0, 0, 0},
-        {-1, -2, -1}
-    };
 
-//    float xsum = 0;
-//    float ysum = 0;
-//    for (int y = 1; y < 2399; y++) {
-//        for (int x = 1; x < 2999; x++) {
-//            xsum = 0;
-//            ysum = 0;
-//            for (int a = -1; a < 2; a++) {
-//                for (int b = -1; b < 2; b++) {
-//                    xsum += xkernel[a+1][b+1] * (img[x+a+((y+b)*3000)]);
-//                    ysum += ykernel[a+1][b+1] * (img[x+a+((y+b)*3000)]);
-//                }
-//            }
-//            int value = sqrt((xsum*xsum)+(ysum*ysum));
-//            img[x+(y*3000)] = value;
-//        }
-//    }
+    cv::Mat src(2400, 3000, CV_16UC1,img);
+    cv::Mat dst;
+    cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+    clahe->setClipLimit(40);
+    clahe->apply(src, dst);
 
 
     file = fopen("./result2.raw", "wb");
-    fwrite(img, sizeof(unsigned short), 3000*2400, file);
+//    fwrite(img, sizeof(unsigned short), 3000*2400, file);
+    fwrite(dst.data, sizeof(unsigned short), 3000*2400, file);
     fclose(file);
 
     qDebug() << "filter1 end";
