@@ -56,16 +56,25 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_networkManager, SIGNAL(sendSelectPatient(QString, QString)), m_patientInfo, SLOT(receiveSelectPatient(QString, QString)));
     connect(m_patientInfo, SIGNAL(sendCameraPatient(QString)), m_networkManager, SLOT(newDataSended(QString)));
 
+    //진료 시작 버튼 클릭 시 리스트 위젯에 해당 환자의 이미지 업로드
+    connect(m_patientInfo, SIGNAL(sendImageFile(QString)), m_imageAlbum, SLOT(reloadImages(QString)));
 
 
     //PMS에서 촬영 의뢰를 눌렀을 시 Viewer의 대기 환자 리스트에서도 환자의 진행 상황을 "촬영중"으로 변경
     connect(m_networkManager, SIGNAL(sendPMSCameraPatient(QString, QString)), m_patientInfo, SLOT(receivePMSCameraPatient(QString, QString)));
 
+    //촬영 SW에서 촬영 완료 신호가 오면 환자 클래스에서 해당 환자의 진행 상황을 촬영중->대기중으로 변경
     connect(m_networkManager, SIGNAL(sendPhotoEnd(QString)), m_patientInfo, SLOT(receivePhotoEnd(QString)));
 
-    connect(m_patientInfo, SIGNAL(sendPatientInfo(QString, QString)), m_imageAlbum, SLOT(receivePatientInfo(QString, QString)));
+    //환자 정보 클래스에서 대기 리스트 내에서 해당 환자 클릭된 후 진료 시작을 눌렀을 때 처방전 작성 폼에 띄워지도록 하기 위한 시그널-슬롯
+    connect(m_patientInfo, SIGNAL(sendPatientInfo(QString, QString, QString)), m_imageAlbum, SLOT(receivePatientInfo(QString, QString, QString)));
 
+    //처방전 창에서 작성 완료 버튼 클릭 시 서버로 처방전의 내용을 전송하기 위한 시그널-슬롯
+    connect(m_imageAlbum, SIGNAL(sendPrescriptiontoServer(QString)), m_networkManager, SLOT(newDataSended(QString)));
 
+    //진료 종료 클릭 시 해당 환자의 정보를 서버로 전송하기 위한 시그널-슬롯
+    connect(m_imageAlbum, SIGNAL(sendEndTreatment(QString)), m_networkManager, SLOT(newDataSended(QString)));
+    connect(m_imageAlbum, SIGNAL(sendEndTreatment(QString)), m_patientInfo, SLOT(receiveEndTreatment(QString)));
 }
 
 MainWindow::~MainWindow()

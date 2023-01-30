@@ -18,15 +18,16 @@ public slots:
 private slots:
     void newDataSended(QString);
     void receiveData();
-    void newConnection();
-    void disconnected();
+    void receiveFile();
+//    void newConnection();
+//    void disconnected();
 
 
 private:
     QTcpSocket *socket;
+    QTcpSocket* fileSocket;
     bool fd_flag = false;
     bool send_flag = false;
-    QTcpSocket *PMSocket;
     QByteArray *buffer;
     QString saveData;
     QHash<QTcpSocket*, QByteArray*> buffers; //We need a buffer to store data until block has completely received
@@ -34,6 +35,16 @@ private:
     QHash<QTcpSocket*, qint32*> sizes; //We need to store the size to verify if a block has received completely
 
     QString patientID;
+
+
+    qint64 totalSize;
+    qint64 byteReceived = 0;
+    QString fileName;                           // Receiving FileName
+    QString checkFileName;
+    QFile* file;
+    QByteArray inBlock;
+    QString currentPID = "NULL";
+
 
 
 signals:

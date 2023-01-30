@@ -140,6 +140,9 @@
        <property name="text">
         <string>로그인</string>
        </property>
+       <property name="shortcut">
+        <string>Return</string>
+       </property>
       </widget>
      </item>
     </layout>

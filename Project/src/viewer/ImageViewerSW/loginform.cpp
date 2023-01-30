@@ -8,7 +8,6 @@ LoginForm::LoginForm(QWidget *parent) :
     ui(new Ui::LoginForm)
 {
     ui->setupUi(this);
-
 }
 
 LoginForm::~LoginForm()
@@ -50,7 +49,5 @@ void LoginForm::on_LogIn_clicked()
     QString Data = "VLG<CR>" + DoctorID + "<CR>" + DoctorName;
     //로그인 페이지에서 입력한 의사 ID, 의사 명을 서버에서 체크하기 위해 데이터 전송
     emit SendDoctorCheck(Data);
-
-
 }
 

@@ -74,6 +74,20 @@
    </item>
    <item row="2" column="0">
     <widget class="QTreeWidget" name="WaitingList">
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
+     <property name="rootIsDecorated">
+      <bool>false</bool>
+     </property>
+     <property name="headerHidden">
+      <bool>false</bool>
+     </property>
+     <attribute name="headerVisible">
+      <bool>true</bool>
+     </attribute>
      <column>
       <property name="text">
        <string>환자 ID</string>
@@ -137,15 +151,37 @@
    </item>
    <item row="5" column="0">
     <widget class="QTableWidget" name="tableWidget">
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+      </font>
+     </property>
      <property name="layoutDirection">
       <enum>Qt::LeftToRight</enum>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">
+QHeaderView {background-color: #FFFFFF;}
+</string>
+     </property>
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>
      </property>
+     <property name="showGrid">
+      <bool>true</bool>
+     </property>
+     <property name="gridStyle">
+      <enum>Qt::SolidLine</enum>
+     </property>
      <property name="cornerButtonEnabled">
       <bool>false</bool>
      </property>
+     <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
+      <bool>false</bool>
+     </attribute>
      <row>
       <property name="text">
        <string>환자 번호</string>
@@ -176,6 +212,50 @@
        <string>정보</string>
       </property>
      </column>
+     <item row="0" column="0">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+     </item>
+     <item row="1" column="0">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+     </item>
+     <item row="2" column="0">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+     </item>
+     <item row="3" column="0">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+     </item>
+     <item row="4" column="0">
+      <property name="font">
+       <font>
+        <pointsize>11</pointsize>
+       </font>
+      </property>
+      <property name="foreground">
+       <brush brushstyle="NoBrush">
+        <color alpha="255">
+         <red>0</red>
+         <green>0</green>
+         <blue>0</blue>
+        </color>
+       </brush>
+      </property>
+     </item>
     </widget>
    </item>
    <item row="6" column="0">
