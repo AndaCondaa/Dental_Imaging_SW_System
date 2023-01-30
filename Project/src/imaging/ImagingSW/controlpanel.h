@@ -25,8 +25,10 @@ private slots:
     bool readyButtonClicked();
     bool startButtonClicked();
     void stopButtonClicked();
-
+    void saveSlot(QString);
     void shootingEndSlot(QString);
+    void finishSlot(QString);
+
 
 private:
     Ui::ControlPanel *ui;

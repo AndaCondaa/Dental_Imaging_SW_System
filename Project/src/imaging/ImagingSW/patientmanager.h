@@ -22,6 +22,7 @@ private slots:
     void slotPatientReady();                            // 환자준비 버튼을 눌러서, 서버에 환자 정보 요청하는 함수
     void receivePatientInfo(QStringList dataList);      // 서버로부터 환자 정보를 받는 함수
     void waitDoubleClicked(QTreeWidgetItem*, int);       // 대기명단 고객을 더블클릭
+    void finishSlot(QString);
 
 private:
     Ui::PatientManager *ui;

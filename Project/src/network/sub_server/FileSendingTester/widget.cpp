@@ -41,9 +41,9 @@ void Widget::sendFile(int num)
 {
     QString fileName;
     if (num >= 100)
-        fileName = QString("./image/0%1.raw").arg(num);
+        fileName = QString("./CEPH/0%1.raw").arg(num);
     else
-        fileName = QString("./image/00%1.raw").arg(num);
+        fileName = QString("./CEPH/00%1.raw").arg(num);
 
     loadSize = 0;
     byteToWrite = 0;

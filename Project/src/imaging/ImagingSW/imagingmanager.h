@@ -7,6 +7,8 @@ namespace Ui {
 class ImagingManager;
 }
 
+class ImageThread;
+
 class ImagingManager : public QWidget
 {
     Q_OBJECT
@@ -25,19 +27,20 @@ private slots:
     void reconImage();
     void saveButtonSlot();
     void finishButtonSlot();
-
     void stopButtonSlot();
 
     void isProgressMaximum(int);
 
-    void on_filter1Button_clicked();
-    void on_filter2Button_2_clicked();
+    void on_tempReconButton_clicked();
+    void on_tempFilterButton_2_clicked();
 
 private:
     Ui::ImagingManager *ui;
 
     QString currentPID = "NULL";
     QString currentType = "NULL";
+
+    ImageThread *thread;
 
 signals:
     void shootingEndSignal(QString);

@@ -157,16 +157,16 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="filter1Button">
+          <widget class="QPushButton" name="tempReconButton">
            <property name="text">
-            <string>filter1</string>
+            <string>TEMP_RECON</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="filter2Button_2">
+          <widget class="QPushButton" name="tempFilterButton_2">
            <property name="text">
-            <string>filter2</string>
+            <string>TEMP_FILTER</string>
            </property>
           </widget>
          </item>
