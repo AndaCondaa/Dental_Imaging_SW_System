@@ -80,30 +80,16 @@ void MainNetworkManager::requestPatientInfo(QString pid)
     sendPacket(mainSocket, "IPR", pid, "NULL");     // 서버로 환자정보 요청
 }
 
-void MainNetworkManager::saveSlot(QString)
-{
-    sendFile();
-}
-
 void MainNetworkManager::endImagingProcess(QString pid)
 {
     sendPacket(mainSocket, "ISV", pid, "NULL");     // 촬영 종료 안내 패킷
 }
 
-void MainNetworkManager::goOnSend(qint64 numBytes)
+void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
 {
-    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
-    byteToWrite -= numBytes; // Remaining data size
-    outBlock = file->read(qMin(byteToWrite, numBytes));
-    socket->write(outBlock);
+    QString pid = data.split("|")[0];
+    QString type = data.split("|")[1];
 
-    if (byteToWrite == 0) { // Send completed
-        qDebug("File sending completed!");
-    }
-}
-
-void MainNetworkManager::sendFile()
-{
     loadSize = 0;
     byteToWrite = 0;
     totalSize = 0;
@@ -120,7 +106,7 @@ void MainNetworkManager::sendFile()
         loadSize = 1024; // Size of data per a block
 
         QDataStream out(&outBlock, QIODevice::WriteOnly);
-        out << qint64(0) << qint64(0) << filename;
+        out << qint64(0) << qint64(0) << pid << type << filename;
 
         totalSize += outBlock.size();
         byteToWrite += outBlock.size();
@@ -133,4 +119,14 @@ void MainNetworkManager::sendFile()
     qDebug() << QString("Sending file %1").arg(filename);
 }
 
+void MainNetworkManager::goOnSend(qint64 numBytes)
+{
+    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
+    byteToWrite -= numBytes; // Remaining data size
+    outBlock = file->read(qMin(byteToWrite, numBytes));
+    socket->write(outBlock);
 
+    if (byteToWrite == 0) { // Send completed
+        qDebug("File sending completed!");
+    }
+}

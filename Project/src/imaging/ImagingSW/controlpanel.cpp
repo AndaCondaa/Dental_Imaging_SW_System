@@ -14,10 +14,10 @@ ControlPanel::ControlPanel(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->panoButton->setStyleSheet("QRadioButton::indicator::checked {image: url(:/icon/PANO_ACT.png)}"
-                                  "QRadioButton::indicator::unchecked {image: url(:/icon/PANO_DIS.png)};");
-    ui->cephButton->setStyleSheet("QRadioButton::indicator::checked {image: url(:/icon/CEPH_ACT.png)}"
-                                  "QRadioButton::indicator::unchecked {image: url(:/icon/CEPH_DIS.png)};");
+    ui->panoButton->setStyleSheet("QRadioButton::indicator::unchecked {image: url(:/icon/PANO_DIS.png)}"
+                                  "QRadioButton::indicator::checked {image: url(:/icon/PANO_ACT.png)};");
+    ui->cephButton->setStyleSheet("QRadioButton::indicator::unchecked {image: url(:/icon/CEPH_DIS.png)}"
+                                  "QRadioButton::indicator::checked {image: url(:/icon/CEPH_ACT.png)};");
 
     controlButtonGroup = new QButtonGroup(this);
     controlButtonGroup->addButton(ui->resetButton, RESET);
@@ -43,20 +43,14 @@ void ControlPanel::checkTypeButton(QString data)
         currentType = "PANO";
         ui->panoButton->setCheckable(true);
         ui->cephButton->setCheckable(false);
-        ui->panoButton->setChecked(true);
-        ui->cephButton->setChecked(false);
     } else if (requestType == "CEPH") {
         currentType = "CEPH";
         ui->panoButton->setCheckable(false);
         ui->cephButton->setCheckable(true);
-        ui->panoButton->setChecked(false);
-        ui->cephButton->setChecked(true);
     } else if (requestType == "BOTH") {
         currentType = "PANO";
         ui->panoButton->setCheckable(true);
         ui->cephButton->setCheckable(true);
-        ui->panoButton->setChecked(true);
-        ui->cephButton->setChecked(false);
     }
 }
 
@@ -87,10 +81,10 @@ void ControlPanel::receiveButtonControl(int buttonIdx)
         resetButtonClicked();
         break;
     case READY:
-        readyButtonClicked();
+        if (!readyButtonClicked()) return;
         break;
     case START:
-        startButtonClicked();
+        if (!startButtonClicked()) return;
         break;
     case STOP:
         stopButtonClicked();
@@ -100,7 +94,24 @@ void ControlPanel::receiveButtonControl(int buttonIdx)
 
 void ControlPanel::resetButtonClicked()
 {
-    checkTypeButton("P0001|BOTH");
+//    checkTypeButton("NULL|BOTH");
+
+    if (requestType == "PANO") {
+        ui->panoButton->setCheckable(true);
+        ui->cephButton->setCheckable(false);
+        ui->panoButton->setChecked(true);
+        ui->cephButton->setChecked(false);
+    } else if (requestType == "CEPH") {
+        ui->panoButton->setCheckable(false);
+        ui->cephButton->setCheckable(true);
+        ui->panoButton->setChecked(false);
+        ui->cephButton->setChecked(true);
+    } else if (requestType == "BOTH") {
+        ui->panoButton->setCheckable(true);
+        ui->cephButton->setCheckable(true);
+        ui->panoButton->setChecked(false);
+        ui->cephButton->setChecked(false);
+    }
 
     ui->resetButton->setEnabled(true);
     ui->readyButton->setEnabled(true);
@@ -112,17 +123,15 @@ bool ControlPanel::readyButtonClicked()
 {
     if (ui->panoButton->isChecked()) {
         currentType = "PANO";
-        ui->panoButton->setChecked(true);
-        ui->cephButton->setChecked(false);
         ui->cephButton->setCheckable(false);
     }
     else if (ui->cephButton->isChecked()) {
         currentType = "CEPH";
-        ui->cephButton->setChecked(true);
-        ui->panoButton->setChecked(false);
         ui->panoButton->setCheckable(false);
-    }
-    else {
+    } else if (currentPID == "NULL") {
+        qDebug("%d : 촬영할 환자를 선택하고 ready버튼을 누르세요.", __LINE__);
+        return false;
+    } else {
         qDebug("%d : 타입을 선택하고 ready버튼을 누르세요.", __LINE__);
         return false;
     }
@@ -154,6 +163,11 @@ bool ControlPanel::startButtonClicked()
 
 void ControlPanel::stopButtonClicked()
 {
+    currentType = "NULL";
+
+    ui->panoButton->setCheckable(false);
+    ui->cephButton->setCheckable(false);
+
     ui->resetButton->setEnabled(true);
     ui->readyButton->setEnabled(false);
     ui->startButton->setEnabled(false);
@@ -163,5 +177,28 @@ void ControlPanel::stopButtonClicked()
 
 void ControlPanel::shootingEndSlot(QString type)
 {
-//    ui->
+    ui->resetButton->setEnabled(true);
+    ui->readyButton->setEnabled(false);
+    ui->startButton->setEnabled(false);
+    ui->stopButton->setEnabled(false);
+}
+
+void ControlPanel::saveSlot(QString)
+{
+
+}
+
+void ControlPanel::finishSlot(QString pid)
+{
+    currentType = "NULL";
+    requestType = "NULL";
+    currentPID = "NULL";
+
+    ui->panoButton->setCheckable(false);
+    ui->cephButton->setCheckable(false);
+
+    ui->resetButton->setEnabled(true);
+    ui->readyButton->setEnabled(false);
+    ui->startButton->setEnabled(false);
+    ui->stopButton->setEnabled(false);
 }

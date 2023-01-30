@@ -154,21 +154,18 @@ void ImagingManager::loadImage()
         return;
     }
 
-    ImageThread *thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), currentType, this);
+    thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), currentType, this);
     connect(thread, SIGNAL(imageProgressed(int)), ui->progressBar, SLOT(setValue(int)));
     connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
-    connect(this, SIGNAL(stopThread()), thread, SLOT(terminate()));
     thread->start();
 }
 
-void ImagingManager::finishButtonSlot()
-{
-    emit finishSignal(currentPID);
-}
 
 void ImagingManager::stopButtonSlot()
 {
-    emit stopThread();
+//    thread->terminate();
+//    thread->exit();
+//    delete thread;
 }
 
 void ImagingManager::isProgressMaximum(int value)
@@ -177,6 +174,9 @@ void ImagingManager::isProgressMaximum(int value)
         qDebug("촬영 종료");
         ui->reconButton->setEnabled(true);
         emit shootingEndSignal(currentType);
+
+//        thread->exit();
+//        delete thread;
     }
 }
 
@@ -185,7 +185,29 @@ void ImagingManager::saveButtonSlot()
     emit saveSignal(currentPID + "|" + currentType);
 }
 
+void ImagingManager::finishButtonSlot()
+{
+    emit finishSignal(currentPID);
+}
+
+#include <QFile>
+
 void ImagingManager::reconImage()
+{
+    QFile file("./CEPH.bmp");
+
+    file.open(QIODevice::ReadOnly);
+    QByteArray buf = file.readAll();
+    file.close();
+
+    QPixmap *img = new QPixmap(QSize(3000, 2400));
+    img->loadFromData(buf);
+//    QImage img(buf, 3000, 2400, QImage::Format_Grayscale16);
+    ui->viewLabel->setPixmap(img->scaledToHeight(ui->viewLabel->height()));
+}
+
+
+void ImagingManager::on_tempReconButton_clicked()
 {
     int count = 0;
 
@@ -218,23 +240,23 @@ void ImagingManager::reconImage()
         fclose(file);
 
 
-        // 프레임데이터 히스토그램 스트레칭
-        unsigned short min, max, tmp, range;
-        min = 0;
-        max = 359;
-//        for (int i = 0; i < 48*2400; i++) {
-//            tmp = buf[i];
-//            if (tmp > max)
-//                max = tmp;
-//            if (tmp < min)
-//                min = tmp;
-//        }
-        range = max - min;
+//        // 프레임데이터 히스토그램 스트레칭
+//        unsigned short min, max, tmp, range;
+//        min = 0;
+//        max = 359;
+////        for (int i = 0; i < 48*2400; i++) {
+////            tmp = buf[i];
+////            if (tmp > max)
+////                max = tmp;
+////            if (tmp < min)
+////                min = tmp;
+////        }
+//        range = max - min;
 
-        for (int i = 0; i < 48*2400; i++) {
-            if (buf[i] < 359)
-                buf[i] = cvRound(((double)(buf[i] - min) / range) * 65535.);
-        }
+//        for (int i = 0; i < 48*2400; i++) {
+//            if (buf[i] < 359)
+//                buf[i] = cvRound(((double)(buf[i] - min) / range) * 65535.);
+//        }
 
         cv::Mat src(2400, 48, CV_16UC1, buf);
         cv::Mat dst;
@@ -264,7 +286,8 @@ void ImagingManager::reconImage()
     delete[] out;
 }
 
-void ImagingManager::on_filter1Button_clicked()
+
+void ImagingManager::on_tempFilterButton_2_clicked()
 {
     FILE *file;
     unsigned short *img = new unsigned short[3000*2400];
@@ -300,7 +323,6 @@ void ImagingManager::on_filter1Button_clicked()
     cv::Mat dst;
     cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
     clahe->setClipLimit(40);
-    clahe->setTilesGridSize(cv::Size2i(8,8));
     clahe->apply(src, dst);
 
 
@@ -311,11 +333,5 @@ void ImagingManager::on_filter1Button_clicked()
 
     qDebug() << "filter1 end";
     delete[] img;
-}
-
-
-void ImagingManager::on_filter2Button_2_clicked()
-{
-
 }
 

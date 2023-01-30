@@ -15,15 +15,15 @@ PatientManager::PatientManager(QWidget *parent) :
     connect(ui->patientReadyButton, SIGNAL(clicked()), this, SLOT(slotPatientReady()));
     connect(ui->waitTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(waitDoubleClicked(QTreeWidgetItem*,int)));
 
-    QStringList dataList;
-    dataList << "P00001" << "김유선" << "CEPH";
-    receiveWaitPatient(dataList);
-    dataList.clear();
-    dataList << "P00004" << "김도예" << "BOTH";
-    receiveWaitPatient(dataList);
-    dataList.clear();
-    dataList << "P00005" << "김영희" << "PANO";
-    receiveWaitPatient(dataList);
+//    QStringList dataList;
+//    dataList << "P00001" << "김유선" << "CEPH";
+//    receiveWaitPatient(dataList);
+//    dataList.clear();
+//    dataList << "P00004" << "김도예" << "BOTH";
+//    receiveWaitPatient(dataList);
+//    dataList.clear();
+//    dataList << "P00005" << "김영희" << "PANO";
+//    receiveWaitPatient(dataList);
 }
 
 PatientManager::~PatientManager()
@@ -113,4 +113,13 @@ void PatientManager::receivePatientInfo(QStringList dataList)           // pid -
 void PatientManager::waitDoubleClicked(QTreeWidgetItem*, int)
 {
     emit sendPid(ui->waitTreeWidget->currentItem()->text(1));
+}
+
+void PatientManager::finishSlot(QString)
+{
+    delete ui->infoTableWidget->item(0,0);
+    delete ui->infoTableWidget->item(0,1);
+    delete ui->infoTableWidget->item(0,2);
+    delete ui->infoTableWidget->item(0,3);
+    delete ui->infoTableWidget->item(0,4);
 }
