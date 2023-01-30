@@ -87,10 +87,10 @@ void ControlPanel::receiveButtonControl(int buttonIdx)
         resetButtonClicked();
         break;
     case READY:
-        readyButtonClicked();
+        if (!readyButtonClicked()) return;
         break;
     case START:
-        startButtonClicked();
+        if (!startButtonClicked()) return;
         break;
     case STOP:
         stopButtonClicked();

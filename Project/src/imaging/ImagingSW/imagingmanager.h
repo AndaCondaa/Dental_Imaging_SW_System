@@ -31,7 +31,6 @@ private slots:
     void isProgressMaximum(int);
 
     void on_filter1Button_clicked();
-
     void on_filter2Button_2_clicked();
 
 private:

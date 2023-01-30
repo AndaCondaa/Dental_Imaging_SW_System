@@ -120,7 +120,7 @@ void SubServer::receiveFile()
 
         QDataStream in(socket);
         in.device()->seek(0);
-        in >> totalSize >> byteReceived >> PID >> "CEPH" >> fileName;
+        in >> totalSize >> byteReceived >> fileName;
         if(checkFileName == fileName) return;
 
         QDir dir(QString("./receive/%1/%2/").arg(currentPID, currentType));

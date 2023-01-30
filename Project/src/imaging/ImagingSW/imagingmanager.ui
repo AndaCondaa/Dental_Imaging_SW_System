@@ -99,9 +99,9 @@
             <property name="geometry">
              <rect>
               <x>40</x>
-              <y>30</y>
+              <y>20</y>
               <width>41</width>
-              <height>321</height>
+              <height>261</height>
              </rect>
             </property>
             <property name="sizePolicy">
@@ -173,7 +173,7 @@
          <item>
           <widget class="QPushButton" name="saveButton">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="minimumSize">
             <size>
@@ -189,7 +189,7 @@
          <item>
           <widget class="QPushButton" name="finishButton">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="sizePolicy">
             <sizepolicy hsizetype="Preferred" vsizetype="Preferred">

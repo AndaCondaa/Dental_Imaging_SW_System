@@ -218,23 +218,23 @@ void ImagingManager::reconImage()
         fclose(file);
 
 
-        // 프레임데이터 히스토그램 스트레칭
-        unsigned short min, max, tmp, range;
-        min = 0;
-        max = 359;
-//        for (int i = 0; i < 48*2400; i++) {
-//            tmp = buf[i];
-//            if (tmp > max)
-//                max = tmp;
-//            if (tmp < min)
-//                min = tmp;
-//        }
-        range = max - min;
+//        // 프레임데이터 히스토그램 스트레칭
+//        unsigned short min, max, tmp, range;
+//        min = 0;
+//        max = 359;
+////        for (int i = 0; i < 48*2400; i++) {
+////            tmp = buf[i];
+////            if (tmp > max)
+////                max = tmp;
+////            if (tmp < min)
+////                min = tmp;
+////        }
+//        range = max - min;
 
-        for (int i = 0; i < 48*2400; i++) {
-            if (buf[i] < 359)
-                buf[i] = cvRound(((double)(buf[i] - min) / range) * 65535.);
-        }
+//        for (int i = 0; i < 48*2400; i++) {
+//            if (buf[i] < 359)
+//                buf[i] = cvRound(((double)(buf[i] - min) / range) * 65535.);
+//        }
 
         cv::Mat src(2400, 48, CV_16UC1, buf);
         cv::Mat dst;
@@ -300,7 +300,6 @@ void ImagingManager::on_filter1Button_clicked()
     cv::Mat dst;
     cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
     clahe->setClipLimit(40);
-    clahe->setTilesGridSize(cv::Size2i(8,8));
     clahe->apply(src, dst);
 
 
