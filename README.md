@@ -10,7 +10,7 @@
 
 최종 : 2/20(월) ~ 2/21(화)
 
-<p align="center"><img src="./project/docs/img/check.png"</p>
+<p align="center"><img src="./project/docs/img/check.png"></p>
 
 
 
