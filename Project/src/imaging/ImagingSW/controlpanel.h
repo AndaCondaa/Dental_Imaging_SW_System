@@ -21,19 +21,20 @@ private slots:
     void checkTypeButton(QString);
     void controlButtonClicked(QAbstractButton*);
     void receiveButtonControl(int);
-    void resetButtonClicked();
-    bool readyButtonClicked();
-    bool startButtonClicked();
-    void stopButtonClicked();
+    void resetControl();
+    bool readyControl(bool);
+    bool startControl(bool);
+    void stopControl(bool);
     void saveSlot(QString);
     void shootingEndSlot(QString);
     void finishSlot(QString);
+    void deleteSlot(QString);
 
 
 private:
     Ui::ControlPanel *ui;
 
-    QString requestType = "BOTH";
+    QString requestType = "NULL";
     QString currentPID = "NULL";
     QString currentType = "NULL";
     QButtonGroup *controlButtonGroup;

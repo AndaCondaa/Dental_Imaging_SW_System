@@ -58,16 +58,16 @@ void ControlPanel::controlButtonClicked(QAbstractButton* button)
 {
     switch (controlButtonGroup->id(button)) {
     case RESET:
-        resetButtonClicked();
+        resetControl();
         break;
     case READY:
-        if (!readyButtonClicked()) return;
+        if (!readyControl(true)) return;
         break;
     case START:
-        if (!startButtonClicked()) return;
+        if (!startControl(true)) return;
         break;
     case STOP:
-        stopButtonClicked();
+        stopControl(true);
         break;
     }
 
@@ -78,21 +78,21 @@ void ControlPanel::receiveButtonControl(int buttonIdx)
 {
     switch (buttonIdx) {
     case RESET:
-        resetButtonClicked();
+        resetControl();
         break;
     case READY:
-        if (!readyButtonClicked()) return;
+        if (!readyControl(false)) return;
         break;
     case START:
-        if (!startButtonClicked()) return;
+        if (!startControl(false)) return;
         break;
     case STOP:
-        stopButtonClicked();
+        stopControl(false);
         break;
     }
 }
 
-void ControlPanel::resetButtonClicked()
+void ControlPanel::resetControl()
 {
 //    checkTypeButton("NULL|BOTH");
 
@@ -119,7 +119,7 @@ void ControlPanel::resetButtonClicked()
     ui->stopButton->setEnabled(false);
 }
 
-bool ControlPanel::readyButtonClicked()
+bool ControlPanel::readyControl(bool signal)
 {
     if (ui->panoButton->isChecked()) {
         currentType = "PANO";
@@ -128,23 +128,24 @@ bool ControlPanel::readyButtonClicked()
     else if (ui->cephButton->isChecked()) {
         currentType = "CEPH";
         ui->panoButton->setCheckable(false);
-    } else if (currentPID == "NULL") {
-        qDebug("%d : 촬영할 환자를 선택하고 ready버튼을 누르세요.", __LINE__);
-        return false;
     } else {
         qDebug("%d : 타입을 선택하고 ready버튼을 누르세요.", __LINE__);
         return false;
     }
-
+    if (currentPID == "NULL") {
+        qDebug("%d : 촬영할 환자를 선택하고 ready버튼을 누르세요.", __LINE__);
+        return false;
+    }
     ui->readyButton->setEnabled(false);
     ui->startButton->setEnabled(true);
 
-    emit readySignal(currentType);
+    if (signal)
+        emit readySignal(currentType);
 
     return true;
 }
 
-bool ControlPanel::startButtonClicked()
+bool ControlPanel::startControl(bool signal)
 {
     QMessageBox startBox(QMessageBox::NoIcon, "START",
                          QString("%1의 %2 촬영을 시작하시겠습니까?").arg(currentPID, currentType),
@@ -157,11 +158,13 @@ bool ControlPanel::startButtonClicked()
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(true);
 
-    emit startSignal();
+    if (signal)
+        emit startSignal();
+
     return true;
 }
 
-void ControlPanel::stopButtonClicked()
+void ControlPanel::stopControl(bool signal)
 {
     currentType = "NULL";
 
@@ -172,7 +175,9 @@ void ControlPanel::stopButtonClicked()
     ui->readyButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
-    emit stopSignal();
+
+    if (signal)
+        emit stopSignal();
 }
 
 void ControlPanel::shootingEndSlot(QString type)
@@ -207,4 +212,10 @@ void ControlPanel::finishSlot(QString pid)
     ui->readyButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
+}
+
+void ControlPanel::deleteSlot(QString pid)
+{
+    if (currentPID == pid)
+        currentPID = "NULL";
 }

@@ -51,6 +51,21 @@ MainWindow::MainWindow(QWidget *parent)
     connect(imagingManager, SIGNAL(shootingEndSignal(QString)), controlPanel, SLOT(shootingEndSlot(QString)));      // PANO,CEPH완료 시 , 버튼 활성화 컨트롤
     connect(patientManager, SIGNAL(finishSignal(QString)), controlPanel, SLOT(finishSlot(QString)));                // 촬영프로세스완료 시, 버튼 셋팅 리셋
     connect(patientManager, SIGNAL(finishSignal(QString)), mainNetworkManager, SLOT(endImagingProcess(QString)));     // 촬영프로세스완료 버튼 클릭 시, 소켓 전송
+    connect(patientManager, SIGNAL(deleteSignal(QString)), controlPanel, SLOT(deleteSlot(QString)));                // 준비된 환자 삭제 시, 소켓 전송 (for currentpid에서 삭제)
+
+//    QStringList dataList;
+//    dataList << "P00001" << "김유선" << "CEPH";
+//    patientManager->receiveWaitPatient(dataList);
+//    dataList.clear();
+//    dataList << "P00004" << "김도예" << "BOTH";
+//    patientManager->receiveWaitPatient(dataList);
+//    dataList.clear();
+//    dataList << "P00005" << "김영희" << "PANO";
+//    patientManager->receiveWaitPatient(dataList);
+
+//    QStringList test;
+//    test << "P00001" << "김유선" << "F" << "asdf";
+//    patientManager->receivePatientInfo(test);
 }
 
 MainWindow::~MainWindow()

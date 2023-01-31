@@ -16,7 +16,8 @@ public:
     explicit PatientManager(QWidget *parent = nullptr);
     ~PatientManager();
 
-private slots:
+//private slots:
+public slots:
     void receiveWaitPatient(QStringList dataList);      // 촬영의뢰 받은 경우
     void deletePatient();                               // 대기환자 목록에서 삭제
     void readyButtonSlot();                            // 환자준비 버튼을 눌러서, 서버에 환자 정보 요청하는 함수
@@ -36,6 +37,7 @@ signals:
     void sendPid(QString);
     void sendType(QString);
     void sendPidToImagingManager(QString);
+    void deleteSignal(QString);                     // 환자준비를 한 후에 삭제한 경우, control클래스에 시그널 전송 (for currentPID 재설정)
     void finishSignal(QString);                     // currentPID
 
 };

@@ -23,13 +23,13 @@ MainNetworkManager::~MainNetworkManager()
 
 void MainNetworkManager::connection(QString address, int port)
 {
-    //    mainSocket->connectToHost(address, port);
-    //    if (mainSocket->waitForConnected()) {
-    //        connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
-    //        sendPacket(mainSocket, "CNT", "IMG", "NULL");
-    //    } else {
-    //        // 연결 실패 예외처리 구현
-    //    }
+//        mainSocket->connectToHost(address, port);
+//        if (mainSocket->waitForConnected()) {
+//            connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
+//            sendPacket(mainSocket, "CNT", "IMG", "NULL");
+//        } else {
+//            // 연결 실패 예외처리 구현
+//        }
 
     //    fileSocket->connectToHost(address, port+1);
     //    if (fileSocket->waitForConnected()) {

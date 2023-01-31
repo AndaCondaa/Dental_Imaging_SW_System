@@ -34,37 +34,25 @@ public:
 
 private slots:
     void newClient();
-    void receiveControl();
-
     void newFileClient();
+    void receiveControl();
+    void firstFileSocket();
     void receiveFile();
-    void goOnSend(qint64 numBytes);
-    void sendFile(int);
-
-    void on_pushButton_clicked();
+    void sendFile();
 
 private:
     Ui::SubServer *ui;
 
     QString currentPID = "NULL";
     QString currentType = "NULL";
-    int count = 0;
+
+    Protocol *protocol;
 
     QTcpServer *controlServer;
     QTcpServer *fileServer;
     QMap<QTcpSocket*, int> controlSocketMap;    // <socket, SW or MODALITY>
     QMap<QTcpSocket*, int> fileSocketMap;       // <socket, SW or MODALITY>
 
-    QFile* file;                                // File Object for FileSending Protocol
-    qint64 totalSize;                           // Total size of File that clients are sending
-    qint64 byteReceived = 0;                    // size of File read currently
-    QByteArray inBlock;                         // Units divided to transfer files
-    QString fileName;                           // Receiving FileName
-    QString checkFileName;                      // Previous File Name for checking new file
-    qint64 loadSize;                // File Size
-    qint64 byteToWrite;             // File Size per a block
-    QByteArray outBlock;            // Block for sending
-
-    Protocol *protocol;
+    QByteArray totalData;
 };
 #endif // SUBSERVER_H

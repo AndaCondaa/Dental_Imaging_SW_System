@@ -165,9 +165,10 @@ void ImagingManager::loadImage()
 
 void ImagingManager::stopButtonSlot()
 {
-    //    thread->terminate();
-    //    thread->exit();
-    //    delete thread;
+    qDebug("%s %d", __FUNCTION__, __LINE__);
+    thread->threadStop();
+//    thread->exit();
+//    delete thread;
 }
 
 void ImagingManager::isProgressMaximum(int value)
@@ -244,32 +245,32 @@ void ImagingManager::on_tempReconButton_clicked()
         fread(buf, sizeof(unsigned short), 48 * 2400, file);
         fclose(file);
 
-        //        // 프레임데이터 히스토그램 스트레칭
-        //        unsigned short min, max, tmp, range;
-        //        min = 0;
-        //        max = 359;
-        ////        for (int i = 0; i < 48*2400; i++) {
-        ////            tmp = buf[i];
-        ////            if (tmp > max)
-        ////                max = tmp;
-        ////            if (tmp < min)
-        ////                min = tmp;
-        ////        }
-        //        range = max - min;
+        // 프레임데이터 히스토그램 스트레칭
+        unsigned short min, max, tmp, range;
+        min = 0;
+        max = 400;
+        for (int i = 0; i < 48*2400; i++) {
+            tmp = buf[i];
+            if (tmp > max)
+                max = tmp;
+            if (tmp < min)
+                min = tmp;
+        }
+        range = max - min;
 
-        //        for (int i = 0; i < 48*2400; i++) {
-        //            if (buf[i] < 359)
-        //                buf[i] = cvRound(((double)(buf[i] - min) / range) * 65535.);
-        //        }
+        for (int i = 0; i < 48*2400; i++) {
+            if (buf[i] < 400)
+                buf[i] = cvRound(((double)(buf[i] - min) / range) * 65535.);
+        }
 
-        cv::Mat src(2400, 48, CV_16UC1, buf);
-        cv::Mat dst;
-        cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
-        clahe->setClipLimit(40);
-        clahe->setTilesGridSize(cv::Size2i(8,8));
-        clahe->apply(src, dst);
+//        cv::Mat src(2400, 48, CV_16UC1, buf);
+//        cv::Mat dst;
+//        cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+//        clahe->setClipLimit(40);
+//        clahe->setTilesGridSize(cv::Size2i(8,8));
+//        clahe->apply(src, dst);
 
-        memcpy(buf, dst.data, 48*2400);
+//        memcpy(buf, dst.data, 48*2400);
 
 
         // 이미지 스티칭
@@ -282,7 +283,7 @@ void ImagingManager::on_tempReconButton_clicked()
         count++;
     }
 
-    file = fopen("./result1.raw", "wb");
+    file = fopen("./test/result.raw", "wb");
     fwrite(out, sizeof(unsigned short), 3000*2400, file);
     fclose(file);
 
@@ -293,17 +294,22 @@ void ImagingManager::on_tempReconButton_clicked()
 
 void ImagingManager::on_tempFilterButton_2_clicked()
 {
+
     FILE *file;
     unsigned short *img = new unsigned short[3000*2400];
 
-    file = fopen("./result1.raw", "rb");
+    file = fopen("./test/result.raw", "rb");
     fread(img, sizeof(unsigned short), 3000*2400, file);
     fclose(file);
+
+//    for (int i = 0; i < 3000*2400; i++) {
+//        img[i] = 65535 * ((double)pow((double)((double)(img[i]) / (double)65535.0), (double)(6.0 / 10.0)));
+//    }
 
     // 전체 영역 스트레칭
     unsigned short min, max, tmp, range;
     min = 0;
-    max = 10000;
+    max = 4000;
     //    for (int i = 0; i < 3000*2400; i++) {
     //        tmp = img[i];
     //        if (tmp > max)
@@ -313,27 +319,60 @@ void ImagingManager::on_tempFilterButton_2_clicked()
     //    }
     range = max - min;
     for (int i = 0; i < 3000*2400; i++) {
-        if (img[i] <= 10000)
-            img[i] = cvRound(((double)(img[i] - min) / range) * 50000.);
+        if (img[i] <= 4000)
+            img[i] = cvRound(((double)(img[i] - min) / range) * 65535.);
+        else
+            img[i] = 0;
+//        if (img[i] <= 3000)
+//            img[i] = 0;
+////            img[i] = cvRound(((double)(img[i] - 0) / 5000) * 20000.);
+//        else if(img[i] > 3000)
+//            img[i] = cvRound(((double)(img[i] - 3000) / 62535) * 20000.) + 45535;
     }
 
+//    cv::Mat src(2400, 3000, CV_16UC1,img);
+//    cv::Mat dst;
+//    cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+//    clahe->setClipLimit(40);
+//    clahe->apply(src, dst);
 
-    //    for (int i = 0; i < 3000*2400; i++) {
-    //        img[i] = 65535 * ((double)pow((double)((double)(img[i]) / (double)65535.0), (double)(4.0 / 10.0)));
-//        }
 
-    cv::Mat src(2400, 3000, CV_16UC1,img);
-    cv::Mat dst;
-    cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
-    clahe->setClipLimit(40);
-    clahe->apply(src, dst);
-
-    file = fopen("./result2.raw", "wb");
+    file = fopen("./test/result2.raw", "wb");
     fwrite(img, sizeof(unsigned short), 3000*2400, file);
-    //    fwrite(dst.data, sizeof(unsigned short), 3000*2400, file);
+    //fwrite(dst.data, sizeof(unsigned short), 3000*2400, file);
     fclose(file);
 
     qDebug() << "filter1 end";
     delete[] img;
+
+
+
+
+
+
+
+
+
+//    FILE *file;
+//    unsigned short *low = new unsigned short[3000*2400];
+//    unsigned short *high = new unsigned short[3000*2400];
+//    unsigned short *mix = new unsigned short[3000*2400];
+
+//    file = fopen("./test/low.raw", "rb");
+//    fread(low, sizeof(unsigned short), 3000*2400, file);
+//    fclose(file);
+//    file = fopen("./test/high.raw", "rb");
+//    fread(high, sizeof(unsigned short), 3000*2400, file);
+//    fclose(file);
+
+
+//    for (int i = 0; i < 3000*2400; i++) {
+//        mix[i] = (low[i] + high[i]) / 2;
+//    }
+
+//    file = fopen("./test/mix.raw", "wb");
+//    fwrite(mix, sizeof(unsigned short), 3000*2400, file);
+//    fclose(file);
+
 }
 

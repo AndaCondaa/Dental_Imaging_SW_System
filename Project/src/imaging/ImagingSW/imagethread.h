@@ -10,8 +10,13 @@ class ImageThread : public QThread
 public:
     explicit ImageThread(int width, int height, QString modeType, QObject *parent = nullptr);
 
+public slots:
+    void threadStop();
+
 private:
     void run();
+
+    bool isStop = false;
 
     int width;
     int height;

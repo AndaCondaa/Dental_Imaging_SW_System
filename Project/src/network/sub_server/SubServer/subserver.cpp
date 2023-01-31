@@ -54,7 +54,24 @@ void SubServer::newClient()
 void SubServer::newFileClient()
 {
     QTcpSocket *fileSocket = fileServer->nextPendingConnection();
-    connect(fileSocket, SIGNAL(readyRead()), this, SLOT(receiveFile()));
+    connect(fileSocket, SIGNAL(readyRead()), this, SLOT(firstFileSocket()));
+}
+
+void SubServer::firstFileSocket()
+{
+    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
+
+    // 처음 연결 시, 소켓과 클라이언트 정보를 매핑
+    if (!fileSocketMap.contains(socket)) {
+        protocol->receiveProtocol(socket);
+        int id = protocol->packetData()->type();
+        fileSocketMap.insert(socket, id);
+        disconnect(socket, SIGNAL(readyRead()), this, SLOT(firstFileSocket()));
+    }
+
+    // MODALITY 소켓에만 리시브파일 연결
+    if (protocol->packetData()->type() == MODALITY)
+        connect(socket, SIGNAL(readyRead()), this, SLOT(receiveFile()));
 }
 
 void SubServer::receiveControl()
@@ -68,7 +85,7 @@ void SubServer::receiveControl()
 
     QString event = protocol->packetData()->event();
     QString msg = protocol->packetData()->msg();
-    QString client = controlSocketMap.value(socket) ? "영상장비" : "촬영SW";
+    QString client = controlSocketMap.value(socket) ? "영상장비" : "촬영SW";      // controlSocketMap.value(socket) -> 0: 촬영SW, 1: 영상장비
 
     int receiver;
     if (controlSocketMap.value(socket)) receiver = SW;
@@ -105,105 +122,43 @@ void SubServer::receiveFile()
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
 
-    // 처음 연결 시, 소켓과 클라이언트 정보를 매핑
-    if (!fileSocketMap.contains(socket)) {
-        int id = protocol->packetData()->type();
-        protocol->receiveProtocol(socket);
-        fileSocketMap.insert(socket, id);
-        connect(socket, SIGNAL(bytesWritten(qint64)), this, SLOT(goOnSend(qint64)));
-        return;
-    }
+    totalData.append(socket->readAll());
 
-    // Beginning File Transfer
-    if (byteReceived == 0) {                                    // First Time(Block) , var byteReceived is always zero
-        checkFileName = fileName;                               // 다음 패킷부터 파일이름으로 구분하기 위해 첫 패킷에서 보낸 파일이름을 임시로 저장
+    qDebug("%d", totalData.size());
+    if (totalData.size() == 227865600) {
+        QFile file;
+        QString fileName;
 
-        QDataStream in(socket);
-        in.device()->seek(0);
-        in >> totalSize >> byteReceived >> fileName;
-        if(checkFileName == fileName) return;
-
-        QDir dir(QString("./receive/%1/%2/").arg(currentPID, currentType));
+        QDir dir(QString("receive/%1/%2/").arg(QDate::currentDate().toString("yyyyMMdd"), currentPID));
         if (!dir.exists())
             dir.mkpath(".");
 
-        QFileInfo info(fileName);
-        QString currentFileName = dir.path() + "/" +info.fileName();
+        int count = 0;
+        for (int i = 10; i < 999; i++) {
+            if (i >= 100)
+                fileName = dir.path() + "/" + QString("0%1.raw").arg(i);
+            else
+                fileName = dir.path() + "/" + QString("00%1.raw").arg(i);
 
-        file = new QFile(currentFileName);
-        file->open(QFile::WriteOnly);
-    } else {
-        if(checkFileName == fileName) return;
-        inBlock = socket->readAll();
+            file.setFileName(fileName);
+            file.open(QIODevice::WriteOnly);
 
-        byteReceived += inBlock.size();
-        file->write(inBlock);
-        file->flush();
-    }
+            file.write(totalData.mid(count*48*2400*2, 48*2400*2));
+            qDebug("%d개 저장 완료", count);
 
-    if (byteReceived == totalSize) {        // file sending is done
-        qDebug() << QString("%1 receive completed").arg(fileName);
-        inBlock.clear();
-        byteReceived = 0;
-        totalSize = 0;
-        file->close();
-        delete file;
-    }
-}
-
-void SubServer::goOnSend(qint64 numBytes)
-{
-    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
-    byteToWrite -= numBytes; // Remaining data size
-    outBlock = file->read(qMin(byteToWrite, numBytes));
-    socket->write(outBlock);
-
-    if (byteToWrite == 0) { // Send completed
-        if (count < 100) {
+            file.close();
             count++;
-            sendFile(count);
         }
+        qDebug("DONE!!!! (line: %d)", __LINE__);
+        sendFile();
     }
 }
 
-void SubServer::sendFile(int num)
+void SubServer::sendFile()
 {
-    QString fileName;
-    if (num >= 100)
-        fileName = QString("./receive/0%1.raw").arg(num);
-    else
-        fileName = QString("./receive/00%1.raw").arg(num);
+    fileSocketMap.key(SW)->write(totalData);
+    fileSocketMap.key(SW)->flush();
+    qDebug("TOTAL SIZE : %d", totalData.size());
+    totalData.clear();
 
-    loadSize = 0;
-    byteToWrite = 0;
-    totalSize = 0;
-    outBlock.clear();
-
-    if(fileName.length()) {
-        file = new QFile(fileName);
-        file->open(QFile::ReadOnly);
-
-        qDebug() << QString("file %1 is opened").arg(fileName);
-
-        byteToWrite = totalSize = file->size(); // Data remained yet
-        loadSize = 1024; // Size of data per a block
-
-        QDataStream out(&outBlock, QIODevice::WriteOnly);
-        out << qint64(0) << qint64(0) << fileName;
-
-        totalSize += outBlock.size();
-        byteToWrite += outBlock.size();
-
-        out.device()->seek(0);
-        out << totalSize << qint64(outBlock.size());
-
-        fileSocketMap.key(SW)->write(outBlock); // Send the read file to the socket
-    }
-    qDebug() << QString("Sending file %1").arg(fileName);
-}
-
-void SubServer::on_pushButton_clicked()
-{
-    count = 10;
-    sendFile(count);
 }
