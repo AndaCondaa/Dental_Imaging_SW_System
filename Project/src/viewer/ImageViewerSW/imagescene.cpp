@@ -5,8 +5,9 @@
 #include <QTimeLine>
 #include <QPinchGesture>
 #include <QGraphicsItem>
+#include <QTimer>
 
-#define ItemWidth   5
+#define DotWidth   5
 
 ImageScene::ImageScene(QWidget *parent)
     : QGraphicsScene(parent)
@@ -16,14 +17,13 @@ ImageScene::ImageScene(QWidget *parent)
 
     //펜의 색상, 두께의 초깃값 설정
     m_penColor = Qt::black;
-    m_penThickness = 10;
+    m_penThickness = 6;
 
-    //그리기 타입 초깃값 설정(일반 선 그리기)
-    m_drawType = Lines;
+    //그리기 타입 초깃값 설정(레이저 그리기)
+    m_drawType = Laser;
     m_currentItem = nullptr;
     point = 0;
     update();
-
 }
 
 void ImageScene::ReceiveType(int type)
@@ -47,7 +47,6 @@ void ImageScene::ReceiveType(int type)
 
     else if(type == 2){
         m_drawType = Laser;
-        tmp = 0;
     }
 
     else if(type == 3){
@@ -79,6 +78,15 @@ void ImageScene::ReceiveType(int type)
         m_ellipseList.clear();
         m_rectList.clear();
         m_textList.clear();
+        m_itemList.clear();
+
+        //도구 탭을 이동했을 때 이전에 그려져있던 레이저 그리기를 삭제
+        if(!m_laserList.empty()){
+            foreach(auto item, m_laserList)
+                removeItem(item);
+            update();
+        }
+        m_laserList.clear();
     }
 
     //Ceph : 길이 측정
@@ -93,6 +101,10 @@ void ImageScene::ReceiveType(int type)
 
     else if(type == 11){
         m_drawType = Angle;
+    }
+
+    else if(type == 12){
+        m_drawType = Capture;
     }
 
     qDebug() << "ImageView : " << type;
@@ -118,6 +130,21 @@ void ImageScene::ReceiveType(int type)
         foreach(auto item, m_textList) {
             item->setFlag(QGraphicsItem::ItemIsMovable, false);
             item->setFlag(QGraphicsItem::ItemIsSelectable, true);
+        }
+    }
+}
+
+void ImageScene::ReceiveFontSize(int size)
+{
+    if(!m_textList.empty()){
+        foreach(auto item, m_textList) {
+            if(item->isSelected()){
+                QFont Font;
+                Font.setPointSize(size);
+                Font.setBold(true);
+                Font.setStyleHint(QFont::Courier);
+                item->setFont(Font);
+            }
         }
     }
 }
@@ -160,7 +187,23 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     }
 
     else if(m_drawType == Laser){
+        m_isDrawable = true;
 
+        //다른 그리기 수행 시 바로 삭제
+        if(!m_laserList.empty()){
+            foreach(auto item, m_laserList)
+                removeItem(item);
+            update();
+        }
+        m_laserList.clear();
+
+        QPainterPath path;
+        QGraphicsPathItem* item = addPath(path, QPen(m_penColor, m_penThickness,
+                                                     Qt::SolidLine, Qt::RoundCap));
+        path = item->path();
+        path.moveTo(event->scenePos());
+        item->setPath(path);
+        m_laserList.append(item);
     }
 
     else if(m_drawType == FreeHand){
@@ -196,6 +239,10 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
         m_startPos = event->scenePos();
     }
 
+    else if(m_drawType == Capture){
+        m_startPos = event->scenePos();
+    }
+
     else if(m_drawType == Angle){
         switch (point) {
         case 0: {
@@ -210,8 +257,8 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             first = event->scenePos();
             QGraphicsEllipseItem* item1 = new QGraphicsEllipseItem();
             item1->setBrush(QBrush(QColor(m_penColor), Qt::SolidPattern));
-            item1->setRect(first.x()-ItemWidth/2, first.y()-ItemWidth/2, ItemWidth, ItemWidth);
-            item1->setTransformOriginPoint(ItemWidth/2, ItemWidth/2);
+            item1->setRect(first.x()-DotWidth/2, first.y()-DotWidth/2, DotWidth, DotWidth);
+            item1->setTransformOriginPoint(DotWidth/2, DotWidth/2);
             addItem(item1);
             m_itemList.append(item1);
             break;
@@ -221,8 +268,8 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             second = event->scenePos();
             QGraphicsEllipseItem* item1 = new QGraphicsEllipseItem();
             item1->setBrush(QBrush(QColor(m_penColor), Qt::SolidPattern));
-            item1->setRect(second.x()-ItemWidth/2, second.y()-ItemWidth/2, ItemWidth, ItemWidth);
-            item1->setTransformOriginPoint(ItemWidth/2, ItemWidth/2);
+            item1->setRect(second.x()-DotWidth/2, second.y()-DotWidth/2, DotWidth, DotWidth);
+            item1->setTransformOriginPoint(DotWidth/2, DotWidth/2);
             addItem(item1);
             m_itemList.append(item1);
 
@@ -238,8 +285,8 @@ void ImageScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
             third = event->scenePos();
             QGraphicsEllipseItem* item1 = new QGraphicsEllipseItem();
             item1->setBrush(QBrush(QColor(m_penColor), Qt::SolidPattern));
-            item1->setRect(third.x()-ItemWidth/2, third.y()-ItemWidth/2, ItemWidth, ItemWidth);
-            item1->setTransformOriginPoint(ItemWidth/2, ItemWidth/2);
+            item1->setRect(third.x()-DotWidth/2, third.y()-DotWidth/2, DotWidth, DotWidth);
+            item1->setTransformOriginPoint(DotWidth/2, DotWidth/2);
 
             addItem(item1);
             m_itemList.append(item1);
@@ -294,6 +341,10 @@ void ImageScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
         addTextItem(m_startPos);
         break;
 
+    case Capture:
+        emit SendCapturePos(m_startPos, event->scenePos());
+        break;
+
     case Lines: {
         if(m_isDrawable) {
             QGraphicsPathItem* item = m_pathList.last();
@@ -304,10 +355,21 @@ void ImageScene::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
             }
             m_isDrawable = false;
         }
-        break;
     }
+        break;
 
-    case Laser:
+
+    case Laser: {
+        if(m_isDrawable) {
+            QGraphicsPathItem* item = m_laserList.last();
+            if(item) {
+                QPainterPath path = item->path();
+                path.lineTo(event->scenePos());
+                item->setPath(path);
+            }
+            m_isDrawable = false;
+        }
+    }
         break;
 
     case FreeHand: {
@@ -353,7 +415,16 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     }
         break;
 
-    case Laser:
+    case Laser: {
+        if(m_isDrawable) {
+            QGraphicsPathItem* item = m_laserList.last();
+            if(item) {
+                QPainterPath path = item->path();
+                path.lineTo(event->scenePos());
+                item->setPath(path);
+            }
+        }
+    }
         break;
 
 
@@ -372,7 +443,7 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     case Rectangle: {
         if(m_currentItem != nullptr)
             delete m_currentItem;
-        QRectF rect(m_startPos, event->scenePos());
+        QRectF rect = QRectF(m_startPos, event->scenePos()).normalized();
         QGraphicsRectItem *item = new QGraphicsRectItem(rect);
         item->setPen(QPen(QColor(Qt::yellow), 2));
         addItem(item);
@@ -383,7 +454,18 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     case Ellipse: {
         if(m_currentItem != nullptr)
             delete m_currentItem;
-        QRectF rect(m_startPos, event->scenePos());
+        QRectF rect = QRectF(m_startPos, event->scenePos()).normalized();
+        QGraphicsRectItem *item = new QGraphicsRectItem(rect);
+        item->setPen(QPen(QColor(Qt::yellow), 2));
+        addItem(item);
+        m_currentItem = item;
+    }
+        break;
+
+    case Capture: {
+        if(m_currentItem != nullptr)
+            delete m_currentItem;
+        QRectF rect = QRectF(m_startPos, event->scenePos()).normalized();
         QGraphicsRectItem *item = new QGraphicsRectItem(rect);
         item->setPen(QPen(QColor(Qt::yellow), 2));
         addItem(item);
@@ -394,7 +476,7 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
     case Text: {
             if(m_currentItem != nullptr)
                 delete m_currentItem;
-            QRectF rect(m_startPos, event->scenePos());
+            QRectF rect = QRectF(m_startPos, event->scenePos()).normalized();
             QGraphicsRectItem *item = new QGraphicsRectItem(rect);
             item->setPen(QPen(QColor(Qt::yellow), 2));
             addItem(item);
@@ -450,7 +532,7 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
         //커서 모드일 때 선택된 텍스트 이동
         foreach(auto item, m_textList) {
             if(item->isSelected()){
-                item->setFlags(QGraphicsItem::ItemIsMovable);
+                item->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
             }
         }
     }
@@ -465,7 +547,7 @@ void ImageScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 void ImageScene::addEllipseItem(QPointF stPos, QPointF edPos)
 {
-    QRectF rect(stPos, edPos);
+    QRectF rect = QRectF(stPos, edPos).normalized();
     QGraphicsEllipseItem *ellipseItem = new QGraphicsEllipseItem(rect);
     ellipseItem->setBrush(m_penColor);
     ellipseItem->setBrush(Qt::NoBrush);
@@ -477,7 +559,7 @@ void ImageScene::addEllipseItem(QPointF stPos, QPointF edPos)
 
 void ImageScene::addRectItem(QPointF stPos, QPointF edPos)
 {
-    QRectF rect(stPos, edPos);
+    QRectF rect = QRectF(stPos, edPos).normalized();
     QGraphicsRectItem *rectItem = new QGraphicsRectItem(rect);
     rectItem->setFlags(QGraphicsItem::ItemIsSelectable);
     rectItem->setPen(QPen(rectItem->isSelected()?Qt::red : m_penColor, rectItem->isSelected()?3:m_penThickness));
@@ -488,7 +570,7 @@ void ImageScene::addRectItem(QPointF stPos, QPointF edPos)
 void ImageScene::addTextItem(QPointF stPos)
 {
     QGraphicsSimpleTextItem *textItem = new QGraphicsSimpleTextItem(inputText);
-    QFont newFont("Courier", m_penThickness, QFont::Bold, false);
+    QFont newFont("Courier", 10, QFont::Bold, false);
     textItem->setFlags(QGraphicsItem::ItemIsSelectable);
     textItem->setPos(stPos);
     textItem->setFont(newFont);

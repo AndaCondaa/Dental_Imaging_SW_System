@@ -186,5 +186,12 @@ void PatientInfo::on_Camerastart_clicked()
         진료 시작을 누를때 다시 생성*/
     QDir dir(QString("./Image/%1").arg(patientID));
     dir.removeRecursively();
+
+    //촬영 의뢰 버튼 클릭시 환자 정보 테이블 위젯을 비워줌
+    ui->tableWidget->setItem(0, 0, new QTableWidgetItem(""));
+    ui->tableWidget->setItem(0, 1, new QTableWidgetItem(""));
+    ui->tableWidget->setItem(0, 2, new QTableWidgetItem(""));
+    ui->tableWidget->setItem(0, 3, new QTableWidgetItem(""));
+    ui->tableWidget->setItem(0, 4, new QTableWidgetItem(""));
 }
 

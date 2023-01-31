@@ -51,7 +51,6 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     connect(ui->Brush, SIGNAL(clicked()), this, SLOT(BrushColor()));
     connect(ui->OrigImage, SIGNAL(clicked()), this, SLOT(OrigImage()));
     connect(ui->horizontalSlider, SIGNAL(valueChanged(int)), this, SLOT(Brightness(int)));
-//    connect(ui->Sobel, SIGNAL(clicked()), this, SLOT(Sobel()));
     connect(ui->VReverse, SIGNAL(clicked()), this, SLOT(VReverse()));
     connect(ui->HReverse, SIGNAL(clicked()), this, SLOT(HReverse()));
     connect(ui->Blur, SIGNAL(clicked()), this, SLOT(Blur()));
@@ -70,8 +69,7 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     connect(ui->TextBox, SIGNAL(clicked()), this, SLOT(TextBox()));
     connect(ui->LengthMeasurement, SIGNAL(clicked()), this, SLOT(Length()));
     connect(ui->Angle, SIGNAL(clicked()), this, SLOT(Angle()));
-    connect(ui->Copy, SIGNAL(clicked()), this, SLOT(Copy()));
-    connect(ui->Paste, SIGNAL(clicked()), this, SLOT(Paste()));
+    connect(ui->Capture, SIGNAL(clicked()), this, SLOT(Capture()));
 
     /*GraphicsView에 펜 색상, 펜 두께, 선인지 도형인지를 구분하여 시그널 전송*/
     connect(this, SIGNAL(SendThickness(int)), imageScene, SLOT(ReceiveThickness(int)));
@@ -80,8 +78,14 @@ ImageAlbum::ImageAlbum(QWidget *parent)
     connect(this, SIGNAL(SendText(QString)), imageScene, SLOT(ReceiveText(QString)));
     connect(this, SIGNAL(SendLength(int, int, int, int)), imageScene, SLOT(ReceiveLength(int, int, int, int)));
 
+    //텍스트 사이즈를 변경하기 위해 시그널 전송
+    connect(this, SIGNAL(SendFontSize(int)), imageScene, SLOT(ReceiveFontSize(int)));
+
     //GraphicsSCene에서 측정한 길이를 위젯 화면에 보여주기 위한 시그널-슬롯
     connect(imageScene, SIGNAL(SendMeasurement(QString, double)), this, SLOT(ReceiveMeasurement(QString, double)));
+
+    //GraphicsScene에서 측정한 캡쳐되는 영역의 좌표를 불러오는 시그널-슬롯
+    connect(imageScene, SIGNAL(SendCapturePos(QPointF, QPointF)), this, SLOT(ReceiveCapturePos(QPointF, QPointF)));
 
     //처방전 작성 버튼 클릭 시 처방전 클래스로 의사 정보, 환자 정보를 전송
     connect(this, SIGNAL(sendPrescription(QString, QString, QString, QString, QString)),
@@ -102,14 +106,12 @@ void ImageAlbum::reloadImages(QString ID)
 {
     QDir dir(".");
 //    QDir dir(QString("./Image/%1").arg(ID));
-    qDebug() << dir;
     QStringList filters;
     filters << "*.png" << "*.jpg" << "*.bmp" << "*.gif";
     QFileInfoList fileInfoList = dir.entryInfoList(filters, QDir::Files | QDir::NoDotAndDotDot);
 
     ui->listWidget->clear();
     for(int i = 0; i < fileInfoList.count(); i++) {
-        qDebug() <<  fileInfoList.count();
         QListWidgetItem* item = new QListWidgetItem(QIcon(dir.path() + "/" + fileInfoList.at(i).fileName()), NULL, ui->listWidget); //, QListWidgetItem::UserType);
         item->setStatusTip(dir.path() + "/" + fileInfoList.at(i).fileName());
         ui->listWidget->addItem(item);
@@ -126,6 +128,16 @@ void ImageAlbum::ReceiveMeasurement(QString type, double length)
         QString Result = QString::number(length);
         ui->LengthResult->setText(type + " " + Result + " mm");
     }
+}
+
+void ImageAlbum::Capture()
+{
+    if(selectImage.isNull()){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
+    emit SendType(12);
 }
 
 void ImageAlbum::Angle()
@@ -183,28 +195,6 @@ void ImageAlbum::RectangleItem()
     }
 
     emit SendType(5);
-}
-
-void ImageAlbum::Copy()
-{
-    //이미지가 선택되지 않았다면 예외처리
-    if(selectImage.isNull()){
-        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
-        return;
-    }
-
-    emit SendType(12);
-}
-
-void ImageAlbum::Paste()
-{
-    //이미지가 선택되지 않았다면 예외처리
-    if(selectImage.isNull()){
-        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
-        return;
-    }
-
-    emit SendType(13);
 }
 
 void ImageAlbum::Cursor()
@@ -312,6 +302,8 @@ void ImageAlbum::OrigImage()
         return;
     }
 
+    emit SendType(8);
+
     imageView->resetTransform();
     imageScene->clear();
     imageScene->setBackgroundBrush(Qt::white);
@@ -325,7 +317,7 @@ void ImageAlbum::OrigImage()
     QGraphicsItem *i = imageScene->addPixmap(QPixmap(orignal->statusTip()).scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
     imageView->setAlignment(Qt::AlignCenter);
     imageScene->setSceneRect(i->sceneBoundingRect());
-    emit SendType(8);
+
 }
 
 void ImageAlbum::selectItem(QListWidgetItem* item)
@@ -364,9 +356,12 @@ void ImageAlbum::VReverse()
     imageScene->clear();
     selectImage.mirror(true, false);
 
+    QSize size = imageView->viewport()->size();
     QPixmap buf = QPixmap::fromImage(selectImage);
-    imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
-                                                   Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    QGraphicsItem *i = imageScene->addPixmap(buf.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    imageView->setAlignment(Qt::AlignCenter);
+    imageScene->setSceneRect(i->sceneBoundingRect());
+
 }
 
 void ImageAlbum::HReverse()
@@ -379,10 +374,37 @@ void ImageAlbum::HReverse()
     imageScene->clear();
     selectImage.mirror(false, true);
 
+    QSize size = imageView->viewport()->size();
     QPixmap buf = QPixmap::fromImage(selectImage);
-//    imageView->setScene(imageScene);
-    imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
-                                                   Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    QGraphicsItem *i = imageScene->addPixmap(buf.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    imageView->setAlignment(Qt::AlignCenter);
+    imageScene->setSceneRect(i->sceneBoundingRect());
+}
+
+void ImageAlbum::ReceiveCapturePos(QPointF startPos, QPointF endPos)
+{
+    if(selectImage.isNull()){
+        QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
+        return;
+    }
+
+    QPoint topLeft = imageView->mapFromScene(startPos);
+    QPoint bottomRight = imageView->mapFromScene(endPos);
+
+    QRect rect = QRect(topLeft, bottomRight).normalized();
+
+    //원본 이미지에서 주어진 사각형의 사이즈만큼 잘라서 확인
+    QPixmap buf = imageView->grab(rect);
+    imageScene->clear();
+
+    QImage image_capture = buf.toImage();
+    QSize size = imageView->viewport()->size();
+    QGraphicsItem *i = imageScene->addPixmap(buf.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    imageView->setAlignment(Qt::AlignCenter);
+    imageScene->setSceneRect(i->sceneBoundingRect());
+    selectImage = image_capture.convertToFormat(QImage::Format_Grayscale8);
+
+    emit SendType(2);
 }
 
 void ImageAlbum::Brightness(int value)
@@ -394,14 +416,24 @@ void ImageAlbum::Brightness(int value)
 
     imageScene->clear();
     Mat out;
-    QImage image = selectImage.convertToFormat(QImage::Format_BGR888);
+    QImage image = selectImage.convertToFormat(QImage::Format_Grayscale8);
 
     cv::Mat in(image.height(),
                 image.width(),
-                CV_8UC3,    //uchar
+                CV_8UC1,    //uchar
                 image.bits(),
                 image.bytesPerLine());
 
+    /*
+    void Mat::convertTo( OutputArray m, int rtype, double alpha=1, double beta=0 ) const;
+    • m
+    출력 행렬. 만약 m 행렬이 적절한 크기와 타입이 아닌 경우 행렬 원소 데이터를 새로 할당합니다.
+    • rtype
+    원하는 출력 행렬의 타입. 만약 rtype이 음수이면 출력 행렬은 입력 행렬과 같은 타입을 갖습니다.
+    • alpha
+    추가적으로 곱할 값
+    • beta
+    추가적으로 더할 값*/
     in.convertTo(out, -1, 1, value - Brightvalue);
 
     image_brightness = QImage(
@@ -409,11 +441,13 @@ void ImageAlbum::Brightness(int value)
                 out.cols,
                 out.rows,
                 out.step,
-                QImage::Format_BGR888).copy();
+                QImage::Format_Grayscale8).copy();
 
+    QSize size = imageView->viewport()->size();
     QPixmap buf = QPixmap::fromImage(image_brightness);
-    imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
-                                                   Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    QGraphicsItem *i = imageScene->addPixmap(buf.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    imageView->setAlignment(Qt::AlignCenter);
+    imageScene->setSceneRect(i->sceneBoundingRect());
 }
 
 void ImageAlbum::on_horizontalSlider_sliderReleased()
@@ -424,7 +458,7 @@ void ImageAlbum::on_horizontalSlider_sliderReleased()
 
 void ImageAlbum::HistEqual()
 {
-    ui->Contrast->editingFinished();
+//    ui->Contrast->editingFinished();
 
     if(selectImage.isNull()){
         QMessageBox:: critical(this, "경고", "이미지를 선택하세요");
@@ -441,7 +475,6 @@ void ImageAlbum::HistEqual()
                 image.bits(),
                 image.bytesPerLine());
     Mat out, Hist;
-//    cvtColor(in, out, cv::COLOR_BGR2GRAY);
     equalizeHist(in, Hist);
 
     QImage image_Histogram(
@@ -451,10 +484,12 @@ void ImageAlbum::HistEqual()
                 Hist.step,
                 QImage::Format_Grayscale8);
 
+    QSize size = imageView->viewport()->size();
     QPixmap buf = QPixmap::fromImage(image_Histogram);
-    imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
-                                                   Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    selectImage = image_Histogram.convertToFormat(QImage::Format_BGR888);
+    QGraphicsItem *i = imageScene->addPixmap(buf.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    imageView->setAlignment(Qt::AlignCenter);
+    imageScene->setSceneRect(i->sceneBoundingRect());
+    selectImage = image_Histogram.convertToFormat(selectImage.format());   
 }
 
 void ImageAlbum::Reverse()
@@ -465,16 +500,15 @@ void ImageAlbum::Reverse()
     }
 
     imageScene->clear();
-    QImage image = selectImage.convertToFormat(QImage::Format_BGR888);
+    QImage image = selectImage.convertToFormat(QImage::Format_Grayscale8);
     cv::Mat in = cv::Mat(
                 image.height(),
                 image.width(),
-                CV_8UC3,
+                CV_8UC1,
                 image.bits(),
                 image.bytesPerLine());
     Mat out;
-    cvtColor(in, out, cv::COLOR_BGR2GRAY);
-    out = 255 - out;
+    out = 255 - in;
 
     QImage image_Reverse(
                 out.data,
@@ -483,11 +517,12 @@ void ImageAlbum::Reverse()
                 out.step,
                 QImage::Format_Grayscale8);
 
+    QSize size = imageView->viewport()->size();
     QPixmap buf = QPixmap::fromImage(image_Reverse);
-//    imageView->setScene(imageScene);
-    imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
-                                                   Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    selectImage = image_Reverse.convertToFormat(QImage::Format_BGR888);
+    QGraphicsItem *i = imageScene->addPixmap(buf.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    imageView->setAlignment(Qt::AlignCenter);
+    imageScene->setSceneRect(i->sceneBoundingRect());
+    selectImage = image_Reverse.convertToFormat(selectImage.format());
 }
 
 void ImageAlbum::Contrast(double value)
@@ -498,33 +533,33 @@ void ImageAlbum::Contrast(double value)
     }
 
     imageScene->clear();
-    QImage image = selectImage.convertToFormat(QImage::Format_BGR888);
+    QImage image = selectImage.convertToFormat(QImage::Format_Grayscale8);
     cv::Mat in = cv::Mat(
                 image.height(),
                 image.width(),
-                CV_8UC3,
+                CV_8UC1,
                 image.bits(),
                 image.bytesPerLine());
     Mat out;
-    cvtColor(in, out, cv::COLOR_BGR2GRAY);
-    out = out * value ;
+    in.convertTo(out, -1, value, 0);
 
-    QImage image_Contrast(
+    image_Contrast = QImage(
                 out.data,
                 out.cols,
                 out.rows,
                 out.step,
-                QImage::Format_Grayscale8);
+                QImage::Format_Grayscale8).copy();
 
+    QSize size = imageView->viewport()->size();
     QPixmap buf = QPixmap::fromImage(image_Contrast);
-    imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
-                                                   Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    selectImage = image_Contrast.convertToFormat(QImage::Format_BGR888);
+    QGraphicsItem *i = imageScene->addPixmap(buf.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    imageView->setAlignment(Qt::AlignCenter);
+    imageScene->setSceneRect(i->sceneBoundingRect());
 }
 
 void ImageAlbum::on_Contrast_editingFinished()
 {
-    qDebug() << "Hello";
+    selectImage = image_Contrast.convertToFormat(selectImage.format());
 }
 
 void ImageAlbum::Blur()
@@ -535,11 +570,11 @@ void ImageAlbum::Blur()
     }
 
     imageScene->clear();
-    QImage image = selectImage.convertToFormat(QImage::Format_BGR888);
-    cv::Mat mat = cv::Mat(
+    QImage image = selectImage.convertToFormat(QImage::Format_Grayscale8);
+    cv::Mat in = cv::Mat(
                 image.height(),
                 image.width(),
-                CV_8UC3,
+                CV_8UC1,
                 image.bits(),
                 image.bytesPerLine());
 
@@ -547,22 +582,23 @@ void ImageAlbum::Blur()
     // 첫 번째 인수는 원본 이미지, 두 번째 인수는 blur 된 이미지, 세 번째 인수는 커널의 크기입니다. 여기에서 커널은
     // OpenCV에게 주어진 픽셀의 값을 서로 다른 양의 인접 픽셀과 결합하여 값을 변경하는 방법을 알려줍니다.
 
-    cv::Mat tmp;
-    blur(mat, tmp, cv::Size(18, 18));
-    mat = tmp;
+    Mat out;
+    blur(in, out, cv::Size(18, 18));
 
     //다시 볼 수 있는 형태로 이미지를 복구시킵니다.
     QImage image_Blur(
-                mat.data,
-                mat.cols,
-                mat.rows,
-                mat.step,
-                QImage::Format_RGB888);
+                out.data,
+                out.cols,
+                out.rows,
+                out.step,
+                QImage::Format_Grayscale8); 
 
+    QSize size = imageView->viewport()->size();
     QPixmap buf = QPixmap::fromImage(image_Blur);
-    imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
-                                                   Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    selectImage = image_Blur.convertToFormat(QImage::Format_BGR888);
+    QGraphicsItem *i = imageScene->addPixmap(buf.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    imageView->setAlignment(Qt::AlignCenter);
+    imageScene->setSceneRect(i->sceneBoundingRect());
+    selectImage = image_Blur.convertToFormat(selectImage.format());
 }
 
 void ImageAlbum::Sharpening()
@@ -573,32 +609,34 @@ void ImageAlbum::Sharpening()
     }
 
     imageScene->update();
-    QImage image = selectImage.convertToFormat(QImage::Format_BGR888);
-    cv::Mat mat = cv::Mat(
+    QImage image = selectImage.convertToFormat(QImage::Format_Grayscale8);
+    cv::Mat in = cv::Mat(
                 image.height(),
                 image.width(),
-                CV_8UC3,
+                CV_8UC1,
                 image.bits(),
                 image.bytesPerLine());
 
-    Mat blurred, out;
-    cvtColor(mat, out, cv::COLOR_BGR2GRAY);
-    GaussianBlur(out, blurred, Size(), 8);
+    Mat blurred;
+//    cvtColor(in, out, cv::COLOR_BGR2GRAY);
+    GaussianBlur(in, blurred, Size(), 8);
 
     float alpha = 1.f;
-    Mat dst = (1 + alpha) * out - alpha * blurred;
+    Mat out = (1 + alpha) * in - alpha * blurred;
 
     QImage image_Sharpen(
-                dst.data,
-                dst.cols,
-                dst.rows,
-                dst.step,
+                out.data,
+                out.cols,
+                out.rows,
+                out.step,
                 QImage::Format_Grayscale8);
 
+    QSize size = imageView->viewport()->size();
     QPixmap buf = QPixmap::fromImage(image_Sharpen);
-    imageScene->addPixmap(buf.scaled(imageView->width(), imageView->height(),
-                                                   Qt::KeepAspectRatio, Qt::SmoothTransformation));
-    selectImage = image_Sharpen.convertToFormat(QImage::Format_BGR888);
+    QGraphicsItem *i = imageScene->addPixmap(buf.scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    imageView->setAlignment(Qt::AlignCenter);
+    imageScene->setSceneRect(i->sceneBoundingRect());
+    selectImage = image_Sharpen.convertToFormat(selectImage.format());
 }
 
 
@@ -653,10 +691,40 @@ void ImageAlbum::on_EndTreatment_clicked()
 }
 
 
+void ImageAlbum::on_tabWidget_tabBarClicked(int index)
+{
+    //도형, 텍스트, 펜 그리기 이후 도구 탭 이동 시 원본으로 초기화
+    if(index == 0){
+        if(selectImage.isNull()){
+            return;
+        }
+        emit SendType(8);
 
+        imageView->resetTransform();
+        imageScene->clear();
+        imageScene->setBackgroundBrush(Qt::white);
+        ui->horizontalSlider->setSliderPosition(0);
+        ui->Contrast->setValue(1.0);
+        ui->LengthResult->clear();
+        ui->AngleResult->clear();
 
+        selectImage = QPixmap(orignal->statusTip()).toImage();
+        QSize size = imageView->viewport()->size();
+        QGraphicsItem *i = imageScene->addPixmap(QPixmap(orignal->statusTip()).scaled(size, Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        imageView->setAlignment(Qt::AlignCenter);
+        imageScene->setSceneRect(i->sceneBoundingRect());
+    }
 
+    //필터링 후 탭 이동 시 그려져있던 레이저 삭제
+    else if(index == 1) {
+        emit SendType(8);
+    }
+}
 
-
+//스핀박스를 활용하여 폰트 사이즈 변경하는 슬롯
+void ImageAlbum::on_Fontsize_valueChanged(int size)
+{
+    emit SendFontSize(size);
+}
 
 
