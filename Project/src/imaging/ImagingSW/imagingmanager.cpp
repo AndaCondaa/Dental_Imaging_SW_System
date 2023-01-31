@@ -3,10 +3,13 @@
 #include "imagethread.h"
 
 #include <QProgressDialog>
+#include <QDir>
 
 #include <opencv2/opencv.hpp>
 #include <stdio.h>
 #include <math.h>
+
+
 
 /*
 using namespace cv;
@@ -50,7 +53,6 @@ ImagingManager::ImagingManager(QWidget *parent) :
 
     connect(ui->reconButton, SIGNAL(clicked()), this, SLOT(reconImage()));
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveButtonSlot()));
-    connect(ui->finishButton, SIGNAL(clicked()), this, SLOT(finishButtonSlot()));
     connect(ui->progressBar, SIGNAL(valueChanged(int)), this, SLOT(isProgressMaximum(int)));
 }
 
@@ -163,9 +165,9 @@ void ImagingManager::loadImage()
 
 void ImagingManager::stopButtonSlot()
 {
-//    thread->terminate();
-//    thread->exit();
-//    delete thread;
+    //    thread->terminate();
+    //    thread->exit();
+    //    delete thread;
 }
 
 void ImagingManager::isProgressMaximum(int value)
@@ -175,8 +177,8 @@ void ImagingManager::isProgressMaximum(int value)
         ui->reconButton->setEnabled(true);
         emit shootingEndSignal(currentType);
 
-//        thread->exit();
-//        delete thread;
+        //        thread->exit();
+        //        delete thread;
     }
 }
 
@@ -185,13 +187,7 @@ void ImagingManager::saveButtonSlot()
     emit saveSignal(currentPID + "|" + currentType);
 }
 
-void ImagingManager::finishButtonSlot()
-{
-    emit finishSignal(currentPID);
-}
-
 #include <QFile>
-
 void ImagingManager::reconImage()
 {
     QFile file("./CEPH.bmp");
@@ -200,10 +196,19 @@ void ImagingManager::reconImage()
     QByteArray buf = file.readAll();
     file.close();
 
-    QPixmap *img = new QPixmap(QSize(3000, 2400));
-    img->loadFromData(buf);
-//    QImage img(buf, 3000, 2400, QImage::Format_Grayscale16);
-    ui->viewLabel->setPixmap(img->scaledToHeight(ui->viewLabel->height()));
+    QPixmap pix(3000, 2400);
+    pix.loadFromData(buf);
+    ui->viewLabel->setPixmap(pix.scaledToHeight(ui->viewLabel->height()));
+
+    QString fileName = currentPID + "_" + currentType + "." + file.fileName().section(".", -1);
+    QDir dir(QString("recon/%1/").arg(QDate::currentDate().toString("yyyyMMdd")));
+    if (!dir.exists())
+        dir.mkpath(".");
+
+    file.setFileName(dir.path() + "/" + fileName);
+    file.open(QIODevice::WriteOnly);
+    file.write(buf);
+    file.close();
 }
 
 
@@ -239,24 +244,23 @@ void ImagingManager::on_tempReconButton_clicked()
         fread(buf, sizeof(unsigned short), 48 * 2400, file);
         fclose(file);
 
+        //        // 프레임데이터 히스토그램 스트레칭
+        //        unsigned short min, max, tmp, range;
+        //        min = 0;
+        //        max = 359;
+        ////        for (int i = 0; i < 48*2400; i++) {
+        ////            tmp = buf[i];
+        ////            if (tmp > max)
+        ////                max = tmp;
+        ////            if (tmp < min)
+        ////                min = tmp;
+        ////        }
+        //        range = max - min;
 
-//        // 프레임데이터 히스토그램 스트레칭
-//        unsigned short min, max, tmp, range;
-//        min = 0;
-//        max = 359;
-////        for (int i = 0; i < 48*2400; i++) {
-////            tmp = buf[i];
-////            if (tmp > max)
-////                max = tmp;
-////            if (tmp < min)
-////                min = tmp;
-////        }
-//        range = max - min;
-
-//        for (int i = 0; i < 48*2400; i++) {
-//            if (buf[i] < 359)
-//                buf[i] = cvRound(((double)(buf[i] - min) / range) * 65535.);
-//        }
+        //        for (int i = 0; i < 48*2400; i++) {
+        //            if (buf[i] < 359)
+        //                buf[i] = cvRound(((double)(buf[i] - min) / range) * 65535.);
+        //        }
 
         cv::Mat src(2400, 48, CV_16UC1, buf);
         cv::Mat dst;
@@ -270,9 +274,9 @@ void ImagingManager::on_tempReconButton_clicked()
 
         // 이미지 스티칭
         for (int y = 0; y < 2400; y++) {
-                out[(count*3)+y*3000] = buf[(25)+(2400-(y+1))*48];
-                out[(count*3)+y*3000+1] = buf[(24)+(2400-(y+1))*48];
-                out[(count*3)+y*3000+2] = buf[(23)+(2400-(y+1))*48];
+            out[(count*3)+y*3000] = buf[(25)+(2400-(y+1))*48];
+            out[(count*3)+y*3000+1] = buf[(24)+(2400-(y+1))*48];
+            out[(count*3)+y*3000+2] = buf[(23)+(2400-(y+1))*48];
         }
 
         count++;
@@ -300,13 +304,13 @@ void ImagingManager::on_tempFilterButton_2_clicked()
     unsigned short min, max, tmp, range;
     min = 0;
     max = 10000;
-//    for (int i = 0; i < 3000*2400; i++) {
-//        tmp = img[i];
-//        if (tmp > max)
-//            max = tmp;
-//        if (tmp < min)
-//            min = tmp;
-//    }
+    //    for (int i = 0; i < 3000*2400; i++) {
+    //        tmp = img[i];
+    //        if (tmp > max)
+    //            max = tmp;
+    //        if (tmp < min)
+    //            min = tmp;
+    //    }
     range = max - min;
     for (int i = 0; i < 3000*2400; i++) {
         if (img[i] <= 10000)
@@ -314,10 +318,9 @@ void ImagingManager::on_tempFilterButton_2_clicked()
     }
 
 
-//    for (int i = 0; i < 3000*2400; i++) {
-//        img[i] = 65535 * ((double)pow((double)((double)(img[i]) / (double)65535.0), (double)(4.0 / 10.0)));
-//    }
-
+    //    for (int i = 0; i < 3000*2400; i++) {
+    //        img[i] = 65535 * ((double)pow((double)((double)(img[i]) / (double)65535.0), (double)(4.0 / 10.0)));
+//        }
 
     cv::Mat src(2400, 3000, CV_16UC1,img);
     cv::Mat dst;
@@ -325,10 +328,9 @@ void ImagingManager::on_tempFilterButton_2_clicked()
     clahe->setClipLimit(40);
     clahe->apply(src, dst);
 
-
     file = fopen("./result2.raw", "wb");
     fwrite(img, sizeof(unsigned short), 3000*2400, file);
-//    fwrite(dst.data, sizeof(unsigned short), 3000*2400, file);
+    //    fwrite(dst.data, sizeof(unsigned short), 3000*2400, file);
     fclose(file);
 
     qDebug() << "filter1 end";

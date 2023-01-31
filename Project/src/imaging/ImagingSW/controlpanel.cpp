@@ -185,7 +185,13 @@ void ControlPanel::shootingEndSlot(QString type)
 
 void ControlPanel::saveSlot(QString)
 {
+    ui->panoButton->setCheckable(false);
+    ui->cephButton->setCheckable(false);
 
+    ui->resetButton->setEnabled(true);
+    ui->readyButton->setEnabled(false);
+    ui->startButton->setEnabled(false);
+    ui->stopButton->setEnabled(false);
 }
 
 void ControlPanel::finishSlot(QString pid)

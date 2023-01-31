@@ -33,7 +33,7 @@ private slots:
 private:
     Ui::ControlPanel *ui;
 
-    QString requestType = "NULL";
+    QString requestType = "BOTH";
     QString currentPID = "NULL";
     QString currentType = "NULL";
     QButtonGroup *controlButtonGroup;

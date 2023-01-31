@@ -23,21 +23,21 @@ MainNetworkManager::~MainNetworkManager()
 
 void MainNetworkManager::connection(QString address, int port)
 {
-//    mainSocket->connectToHost(address, port);
-//    if (mainSocket->waitForConnected()) {
-//        connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
-//        sendPacket(mainSocket, "CNT", "IMG", "NULL");
-//    } else {
-//        // 연결 실패 예외처리 구현
-//    }
+    //    mainSocket->connectToHost(address, port);
+    //    if (mainSocket->waitForConnected()) {
+    //        connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
+    //        sendPacket(mainSocket, "CNT", "IMG", "NULL");
+    //    } else {
+    //        // 연결 실패 예외처리 구현
+    //    }
 
-//    fileSocket->connectToHost(address, port+1);
-//    if (fileSocket->waitForConnected()) {
-//        sendPacket(fileSocket, "CNT", "IMG", "NULL");
-//        connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
-//    } else {
-//        // 연결 실패  예외처리 구현
-//    }
+    //    fileSocket->connectToHost(address, port+1);
+    //    if (fileSocket->waitForConnected()) {
+    //        sendPacket(fileSocket, "CNT", "IMG", "NULL");
+    //        connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
+    //    } else {
+    //        // 연결 실패  예외처리 구현
+    //    }
 }
 
 void MainNetworkManager::sendPacket(QTcpSocket* socket, QString event, QString pid, QString data)
@@ -95,18 +95,20 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
     totalSize = 0;
     outBlock.clear();
 
-    QString filename = QFileDialog::getOpenFileName();
-    if(filename.length()) {
-        file = new QFile(filename);
+    QString imgName = pid + "_" + type + ".bmp";
+    QString fileName = QString("recon/%1/%2").arg(QDate::currentDate().toString("yyyyMMdd"), imgName);
+    qDebug() << fileName;
+    if(fileName.length()) {
+        file = new QFile(fileName);
         file->open(QFile::ReadOnly);
 
-        qDebug() << QString("file %1 is opened").arg(filename);
+        qDebug() << QString("file %1 is opened").arg(fileName);
 
         byteToWrite = totalSize = file->size(); // Data remained yet
         loadSize = 1024; // Size of data per a block
 
         QDataStream out(&outBlock, QIODevice::WriteOnly);
-        out << qint64(0) << qint64(0) << pid << type << filename;
+        out << qint64(0) << qint64(0) << pid << type << fileName;
 
         totalSize += outBlock.size();
         byteToWrite += outBlock.size();
@@ -116,7 +118,6 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
 
         fileSocket->write(outBlock); // Send the read file to the socket
     }
-    qDebug() << QString("Sending file %1").arg(filename);
 }
 
 void MainNetworkManager::goOnSend(qint64 numBytes)

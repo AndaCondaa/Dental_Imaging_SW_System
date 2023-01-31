@@ -26,7 +26,6 @@ private slots:
     void loadImage();
     void reconImage();
     void saveButtonSlot();
-    void finishButtonSlot();
     void stopButtonSlot();
 
     void isProgressMaximum(int);
@@ -45,7 +44,6 @@ private:
 signals:
     void shootingEndSignal(QString);
     void saveSignal(QString);
-    void finishSignal(QString);
     void stopThread();
 };
 
