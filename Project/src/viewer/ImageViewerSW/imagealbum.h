@@ -42,7 +42,7 @@ private:
     QListWidgetItem* orignal;
     QImage* origImage;
     QImage selectImage;
-    int Brightvalue;
+    int Brightvalue = 0;
     QColor paintColor;
     int penThickness;
 
@@ -57,7 +57,7 @@ private:
     QString PatientName;
     QString PatientSex;
 
-
+    QImage image_Contrast;
     QImage image_brightness;
 
 
@@ -89,8 +89,7 @@ public slots:
     void TextBox();
     void Length();
     void Angle();
-    void Copy();
-    void Paste();
+    void Capture();
 
     void receiveDoctorInfo(QString, QString);
     void receivePatientInfo(QString, QString, QString);
@@ -106,6 +105,7 @@ signals:
     void sendEndTreatment(QString);
     void SendText(QString);
     void SendLength(int, int, int, int);
+    void SendFontSize(int);
 
 private slots:
     void on_Prescription_clicked();
@@ -113,6 +113,9 @@ private slots:
     void ReceiveMeasurement(QString, double);
     void on_horizontalSlider_sliderReleased();
     void on_Contrast_editingFinished();
+    void on_tabWidget_tabBarClicked(int index);
+    void ReceiveCapturePos(QPointF, QPointF);
+    void on_Fontsize_valueChanged(int arg1);
 };
 
 #endif // IMAGEALBUM_H

@@ -38,8 +38,7 @@ public:
         Ceph,
         Pano,
         Angle,
-        Copy,
-        Paste
+        Capture
     };
 
 private:
@@ -49,6 +48,7 @@ private:
      DrawType m_drawType;
      QColor m_penColor;
      int m_penThickness;
+
      QList<QGraphicsPathItem*> m_pathList;
      QList<QGraphicsPathItem*> m_laserList;
      QList<QGraphicsEllipseItem*> m_ellipseList;
@@ -64,7 +64,6 @@ private:
      QPointF third;
      QPointF m_startPos;
      QPointF m_endPos;
-     int tmp;
      int point;
      QString inputText;
 
@@ -82,9 +81,11 @@ private slots:
     void ReceiveType(int);
     void ReceiveText(QString);
     void ReceiveLength(int, int, int, int);
+    void ReceiveFontSize(int);
 
 signals:
     void SendMeasurement(QString, double);
+    void SendCapturePos(QPointF, QPointF);
 };
 
 
