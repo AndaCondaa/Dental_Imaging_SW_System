@@ -16,7 +16,6 @@ SOURCES += \
     loginform.cpp \
     main.cpp \
     mainwindow.cpp \
-    movableitem.cpp \
     networkmanager.cpp \
     patientinfo.cpp \
     prescription.cpp
@@ -27,7 +26,6 @@ HEADERS += \
     imageview.h \
     loginform.h \
     mainwindow.h \
-    movableitem.h \
     networkmanager.h \
     patientinfo.h \
     prescription.h
@@ -45,10 +43,12 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 
-win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../opencv/build/x64/vc15/lib/ -lopencv_world452
-else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../opencv/build/x64/vc15/lib/ -lopencv_world452d
 
-INCLUDEPATH += $$PWD/../../opencv/build/x64/vc15/lib
-DEPENDPATH += $$PWD/../../opencv/build/x64/vc15/lib
 
-INCLUDEPATH += $$PWD/../../opencv/build/include
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../../opencv/build/x64/vc15/lib/ -lopencv_world452
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../../opencv/build/x64/vc15/lib/ -lopencv_world452d
+
+INCLUDEPATH += $$PWD/../../../../../opencv/build/x64/vc15
+DEPENDPATH += $$PWD/../../../../../opencv/build/x64/vc15
+
+INCLUDEPATH += $$PWD/../../../../../opencv/build/include

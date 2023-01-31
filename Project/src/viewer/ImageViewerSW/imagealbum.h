@@ -9,6 +9,7 @@
 #include <opencv2/videoio.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/opencv.hpp>
+#include "imagescene.h"
 
 using namespace cv;
 
@@ -33,28 +34,35 @@ public:
     explicit ImageAlbum(QWidget *parent = nullptr);
     ~ImageAlbum();
 
-
 private:
     Ui::ImageAlbum *ui;
     QListWidget* listWidget;
     QGroupBox* groupBox;
-    ImageView* imageView;
+    QGraphicsView* imageView;
     QListWidgetItem* orignal;
     QImage* origImage;
-    QImage* selectImage;
-    QImage* origBrightness;
+    QImage selectImage;
+    int Brightvalue;
     QColor paintColor;
     int penThickness;
 
+    ImageScene* imageScene;
+
     Prescription* m_prescription;
+    bool prescriptionCheck;
+
     QString DoctorID;
     QString DoctorName;
     QString PatientID;
     QString PatientName;
+    QString PatientSex;
+
+
+    QImage image_brightness;
 
 
 public slots:
-    void reloadImages();
+    void reloadImages(QString);
     void selectItem(QListWidgetItem*);
     void ZoomIn();
     void ZoomOut();
@@ -64,7 +72,6 @@ public slots:
     void OrigImage();
     void Contrast(double value);
     void Brightness(int value);
-    void Sobel();
     void VReverse();
     void HReverse();
     void Blur();
@@ -74,20 +81,38 @@ public slots:
     void Thickness(int);
     void Lines();
     void Freehand();
-    void Triangle();
+    void Laser();
+    void Cursor();
+    void DeleteItem();
+    void Ellipse();
+    void RectangleItem();
+    void TextBox();
+    void Length();
+    void Angle();
+    void Copy();
+    void Paste();
 
     void receiveDoctorInfo(QString, QString);
-    void receivePatientInfo(QString, QString);
+    void receivePatientInfo(QString, QString, QString);
+    void receivePrescriptionFinish(QString);
 
 
 signals:
     void SendBrushColor(QColor);
     void SendThickness(int);
     void SendType(int);
-    void sendPrescription(QString, QString, QString, QString);
+    void sendPrescription(QString, QString, QString, QString, QString);
+    void sendPrescriptiontoServer(QString);
+    void sendEndTreatment(QString);
+    void SendText(QString);
+    void SendLength(int, int, int, int);
 
 private slots:
     void on_Prescription_clicked();
+    void on_EndTreatment_clicked();
+    void ReceiveMeasurement(QString, double);
+    void on_horizontalSlider_sliderReleased();
+    void on_Contrast_editingFinished();
 };
 
 #endif // IMAGEALBUM_H

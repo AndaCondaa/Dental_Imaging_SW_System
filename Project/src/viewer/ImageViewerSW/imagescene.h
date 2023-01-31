@@ -9,14 +9,8 @@
 
 class QPinchGesture;
 class QGestureEvent;
-class ImageAlbum;
 class MovableItem;
 
-enum DrawType {
-    Lines,
-    FreeHand,
-    Triangle
-};
 
 class ImageScene : public QGraphicsScene
 {
@@ -25,43 +19,72 @@ public:
     explicit ImageScene(QWidget *parent = 0);
 
 public:
-//    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
+    void mouseMoveEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
     void mousePressEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
-//    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
+    void mouseReleaseEvent(QGraphicsSceneMouseEvent *event) Q_DECL_OVERRIDE;
 //    void wheelEvent(QGraphicsSceneWheelEvent *event) Q_DECL_OVERRIDE;
 //    bool event(QEvent *event) Q_DECL_OVERRIDE;
-//    QGraphicsScene* graphicsScene;
+
+    enum DrawType {
+        Lines,
+        FreeHand,
+        Laser,
+        Cursor,
+        Ellipse,
+        Rectangle,
+        Text,
+        Delete,
+        Clear,
+        Ceph,
+        Pano,
+        Angle,
+        Copy,
+        Paste
+    };
 
 private:
 //    void pinchTriggered(QPinchGesture *gesture);
 //    bool gestureEvent(QGestureEvent *event);
-
-//    bool _pan;
-//    int _panStartX, _panStartY;
-//    int _numScheduledScalings;
-//    int _currentStepScaleFactor;
-//    int _scaleFactor, _rotationAngle;
-//    QPointF startPos;
-//    QGraphicsItem * lastRect;
-//    QColor m_penColor;
-//    int m_penThickness;
-//    int m_drawType;
+     bool m_isDrawable;
+     DrawType m_drawType;
+     QColor m_penColor;
+     int m_penThickness;
+     QList<QGraphicsPathItem*> m_pathList;
+     QList<QGraphicsPathItem*> m_laserList;
+     QList<QGraphicsEllipseItem*> m_ellipseList;
+     QList<QGraphicsRectItem*> m_rectList;
+     QList<QGraphicsSimpleTextItem*> m_textList;
 
 
-//    QPointF A, B, C;
-//    int count;
-//    QGraphicsEllipseItem* first;
-//    QGraphicsEllipseItem* second;
-//    QGraphicsEllipseItem* third;
-//    QPainterPath *path1;
+     QGraphicsPathItem* m_pathItem;
+     QList<QGraphicsItem*> m_itemList;
+     QGraphicsItem* m_currentItem;
+     QPointF first;
+     QPointF second;
+     QPointF third;
+     QPointF m_startPos;
+     QPointF m_endPos;
+     int tmp;
+     int point;
+     QString inputText;
 
-//private slots:
-//    void scalingTime(qreal);
-//    void animFinished();
+     void addEllipseItem(QPointF, QPointF);
+     void addRectItem(QPointF, QPointF);
+     void addTextItem(QPointF);
 
-//    void ReceiveBrushColor(QColor);
-//    void ReceiveThickness(int);
-//    void ReceiveType(int);
+     double xRate, yRate;
+     QTimer* timer;
+
+
+private slots:
+    void ReceiveBrushColor(QColor);
+    void ReceiveThickness(int);
+    void ReceiveType(int);
+    void ReceiveText(QString);
+    void ReceiveLength(int, int, int, int);
+
+signals:
+    void SendMeasurement(QString, double);
 };
 
 
