@@ -45,12 +45,27 @@ MainWindow::MainWindow(QWidget *parent)
     connect(controlPanel, SIGNAL(readySignal(QString)), imagingManager, SLOT(setType(QString)));        // ready버튼 클릭 시, 이미징클래스에 타입 전송
     connect(controlPanel, SIGNAL(startSignal()), imagingManager, SLOT(loadImage()));            // 촬영시작 버튼 클릭 시, 이미지 로드 시작
     connect(controlPanel, SIGNAL(stopSignal()), imagingManager, SLOT(stopButtonSlot()));    // 촬영중단 시, 이미징클래스에서 스레드 종료
+    connect(imagingManager, SIGNAL(saveSignal(QString)), patientManager, SLOT(saveSlot(QString)));            // 저장버튼 클릭 시, 환자클래스에 노티
     connect(imagingManager, SIGNAL(saveSignal(QString)), controlPanel, SLOT(saveSlot(QString)));            // 저장버튼 클릭 시, 버튼 셋팅
     connect(imagingManager, SIGNAL(saveSignal(QString)), mainNetworkManager, SLOT(sendFile(QString)));           // 저장버튼 클릭 시, 파일 전송
-    connect(imagingManager, SIGNAL(shootingEndSignal(QString)), controlPanel, SLOT(shootingEndSlot(QString)));      // 촬영완료 시 , 버튼 활성화 컨트롤
-    connect(imagingManager, SIGNAL(finishSignal(QString)), patientManager, SLOT(finishSlot(QString)));              // 촬영프로세스완료 시, 환자 리스트 삭제
-    connect(imagingManager, SIGNAL(finishSignal(QString)), controlPanel, SLOT(finishSlot(QString)));                // 촬영프로세스완료 시, 버튼 셋팅 리셋
-    connect(imagingManager, SIGNAL(finishSignal(QString)), mainNetworkManager, SLOT(endImagingProcess(QString)));     // 촬영프로세스완료 버튼 클릭 시, 소켓 전송
+    connect(imagingManager, SIGNAL(shootingEndSignal(QString)), controlPanel, SLOT(shootingEndSlot(QString)));      // PANO,CEPH완료 시 , 버튼 활성화 컨트롤
+    connect(patientManager, SIGNAL(finishSignal(QString)), controlPanel, SLOT(finishSlot(QString)));                // 촬영프로세스완료 시, 버튼 셋팅 리셋
+    connect(patientManager, SIGNAL(finishSignal(QString)), mainNetworkManager, SLOT(endImagingProcess(QString)));     // 촬영프로세스완료 버튼 클릭 시, 소켓 전송
+    connect(patientManager, SIGNAL(deleteSignal(QString)), controlPanel, SLOT(deleteSlot(QString)));                // 준비된 환자 삭제 시, 소켓 전송 (for currentpid에서 삭제)
+
+//    QStringList dataList;
+//    dataList << "P00001" << "김유선" << "CEPH";
+//    patientManager->receiveWaitPatient(dataList);
+//    dataList.clear();
+//    dataList << "P00004" << "김도예" << "BOTH";
+//    patientManager->receiveWaitPatient(dataList);
+//    dataList.clear();
+//    dataList << "P00005" << "김영희" << "PANO";
+//    patientManager->receiveWaitPatient(dataList);
+
+//    QStringList test;
+//    test << "P00001" << "김유선" << "F" << "asdf";
+//    patientManager->receivePatientInfo(test);
 }
 
 MainWindow::~MainWindow()

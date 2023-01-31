@@ -69,6 +69,9 @@
           <property name="text">
            <string/>
           </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
          </widget>
         </item>
        </layout>
@@ -183,31 +186,6 @@
            </property>
            <property name="text">
             <string>저장</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="finishButton">
-           <property name="enabled">
-            <bool>true</bool>
-           </property>
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>120</width>
-             <height>70</height>
-            </size>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(255, 167, 14);</string>
-           </property>
-           <property name="text">
-            <string>촬영 완료</string>
            </property>
           </widget>
          </item>

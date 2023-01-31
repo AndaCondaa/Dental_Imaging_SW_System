@@ -14,7 +14,7 @@ Widget::Widget(QWidget *parent)
     fileSocket = new QTcpSocket;
     fileSocket->connectToHost("127.0.0.1", 8003);
     if (fileSocket->waitForConnected()) {
-        connect(fileSocket, SIGNAL(readyRead()), SLOT(receiveFile()));
+//        connect(fileSocket, SIGNAL(readyRead()), SLOT(receiveFile()));
         protocol->sendProtocol(fileSocket, "NEW", ConnectType::MODALITY, "MODALITY");
     } else {
         // 연결 실패  예외처리 구현
@@ -25,65 +25,30 @@ Widget::~Widget()
 {
 }
 
-void Widget::receiveFile()
-{
-    qDebug("%d", __LINE__);
-}
-
 void Widget::buttonClicked()
 {
-    connect(fileSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(goOnSend(qint64)));
-    count = 10;
-    sendFile(count);
+    sendFile();
 }
 
-void Widget::sendFile(int num)
+void Widget::sendFile()
 {
+    QFile file;
     QString fileName;
-    if (num >= 100)
-        fileName = QString("./CEPH/0%1.raw").arg(num);
-    else
-        fileName = QString("./CEPH/00%1.raw").arg(num);
 
-    loadSize = 0;
-    byteToWrite = 0;
-    totalSize = 0;
-    outBlock.clear();
+    for (int i = 10; i < 999; i++) {
+        if (i >= 100)
+            fileName = QString("./CEPH/0%1.raw").arg(i);
+        else
+            fileName = QString("./CEPH/00%1.raw").arg(i);
 
-    if(fileName.length()) {
-        file = new QFile(fileName);
-        file->open(QFile::ReadOnly);
-
-        qDebug() << QString("file %1 is opened").arg(fileName);
-
-        byteToWrite = totalSize = file->size(); // Data remained yet
-        loadSize = 1024; // Size of data per a block
-
-        QDataStream out(&outBlock, QIODevice::WriteOnly);
-        out << qint64(0) << qint64(0) << fileName;
-
-        totalSize += outBlock.size();
-        byteToWrite += outBlock.size();
-
-        out.device()->seek(0);
-        out << totalSize << qint64(outBlock.size());
-
-        fileSocket->write(outBlock); // Send the read file to the socket
+        file.setFileName(fileName);
+        file.open(QIODevice::ReadOnly);
+        totalData.append(file.readAll());
+        file.close();
     }
-    qDebug() << QString("Sending file %1").arg(fileName);
-}
+    qDebug("TOTAL SIZE : %d", totalData.size());
+    fileSocket->write(totalData);
+    fileSocket->flush();
+    totalData.clear();
 
-void Widget::goOnSend(qint64 numBytes)
-{
-    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
-    byteToWrite -= numBytes; // Remaining data size
-    outBlock = file->read(qMin(byteToWrite, numBytes));
-    socket->write(outBlock);
-
-    if (byteToWrite == 0) { // Send completed
-        if (count < 998) {
-            count++;
-            sendFile(count);
-        }
-    }
 }

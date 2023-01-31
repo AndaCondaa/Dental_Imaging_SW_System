@@ -17,6 +17,12 @@ ImageThread::ImageThread(int width, int height, QString modeType, QObject *paren
     this->modeType = modeType;
 }
 
+void ImageThread::threadStop()
+{
+    qDebug("%s %d", __FUNCTION__, __LINE__);
+    isStop = true;
+}
+
 void ImageThread::run()
 {
     QPixmap pixmap(width, height);
@@ -39,7 +45,10 @@ void ImageThread::run()
         cols = 1152;
         pixels = rows * cols;
         buf = (unsigned short*)malloc(sizeof(unsigned short) * pixels);
+
         for(int k = 110; k < 1700; k++) {
+            if (isStop) return;
+
             if (k < 1000) {
                 fileName = QString("./PANO/0%1.raw").arg(k);
             } else {
@@ -88,6 +97,8 @@ void ImageThread::run()
         buf = (unsigned short*)malloc(sizeof(unsigned short) * pixels);
 
         for(int k = 876; k > 10; k--) {
+            if (isStop) return;
+
             if (k >= 100)
                 fileName = QString("./CEPH/0%1.raw").arg(k);
             else
