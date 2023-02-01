@@ -23,21 +23,20 @@ MainNetworkManager::~MainNetworkManager()
 
 void MainNetworkManager::connection(QString address, int port)
 {
-//        mainSocket->connectToHost(address, port);
-//        if (mainSocket->waitForConnected()) {
-//            connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
-//            sendPacket(mainSocket, "CNT", "IMG", "NULL");
-//        } else {
-//            // 연결 실패 예외처리 구현
-//        }
+//    mainSocket->connectToHost(address, port);
+//    if (mainSocket->waitForConnected()) {
+//        connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
+//        sendPacket(mainSocket, "CNT", "IMG", "NULL");
+//    } else {
+//        // 연결 실패 예외처리 구현
+//    }
 
-    //    fileSocket->connectToHost(address, port+1);
-    //    if (fileSocket->waitForConnected()) {
-    //        sendPacket(fileSocket, "CNT", "IMG", "NULL");
-    //        connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
-    //    } else {
-    //        // 연결 실패  예외처리 구현
-    //    }
+//    fileSocket->connectToHost(address, port+1);
+//    if (fileSocket->waitForConnected()) {
+//        sendPacket(fileSocket, "CNT", "IMG", "NULL");
+//    } else {
+//        // 연결 실패  예외처리 구현
+//    }
 }
 
 void MainNetworkManager::sendPacket(QTcpSocket* socket, QString event, QString pid, QString data)
@@ -87,9 +86,10 @@ void MainNetworkManager::endImagingProcess(QString pid)
 
 void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
 {
+    connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
     QString pid = data.split("|")[0];
     QString type = data.split("|")[1];
-
+    qDebug() << pid;
     loadSize = 0;
     byteToWrite = 0;
     totalSize = 0;
@@ -108,7 +108,9 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
         loadSize = 1024; // Size of data per a block
 
         QDataStream out(&outBlock, QIODevice::WriteOnly);
-        out << qint64(0) << qint64(0) << pid << type << fileName;
+        out << qint64(0) << qint64(0) << pid << type;
+        qDebug() << pid;
+        qDebug() << type;
 
         totalSize += outBlock.size();
         byteToWrite += outBlock.size();
@@ -129,5 +131,6 @@ void MainNetworkManager::goOnSend(qint64 numBytes)
 
     if (byteToWrite == 0) { // Send completed
         qDebug("File sending completed!");
+        disconnect(fileSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(goOnSend(qint64)));
     }
 }

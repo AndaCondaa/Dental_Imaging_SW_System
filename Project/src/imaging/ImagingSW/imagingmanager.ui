@@ -40,7 +40,7 @@
         </sizepolicy>
        </property>
        <property name="frameShape">
-        <enum>QFrame::WinPanel</enum>
+        <enum>QFrame::NoFrame</enum>
        </property>
        <property name="frameShadow">
         <enum>QFrame::Raised</enum>
@@ -65,6 +65,9 @@
          <widget class="QLabel" name="viewLabel">
           <property name="frameShape">
            <enum>QFrame::NoFrame</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
           </property>
           <property name="text">
            <string/>
@@ -104,7 +107,7 @@
               <x>40</x>
               <y>20</y>
               <width>41</width>
-              <height>261</height>
+              <height>331</height>
              </rect>
             </property>
             <property name="sizePolicy">

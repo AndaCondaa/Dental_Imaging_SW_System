@@ -85,7 +85,7 @@ void SubServer::receiveControl()
 
     QString event = protocol->packetData()->event();
     QString msg = protocol->packetData()->msg();
-    QString client = controlSocketMap.value(socket) ? "영상장비" : "촬영SW";      // controlSocketMap.value(socket) -> 0: 촬영SW, 1: 영상장비
+    QString client = controlSocketMap.value(socket) ? "CT" : "촬영SW";      // controlSocketMap.value(socket) -> 0: 촬영SW, 1: 영상장비
 
     int receiver;
     if (controlSocketMap.value(socket)) receiver = SW;
@@ -99,18 +99,22 @@ void SubServer::receiveControl()
         currentType = msg.split("|")[1];
         switch (command) {
         case RESET:
+            qDebug("%d", __LINE__);
             protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", RESET, msg);
             ui->logEdit->append((QString("%1가 장비 초기화 명령을 보냈습니다.")).arg(client));
             break;
         case READY:
+            qDebug("%d", __LINE__);
             protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", READY, msg);
             ui->logEdit->append((QString("%1가 %2의 %3 촬영준비 명령을 보냈습니다.")).arg(client, currentPID, currentType));
             break;
         case START:
+            qDebug("%d", __LINE__);
             protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", START, msg);
             ui->logEdit->append((QString("%1가 %2의 %3 촬영시작 명령을 보냈습니다.")).arg(client, currentPID, currentType));
             break;
         case STOP:
+            qDebug("%d", __LINE__);
             protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", STOP, msg);
             ui->logEdit->append((QString("%1가 %2의 %3 촬영종료 명령을 보냈습니다.")).arg(client, currentPID, currentType));
             break;
@@ -121,37 +125,45 @@ void SubServer::receiveControl()
 void SubServer::receiveFile()
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
+    QByteArray recvData = socket->readAll();
 
-    totalData.append(socket->readAll());
+    if (QString(recvData).contains("<CR>")) {
+        qDebug() << "CONTAIN";
+        qDebug() << QString(recvData).split("<CR>")[1];
+        qDebug() << QString(recvData).split("<CR>")[2];
+    }
+
+    totalData.append(recvData);
 
     qDebug("%d", totalData.size());
-    if (totalData.size() == 227865600) {
-        QFile file;
-        QString fileName;
 
-        QDir dir(QString("receive/%1/%2/").arg(QDate::currentDate().toString("yyyyMMdd"), currentPID));
-        if (!dir.exists())
-            dir.mkpath(".");
+//    if (totalData.size() == 227865600) {
+//        QFile file;
+//        QString fileName;
 
-        int count = 0;
-        for (int i = 10; i < 999; i++) {
-            if (i >= 100)
-                fileName = dir.path() + "/" + QString("0%1.raw").arg(i);
-            else
-                fileName = dir.path() + "/" + QString("00%1.raw").arg(i);
+//        QDir dir(QString("receive/%1/%2/").arg(QDate::currentDate().toString("yyyyMMdd"), currentPID));
+//        if (!dir.exists())
+//            dir.mkpath(".");
 
-            file.setFileName(fileName);
-            file.open(QIODevice::WriteOnly);
+//        int count = 0;
+//        for (int i = 10; i < 999; i++) {
+//            if (i >= 100)
+//                fileName = dir.path() + "/" + QString("0%1.raw").arg(i);
+//            else
+//                fileName = dir.path() + "/" + QString("00%1.raw").arg(i);
 
-            file.write(totalData.mid(count*48*2400*2, 48*2400*2));
-            qDebug("%d개 저장 완료", count);
+//            file.setFileName(fileName);
+//            file.open(QIODevice::WriteOnly);
 
-            file.close();
-            count++;
-        }
-        qDebug("DONE!!!! (line: %d)", __LINE__);
-        sendFile();
-    }
+//            file.write(totalData.mid(count*48*2400*2, 48*2400*2));
+//            qDebug("%d개 저장 완료", count);
+
+//            file.close();
+//            count++;
+//        }
+//        qDebug("DONE!!!! (line: %d)", __LINE__);
+////        sendFile();
+//    }
 }
 
 void SubServer::sendFile()
@@ -160,5 +172,4 @@ void SubServer::sendFile()
     fileSocketMap.key(SW)->flush();
     qDebug("TOTAL SIZE : %d", totalData.size());
     totalData.clear();
-
 }

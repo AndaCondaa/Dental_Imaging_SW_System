@@ -202,6 +202,7 @@ void ImagingManager::reconImage()
     ui->viewLabel->setPixmap(pix.scaledToHeight(ui->viewLabel->height()));
 
     QString fileName = currentPID + "_" + currentType + "." + file.fileName().section(".", -1);
+
     QDir dir(QString("recon/%1/").arg(QDate::currentDate().toString("yyyyMMdd")));
     if (!dir.exists())
         dir.mkpath(".");
@@ -241,11 +242,20 @@ void ImagingManager::on_tempReconButton_clicked()
             qDebug() << "open is failed";
             return;
         }
-
         fread(buf, sizeof(unsigned short), 48 * 2400, file);
         fclose(file);
 
-        // 프레임데이터 히스토그램 스트레칭
+
+
+
+//        for (int i = 0; i < 48*2400; i++) {
+//            if (buf[i] * 100 < 65535)
+//                buf[i] *= 100;
+//            else
+//                buf[i] = 0;
+//        }
+
+        //프레임데이터 히스토그램 스트레칭
         unsigned short min, max, tmp, range;
         min = 0;
         max = 400;
@@ -263,14 +273,14 @@ void ImagingManager::on_tempReconButton_clicked()
                 buf[i] = cvRound(((double)(buf[i] - min) / range) * 65535.);
         }
 
-//        cv::Mat src(2400, 48, CV_16UC1, buf);
-//        cv::Mat dst;
-//        cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
-//        clahe->setClipLimit(40);
-//        clahe->setTilesGridSize(cv::Size2i(8,8));
-//        clahe->apply(src, dst);
+        cv::Mat src(2400, 48, CV_16UC1, buf);
+        cv::Mat dst;
+        cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+        clahe->setClipLimit(40);
+        clahe->setTilesGridSize(cv::Size2i(8,8));
+        clahe->apply(src, dst);
 
-//        memcpy(buf, dst.data, 48*2400);
+        memcpy(buf, dst.data, 48*2400*2);
 
 
         // 이미지 스티칭
@@ -283,7 +293,17 @@ void ImagingManager::on_tempReconButton_clicked()
         count++;
     }
 
-    file = fopen("./test/result.raw", "wb");
+//    cv::Mat src(2400, 3000, CV_16UC1, out);
+//    cv::Mat dst;
+//    cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+//    clahe->setClipLimit(40);
+//    clahe->setTilesGridSize(cv::Size2i(8,8));
+//    clahe->apply(src, dst);
+
+//    memcpy(out, dst.data, 3000*2400*2);
+
+
+    file = fopen("./test/RECON.raw", "wb");
     fwrite(out, sizeof(unsigned short), 3000*2400, file);
     fclose(file);
 
@@ -296,83 +316,126 @@ void ImagingManager::on_tempFilterButton_2_clicked()
 {
 
     FILE *file;
-    unsigned short *img = new unsigned short[3000*2400];
+    unsigned short *mix = new unsigned short[3000*2400];
+    unsigned short *section1 = new unsigned short[3000*2400];
+    unsigned short *section2 = new unsigned short[3000*2400];
+    unsigned short *section3 = new unsigned short[3000*2400];
+    unsigned short *section4 = new unsigned short[3000*2400];
 
-    file = fopen("./test/result.raw", "rb");
-    fread(img, sizeof(unsigned short), 3000*2400, file);
+    file = fopen("./test/RECON.raw", "rb");
+    fread(section1, sizeof(unsigned short), 3000*2400, file);
+    fseek(file, 0, SEEK_SET);
+    fread(section2, sizeof(unsigned short), 3000*2400, file);
+    fseek(file, 0, SEEK_SET);
+    fread(section3, sizeof(unsigned short), 3000*2400, file);
+    fseek(file, 0, SEEK_SET);
+    fread(section4, sizeof(unsigned short), 3000*2400, file);
     fclose(file);
 
+
+//****************************************************************************************************
+// 감마 보정
 //    for (int i = 0; i < 3000*2400; i++) {
 //        img[i] = 65535 * ((double)pow((double)((double)(img[i]) / (double)65535.0), (double)(6.0 / 10.0)));
 //    }
 
-    // 전체 영역 스트레칭
-    unsigned short min, max, tmp, range;
-    min = 0;
-    max = 4000;
-    //    for (int i = 0; i < 3000*2400; i++) {
-    //        tmp = img[i];
-    //        if (tmp > max)
-    //            max = tmp;
-    //        if (tmp < min)
-    //            min = tmp;
-    //    }
-    range = max - min;
+
+
+//****************************************************************************************************
+// 섹션 분할
     for (int i = 0; i < 3000*2400; i++) {
-        if (img[i] <= 4000)
-            img[i] = cvRound(((double)(img[i] - min) / range) * 65535.);
-        else
-            img[i] = 0;
-//        if (img[i] <= 3000)
-//            img[i] = 0;
-////            img[i] = cvRound(((double)(img[i] - 0) / 5000) * 20000.);
-//        else if(img[i] > 3000)
-//            img[i] = cvRound(((double)(img[i] - 3000) / 62535) * 20000.) + 45535;
+        int tmp = section1[i];
+        if (tmp <= 4000) {
+            section2[i] = 0;
+            section3[i] = 0;
+            section4[i] = 0;
+        } else if (tmp > 4000 && tmp <= 10000) {
+            section1[i] = 0;
+            section3[i] = 0;
+            section4[i] = 0;
+        } else if (tmp > 10000 && tmp <= 40000) {
+            section1[i] = 0;
+            section2[i] = 0;
+            section4[i] = 0;
+        } else if (tmp > 40000) {
+            section1[i] = 0;
+            section2[i] = 0;
+            section3[i] = 0;
+        }
     }
 
-//    cv::Mat src(2400, 3000, CV_16UC1,img);
-//    cv::Mat dst;
+//****************************************************************************************************
+// 섹션별 히스토그램 스트레칭
+//    for (int i = 0 ; i < 3000*2400; i++) {
+//        section1[i] = cvRound(((double)(section1[i]) / 1000.) * 10000.);
+//        if (section2[i] != 0)
+//            section2[i] = cvRound(((double)(section1[i]) / 3000.) * 20000.) + 10000;
+//        if (section3[i] != 0)
+//            section3[i] = cvRound(((double)(section1[i]) / 61535.) * 25535.) + 40000;
+//    }
+
+//****************************************************************************************************
+// CLAHE
 //    cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
 //    clahe->setClipLimit(40);
-//    clahe->apply(src, dst);
+
+//    cv::Mat src1(2400, 3000, CV_16UC1, section1);
+//    cv::Mat dst1;
+//    clahe->apply(src1, dst1);
+
+//    cv::Mat src2(2400, 3000, CV_16UC1, section2);
+//    cv::Mat dst2;
+//    clahe->apply(src2, dst2);
+
+//    cv::Mat src3(2400, 3000, CV_16UC1, section3);
+//    cv::Mat dst3;
+//    clahe->apply(src3, dst3);
+
+//    cv::Mat src4(2400, 3000, CV_16UC1, section4);
+//    cv::Mat dst4;
+//    clahe->apply(src4, dst4);
 
 
-    file = fopen("./test/result2.raw", "wb");
-    fwrite(img, sizeof(unsigned short), 3000*2400, file);
-    //fwrite(dst.data, sizeof(unsigned short), 3000*2400, file);
+//    memcpy(section1, dst1.data, 3000*2400*2);
+//    memcpy(section2, dst2.data, 3000*2400*2);
+//    memcpy(section3, dst3.data, 3000*2400*2);
+//    memcpy(section4, dst4.data, 3000*2400*2);
+
+
+//****************************************************************************************************
+// 블렌딩
+    for (int i = 0; i < 3000*2400; i++) {
+        mix[i] = section1[i] + section2[i] + section3[i] + section4[i];
+    }
+
+//****************************************************************************************************
+// 값 역전
+
+
+//****************************************************************************************************
+    file = fopen("./test/section1.raw", "wb");
+    fwrite(section1, sizeof(unsigned short), 3000*2400, file);
+    fclose(file);
+
+    file = fopen("./test/section2.raw", "wb");
+    fwrite(section2, sizeof(unsigned short), 3000*2400, file);
+    fclose(file);
+
+    file = fopen("./test/section3.raw", "wb");
+    fwrite(section3, sizeof(unsigned short), 3000*2400, file);
+    fclose(file);
+
+    file = fopen("./test/section4.raw", "wb");
+    fwrite(section4, sizeof(unsigned short), 3000*2400, file);
+    fclose(file);
+
+    file = fopen("./test/mix.raw", "wb");
+    fwrite(mix, sizeof(unsigned short), 3000*2400, file);
     fclose(file);
 
     qDebug() << "filter1 end";
-    delete[] img;
-
-
-
-
-
-
-
-
-
-//    FILE *file;
-//    unsigned short *low = new unsigned short[3000*2400];
-//    unsigned short *high = new unsigned short[3000*2400];
-//    unsigned short *mix = new unsigned short[3000*2400];
-
-//    file = fopen("./test/low.raw", "rb");
-//    fread(low, sizeof(unsigned short), 3000*2400, file);
-//    fclose(file);
-//    file = fopen("./test/high.raw", "rb");
-//    fread(high, sizeof(unsigned short), 3000*2400, file);
-//    fclose(file);
-
-
-//    for (int i = 0; i < 3000*2400; i++) {
-//        mix[i] = (low[i] + high[i]) / 2;
-//    }
-
-//    file = fopen("./test/mix.raw", "wb");
-//    fwrite(mix, sizeof(unsigned short), 3000*2400, file);
-//    fclose(file);
-
+    delete[] section1;
+    delete[] section2;
+    delete[] section3;
 }
 
