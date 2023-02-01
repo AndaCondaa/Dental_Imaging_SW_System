@@ -121,37 +121,46 @@ void SubServer::receiveControl()
 void SubServer::receiveFile()
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
+    QByteArray recvData = socket->readAll();
 
-    totalData.append(socket->readAll());
+
+
+    if (QString(recvData).contains("<CR>")) {
+        qDebug() << "CONTAIN";
+        qDebug() << QString(recvData).split("<CR>")[1];
+        qDebug() << QString(recvData).split("<CR>")[2];
+    }
+
+    totalData.append(recvData);
 
     qDebug("%d", totalData.size());
-    if (totalData.size() == 227865600) {
-        QFile file;
-        QString fileName;
+//    if (totalData.size() == 227865600) {
+//        QFile file;
+//        QString fileName;
 
-        QDir dir(QString("receive/%1/%2/").arg(QDate::currentDate().toString("yyyyMMdd"), currentPID));
-        if (!dir.exists())
-            dir.mkpath(".");
+//        QDir dir(QString("receive/%1/%2/").arg(QDate::currentDate().toString("yyyyMMdd"), currentPID));
+//        if (!dir.exists())
+//            dir.mkpath(".");
 
-        int count = 0;
-        for (int i = 10; i < 999; i++) {
-            if (i >= 100)
-                fileName = dir.path() + "/" + QString("0%1.raw").arg(i);
-            else
-                fileName = dir.path() + "/" + QString("00%1.raw").arg(i);
+//        int count = 0;
+//        for (int i = 10; i < 999; i++) {
+//            if (i >= 100)
+//                fileName = dir.path() + "/" + QString("0%1.raw").arg(i);
+//            else
+//                fileName = dir.path() + "/" + QString("00%1.raw").arg(i);
 
-            file.setFileName(fileName);
-            file.open(QIODevice::WriteOnly);
+//            file.setFileName(fileName);
+//            file.open(QIODevice::WriteOnly);
 
-            file.write(totalData.mid(count*48*2400*2, 48*2400*2));
-            qDebug("%d개 저장 완료", count);
+//            file.write(totalData.mid(count*48*2400*2, 48*2400*2));
+//            qDebug("%d개 저장 완료", count);
 
-            file.close();
-            count++;
-        }
-        qDebug("DONE!!!! (line: %d)", __LINE__);
-        sendFile();
-    }
+//            file.close();
+//            count++;
+//        }
+//        qDebug("DONE!!!! (line: %d)", __LINE__);
+////        sendFile();
+//    }
 }
 
 void SubServer::sendFile()

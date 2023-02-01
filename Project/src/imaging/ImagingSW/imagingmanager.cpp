@@ -202,6 +202,7 @@ void ImagingManager::reconImage()
     ui->viewLabel->setPixmap(pix.scaledToHeight(ui->viewLabel->height()));
 
     QString fileName = currentPID + "_" + currentType + "." + file.fileName().section(".", -1);
+
     QDir dir(QString("recon/%1/").arg(QDate::currentDate().toString("yyyyMMdd")));
     if (!dir.exists())
         dir.mkpath(".");

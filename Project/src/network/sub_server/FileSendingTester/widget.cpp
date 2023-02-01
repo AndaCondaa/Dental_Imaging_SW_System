@@ -34,6 +34,7 @@ void Widget::sendFile()
 {
     QFile file;
     QString fileName;
+    QString fileInfo;           // <INFO>파일개수<CR>프레임파일1개당크기
 
     for (int i = 10; i < 999; i++) {
         if (i >= 100)
@@ -47,8 +48,11 @@ void Widget::sendFile()
         file.close();
     }
     qDebug("TOTAL SIZE : %d", totalData.size());
-    fileSocket->write(totalData);
+    fileInfo = "<CR>" + QString::number(totalData.size()) + "<CR>" + QString::number(48*2400);
+    //    totalData.append(fileInfo.toStdString());
+    fileSocket->write(totalData);                                       // 영상 파일 전송
     fileSocket->flush();
     totalData.clear();
 
+    fileSocket->write(fileInfo.toStdString().data());                   // 영상 파일 정보 전송
 }
