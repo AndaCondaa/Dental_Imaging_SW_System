@@ -187,7 +187,6 @@ void PatientManager::saveSlot(QString data) // pid|type
 
 void PatientManager::finishButtonSlot()
 {       
-
     QString pid = ui->infoTableWidget->item(0,0)->text();
 
     QMessageBox finishBox(QMessageBox::NoIcon, "FINISH",

@@ -60,12 +60,15 @@ MainWindow::MainWindow(QWidget *parent)
     dataList << "P00004" << "김도예" << "BOTH";
     patientManager->receiveWaitPatient(dataList);
     dataList.clear();
-    dataList << "P00005" << "김영희" << "PANO";
+    dataList << "P00005" << "김영희" << "BOTH";
     patientManager->receiveWaitPatient(dataList);
 
-    QStringList test;
-    test << "P00001" << "김유선" << "F" << "asdf";
-    patientManager->receivePatientInfo(test);
+    QStringList test1;
+    test1 << "P00001" << "김유선" << "F" << "asdf";
+    QStringList test2;
+    test2 << "P00005" << "김영희" << "F" << "asdf";
+    patientManager->receivePatientInfo(test1);
+    patientManager->receivePatientInfo(test2);
 }
 
 MainWindow::~MainWindow()

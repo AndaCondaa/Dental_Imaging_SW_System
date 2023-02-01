@@ -85,7 +85,7 @@ void SubServer::receiveControl()
 
     QString event = protocol->packetData()->event();
     QString msg = protocol->packetData()->msg();
-    QString client = controlSocketMap.value(socket) ? "영상장비" : "촬영SW";      // controlSocketMap.value(socket) -> 0: 촬영SW, 1: 영상장비
+    QString client = controlSocketMap.value(socket) ? "CT" : "촬영SW";      // controlSocketMap.value(socket) -> 0: 촬영SW, 1: 영상장비
 
     int receiver;
     if (controlSocketMap.value(socket)) receiver = SW;
@@ -99,18 +99,22 @@ void SubServer::receiveControl()
         currentType = msg.split("|")[1];
         switch (command) {
         case RESET:
+            qDebug("%d", __LINE__);
             protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", RESET, msg);
             ui->logEdit->append((QString("%1가 장비 초기화 명령을 보냈습니다.")).arg(client));
             break;
         case READY:
+            qDebug("%d", __LINE__);
             protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", READY, msg);
             ui->logEdit->append((QString("%1가 %2의 %3 촬영준비 명령을 보냈습니다.")).arg(client, currentPID, currentType));
             break;
         case START:
+            qDebug("%d", __LINE__);
             protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", START, msg);
             ui->logEdit->append((QString("%1가 %2의 %3 촬영시작 명령을 보냈습니다.")).arg(client, currentPID, currentType));
             break;
         case STOP:
+            qDebug("%d", __LINE__);
             protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", STOP, msg);
             ui->logEdit->append((QString("%1가 %2의 %3 촬영종료 명령을 보냈습니다.")).arg(client, currentPID, currentType));
             break;
@@ -123,8 +127,6 @@ void SubServer::receiveFile()
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
     QByteArray recvData = socket->readAll();
 
-
-
     if (QString(recvData).contains("<CR>")) {
         qDebug() << "CONTAIN";
         qDebug() << QString(recvData).split("<CR>")[1];
@@ -134,6 +136,7 @@ void SubServer::receiveFile()
     totalData.append(recvData);
 
     qDebug("%d", totalData.size());
+
 //    if (totalData.size() == 227865600) {
 //        QFile file;
 //        QString fileName;
@@ -169,5 +172,4 @@ void SubServer::sendFile()
     fileSocketMap.key(SW)->flush();
     qDebug("TOTAL SIZE : %d", totalData.size());
     totalData.clear();
-
 }

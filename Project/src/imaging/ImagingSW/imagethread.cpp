@@ -46,16 +46,18 @@ void ImageThread::run()
         pixels = rows * cols;
         buf = (unsigned short*)malloc(sizeof(unsigned short) * pixels);
 
-        for(int k = 110; k < 1700; k++) {
+        for(int k = 0; k < 1749; k++) {
             if (isStop) return;
 
-            if (k < 1000) {
-                fileName = QString("./PANO/0%1.raw").arg(k);
-            } else {
+            if (k >= 1000)
                 fileName = QString("./PANO/%1.raw").arg(k);
-            }
+            else if (k < 1000 && k >= 100)
+                fileName = QString("./PANO/0%1.raw").arg(k);
+            else if (k < 100 && k >= 10)
+                fileName = QString("./PANO/00%1.raw").arg(k);
+            else
+                fileName = QString("./PANO/000%1.raw").arg(k);
 
-            qDebug() << fileName;
             file = fopen(fileName.toStdString().c_str(), "rb");
             memset(buf, 0, pixels);
             fread(buf, sizeof(unsigned short), pixels, file);
@@ -84,7 +86,7 @@ void ImageThread::run()
             Mat rotateMat;
             rotate(mat, rotateMat, cv::ROTATE_90_CLOCKWISE);
             QImage frameImage(rotateMat.data, rotateMat.cols, rotateMat.rows , QImage::Format_Grayscale16);
-            painter.drawImage(cnt*((double)width/1590), height/8, frameImage.scaledToHeight(height*3/4));
+            painter.drawImage(cnt*((double)width/1750.), 0, frameImage.scaled(cvRound((double)width/1750.), cvRound((double)width/1750.)*1750/2.5));
             emit imageProgressed(cnt);
             emit processFinished(pixmap);
             cnt++;
@@ -96,15 +98,18 @@ void ImageThread::run()
         pixels = rows * cols;
         buf = (unsigned short*)malloc(sizeof(unsigned short) * pixels);
 
-        for(int k = 876; k > 10; k--) {
+        for(int k = 1249; k >= 0; k--) {
             if (isStop) return;
 
-            if (k >= 100)
+            if (k >= 1000)
+                fileName = QString("./CEPH/%1.raw").arg(k);
+            else if (k < 1000 && k >= 100)
                 fileName = QString("./CEPH/0%1.raw").arg(k);
-            else
+            else if (k < 100 && k >= 10)
                 fileName = QString("./CEPH/00%1.raw").arg(k);
+            else
+                fileName = QString("./CEPH/000%1.raw").arg(k);
 
-            qDebug() << fileName;
             file = fopen(fileName.toStdString().c_str(), "rb");
             memset(buf, 0, pixels);
             fread(buf, sizeof(unsigned short), pixels, file);
@@ -130,30 +135,30 @@ void ImageThread::run()
                 buf[i] = (unsigned short)(((double)(buf[i] - min) / (double)(range)) * valueMax);
             }
 
-            //            int hist[sizeof(unsigned short)];
-            //            int sum[sizeof(unsigned short)];
-            //            memset(hist, 0, sizeof(unsigned short));
-            //            memset(sum, 0, sizeof(unsigned short));
-            //            for (int i = 0; i < pixels; i++) {
-            //                hist[buf[i]]++;
-            //            }
-            //            for (int i = 0; i < 65535; i++) {
-            //                for (int j = 0; j <= i; j++) {
-            //                    sum[i] += hist[j];
-            //                }
-            //                sum[i] = (unsigned short)(((double)sum[i] / pixels) * 65535);
-            //                qDebug("%d : %d", i, sum[i]);
-            //            }
-            //            for (int i = 0; i < pixels; i++) {
-            //                buf[i] = sum[buf[i]];
-            //            }
+//            int hist[sizeof(unsigned short)];
+//            int sum[sizeof(unsigned short)];
+//            memset(hist, 0, sizeof(unsigned short));
+//            memset(sum, 0, sizeof(unsigned short));
+//            for (int i = 0; i < pixels; i++) {
+//                hist[buf[i]]++;
+//            }
+//            for (int i = 0; i < 65535; i++) {
+//                for (int j = 0; j <= i; j++) {
+//                    sum[i] += hist[j];
+//                }
+//                sum[i] = (unsigned short)(((double)sum[i] / pixels) * 65535);
+//                qDebug("%d : %d", i, sum[i]);
+//            }
+//            for (int i = 0; i < pixels; i++) {
+//                buf[i] = sum[buf[i]];
+//            }
 
             Mat mat(rows, cols, CV_16UC1, buf);
             Mat dst;
             flip(mat, dst, 0);
 
             QImage frameImage(dst.data, dst.cols, dst.rows, QImage::Format_Grayscale16);
-            painter.drawImage((width/5) + cnt*((double)(width*3/5)/900), 0, frameImage.scaledToHeight(height));
+            painter.drawImage(cnt*((double)(width)/1250.), 0, frameImage.scaledToHeight(height));
 
             emit imageProgressed(cnt);
             emit processFinished(pixmap);
@@ -161,7 +166,8 @@ void ImageThread::run()
         }
         delete buf;
     }
-
+    qDebug("width: %d", width);
+    qDebug("height : %d", height);
 }
 
 

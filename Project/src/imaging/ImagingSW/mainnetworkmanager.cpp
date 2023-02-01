@@ -108,7 +108,9 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
         loadSize = 1024; // Size of data per a block
 
         QDataStream out(&outBlock, QIODevice::WriteOnly);
-        out << qint64(0) << qint64(0) << pid << type <<  imgName;
+        out << qint64(0) << qint64(0) << pid << type;
+        qDebug() << pid;
+        qDebug() << type;
 
         totalSize += outBlock.size();
         byteToWrite += outBlock.size();
@@ -122,8 +124,6 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
 
 void MainNetworkManager::goOnSend(qint64 numBytes)
 {
-    numBytes = 48;
-
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
     byteToWrite -= numBytes; // Remaining data size
     outBlock = file->read(qMin(byteToWrite, numBytes));
