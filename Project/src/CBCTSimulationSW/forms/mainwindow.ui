@@ -600,7 +600,7 @@ QPushButton:default {
    <widget class="QTableWidget" name="ImageLogTableWidget">
     <property name="geometry">
      <rect>
-      <x>11</x>
+      <x>10</x>
       <y>141</y>
       <width>300</width>
       <height>310</height>
@@ -850,7 +850,7 @@ transform: scale(1.0, 1.0);</string>
       <rect>
        <x>40</x>
        <y>20</y>
-       <width>100</width>
+       <width>31</width>
        <height>740</height>
       </rect>
      </property>
@@ -933,7 +933,7 @@ transform: scale(1.0, 1.0);</string>
     border: 6px solid white;
     border-radius: 35px;
 	margin: 1px;
-	padding: 10px;
+	padding: 5px;
 	transform: scale(1.0, 1.0);
 }</string>
      </property>
@@ -955,7 +955,7 @@ transform: scale(1.0, 1.0);</string>
       <rect>
        <x>150</x>
        <y>20</y>
-       <width>100</width>
+       <width>31</width>
        <height>740</height>
       </rect>
      </property>
@@ -973,7 +973,7 @@ transform: scale(1.0, 1.0);</string>
     border: 6px solid white;
     border-radius: 35px;
 	margin: 1px;
-	padding: 10px;
+	padding: 5px;
 	transform: scale(1.0, 1.0);
 }</string>
      </property>
@@ -1090,6 +1090,26 @@ QProgressBar {
      </property>
      <property name="orientation">
       <enum>Qt::Vertical</enum>
+     </property>
+    </widget>
+    <widget class="QGraphicsView" name="PanoGraphicsView">
+     <property name="geometry">
+      <rect>
+       <x>80</x>
+       <y>20</y>
+       <width>60</width>
+       <height>741</height>
+      </rect>
+     </property>
+    </widget>
+    <widget class="QGraphicsView" name="CephGraphicsView">
+     <property name="geometry">
+      <rect>
+       <x>190</x>
+       <y>20</y>
+       <width>60</width>
+       <height>741</height>
+      </rect>
      </property>
     </widget>
    </widget>

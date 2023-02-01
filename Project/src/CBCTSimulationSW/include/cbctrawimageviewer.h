@@ -2,6 +2,8 @@
 #define CBCTRAWIMAGEVIEWER_H
 
 #include <QObject>
+#include <qdebug.h>
+#include "ui_mainwindow.h"
 
 class QDir;
 class QDirIterator;
@@ -13,10 +15,18 @@ class CBCTRawImageViewer : public QObject
 public:
     explicit CBCTRawImageViewer();
     ~CBCTRawImageViewer();
+    Ui::MainWindow* m_mainwindowUi = nullptr;
 
     QPixmap PanoImageViewer();
     QPixmap CephImageViewer();
 
+//    QImage timeoutPanoTimer();
+//    QImage timeoutCephTimer();
+
+    void resetPanoTimer();
+    void resetCephTimer();
+    void readyPanoTimer();
+    void readyCephTimer();
     void startPanoTimer();
     void stopPanoTimer();
 
@@ -30,8 +40,11 @@ private:
     QTimer *cephImageTimer;
 
 private slots:
-    void timeoutPanoTimer();
-    void timeoutCephTimer();
+        void timeoutPanoTimer();
+        void timeoutCephTimer();
+
+//    void slot_panoImage(QImage* panoImage);
+//    void slot_cephImage(QImage* cephImage);
 
 signals:
     void signals_panoImage(QImage*);

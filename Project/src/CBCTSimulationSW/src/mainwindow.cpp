@@ -58,20 +58,20 @@ MainWindow::MainWindow(QWidget* parent)
 	: QMainWindow(parent), ui(new Ui::MainWindow)
 {
 	ui->setupUi(this);
-	
+
 	// Model Controller 생성. 
 	m_modelController = new CBCTModelController(ui);
 	if (!m_modelController->initialize())
 		qDebug() << "CBCTModelController initialize Fail ! ";
 
-    connect(ui->AscendingPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_AscendingPushButton_pressed()));
-    connect(ui->DescendingPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_DescendingPushButton_pressed()));
+	connect(ui->AscendingPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_AscendingPushButton_pressed()));
+	connect(ui->DescendingPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_DescendingPushButton_pressed()));
 	connect(ui->MainPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_MainPushButton_clicked()));
 	connect(ui->SubPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_SubPushButton_clicked()));
-    connect(ui->CaptureResetPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_CaptureResetPushButton_VTK_clicked()));
-    connect(ui->CaptureReadyPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_CaptureReadyPushButton_VTK_clicked()));
+	connect(ui->CaptureResetPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_CaptureResetPushButton_VTK_clicked()));
+	connect(ui->CaptureReadyPushButton, SIGNAL(clicked()), m_modelController, SLOT(on_CaptureReadyPushButton_VTK_clicked()));
 
-    connect(ui->CaptureResetPushButton, SIGNAL(clicked()), this, SLOT(on_CaptureResetPushButton_clicked()));
+	connect(ui->CaptureResetPushButton, SIGNAL(clicked()), this, SLOT(on_CaptureResetPushButton_clicked()));
 	connect(ui->CaptureReadyPushButton, SIGNAL(clicked()), this, SLOT(on_CaptureReadyPushButton_clicked()));
 	connect(ui->CaptureStartPushButton, SIGNAL(clicked()), this, SLOT(on_CaptureStartPushButton_clicked()));
 	connect(ui->CaptureStopPushButton, SIGNAL(clicked()), this, SLOT(on_CaptureStopPushButton_clicked()));
@@ -81,21 +81,48 @@ MainWindow::MainWindow(QWidget* parent)
 	connect(m_rawImageViewer, SIGNAL(signals_cephImage(QImage*)), this, SLOT(slot_cephImage(QImage*)));
 
 	m_fileTransfer = new CBCTFileTransfer(this);
-    connect(ui->CaptureReadyPushButton, SIGNAL(clicked), m_fileTransfer, SLOT());
-    connect(ui->CaptureResetPushButton, SIGNAL(clicked), m_fileTransfer, SLOT());
-    connect(ui->CaptureStartPushButton, SIGNAL(clicked), m_fileTransfer, SLOT());
-    connect(ui->CaptureStartPushButton, SIGNAL(clicked), m_fileTransfer, SLOT());
+	connect(ui->CaptureReadyPushButton, SIGNAL(clicked), m_fileTransfer, SLOT());
+	connect(ui->CaptureResetPushButton, SIGNAL(clicked), m_fileTransfer, SLOT());
+	connect(ui->CaptureStartPushButton, SIGNAL(clicked), m_fileTransfer, SLOT());
+	connect(ui->CaptureStartPushButton, SIGNAL(clicked), m_fileTransfer, SLOT());
 
-	connect(m_fileTransfer, SIGNAL(READYSignal(ControlType)), this, SLOT(sendControl(ControlType)));
-	connect(m_fileTransfer, SIGNAL(RESETSignal(ControlType)), this, SLOT(sendControl(ControlType)));
-	connect(m_fileTransfer, SIGNAL(STARTSignal(ControlType)), this, SLOT(sendControl(ControlType)));
-	connect(m_fileTransfer, SIGNAL(STOPSignal(ControlType)), this, SLOT(sendControl(ControlType)));
+	/* 촬영 SW에서 Signal 받았을 시 Raw Image Viewer 기능 동작 */
+	connect(m_fileTransfer, SIGNAL(resetSignal()), this, SLOT(on_CaptureResetPushButton_clicked()));
+	connect(m_fileTransfer, SIGNAL(readySignal()), this, SLOT(on_CaptureReadyPushButton_clicked()));
+	connect(m_fileTransfer, SIGNAL(startSignal()), this, SLOT(on_CaptureStartPushButton_clicked()));
+	connect(m_fileTransfer, SIGNAL(stopSignal()), this, SLOT(on_CaptureStopPushButton_clicked()));
 
 	connect(this, SIGNAL(READYSignal(ControlType)), m_fileTransfer, SLOT(sendControl(ControlType)));
 	connect(this, SIGNAL(READYSignal(ControlType)), m_fileTransfer, SLOT(sendControl(ControlType)));
 	connect(this, SIGNAL(READYSignal(ControlType)), m_fileTransfer, SLOT(sendControl(ControlType)));
 	connect(this, SIGNAL(READYSignal(ControlType)), m_fileTransfer, SLOT(sendControl(ControlType)));
 
+
+	// ui check box Update 
+	connect(ui->PanoCheckBox, &QCheckBox::clicked, this, [&](bool state) {
+		if (state == true)
+		{
+			if (ui->CephCheckBox->isChecked())
+			{
+				ui->CephCheckBox->setCheckState(Qt::Unchecked);
+			}
+		}
+		});
+	connect(ui->CephCheckBox, &QCheckBox::clicked, this, [&](bool state) {
+		if (state == true)
+		{
+			if (ui->PanoCheckBox->isChecked())
+			{
+				ui->PanoCheckBox->setCheckState(Qt::Unchecked);
+			}
+		}
+		});
+	connect(ui->PanoProgressBar, &QProgressBar::valueChanged, this, [&](int value) {
+		m_modelController->on_Rotate_PanoObject(value);
+	});
+	connect(ui->CephProgressBar, &QProgressBar::valueChanged, this, [&](int value) {
+		m_modelController->on_Translate_CephObject(value);
+		});
 }
 
 MainWindow::~MainWindow()
@@ -114,13 +141,14 @@ void MainWindow::resizeEvent(QResizeEvent* event)
 
 void MainWindow::on_CaptureResetPushButton_clicked()
 {
-    emit RESETSignal(RESET);
-
+	emit RESETSignal(RESET);
+	m_rawImageViewer->resetPanoTimer();
+	m_rawImageViewer->resetCephTimer();
 }
 
 void MainWindow::on_CaptureReadyPushButton_clicked()
 {
-    emit READYSignal(READY);
+	emit READYSignal(READY);
 
 }
 
@@ -164,7 +192,7 @@ void MainWindow::on_CaptureStartPushButton_clicked()
 		//        ui->CephLabel->setPixmap(cephPix);
 
 	}
-    emit STARTSignal(START);
+	emit STARTSignal(START);
 
 }
 
@@ -172,7 +200,7 @@ void MainWindow::on_CaptureStopPushButton_clicked()
 {
 	m_rawImageViewer->stopPanoTimer();
 	m_rawImageViewer->stopCephTimer();
-    emit STOPSignal(STOP);
+	emit STOPSignal(STOP);
 
 
 }
@@ -180,7 +208,7 @@ void MainWindow::on_CaptureStopPushButton_clicked()
 void MainWindow::slot_panoImage(QImage* pImg)
 {
 	qDebug() << __FUNCTION__;
-    QGraphicsScene* panoScene = new QGraphicsScene();
+	QGraphicsScene* panoScene = new QGraphicsScene();
 
 
 	QImage pano_Image(*pImg);
@@ -190,9 +218,9 @@ void MainWindow::slot_panoImage(QImage* pImg)
 	/* 파노라마 이미지가 90도 회전되어 있으므로, 출력시 원상복구한다 */
 	QTransform panoTransform;
 	panoTransform.rotate(90);
-    panoScene->addPixmap(panoPix);
+	panoScene->addPixmap(panoPix.transformed(panoTransform));
 	ui->PanoLabel->setPixmap(panoPix.transformed(panoTransform));
-
+	ui->PanoGraphicsView->setScene(panoScene);
 	/* 파노라마 Raw Image 전송상태를 표시해주는 ProgressBar */
 	int panoValue = ui->PanoProgressBar->value();
 	panoValue++;
@@ -202,15 +230,15 @@ void MainWindow::slot_panoImage(QImage* pImg)
 void MainWindow::slot_cephImage(QImage* cImg)
 {
 	qDebug() << __FUNCTION__;
-    QGraphicsScene* cephScene = new QGraphicsScene();
+	QGraphicsScene* cephScene = new QGraphicsScene();
 
 
 	QImage ceph_Image(*cImg);
 	QPixmap cephPix;
 	cephPix = QPixmap::fromImage(ceph_Image, Qt::AutoColor);
-    cephScene->addPixmap(cephPix);
+	cephScene->addPixmap(cephPix);
 	ui->CephLabel->setPixmap(cephPix);
-
+	ui->CephGraphicsView->setScene(cephScene);
 	/* 세팔로 Raw Image 전송상태를 표시해주는 ProgressBar */
 	int cephValue = ui->CephProgressBar->value();
 	cephValue++;
