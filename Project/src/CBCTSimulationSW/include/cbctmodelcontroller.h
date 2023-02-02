@@ -92,6 +92,9 @@ public:
 	CBCTModelController(Ui::MainWindow* parentUI = nullptr);
 	~CBCTModelController();
 
+    void on_CaptureResetPushButton_VTK_clicked();
+    void on_CaptureReadyPushButton_VTK_clicked();
+
 private slots:
 	// MainPush Btn : Pano Obj File이 Y Axis 기준으로 360 회전을 한다. 
 	void on_MainPushButton_clicked();
@@ -102,9 +105,9 @@ private slots:
 	// 하강 Btn : Lower Body Obj File 만 빼고 Y Axis 기준 -Lo Min을 벗어나면 안된다. 
 	void on_DescendingPushButton_pressed();
 
-	void on_CaptureResetPushButton_VTK_clicked();
-	void on_CaptureReadyPushButton_VTK_clicked();
 
+//    void on_CaptureResetPushButton_VTK_clicked();
+//    void on_CaptureReadyPushButton_VTK_clicked();
 public:
 	bool initialize();
 	void on_Rotate_PanoObject(const int& val);

@@ -38,19 +38,28 @@ QPixmap CBCTRawImageViewer::CephImageViewer()
 }
 void CBCTRawImageViewer::resetPanoTimer()
 {
-    QGraphicsScene* panoScene = new QGraphicsScene();
-    m_mainwindowUi->PanoGraphicsView->resetTransform();
-    panoScene->clear();
+
+
+    panoImageTimer->start();
+    panoImageTimer->stop();
+
+
+    //QGraphicsScene* panoScene = new QGraphicsScene();
+    //m_mainwindowUi->PanoGraphicsView->resetTransform();
+    //panoScene->clear();
  //   m_mainwindowUi->PanoGraphicsView->setScene(panoScene);
     
 }
 
 void CBCTRawImageViewer::resetCephTimer()
 {
-    QGraphicsScene* cephScene = new QGraphicsScene();
+    QString cephPath = panoImageIterator->filePath();
+    cephImageTimer->start();
+    cephImageTimer->stop();
+  /*  QGraphicsScene* cephScene = new QGraphicsScene();
 
     m_mainwindowUi->CephGraphicsView->setScene(cephScene);
-    cephScene->clear();
+    cephScene->clear();*/
 }
 
 void CBCTRawImageViewer::readyPanoTimer()
@@ -82,6 +91,7 @@ void CBCTRawImageViewer::stopPanoTimer()
     // 타이머 종료
     qDebug() << __FUNCTION__;
     panoImageTimer->stop();
+//
 }
 
 void CBCTRawImageViewer::stopCephTimer()
