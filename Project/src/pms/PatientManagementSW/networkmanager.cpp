@@ -152,7 +152,7 @@ void NetworkManager::makeFiles() //P00004 파일 2개짜리로 해보기
 
 allFile.clear();
 
-
+emit PSEDataInNET(id);
 }
 
 
@@ -455,7 +455,7 @@ allFile.clear();
             {
                 //어떤 이벤트인지에 따라 불러올 함수 써주기(각각 이벤트에 대한 함수 만들고 if-else문 타도록 만들자)
                 QString event = saveData.split("<CR>")[0];
-                QString id = saveData.split("<CR>")[1];
+                id = saveData.split("<CR>")[1];
                 QString data = saveData.split("<CR>")[2];
                 qDebug("%d", __LINE__);
                 qDebug() << "event: " << event;

@@ -58,6 +58,7 @@ private:
 
     int allFileSize = 0;
     QByteArray allFileSended;
+    QString id;
 
 signals:
     void sendNewPID(QString);

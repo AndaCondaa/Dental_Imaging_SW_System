@@ -11,6 +11,11 @@ ImageManager::ImageManager(QWidget *parent) :
 {
     ui->setupUi(this);
 
+
+
+
+
+
 }
 
 ImageManager::~ImageManager()
@@ -20,7 +25,8 @@ ImageManager::~ImageManager()
 
 void ImageManager::reloadImages(QString id)
 {
-    QDir dir(QString("./Image/%1").arg(id));
+//    QDir dir(QString("./Image/%1").arg(id));
+    QDir dir("./Image");
 
     QStringList filters;
     filters << "*.png" << "*.jpg" << "*.bmp" << "*.gif";
@@ -28,6 +34,8 @@ void ImageManager::reloadImages(QString id)
     QFileInfoList fileInfoList = dir.entryInfoList(filters, QDir::Files | QDir::NoDotAndDotDot);
 
     ui->imageListWidget->clear();
+    qDebug() << "####################" << fileInfoList.count();
+
     for(int i = 0; i < fileInfoList.count(); i++) {
         QListWidgetItem* item = new QListWidgetItem(QIcon(dir.path() + "/" + fileInfoList.at(i).fileName()), NULL, ui->imageListWidget); //, QListWidgetItem::UserType);
 
