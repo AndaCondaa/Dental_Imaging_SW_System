@@ -31,7 +31,10 @@ void MedicalRecordManager::recordDataSended(QString sendedID, QString sendedData
     patientAddress = sendedData.split("|")[4];
     patientMemo = sendedData.split("|")[5];
 
+
     patientDetail = sendedID + "|" + sendedData.split("<NEL>")[0];
+qDebug() << "patientDetail" << patientDetail;
+
 
     QString rowData, reportID, doctorID, reportDate, dentistName;
     qDebug()<<"<NEL> count: " <<sendedData.count("<NEL>");
@@ -78,3 +81,17 @@ void MedicalRecordManager::on_recordTreeWidget_itemDoubleClicked(QTreeWidgetItem
     emit sendPatientReportInfo(patientDetail, reportDetail);
 }
 
+void MedicalRecordManager::addNewRecord(QString newRecordInfo)
+{
+    qDebug() << "newRecordInfo" << newRecordInfo;
+
+
+
+
+    //다시 서치한거같은 효과 주기
+    QString searchData = "PSE<CR>0<CR>" + newRecordInfo.split("<CR>")[1]; //pid담아서 pse를 써서 보냄
+    emit sendReSearchData(searchData);
+
+
+
+}

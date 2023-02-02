@@ -15,8 +15,13 @@ public:
     explicit ImageManager(QWidget *parent = nullptr);
     ~ImageManager();
 
+public slots:
+    void reloadImages(QString);
+    void PSEDataSended(QString);
+
 private:
     Ui::ImageManager *ui;
+    QString pid;
 };
 
 #endif // IMAGEMANAGER_H

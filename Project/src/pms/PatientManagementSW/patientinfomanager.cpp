@@ -10,7 +10,7 @@ PatientInfoManager::PatientInfoManager(QWidget *parent) :
     ui->clientInfoTableWidget->setColumnWidth(0,285);
 
     pixmap = new QPixmap();
-    pixmap->load("./PatientFace/default.png");
+    pixmap->load("./Face/default.png");
     pixmap->scaled(200,180,Qt::IgnoreAspectRatio);
 
     ui->patientFace->setPixmap(pixmap->scaled(ui->patientFace->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
@@ -62,16 +62,13 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
     ui->clientInfoTableWidget->setItem(5, 0, new QTableWidgetItem(address));
     ui->clientInfoTableWidget->setItem(6, 0, new QTableWidgetItem(memo));
 
-    pixmap->load(QString("./PatientFace/%1.png").arg(pid));
+    pixmap = new QPixmap();
+    pixmap->load(QString("./Face/%1.png").arg(pid));
     pixmap->scaled(200,180,Qt::IgnoreAspectRatio);
+
     ui->patientFace->setPixmap(pixmap->scaled(ui->patientFace->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
 
-    //ui->tableWidget->setItem(0,0,QTableWidgetItem(pid));
-
-    //폴더 삭제
-//    QDir dir("./Image/P00005");
-//        dir.removeRecursively();
 }
 
 
@@ -99,36 +96,13 @@ void PatientInfoManager::on_WaitPushButton_clicked()
     emit sendPIDtoWaitList(pid);
 
     qDebug() << "waitSignal: " << waitSignal;
-    qDebug("%d", __LINE__);
-//    if(waitSignal == 0)
-//    {
-//        qDebug("%d", __LINE__);
-//        QMessageBox::critical(this, tr("경고"), \
-//                              tr("이미 대기명단에 있는 환자입니다."));
 
-//        return;
-//    }
-
-//    qDebug("##########waitSignal: %d", waitSignal);
-//    if(waitSignal != 1)
-//    {
-//        QString sendData = "AWL<CR>" + pid + "<CR>" + name + "|" + sex + "|" + birthdate + "|" + tel + "|" + address + "|" + memo;
-//    //qDebug() << "서버로 보낼 대기환자 데이터: " <<sendData;
-//    //emit sendWaitToServer(sendData);
-//    emit sendWaitInfo(sendData);
-//    }
-//    qDebug()<<" ";
 
 }
 
 void PatientInfoManager::inWaitListSlot(int inWaitListOrNot)
 {
     qDebug()<<"inWaitLsit: " << inWaitListOrNot;
-
-    //qDebug("%d", __LINE__);
-    //qDebug()<<"@@@@@@@inWaitListOrNot: " << inWaitListOrNot;
-    //waitSignal = inWaitListOrNot;
-    //qDebug()<<"@@@@@@@waitSignal: " << waitSignal;
 
     if(inWaitListOrNot == 1)
     {
@@ -137,13 +111,12 @@ void PatientInfoManager::inWaitListSlot(int inWaitListOrNot)
         return;
     }
 
-    //qDebug("##########waitSignal: %d", waitSignal);
 
     if(inWaitListOrNot == 0)
     {
         QString sendData = "AWL<CR>" + pid + "<CR>" + name + "|" + sex + "|" + birthdate + "|" + tel + "|" + address + "|" + memo;
     //qDebug() << "서버로 보낼 대기환자 데이터: " <<sendData;
-    //emit sendWaitToServer(sendData);
+
     emit sendWaitInfo(sendData);
     }
     qDebug()<<" ";
@@ -166,22 +139,7 @@ void PatientInfoManager::on_modifyPushButton_clicked()
     qDebug()<< "modifyData: " << modifyData;
     emit sendModifyData(modifyData);
 
-    //    if(fd_flag)
-    //    {
-    //이거는 mainwindow쪽에 보내면 될 듯
-    //        QString textData = QString("Modify_PatientInfo Button click: %1\n").arg(pid);
-    //        QString sendData = QString("Socket data: patient ID(%1) info changed").arg(pid);
-
-    //        ui->textBrowser->insertPlainText(textData);
-    //        send_flag = writeData(sendData.toStdString().c_str());
-
-    //        if(!send_flag)
-    //            ui->textBrowser->insertPlainText("Socket send fail\n");
-    //        else
-
-    //    }
-
-    //emit modifyPInfo(pid, textData, sendData); //수정된 정보들 보내줘야 함
-
 }
+
+
 

@@ -25,12 +25,43 @@
         </font>
        </property>
        <property name="text">
-        <string>최근 촬영 사진</string>
+        <string>촬영 사진</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QTableWidget" name="tableWidget_7"/>
+      <widget class="QListWidget" name="imageListWidget">
+       <property name="baseSize">
+        <size>
+         <width>600</width>
+         <height>80</height>
+        </size>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAsNeeded</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOff</enum>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>300</width>
+         <height>300</height>
+        </size>
+       </property>
+       <property name="flow">
+        <enum>QListView::LeftToRight</enum>
+       </property>
+       <property name="resizeMode">
+        <enum>QListView::Adjust</enum>
+       </property>
+       <property name="viewMode">
+        <enum>QListView::IconMode</enum>
+       </property>
+       <property name="batchSize">
+        <number>96</number>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

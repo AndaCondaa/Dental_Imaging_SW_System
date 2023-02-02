@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    ui->textEdit->hide();
+    //ui->textEdit->hide();
 
 
     imageManager = new ImageManager(this);
@@ -52,23 +52,35 @@ MainWindow::MainWindow(QWidget *parent)
     connect(enrollManager, SIGNAL(sendNewDataForShow(QString, QString)), patientInfoManager, SLOT(searchDataSended(QString, QString)));
 
 
+    connect(medicalRecordManager, SIGNAL(sendReSearchData(QString)), networkManager, SLOT(newDataSended(QString)));
+
+
+
     connect(patientInfoManager, SIGNAL(sendSearchData(QString)), networkManager, SLOT(newDataSended(QString)));
     connect(this, SIGNAL(requestPID(QString)), networkManager, SLOT(newDataSended(QString)));
     connect(networkManager, SIGNAL(sendNewPID(QString)), enrollManager, SLOT(newPIDSended(QString)));
     connect(networkManager, SIGNAL(sendSearchResult(QString, QString)), patientInfoManager, SLOT(searchDataSended(QString, QString)));
+
+    //검색될 때 관련 이미지를 불러올 수 있도록 pid를 전송
+    //connect(networkManager, SIGNAL(sendSearchResult(QString, QString)), imageManager, SLOT(PSEDataToImgManager(QString, QString)));
+    connect(networkManager, SIGNAL(PSEDataInNET(QString)), imageManager, SLOT(PSEDataSended(QString)));
+
     connect(patientInfoManager, SIGNAL(sendDelData(QString)), networkManager, SLOT(newDataSended(QString)));
     //connect(patientInfoManager, SIGNAL(sendWaitInfo(QString, QString)), patientStatusManager, SLOT(waitInfoSended(QString, QString)));
     connect(patientInfoManager, SIGNAL(sendWaitInfo(QString)), patientStatusManager, SLOT(waitInfoSended(QString)));
     connect(patientInfoManager, SIGNAL(sendWaitInfo(QString)), networkManager, SLOT(newDataSended(QString)));
     connect(patientStatusManager, SIGNAL(sendWaitInfo(QString)), networkManager, SLOT(newDataSended(QString)));
     connect(patientStatusManager, SIGNAL(sendRequest(QString)), networkManager, SLOT(newDataSended(QString)));
-    //connect(networkManager, SIGNAL(sendSRQRequest(QString)), patientStatusManager, SLOT(SRQRequestSended(QString)));
     connect(patientInfoManager, SIGNAL(sendModifyData(QString)), networkManager, SLOT(newDataSended(QString)));
 
 
     //connect(patientInfoManager, SIGNAL(sendWaitToServer(QString)), networkManager, SLOT(newDataSended(QString)));
     connect(networkManager, SIGNAL(sendSRQRequest(QString)), patientStatusManager, SLOT(statusRequestSended(QString)));
     connect(networkManager, SIGNAL(sendVTSRequest(QString)), patientStatusManager, SLOT(statusRequestSended(QString)));
+
+    //처방전 작성하면 환자진료기록 바로 띄울 수 있도록 함
+    connect(networkManager, SIGNAL(sendVNTevent(QString)), medicalRecordManager, SLOT(addNewRecord(QString)));
+
     connect(networkManager, SIGNAL(sendISVevent(QString)), patientStatusManager, SLOT(statusRequestSended(QString)));
 
 
@@ -80,6 +92,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(patientInfoManager, SIGNAL(sendPIDtoWaitList(QString)), patientStatusManager, SLOT(PIDsendedtoWaitList(QString)));
     connect(patientStatusManager, SIGNAL(inWaitListSignal(int)), patientInfoManager, SLOT(inWaitListSlot(int)));
+
+
+//    connect(networkManager, SIGNAL(sendByteArray(QByteArray*)), patientInfoManager, SLOT(byteArraySended(QByteArray*)));
+//    connect(networkManager, SIGNAL(sendByteArray(const QPixmap&)), patientInfoManager, SLOT(byteArraySended(const QPixmap&)));
 
 
 }
