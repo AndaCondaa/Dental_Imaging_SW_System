@@ -26,9 +26,9 @@ public:
     QByteArray makeSendData();
 
 private:
-    QString m_event;
-    int m_type;
-    QString m_msg;
+    QString m_event;    //
+    int m_type;         //
+    QString m_msg;      // PANO or CEPH
 
 signals:
     void eventChanged();

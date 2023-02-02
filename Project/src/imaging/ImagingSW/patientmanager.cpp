@@ -51,8 +51,6 @@ PatientManager::PatientManager(QWidget *parent) :
                                         "padding-right:10px;"
                                         "outline: 0; "
                                     "}");
-
-
 }
 
 PatientManager::~PatientManager()

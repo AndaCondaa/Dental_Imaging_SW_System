@@ -36,9 +36,6 @@ private:
     qint64 byteReceived = 0;                    // size of File read currently
     QByteArray inBlock;                         // Units divided to transfer files
     QString fileName;                           // Receiving FileName
-    QString fileSender;                         // Receiving File's Sender
-    QString checkFileName;                      // Previous File Name for checking new file
-    qint64 loadSize;                // File Size
     qint64 byteToWrite;             // File Size per a block
     QByteArray outBlock;            // Block for sending
 

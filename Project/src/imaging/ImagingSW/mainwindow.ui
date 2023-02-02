@@ -57,7 +57,7 @@
        <string notr="true"/>
       </property>
       <property name="frameShape">
-       <enum>QFrame::WinPanel</enum>
+       <enum>QFrame::NoFrame</enum>
       </property>
       <property name="frameShadow">
        <enum>QFrame::Raised</enum>

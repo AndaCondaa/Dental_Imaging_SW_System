@@ -90,7 +90,6 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
     QString pid = data.split("|")[0];
     QString type = data.split("|")[1];
     qDebug() << pid;
-    loadSize = 0;
     byteToWrite = 0;
     totalSize = 0;
     outBlock.clear();
@@ -105,7 +104,6 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
         qDebug() << QString("file %1 is opened").arg(fileName);
 
         byteToWrite = totalSize = file->size(); // Data remained yet
-        loadSize = 1024; // Size of data per a block
 
         QDataStream out(&outBlock, QIODevice::WriteOnly);
         out << qint64(0) << qint64(0) << pid << type;
@@ -125,9 +123,20 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
 void MainNetworkManager::goOnSend(qint64 numBytes)
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
-    byteToWrite -= numBytes; // Remaining data size
-    outBlock = file->read(qMin(byteToWrite, numBytes));
+
+    int end = -1;
+
+    if (byteToWrite - numBytes >= 0) {
+        byteToWrite -= numBytes; // Remaining data size
+        outBlock = file->read(numBytes);
+    } else {
+        outBlock = file ->read(byteToWrite);
+        end = byteToWrite;
+        byteToWrite = 0;
+    }
+
     socket->write(outBlock);
+
 
     if (byteToWrite == 0) { // Send completed
         qDebug("File sending completed!");

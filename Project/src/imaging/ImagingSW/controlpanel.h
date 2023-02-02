@@ -22,9 +22,9 @@ private slots:
     void controlButtonClicked(QAbstractButton*);
     void receiveButtonControl(int);
     void resetControl();
-    bool readyControl(bool);
-    bool startControl(bool);
-    void stopControl(bool);
+    bool readyControl();
+    bool startControl();
+    void stopControl();
     void saveSlot(QString);
     void shootingEndSlot(QString);
     void finishSlot(QString);

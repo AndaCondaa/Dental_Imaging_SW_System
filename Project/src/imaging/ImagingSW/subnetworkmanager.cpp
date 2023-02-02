@@ -54,18 +54,19 @@ void SubNetworkManager::receiveControl()
     protocol->receiveProtocol(subSocket);
 
     if (protocol->packetData()->event() == "CTL") {
+        qDebug("%d", __LINE__);
         emit buttonSignal(protocol->packetData()->type());
     }
 }
 
 void SubNetworkManager::sendButtonControl(int buttonIdx, QString data)
 {
-    if (buttonIdx == 1 || buttonIdx == 2) {   // 1: RESET , 2: START
+    if (buttonIdx == 1 || buttonIdx == 2) {   // 1: RESET , 2: READY
         currentPID = data.split("|")[0];
         currentType = data.split("|")[1];
     }
 
-    protocol->sendProtocol(subSocket, "CTL", buttonIdx, data);
+    protocol->sendProtocol(subSocket, "CTL", buttonIdx, currentType);
 }
 
 void SubNetworkManager::receiveFile()

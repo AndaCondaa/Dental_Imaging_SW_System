@@ -95,28 +95,23 @@ void SubServer::receiveControl()
         ui->logEdit->append((QString("%1가 연결되었습니다.")).arg(client));
     } else if (event == "CTL") {
         int command = protocol->packetData()->type();
-        currentPID = msg.split("|")[0];
-        currentType = msg.split("|")[1];
         switch (command) {
         case RESET:
-            qDebug("%d", __LINE__);
             protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", RESET, msg);
             ui->logEdit->append((QString("%1가 장비 초기화 명령을 보냈습니다.")).arg(client));
             break;
         case READY:
-            qDebug("%d", __LINE__);
+            qDebug() << msg;
             protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", READY, msg);
-            ui->logEdit->append((QString("%1가 %2의 %3 촬영준비 명령을 보냈습니다.")).arg(client, currentPID, currentType));
+            ui->logEdit->append((QString("%1가 %2 촬영준비 명령을 보냈습니다.")).arg(client, msg));
             break;
         case START:
-            qDebug("%d", __LINE__);
             protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", START, msg);
-            ui->logEdit->append((QString("%1가 %2의 %3 촬영시작 명령을 보냈습니다.")).arg(client, currentPID, currentType));
+            ui->logEdit->append((QString("%1가 %2 촬영시작 명령을 보냈습니다.")).arg(client, msg));
             break;
         case STOP:
-            qDebug("%d", __LINE__);
             protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", STOP, msg);
-            ui->logEdit->append((QString("%1가 %2의 %3 촬영종료 명령을 보냈습니다.")).arg(client, currentPID, currentType));
+            ui->logEdit->append((QString("%1가 %2 촬영종료 명령을 보냈습니다.")).arg(client, msg));
             break;
         }
     }
@@ -124,46 +119,33 @@ void SubServer::receiveControl()
 
 void SubServer::receiveFile()
 {
-    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
-    QByteArray recvData = socket->readAll();
+////    if (totalData.size() == 227865600) {
+////        QFile file;
+////        QString fileName;
 
-    if (QString(recvData).contains("<CR>")) {
-        qDebug() << "CONTAIN";
-        qDebug() << QString(recvData).split("<CR>")[1];
-        qDebug() << QString(recvData).split("<CR>")[2];
-    }
+////        QDir dir(QString("receive/%1/%2/").arg(QDate::currentDate().toString("yyyyMMdd"), currentPID));
+////        if (!dir.exists())
+////            dir.mkpath(".");
 
-    totalData.append(recvData);
+////        int count = 0;
+////        for (int i = 10; i < 999; i++) {
+////            if (i >= 100)
+////                fileName = dir.path() + "/" + QString("0%1.raw").arg(i);
+////            else
+////                fileName = dir.path() + "/" + QString("00%1.raw").arg(i);
 
-    qDebug("%d", totalData.size());
+////            file.setFileName(fileName);
+////            file.open(QIODevice::WriteOnly);
 
-//    if (totalData.size() == 227865600) {
-//        QFile file;
-//        QString fileName;
+////            file.write(totalData.mid(count*48*2400*2, 48*2400*2));
+////            qDebug("%d개 저장 완료", count);
 
-//        QDir dir(QString("receive/%1/%2/").arg(QDate::currentDate().toString("yyyyMMdd"), currentPID));
-//        if (!dir.exists())
-//            dir.mkpath(".");
-
-//        int count = 0;
-//        for (int i = 10; i < 999; i++) {
-//            if (i >= 100)
-//                fileName = dir.path() + "/" + QString("0%1.raw").arg(i);
-//            else
-//                fileName = dir.path() + "/" + QString("00%1.raw").arg(i);
-
-//            file.setFileName(fileName);
-//            file.open(QIODevice::WriteOnly);
-
-//            file.write(totalData.mid(count*48*2400*2, 48*2400*2));
-//            qDebug("%d개 저장 완료", count);
-
-//            file.close();
-//            count++;
-//        }
-//        qDebug("DONE!!!! (line: %d)", __LINE__);
-////        sendFile();
-//    }
+////            file.close();
+////            count++;
+////        }
+////        qDebug("DONE!!!! (line: %d)", __LINE__);
+//////        sendFile();
+////    }
 }
 
 void SubServer::sendFile()
