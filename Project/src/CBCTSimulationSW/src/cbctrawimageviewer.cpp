@@ -38,19 +38,31 @@ QPixmap CBCTRawImageViewer::CephImageViewer()
 }
 void CBCTRawImageViewer::resetPanoTimer()
 {
-    QGraphicsScene* panoScene = new QGraphicsScene();
-    m_mainwindowUi->PanoGraphicsView->resetTransform();
-    panoScene->clear();
+
+    QString panoFolder = "C:/Qt_VTK_CT/build/Debug/Pano_Frame(1152x64)";
+    panoImageIterator = new QDirIterator(panoFolder, QDirIterator::Subdirectories);
+    panoImageTimer->start();
+    panoImageTimer->stop();
+
+
+    //QGraphicsScene* panoScene = new QGraphicsScene();
+    //m_mainwindowUi->PanoGraphicsView->resetTransform();
+    //panoScene->clear();
  //   m_mainwindowUi->PanoGraphicsView->setScene(panoScene);
     
 }
 
 void CBCTRawImageViewer::resetCephTimer()
 {
-    QGraphicsScene* cephScene = new QGraphicsScene();
+
+    QString cephFolder = "C:/Qt_VTK_CT/build/Debug/Ceph_Frame(48x2400)";
+    cephImageIterator = new QDirIterator(cephFolder, QDirIterator::Subdirectories);
+    cephImageTimer->start();
+    cephImageTimer->stop();
+  /*  QGraphicsScene* cephScene = new QGraphicsScene();
 
     m_mainwindowUi->CephGraphicsView->setScene(cephScene);
-    cephScene->clear();
+    cephScene->clear();*/
 }
 
 void CBCTRawImageViewer::readyPanoTimer()
@@ -82,6 +94,7 @@ void CBCTRawImageViewer::stopPanoTimer()
     // 타이머 종료
     qDebug() << __FUNCTION__;
     panoImageTimer->stop();
+//
 }
 
 void CBCTRawImageViewer::stopCephTimer()
@@ -135,6 +148,7 @@ void CBCTRawImageViewer::stopCephTimer()
 void CBCTRawImageViewer::timeoutPanoTimer()
 {
 
+
     // 타이머 함수 -> mainwindow로 이미지 파일 하나씩 읽어 보내주도록 한다.
     if (panoImageIterator->hasNext())
     {
@@ -165,6 +179,8 @@ void CBCTRawImageViewer::timeoutPanoTimer()
 
 void CBCTRawImageViewer::timeoutCephTimer()
 {
+
+
     // 타이머 함수 -> mainwindow로 이미지 파일 하나씩 읽어 보내주도록 한다.
     if (cephImageIterator->hasNext())
     {

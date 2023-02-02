@@ -13,31 +13,34 @@ class CBCTFileTransfer : public QObject
 {
     Q_OBJECT
 public:
+//    void sendButtonControl(int buttonIdx, QString msg);
+
     explicit CBCTFileTransfer(QObject * parent = nullptr);
     ~CBCTFileTransfer();
+    void sendingControl(int buttonIdx, QString msg);
+
+    void sendPanoFile();
+    void sendCephFile();
 
 private slots:
-    void sendFile();
-    void sendControl(int buttonIdx);
+    void receiveModality();
     void receiveControl();
-    void goOnSend(qint64 numBytes);
+ //   void goOnSend(qint64 numBytes);
 
     //    void sendCBCTProtocol();
     //    void sendRawImages();
     //    void disconnect();
-
 private:
     Protocol *protocol;
+
     QTcpSocket *CBCTSocket;
+    QTcpSocket *fileSocket;
 
     QString currentPID = "NULL";
     QString currentType = "NULL";
 
-
-
-    QTcpSocket *subSocket;
-    QTcpSocket *fileSocket;
-
+    QByteArray panoData;
+    QByteArray cephData;
     QFile* file;
     qint64 loadSize;                            // File Object for FileSending Protocol
     qint64 totalSize;                           // Total size of File that clients are sending
@@ -50,12 +53,13 @@ private:
     //    QTcpSocket * FileSocket;
 
 
-
 signals:
     void resetSignal();
     void readySignal();
     void startSignal();
     void stopSignal();
+    void panoSignal();
+    void cephSignal();
 };
 
 #endif // CBCTFILETRANSFER_H
