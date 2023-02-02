@@ -18,10 +18,12 @@ PacketData* Protocol::packetData()
 
 void Protocol::sendProtocol(QTcpSocket* socket, QString event, int type, QString msg)
 {
+    qDebug("%d", __LINE__);
     m_packetData->setEvent(event);
     m_packetData->setType(type);
     m_packetData->setMsg(msg);
 
+    qDebug("%d", __LINE__);
     socket->write(m_packetData->makeSendData());
 }
 

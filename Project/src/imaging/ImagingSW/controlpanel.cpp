@@ -14,10 +14,10 @@ ControlPanel::ControlPanel(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->panoButton->setStyleSheet("QRadioButton::indicator::unchecked {image: url(:/icon/PANO_DIS.png)}"
-                                  "QRadioButton::indicator::checked {image: url(:/icon/PANO_ACT.png)};");
-    ui->cephButton->setStyleSheet("QRadioButton::indicator::unchecked {image: url(:/icon/CEPH_DIS.png)}"
-                                  "QRadioButton::indicator::checked {image: url(:/icon/CEPH_ACT.png)};");
+    ui->panoButton->setStyleSheet("QRadioButton::indicator::unchecked {image: url(:/icon/pano.png); width: 120px; height: 80px;}"
+                                  "QRadioButton::indicator::checked {image: url(:/icon/pano_clicked.png); width: 120px; height: 80px;};");
+    ui->cephButton->setStyleSheet("QRadioButton::indicator::unchecked {image: url(:/icon/ceph.png); width: 120px; height: 80px;}"
+                                  "QRadioButton::indicator::checked {image: url(:/icon/ceph_clicked.png); width: 120px; height: 80px;};");
 
     controlButtonGroup = new QButtonGroup(this);
     controlButtonGroup->addButton(ui->resetButton, RESET);
@@ -61,13 +61,13 @@ void ControlPanel::controlButtonClicked(QAbstractButton* button)
         resetControl();
         break;
     case READY:
-        if (!readyControl(true)) return;
+        if (!readyControl()) return;
         break;
     case START:
-        if (!startControl(true)) return;
+        if (!startControl()) return;
         break;
     case STOP:
-        stopControl(true);
+        stopControl();
         break;
     }
 
@@ -81,13 +81,13 @@ void ControlPanel::receiveButtonControl(int buttonIdx)
         resetControl();
         break;
     case READY:
-        if (!readyControl(false)) return;
+        if (!readyControl()) return;
         break;
     case START:
-        if (!startControl(false)) return;
+        if (!startControl()) return;
         break;
     case STOP:
-        stopControl(false);
+        stopControl();
         break;
     }
 }
@@ -119,7 +119,7 @@ void ControlPanel::resetControl()
     ui->stopButton->setEnabled(false);
 }
 
-bool ControlPanel::readyControl(bool signal)
+bool ControlPanel::readyControl()
 {
     if (ui->panoButton->isChecked()) {
         currentType = "PANO";
@@ -139,13 +139,12 @@ bool ControlPanel::readyControl(bool signal)
     ui->readyButton->setEnabled(false);
     ui->startButton->setEnabled(true);
 
-    if (signal)
-        emit readySignal(currentType);
+    emit readySignal(currentType);
 
     return true;
 }
 
-bool ControlPanel::startControl(bool signal)
+bool ControlPanel::startControl()
 {
     QMessageBox startBox(QMessageBox::NoIcon, "START",
                          QString("%1의 %2 촬영을 시작하시겠습니까?").arg(currentPID, currentType),
@@ -158,13 +157,12 @@ bool ControlPanel::startControl(bool signal)
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(true);
 
-    if (signal)
-        emit startSignal();
+    emit startSignal();
 
     return true;
 }
 
-void ControlPanel::stopControl(bool signal)
+void ControlPanel::stopControl()
 {
     currentType = "NULL";
 
@@ -176,8 +174,7 @@ void ControlPanel::stopControl(bool signal)
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
 
-    if (signal)
-        emit stopSignal();
+    emit stopSignal();
 }
 
 void ControlPanel::shootingEndSlot(QString type)

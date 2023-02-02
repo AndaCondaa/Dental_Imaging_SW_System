@@ -1,10 +1,8 @@
 <RCC>
     <qresource prefix="/">
-        <file>icon/CEPH.png</file>
-        <file>icon/PANO.png</file>
-        <file>icon/CEPH_ACT.png</file>
-        <file>icon/PANO_ACT.png</file>
-        <file>icon/CEPH_DIS.png</file>
-        <file>icon/PANO_DIS.png</file>
+        <file>icon/ceph.png</file>
+        <file>icon/ceph_clicked.png</file>
+        <file>icon/pano.png</file>
+        <file>icon/pano_clicked.png</file>
     </qresource>
 </RCC>

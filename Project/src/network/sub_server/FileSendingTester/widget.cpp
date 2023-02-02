@@ -32,27 +32,57 @@ void Widget::buttonClicked()
 
 void Widget::sendFile()
 {
+    QByteArray total;
+    QByteArray send;
+    QByteArray img1;
+    QByteArray img2;
     QFile file;
-    QString fileName;
-    QString fileInfo;           // <INFO>파일개수<CR>프레임파일1개당크기
 
-    for (int i = 10; i < 999; i++) {
-        if (i >= 100)
-            fileName = QString("./CEPH/0%1.raw").arg(i);
-        else
-            fileName = QString("./CEPH/00%1.raw").arg(i);
 
-        file.setFileName(fileName);
-        file.open(QIODevice::ReadOnly);
-        totalData.append(file.readAll());
-        file.close();
-    }
-    qDebug("TOTAL SIZE : %d", totalData.size());
-    fileInfo = "<CR>" + QString::number(totalData.size()) + "<CR>" + QString::number(48*2400);
-    //    totalData.append(fileInfo.toStdString());
-    fileSocket->write(totalData);                                       // 영상 파일 전송
-    fileSocket->flush();
-    totalData.clear();
+    file.setFileName("./CEPH/0200.raw");
+    file.open(QIODevice::ReadOnly);
+    img1.append(file.readAll());
+    file.close();
+    file.open(QIODevice::ReadOnly);
+    img2.append(file.readAll());
+    file.close();
+//115200
 
-    fileSocket->write(fileInfo.toStdString().data());                   // 영상 파일 정보 전송
+    send.append("ceph1.raw<cr>115200<cr>");
+    send.append(img1);
+    send.append("<T>");
+    send.append("ceph2.raw<cr>115200<cr>");
+    send.append(img2);
+    send.append("<END>");
+
+    int count = 2;
+
+    QDataStream in(&total, QIODevice::WriteOnly);
+    in << count << send;
+
+    fileSocket->write(total);
+
+//    QFile file;
+//    QString fileName;
+//    QString fileInfo;           // <INFO>파일개수<CR>프레임파일1개당크기
+
+//    for (int i = 10; i < 999; i++) {
+//        if (i >= 100)
+//            fileName = QString("./CEPH/0%1.raw").arg(i);
+//        else
+//            fileName = QString("./CEPH/00%1.raw").arg(i);
+
+//        file.setFileName(fileName);
+//        file.open(QIODevice::ReadOnly);
+//        totalData.append(file.readAll());
+//        file.close();
+//    }
+//    qDebug("TOTAL SIZE : %d", totalData.size());
+//    fileInfo = "<CR>" + QString::number(totalData.size()) + "<CR>" + QString::number(48*2400);
+//    //    totalData.append(fileInfo.toStdString());
+//    fileSocket->write(totalData);                                       // 영상 파일 전송
+//    fileSocket->flush();
+//    totalData.clear();
+
+//    fileSocket->write(fileInfo.toStdString().data());                   // 영상 파일 정보 전송
 }
