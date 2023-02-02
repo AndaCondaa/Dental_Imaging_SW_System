@@ -21,8 +21,9 @@ private slots:
 
     void receiveData();
     void receiveFile();
-//    void newConnection();
-//    void disconnected();
+
+
+    void makeFiles();
 
 private:
     QTcpSocket *socket;
@@ -41,6 +42,7 @@ private:
 
 
     QTcpSocket *fileSocket;
+
     qint64 totalSize;
     qint64 byteReceived = 0;
     QString fileName;                           // Receiving FileName
@@ -49,6 +51,14 @@ private:
     QByteArray inBlock;
     QString currentPID = "NULL";
 
+    QByteArray *byteArray;
+    QByteArray allFile;
+
+
+
+    int allFileSize = 0;
+    QByteArray allFileSended;
+
 signals:
     void sendNewPID(QString);
     void sendSearchResult(QString, QString);
@@ -56,9 +66,13 @@ signals:
     void sendVTSRequest(QString);
     void sendISVevent(QString);
     void sendVTFevent(QString);
+    void sendVNTevent(QString);
 
 
+    void PSEDataInNET(QString);
 
+//    void sendByteArray(QByteArray*);
+   void sendByteArray(const QPixmap&);
 
 };
 

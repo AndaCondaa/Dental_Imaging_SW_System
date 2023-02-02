@@ -95,11 +95,11 @@
      </property>
     </widget>
    </widget>
-   <widget class="QWidget" name="imageRelation">
+   <widget class="QWidget" name="faceImage">
     <attribute name="title">
-     <string>imageRelation</string>
+     <string>faceImage</string>
     </attribute>
-    <widget class="QTableView" name="imageRelationTableView">
+    <widget class="QTableView" name="faceImageTableView">
      <property name="geometry">
       <rect>
        <x>0</x>

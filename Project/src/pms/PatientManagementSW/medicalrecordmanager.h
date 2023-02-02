@@ -23,6 +23,8 @@ private slots:
 
     void on_recordTreeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column);
 
+    void addNewRecord(QString);
+
 private:
     Ui::MedicalRecordManager *ui;
     MedicalChart *medicalChart;
@@ -34,6 +36,7 @@ private:
 
 signals:
     void sendPatientReportInfo(QString, QString);
+    void sendReSearchData(QString);
 };
 
 #endif // MEDICALRECORDMANAGER_H
