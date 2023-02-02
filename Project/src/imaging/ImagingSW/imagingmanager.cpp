@@ -223,14 +223,6 @@ void ImagingManager::on_tempReconButton_clicked()
     unsigned short *buf = new unsigned short[48*2400];
     unsigned short *out = new unsigned short[3000*2400];
 
-
-
-    unsigned int *his = new unsigned int[65535];
-    unsigned int *sum = new unsigned int[65535];
-    unsigned short *col = new unsigned short[65535];
-
-
-
     for (int k = 1000; k > 0; k--) {
         memset(buf, 0, 48*2400);
         QString fileName;
@@ -256,51 +248,20 @@ void ImagingManager::on_tempReconButton_clicked()
         //프레임데이터 히스토그램 스트레칭
         unsigned short min, max,range;
         min = 0;
-        max = 500;
-//        for (int i = 0; i < 48*2400; i++) {
-//            tmp = buf[i];
-//            if (tmp > max)
-//                max = tmp;
-//            if (tmp < min)
-//                min = tmp;
-
-//        }
+        max = 350;
         range = max - min;
 
         for (int i = 0; i < 48*2400; i++) {
-            if (buf[i] < 500)
+            if (buf[i] < max)
                 buf[i] = cvRound(((double)(buf[i] - min) / range) * 65535.);
         }
 
-        memset(his, 0, 65535);
-        memset(sum, 0, 65535);
-        memset(col, 0, 65535);
-
-
-        for (int i = 0; i < 48*2400; i++) {
-            his[buf[i]]++;
-        }
-
-        int tmp = 0;
-        for (int i = 0; i < 65535; i++) {
-            tmp += his[i];
-            sum[i] = tmp;
-        }
-
-        for (int i = 0; i < 65535; i++) {
-            col[i] = (unsigned short)cvRound((double)(sum[i] * 65535 / 115200.));
-        }
-
-        for (int i = 0 ; i < 48*2400; i++) {
-            unsigned short k = buf[i];
-            buf[i] = col[k];
-        }
 
         cv::Mat src(2400, 48, CV_16UC1, buf);
         cv::Mat dst;
         cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
-        clahe->setClipLimit(1);
-        clahe->setTilesGridSize(cv::Size2i(2,2));
+        clahe->setClipLimit(32);
+        clahe->setTilesGridSize(cv::Size2i(2,75));
         clahe->apply(src, dst);
 
         memcpy(buf, dst.data, 48*2400*2);
@@ -318,7 +279,7 @@ void ImagingManager::on_tempReconButton_clicked()
 
     cv::Mat src(2400, 3000, CV_16UC1, out);
     cv::Mat dst;
-    cv::medianBlur(src, dst, 3);
+    cv::medianBlur(src, dst, 5);
     memcpy(out, dst.data, 3000*2400*2);
 
     file = fopen("./test/RECON.raw", "wb");
@@ -345,35 +306,18 @@ void ImagingManager::on_tempFilterButton_2_clicked()
     fread(section3, sizeof(unsigned short), 3000*2400, file);
     fclose(file);
 
-    unsigned int *his = new unsigned int[65535];
-    unsigned int *sum = new unsigned int[65535];
-    unsigned int *col = new unsigned int[65535];
-    memset(his, 0, 65535);
-    memset(sum, 0, 65535);
-    memset(col, 0, 65535);
-
-
     for (int i = 0; i < 3000*2400; i++) {
-        his[section1[i]]++;
-    }
-
-    int tmp = 0;
-    for (int i = 0; i < 65535; i++) {
-        tmp += his[i];
-        sum[i] = tmp;
-    }
-
-    for (int i = 0; i < 65535; i++) {
-        col[i] = cvRound((double)(sum[i] * 65535 / 7200000.));
-    }
-
-    for (int i = 0 ; i < 3000*2400; i++) {
-        section2[i] = col[section1[i]];
+        if (section1[i] < 21000)
+            section1[i] = cvRound(((double)(section1[i] - 100) / 20900) * 55000.);
+        else if (section1[i] > 21000 && section2[i] < 55000)
+            section1[i] = cvRound(((double)(section1[i] - 21000) / 34000) * 10000.) + 45000;
     }
 
 
 
-/*
+
+
+
 //****************************************************************************************************
 // 감마 보정
 //    for (int i = 0; i < 3000*2400; i++) {
@@ -383,33 +327,64 @@ void ImagingManager::on_tempFilterButton_2_clicked()
 
 //****************************************************************************************************
 // 섹션 분할
-    for (int i = 0; i < 3000*2400; i++) {
-        int tmp = section1[i];
-        if (tmp < 100) {
-            section2[i] = 0;
-            section3[i] = 0;
-        } else if (tmp <= 30000 && tmp > 100) {
-            section1[i] = 0;
-            section3[i] = 0;
-        } else if (tmp > 30000) {
-            section1[i] = 0;
-            section2[i] = 0;
-        }
-    }
+//    for (int i = 0; i < 3000*2400; i++) {
+//        int tmp = section1[i];
+//        if (tmp < 100) {
+//            section2[i] = 0;
+//            section3[i] = 0;
+//        } else if (tmp <= 30000 && tmp > 100) {
+//            section1[i] = 0;
+//            section3[i] = 0;
+//        } else if (tmp > 30000) {
+//            section1[i] = 0;
+//            section2[i] = 0;
+//        }
+//    }
 
-    cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
-    clahe->setClipLimit(1);
-    clahe->setTilesGridSize(cv::Size2i(4,4));
+
+//    unsigned int *his = new unsigned int[65535];
+//    unsigned int *sum = new unsigned int[65535];
+//    unsigned int *col = new unsigned int[65535];
+//    memset(his, 0, 65535);
+//    memset(sum, 0, 65535);
+//    memset(col, 0, 65535);
+
+
+//    for (int i = 0; i < 3000*2400; i++) {
+//        his[section2[i]]++;
+//    }
+
+//    int tmp = 0;
+//    for (int i = 0; i < 65535; i++) {
+//        tmp += his[i];
+//        sum[i] = tmp;
+//    }
+
+//    for (int i = 0; i < 65535; i++) {
+//        col[i] = cvRound((double)(sum[i] * 65535 / 7200000.));
+//    }
+
+//    for (int i = 0 ; i < 3000*2400; i++) {
+//        section2[i] = col[section2[i]];
+//    }
+
+
+
+
+
+//    cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+//    clahe->setClipLimit(1);
+//    clahe->setTilesGridSize(cv::Size2i(4,4));
 
 //    cv::Mat src1(2400, 3000, CV_16UC1, section1);
 //    cv::Mat dst1;
 //    clahe->apply(src1, dst1);
 //    memcpy(section1, dst1.data, 3000*2400*2);
 
-    cv::Mat src2(2400, 3000, CV_16UC1, section2);
-    cv::Mat dst2;
-    clahe->apply(src2, dst2);
-    memcpy(section2, dst2.data, 3000*2400*2);
+//    cv::Mat src2(2400, 3000, CV_16UC1, section2);
+//    cv::Mat dst2;
+//    clahe->apply(src2, dst2);
+//    memcpy(section2, dst2.data, 3000*2400*2);
 
 //    cv::Mat src3(2400, 3000, CV_16UC1, section3);
 //    cv::Mat dst3;
@@ -423,15 +398,15 @@ void ImagingManager::on_tempFilterButton_2_clicked()
 //    cv::medianBlur(src4, dst4, 3);
 //    memcpy(section1, dst4.data, 3000*2400*2);
 
-    cv::Mat src5(2400, 3000, CV_16UC1, section2);
-    cv::Mat dst5;
-    cv::medianBlur(src5, dst5, 3);
-    memcpy(section2, dst5.data, 3000*2400*2);
+//    cv::Mat src5(2400, 3000, CV_16UC1, section2);
+//    cv::Mat dst5;
+//    cv::medianBlur(src5, dst5, 3);
+//    memcpy(section2, dst5.data, 3000*2400*2);
 
-    cv::Mat src6(2400, 3000, CV_16UC1, section3);
-    cv::Mat dst6;
-    cv::medianBlur(src6, dst6, 3);
-    memcpy(section3, dst6.data, 3000*2400*2);
+//    cv::Mat src6(2400, 3000, CV_16UC1, section3);
+//    cv::Mat dst6;
+//    cv::medianBlur(src6, dst6, 3);
+//    memcpy(section3, dst6.data, 3000*2400*2);
 
 //****************************************************************************************************
 // 히스토그램 노멀라이징
@@ -454,7 +429,7 @@ void ImagingManager::on_tempFilterButton_2_clicked()
 
 
 //****************************************************************************************************
-*/
+
 
 
     file = fopen("./test/section1.raw", "wb");
