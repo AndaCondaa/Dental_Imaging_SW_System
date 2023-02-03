@@ -29,7 +29,6 @@ private:
     QFile file;
     QString fileName;
 
-    int count = 0;
     int countMax = 0;
     int frameSize = 0;
 

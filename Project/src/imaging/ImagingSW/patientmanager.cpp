@@ -10,7 +10,6 @@ PatientManager::PatientManager(QWidget *parent) :
     ui->setupUi(this);
     ui->infoTableWidget->horizontalHeader()->setStretchLastSection(true);
 
-    connect(ui->deleteButton, SIGNAL(clicked()), this, SLOT(deletePatient()));
     connect(ui->patientReadyButton, SIGNAL(clicked()), this, SLOT(readyButtonSlot()));
     connect(ui->finishButton, SIGNAL(clicked()), this, SLOT(finishButtonSlot()));
     connect(ui->waitTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(waitDoubleClicked(QTreeWidgetItem*,int)));
@@ -76,51 +75,17 @@ void PatientManager::receiveWaitPatient(QStringList dataList)
     waitItem->setTextAlignment(2, Qt::AlignHCenter);
     ui->waitTreeWidget->resizeColumnToContents(0);
     ui->waitTreeWidget->resizeColumnToContents(1);
+    ui->waitTreeWidget->resizeColumnToContents(2);
 
 //    ui->waitTreeWidget->setCurrentItem(nullptr);    // 자동으로 처음 등록한 item이 currentitem으로 설정되지 않게 함
 }
 
-void PatientManager::deletePatient()
-{
-    if (ui->waitTreeWidget->currentItem() == nullptr) return;
-
-    QMessageBox deleteBox(QMessageBox::Warning, "DELETE",
-                          QString("%1 환자를 대기목록에서 삭제하시겠습니까?").arg(ui->waitTreeWidget->currentItem()->text(2)),
-                          QMessageBox::Yes | QMessageBox::No, this, Qt::Dialog);
-    deleteBox.exec();
-
-    if (deleteBox.clickedButton()->text() == "&No") return;
-
-
-    if (ui->infoTableWidget->item(0,0) != nullptr &&
-            ui->waitTreeWidget->currentItem()->text(1) == ui->infoTableWidget->item(0,0)->text()) {
-        emit deleteSignal(ui->infoTableWidget->item(0,0)->text());
-        delete ui->infoTableWidget->takeItem(0,0);
-        delete ui->infoTableWidget->takeItem(0,1);
-        delete ui->infoTableWidget->takeItem(0,2);
-        delete ui->infoTableWidget->takeItem(0,3);
-        delete ui->infoTableWidget->takeItem(0,4);
-    }
-
-    typeMap.remove(ui->waitTreeWidget->currentItem()->text(1));
-    delete ui->waitTreeWidget->takeTopLevelItem(ui->waitTreeWidget->currentIndex().row());
-
-    for (int idx = 0; idx < typeMap.count() ; idx++) {
-        ui->waitTreeWidget->topLevelItem(idx)->setText(0, QString::number(idx+1));
-    }
-
-    shootingStatus = "NULL";
-    ui->finishButton->setEnabled(false);
-}
 
 void PatientManager::readyButtonSlot()
 {
-    qDebug("%d", __LINE__);
     if (ui->waitTreeWidget->currentItem() == nullptr) return;
-//    else if (ui->waitTreeWidget->currentItem()->text(1) == ui->infoTableWidget->item(0,0)->text()) return;
-    qDebug("%d", __LINE__);
+
     emit sendPid(ui->waitTreeWidget->currentItem()->text(1));
-    qDebug("%d", __LINE__);
 }
 
 void PatientManager::receivePatientInfo(QStringList dataList)           // pid -> name -> sex -> birth
@@ -159,8 +124,6 @@ void PatientManager::receivePatientInfo(QStringList dataList)           // pid -
 void PatientManager::waitDoubleClicked(QTreeWidgetItem* item, int col)
 {
     Q_UNUSED(col);
-
-    if (ui->waitTreeWidget->currentItem()->text(1) == ui->infoTableWidget->item(0,0)->text()) return;
 
     emit sendPid(item->text(1));
 }

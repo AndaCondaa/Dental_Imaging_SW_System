@@ -14,10 +14,26 @@ ControlPanel::ControlPanel(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    ui->panoButton->setStyleSheet("QRadioButton::indicator::unchecked {image: url(:/icon/pano.png); width: 120px; height: 80px;}"
-                                  "QRadioButton::indicator::checked {image: url(:/icon/pano_clicked.png); width: 120px; height: 80px;};");
-    ui->cephButton->setStyleSheet("QRadioButton::indicator::unchecked {image: url(:/icon/ceph.png); width: 120px; height: 80px;}"
-                                  "QRadioButton::indicator::checked {image: url(:/icon/ceph_clicked.png); width: 120px; height: 80px;};");
+
+    ui->panoButton->setStyleSheet("QPushButton {"
+                                  "border-style: solid;"
+                                  "border-width: 1px;"
+                                  "border-color: gray;"
+                                  "}"
+                                  "QPushButton:checked {"
+                                  "border-width: 3px;"
+                                  "border-color: blue;"
+                                  "}");
+    ui->cephButton->setStyleSheet("QPushButton {"
+                                  "border-style: solid;"
+                                  "border-width: 1px;"
+                                  "border-color: gray;"
+                                  "}"
+                                  "QPushButton:checked {"
+                                  "border-width: 3px;"
+                                  "border-color: blue;"
+                                  "}");
+
 
     controlButtonGroup = new QButtonGroup(this);
     controlButtonGroup->addButton(ui->resetButton, RESET);
@@ -121,6 +137,14 @@ void ControlPanel::resetControl()
 
 bool ControlPanel::readyControl()
 {
+    if (currentPID == "NULL") {
+        QMessageBox messageBox(QMessageBox::NoIcon, "NO TYPE",
+                             QString("촬영환자를 선택해주세요."),
+                             QMessageBox::Ok, this, Qt::Window);
+        messageBox.exec();
+        return false;
+    }
+
     if (ui->panoButton->isChecked()) {
         currentType = "PANO";
         ui->cephButton->setCheckable(false);
@@ -129,13 +153,13 @@ bool ControlPanel::readyControl()
         currentType = "CEPH";
         ui->panoButton->setCheckable(false);
     } else {
-        qDebug("%d : 타입을 선택하고 ready버튼을 누르세요.", __LINE__);
+        QMessageBox messageBox(QMessageBox::NoIcon, "NO TYPE",
+                             QString("촬영타입을 선택해주세요."),
+                             QMessageBox::Ok, this, Qt::Window);
+        messageBox.exec();
         return false;
     }
-    if (currentPID == "NULL") {
-        qDebug("%d : 촬영할 환자를 선택하고 ready버튼을 누르세요.", __LINE__);
-        return false;
-    }
+
     ui->readyButton->setEnabled(false);
     ui->startButton->setEnabled(true);
 
@@ -146,12 +170,12 @@ bool ControlPanel::readyControl()
 
 bool ControlPanel::startControl()
 {
-    QMessageBox startBox(QMessageBox::NoIcon, "START",
-                         QString("%1의 %2 촬영을 시작하시겠습니까?").arg(currentPID, currentType),
-                         QMessageBox::Yes|QMessageBox::No, this, Qt::Dialog);
-    startBox.exec();
+//    QMessageBox startBox(QMessageBox::NoIcon, "START",
+//                         QString("%1의 %2 촬영을 시작하시겠습니까?").arg(currentPID, currentType),
+//                         QMessageBox::Yes|QMessageBox::No, this, Qt::Dialog);
+//    startBox.exec();
 
-    if(startBox.clickedButton()->text() == "&No") return false;
+//    if(startBox.clickedButton()->text() == "&No") return false;
 
     ui->resetButton->setEnabled(false);
     ui->startButton->setEnabled(false);
@@ -216,3 +240,30 @@ void ControlPanel::deleteSlot(QString pid)
     if (currentPID == pid)
         currentPID = "NULL";
 }
+
+void ControlPanel::on_panoButton_toggled(bool checked)
+{
+//    if (checked)
+//        qDebug("check");
+//    else
+//        qDebug("uncheck");
+}
+
+
+void ControlPanel::on_panoButton_clicked(bool checked)
+{
+    if (checked)
+        qDebug("check");
+    else
+        qDebug("uncheck");
+}
+
+
+void ControlPanel::on_cephButton_clicked(bool checked)
+{
+    if (checked)
+        qDebug("check");
+    else
+        qDebug("uncheck");
+}
+

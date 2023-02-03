@@ -53,22 +53,22 @@ MainWindow::MainWindow(QWidget *parent)
     connect(patientManager, SIGNAL(finishSignal(QString)), mainNetworkManager, SLOT(endImagingProcess(QString)));     // 촬영프로세스완료 버튼 클릭 시, 소켓 전송
     connect(patientManager, SIGNAL(deleteSignal(QString)), controlPanel, SLOT(deleteSlot(QString)));                // 준비된 환자 삭제 시, 소켓 전송 (for currentpid에서 삭제)
 
-    QStringList dataList;
-    dataList << "P00001" << "김유선" << "BOTH";
-    patientManager->receiveWaitPatient(dataList);
-    dataList.clear();
-    dataList << "P00004" << "김도예" << "BOTH";
-    patientManager->receiveWaitPatient(dataList);
-    dataList.clear();
-    dataList << "P00005" << "김영희" << "BOTH";
-    patientManager->receiveWaitPatient(dataList);
+//    QStringList dataList;
+//    dataList << "P00001" << "김유선" << "BOTH";
+//    patientManager->receiveWaitPatient(dataList);
+//    dataList.clear();
+//    dataList << "P00004" << "김도예" << "BOTH";
+//    patientManager->receiveWaitPatient(dataList);
+//    dataList.clear();
+//    dataList << "P00005" << "김영희" << "BOTH";
+//    patientManager->receiveWaitPatient(dataList);
 
-    QStringList test1;
-    test1 << "P00001" << "김유선" << "F" << "asdf";
-    QStringList test2;
-    test2 << "P00005" << "김영희" << "F" << "asdf";
-    patientManager->receivePatientInfo(test1);
-    patientManager->receivePatientInfo(test2);
+//    QStringList test1;
+//    test1 << "P00001" << "김유선" << "F" << "asdf";
+//    QStringList test2;
+//    test2 << "P00005" << "김영희" << "F" << "asdf";
+//    patientManager->receivePatientInfo(test1);
+//    patientManager->receivePatientInfo(test2);
 }
 
 MainWindow::~MainWindow()
