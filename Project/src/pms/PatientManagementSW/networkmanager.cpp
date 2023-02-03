@@ -70,10 +70,7 @@ void NetworkManager::receiveFile() //P00004 파일 2개짜리로 해보기
     fileSocket = dynamic_cast<QTcpSocket*>(sender());
     qDebug("%d", __LINE__);
 
-    //    QDataStream in(&allFileSended, QIODevice::ReadOnly);
-    //    in >> allFileSize >> allFile;
-    //    QByteArray byte;
-    //    byte = fileSocket->readAll();
+
     allFile.append(fileSocket->readAll());
 
     if(QString(allFile).right(5) == "<FIN>")

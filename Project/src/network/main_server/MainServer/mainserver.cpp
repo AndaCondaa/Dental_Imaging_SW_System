@@ -185,7 +185,7 @@ void MainServer::sendFile()
 
     //QString filename = id; //여기까지함
 
-
+//요기 이상한거같음!!!
     qDebug() << "((((((currentPID" << currentPID;    //ex. P00003
     QDir dir(QString("./Image/%1").arg(currentPID));
     QStringList filters;
@@ -231,8 +231,10 @@ void MainServer::sendFile()
 
 //    QDataStream out(&sendAllFile, QIODevice::WriteOnly);
 //    out << allFile.size() << allFile;
-
-    pmsFileSocket->write(allFile);
+    if(sendFileFlag == 0)
+        pmsFileSocket->write(allFile);
+    else if(sendFileFlag == 1)
+        viewerFileSocket->write(allFile);
 
 }
 
@@ -673,7 +675,6 @@ void MainServer::receiveData()
 
 
             sendFileFlag = 0;
-
             sendFile();
 
 
@@ -722,9 +723,7 @@ void MainServer::receiveData()
             //qDebug() << "정연이 소켓 있는지 확인: " << viewerSocket->isValid();
             viewerSocket->write(sendWaitData.toStdString().c_str());
 
-            //정연이쪽에 파일보내줌
-            sendFileFlag = 1;
-            sendFile();
+
 
 
         }
@@ -798,10 +797,13 @@ void MainServer::receiveData()
         else if(event == "VTS")     //진료 시작: VTS(treatment start)
             //[받을 정보: 이벤트, pid / 보낼 정보: 이벤트, pid, 이름, 성별, 생년월일, 메모]
         {
+            qDebug() << "정연이 데이터 온 거: " << saveData;
 
             QString sendData ="VTS<CR>";
             sendData = sendData + id + "<CR>";
 
+            qDebug() << "내가 가지고 있는 id 데이터: " << id;
+            currentPID = id;
 
             query->exec("select * from patient where patient_no = '" + id + "'");
 
@@ -826,12 +828,15 @@ void MainServer::receiveData()
             }
 
             qDebug() << "sendData: " << sendData;
+            pmsSocket->write(sendData.toStdString().c_str());
             viewerSocket->write(sendData.toStdString().c_str());
 
+            //정연이쪽에 파일보내줌
             sendFileFlag = 1;
             sendFile();
 
-            pmsSocket->write(sendData.toStdString().c_str());
+
+
 
         }
         else if(event == "VTF")     //진료 완료: VTF(treatment finish) [받을 정보: 이벤트, pid / 보낼 정보: 이벤트, pid]
