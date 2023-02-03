@@ -88,29 +88,46 @@ void SubServer::receiveControl()
     QString client = controlSocketMap.value(socket) ? "CT" : "촬영SW";      // controlSocketMap.value(socket) -> 0: 촬영SW, 1: 영상장비
 
     int receiver;
-    if (controlSocketMap.value(socket)) receiver = SW;
-    else receiver = MODALITY;
+    if (controlSocketMap.value(socket)) {
+        receiver = SW;
+    } else {
+        receiver = MODALITY;
+    }
 
     if (event == "NEW") {
         ui->logEdit->append((QString("%1가 연결되었습니다.")).arg(client));
     } else if (event == "CTL") {
+        if (receiver == MODALITY) {
+            currentPID = msg.split("|")[0];
+            currentType = msg.split("|")[1];
+            msg = currentType;
+            if (currentType == "PANO") {
+                count = 0;
+                countMax = 1750;
+                frameSize = 1152 * 64 * 2;
+            } else if (currentType == "CEPH") {
+                count = 0;
+                countMax = 1250;
+                frameSize = 48 * 2400 * 2;
+            }
+        }
+
         int command = protocol->packetData()->type();
         switch (command) {
         case RESET:
-            protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", RESET, msg);
+//            protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", RESET, msg);
             ui->logEdit->append((QString("%1가 장비 초기화 명령을 보냈습니다.")).arg(client));
             break;
         case READY:
-            qDebug() << msg;
-            protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", READY, msg);
+//            protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", READY, msg);
             ui->logEdit->append((QString("%1가 %2 촬영준비 명령을 보냈습니다.")).arg(client, msg));
             break;
         case START:
-            protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", START, msg);
+//            protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", START, msg);
             ui->logEdit->append((QString("%1가 %2 촬영시작 명령을 보냈습니다.")).arg(client, msg));
             break;
         case STOP:
-            protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", STOP, msg);
+//            protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", STOP, msg);
             ui->logEdit->append((QString("%1가 %2 촬영종료 명령을 보냈습니다.")).arg(client, msg));
             break;
         }
@@ -119,39 +136,40 @@ void SubServer::receiveControl()
 
 void SubServer::receiveFile()
 {
-////    if (totalData.size() == 227865600) {
-////        QFile file;
-////        QString fileName;
+    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
+    QByteArray tempArray;
+    tempArray = socket->readAll();
+    fileSocketMap.key(SW)->write(tempArray);
+    receiveData.append(tempArray);
 
-////        QDir dir(QString("receive/%1/%2/").arg(QDate::currentDate().toString("yyyyMMdd"), currentPID));
-////        if (!dir.exists())
-////            dir.mkpath(".");
 
-////        int count = 0;
-////        for (int i = 10; i < 999; i++) {
-////            if (i >= 100)
-////                fileName = dir.path() + "/" + QString("0%1.raw").arg(i);
-////            else
-////                fileName = dir.path() + "/" + QString("00%1.raw").arg(i);
+    if (receiveData.size() >= frameSize) {
+        QDir dir(QString("receive/%1/%2/%3").arg(QDate::currentDate().toString("yyyyMMdd"), currentPID, currentType));
+        if (!dir.exists())
+            dir.mkpath(".");
 
-////            file.setFileName(fileName);
-////            file.open(QIODevice::WriteOnly);
+        if (count >= 1000)
+            fileName = dir.path() + QString("/%1.raw").arg(count);
+        else if (count < 1000 && count >= 100)
+            fileName = dir.path() + QString("/0%1.raw").arg(count);
+        else if (count < 100 && count >= 10)
+            fileName = dir.path() + QString("/00%1.raw").arg(count);
+        else
+            fileName = dir.path() + QString("/000%1.raw").arg(count);
 
-////            file.write(totalData.mid(count*48*2400*2, 48*2400*2));
-////            qDebug("%d개 저장 완료", count);
+        file.setFileName(fileName);
+        file.open(QIODevice::WriteOnly);
+        file.write(receiveData.first(frameSize));
+        file.close();
+        receiveData.remove(0, frameSize);
+        count++;
+        qDebug("%d", count);
+        if (count == countMax) {
+            qDebug() << QString("%1 Frame Data Send End!").arg(currentType);
+            count = 0;
+            receiveData.clear();
+            return;
+        }
+    }
 
-////            file.close();
-////            count++;
-////        }
-////        qDebug("DONE!!!! (line: %d)", __LINE__);
-//////        sendFile();
-////    }
-}
-
-void SubServer::sendFile()
-{
-    fileSocketMap.key(SW)->write(totalData);
-    fileSocketMap.key(SW)->flush();
-    qDebug("TOTAL SIZE : %d", totalData.size());
-    totalData.clear();
 }

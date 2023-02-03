@@ -41,6 +41,9 @@ private:
     QTcpSocket *subSocket;
     QTcpSocket *fileSocket;
 
+    int count = 0;
+    int countMax = 0;
+    int frameSize = 0;
     QByteArray totalData;
 
 signals:

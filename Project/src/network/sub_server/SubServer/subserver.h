@@ -38,7 +38,6 @@ private slots:
     void receiveControl();
     void firstFileSocket();
     void receiveFile();
-    void sendFile();
 
 private:
     Ui::SubServer *ui;
@@ -53,6 +52,11 @@ private:
     QMap<QTcpSocket*, int> controlSocketMap;    // <socket, SW or MODALITY>
     QMap<QTcpSocket*, int> fileSocketMap;       // <socket, SW or MODALITY>
 
-    QByteArray totalData;
+    int count = 0;
+    int countMax = 0;
+    int frameSize = 0;
+    QFile file;
+    QString fileName;
+    QByteArray receiveData;
 };
 #endif // SUBSERVER_H

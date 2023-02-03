@@ -31,21 +31,21 @@ SubNetworkManager::~SubNetworkManager()
 
 void SubNetworkManager::connection(QString address, int port)
 {
-//    subSocket->connectToHost(address, port);
-//    if (subSocket->waitForConnected()) {
-//        connect(subSocket, SIGNAL(readyRead()), SLOT(receiveControl()));
-//        protocol->sendProtocol(subSocket, "NEW", ConnectType::SW, "SW");
-//    } else {
-//        // 연결 실패 예외처리 구현
-//    }
+    subSocket->connectToHost(address, port);
+    if (subSocket->waitForConnected()) {
+        connect(subSocket, SIGNAL(readyRead()), SLOT(receiveControl()));
+        protocol->sendProtocol(subSocket, "NEW", ConnectType::SW, "SW");
+    } else {
+        // 연결 실패 예외처리 구현
+    }
 
-//    fileSocket->connectToHost(address, port+1);
-//    if (fileSocket->waitForConnected()) {
-//        connect(fileSocket, SIGNAL(readyRead()), SLOT(receiveFile()));
-//        protocol->sendProtocol(fileSocket, "NEW", ConnectType::SW, "SW");
-//    } else {
-//        // 연결 실패  예외처리 구현
-//    }
+    fileSocket->connectToHost(address, port+1);
+    if (fileSocket->waitForConnected()) {
+        connect(fileSocket, SIGNAL(readyRead()), SLOT(receiveFile()));
+        protocol->sendProtocol(fileSocket, "NEW", ConnectType::SW, "SW");
+    } else {
+        // 연결 실패  예외처리 구현
+    }
 }
 
 void SubNetworkManager::receiveControl()
@@ -64,41 +64,55 @@ void SubNetworkManager::sendButtonControl(int buttonIdx, QString data)
     if (buttonIdx == 1 || buttonIdx == 2) {   // 1: RESET , 2: READY
         currentPID = data.split("|")[0];
         currentType = data.split("|")[1];
+
+        if (currentType == "PANO") {
+            count = 0;
+            countMax = 1750;
+            frameSize = 1152 * 64 * 2;
+        } else if (currentType == "CEPH") {
+            count = 0;
+            countMax = 1250;
+            frameSize = 48 * 2400 * 2;
+        }
     }
 
-    protocol->sendProtocol(subSocket, "CTL", buttonIdx, currentType);
+    protocol->sendProtocol(subSocket, "CTL", buttonIdx, data);
 }
 
 void SubNetworkManager::receiveFile()
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
-
     totalData.append(socket->readAll());
 
-    if (totalData.size() == 227865600) {
+    if (totalData.size() >= frameSize) {
         QFile file;
         QString fileName;
 
-        QDir dir(QString("receive/%1/%2").arg(currentPID, currentType));
+        QDir dir(QString("frame/%1/%2").arg(QDate::currentDate().toString("yyyyMMdd")).arg(currentType));
         if (!dir.exists())
             dir.mkpath(".");
 
-        int count = 0;
-        for (int i = 10; i < 999; i++) {
-            if (i >= 100)
-                fileName = dir.path() + "/" + QString("0%1.raw").arg(i);
-            else
-                fileName = dir.path() + "/" + QString("00%1.raw").arg(i);
+        if (count >= 1000)
+            fileName = dir.path() + QString("/%1.raw").arg(count);
+        else if (count < 1000 && count >= 100)
+            fileName = dir.path() + QString("/0%1.raw").arg(count);
+        else if (count < 100 && count >= 10)
+            fileName = dir.path() + QString("/00%1.raw").arg(count);
+        else
+            fileName = dir.path() + QString("/000%1.raw").arg(count);
 
-            file.setFileName(fileName);
-            file.open(QIODevice::WriteOnly);
-
-            file.write(totalData.mid(count*48*2400*2, 48*2400*2));
-            qDebug("%d개 저장 완료", count);
-
-            file.close();
-            count++;
+        file.setFileName(fileName);
+        file.open(QIODevice::WriteOnly);
+        file.write(totalData.first(frameSize));
+        file.close();
+        totalData.remove(0, frameSize);
+        count++;
+        qDebug("%d", count);
+        if (count == countMax) {
+             qDebug() << QString("%1 Frame Data Send End!").arg(currentType);
+            count = 0;
+            totalData.clear();
+            return;
         }
-        qDebug("DONE!!!! (line: %d)", __LINE__);
     }
 }

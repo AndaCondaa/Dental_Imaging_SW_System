@@ -5,16 +5,22 @@
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
 {
-    QPushButton *button = new QPushButton(this);
-    button->setGeometry(50, 50, 100, 100);
+    QPushButton *button = new QPushButton("send", this);
+    QPushButton *cephButton = new QPushButton("CEPH", this);
+    QPushButton *panoButton = new QPushButton("PANO", this);
+    button->setGeometry(60, 120, 100, 100);
+    panoButton->setGeometry(0, 0, 100, 100);
+    cephButton->setGeometry(120, 0, 100, 100);
     connect(button, SIGNAL(clicked()), this, SLOT(buttonClicked()));
+    connect(cephButton, SIGNAL(clicked()), this, SLOT(cephButtonClicked()));
+    connect(panoButton, SIGNAL(clicked()), this, SLOT(panoButtonClicked()));
+
 
     protocol = new Protocol;
 
     fileSocket = new QTcpSocket;
     fileSocket->connectToHost("127.0.0.1", 8003);
     if (fileSocket->waitForConnected()) {
-//        connect(fileSocket, SIGNAL(readyRead()), SLOT(receiveFile()));
         protocol->sendProtocol(fileSocket, "NEW", ConnectType::MODALITY, "MODALITY");
     } else {
         // 연결 실패  예외처리 구현
@@ -24,65 +30,42 @@ Widget::Widget(QWidget *parent)
 Widget::~Widget()
 {
 }
-
 void Widget::buttonClicked()
 {
     sendFile();
 }
 
+void Widget::cephButtonClicked()
+{
+    currentType = "CEPH";
+}
+
+void Widget::panoButtonClicked()
+{
+    currentType = "PANO";
+}
+
 void Widget::sendFile()
 {
-    QByteArray total;
-    QByteArray send;
-    QByteArray img1;
-    QByteArray img2;
-    QFile file;
+    if (currentType == "PANO")
+        countMax = 1750;
+    else if (currentType == "CEPH")
+        countMax = 1250;
 
+    // CEPH MODE
+    for (int i = 0; i < countMax; i++) {
+        if (i >= 1000)
+            fileName = QString("./%1/%2.raw").arg(currentType).arg(i);
+        else if (i < 1000 && i >= 100)
+            fileName = QString("./%1/0%2.raw").arg(currentType).arg(i);
+        else if (i < 100 && i >= 10)
+            fileName = QString("./%1/00%2.raw").arg(currentType).arg(i);
+        else
+            fileName = QString("./%1/000%2.raw").arg(currentType).arg(i);
 
-    file.setFileName("./CEPH/0200.raw");
-    file.open(QIODevice::ReadOnly);
-    img1.append(file.readAll());
-    file.close();
-    file.open(QIODevice::ReadOnly);
-    img2.append(file.readAll());
-    file.close();
-//115200
-
-    send.append("ceph1.raw<cr>115200<cr>");
-    send.append(img1);
-    send.append("<T>");
-    send.append("ceph2.raw<cr>115200<cr>");
-    send.append(img2);
-    send.append("<END>");
-
-    int count = 2;
-
-    QDataStream in(&total, QIODevice::WriteOnly);
-    in << count << send;
-
-    fileSocket->write(total);
-
-//    QFile file;
-//    QString fileName;
-//    QString fileInfo;           // <INFO>파일개수<CR>프레임파일1개당크기
-
-//    for (int i = 10; i < 999; i++) {
-//        if (i >= 100)
-//            fileName = QString("./CEPH/0%1.raw").arg(i);
-//        else
-//            fileName = QString("./CEPH/00%1.raw").arg(i);
-
-//        file.setFileName(fileName);
-//        file.open(QIODevice::ReadOnly);
-//        totalData.append(file.readAll());
-//        file.close();
-//    }
-//    qDebug("TOTAL SIZE : %d", totalData.size());
-//    fileInfo = "<CR>" + QString::number(totalData.size()) + "<CR>" + QString::number(48*2400);
-//    //    totalData.append(fileInfo.toStdString());
-//    fileSocket->write(totalData);                                       // 영상 파일 전송
-//    fileSocket->flush();
-//    totalData.clear();
-
-//    fileSocket->write(fileInfo.toStdString().data());                   // 영상 파일 정보 전송
+        file.setFileName(fileName);
+        file.open(QIODevice::ReadOnly);
+        fileSocket->write(file.readAll());
+        file.close();
+    }
 }
