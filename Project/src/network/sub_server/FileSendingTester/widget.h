@@ -11,6 +11,8 @@ class Widget : public QWidget
     Q_OBJECT
 
 public slots:
+    void cephButtonClicked();
+    void panoButtonClicked();
     void buttonClicked();
     void sendFile();
 
@@ -22,7 +24,14 @@ private:
     Protocol *protocol;
     QTcpSocket *fileSocket;
 
-    QByteArray totalData;
+    QString currentType;
+
+    QFile file;
+    QString fileName;
+
+    int count = 0;
+    int countMax = 0;
+    int frameSize = 0;
 
 signals:
 };
