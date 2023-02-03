@@ -31,6 +31,12 @@ private slots:
     void deleteSlot(QString);
 
 
+    void on_panoButton_toggled(bool checked);
+
+    void on_panoButton_clicked(bool checked);
+
+    void on_cephButton_clicked(bool checked);
+
 private:
     Ui::ControlPanel *ui;
 
