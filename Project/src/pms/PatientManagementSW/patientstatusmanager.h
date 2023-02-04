@@ -23,6 +23,9 @@ private:
     //QTreeWidgetItem* row;
     QTreeWidgetItem* selectedTreatRow, *selectedPayRow;
     QString tempTreatPID;
+
+    QMap<int,QString> oldList;
+
 private slots:
     //void waitInfoSended(QString, QString);
     void waitInfoSended(QString);
@@ -40,9 +43,15 @@ private slots:
 
     void PIDsendedtoWaitList(QString);
 
+    void delPIDSended(QString);
+
+    void oldListSended(QString);
+
 signals:
     void sendRequest(QString);
     void inWaitListSignal(int);
+    void sendDelFlag(int);
+    void sendPayInfo(QString);
 };
 
 #endif // PATIENTSTATUSMANAGER_H

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>PatientManagement</string>
+   <string>Patient Management</string>
   </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(145, 162, 179);</string>

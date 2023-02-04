@@ -45,6 +45,8 @@ private slots:
     void sendFile();
 
 
+    void on_quitPushButton_clicked();
+
 private:
     Ui::MainServer *ui;
     QTcpServer *server;
@@ -109,6 +111,12 @@ private:
 
 
     QByteArray sendAllFile;
+
+
+
+    void sendWaitingList(QTcpSocket*);
+
+ int tmpCount = 0;
 
 signals:
     void sendNewPID(QString);

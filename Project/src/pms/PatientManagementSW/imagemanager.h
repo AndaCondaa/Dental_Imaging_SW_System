@@ -18,7 +18,7 @@ public:
 public slots:
     void reloadImages(QString);
     void PSEDataSended(QString);
-
+    void delPIDSendedToImg(QString);
 private:
     Ui::ImageManager *ui;
     QString pid;
