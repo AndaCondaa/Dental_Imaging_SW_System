@@ -56,7 +56,7 @@ private:
     QHash<QTcpSocket*, qint32*> sizes; //We need to store the size to verify if a block has received completely
     QString makeId();
     QString makeReportNo();
-    QString newReportNo();
+    QString makeImageNo();
     QSqlQuery *query;
     QSqlQuery *query2;
     QSqlQuery *query3;
@@ -117,6 +117,7 @@ private:
     void sendWaitingList(QTcpSocket*);
 
  int tmpCount = 0;
+ QString currentFileName;
 
 signals:
     void sendNewPID(QString);

@@ -33,7 +33,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>4</number>
+    <number>2</number>
    </property>
    <widget class="QWidget" name="patient">
     <attribute name="title">
@@ -91,21 +91,6 @@
        <y>10</y>
        <width>1001</width>
        <height>531</height>
-      </rect>
-     </property>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="faceImage">
-    <attribute name="title">
-     <string>faceImage</string>
-    </attribute>
-    <widget class="QTableView" name="faceImageTableView">
-     <property name="geometry">
-      <rect>
-       <x>0</x>
-       <y>10</y>
-       <width>851</width>
-       <height>541</height>
       </rect>
      </property>
     </widget>

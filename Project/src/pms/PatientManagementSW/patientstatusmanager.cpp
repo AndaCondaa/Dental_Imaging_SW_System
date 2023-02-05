@@ -295,7 +295,7 @@ void PatientStatusManager::oldListSended(QString sendedData)
     qDebug() << sendedData.split("<CR>")[2];
     QString data = sendedData.split("<CR>")[2];
     qDebug() << sendedData.count("<r>")+1;
-    int tempCount = sendedData.count("<r>")+1;
+    int tempCount = sendedData.split("<CR>")[1].toInt();
 
     for(int i=0; i<tempCount; i++)
     {

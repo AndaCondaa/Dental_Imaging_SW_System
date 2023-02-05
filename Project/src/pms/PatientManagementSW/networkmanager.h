@@ -25,6 +25,10 @@ private slots:
 
     void makeFiles();
 
+
+
+    void downloadOrNotSlot();
+
 private:
     QTcpSocket *socket;
     bool fd_flag = false;
@@ -60,6 +64,11 @@ private:
     QByteArray allFileSended;
     QString id;
 
+
+
+    int downloadOrNotFlag = 0;
+    int downButtonClicked =0;
+
 signals:
     void sendNewPID(QString);
     void sendSearchResult(QString, QString);
@@ -77,6 +86,7 @@ signals:
 
    void sendWTRevent(QString);
 
+   void fileSendedSig(int);
 
 };
 
