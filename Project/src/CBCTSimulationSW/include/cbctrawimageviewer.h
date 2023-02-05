@@ -34,6 +34,8 @@ public:
     void stopCephTimer();
 
 private:
+
+
     QDirIterator *panoImageIterator;
     QDirIterator *cephImageIterator;
     QTimer *panoImageTimer;

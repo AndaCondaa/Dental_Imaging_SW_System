@@ -17,7 +17,6 @@
 #include "cbctlogthread.h"
 #include "controlpanel.h"
 #include "protocol.h"
-#include "fileprotocol.h"
 #include "packetdata.h"
 
 class QMessageBox;
@@ -27,7 +26,6 @@ class CBCTFileTransfer;
 class CBCTLogThread;
 class ControlPanel;
 class Protocol;
-class FileProtocol;
 class PacketData;
 
 QT_BEGIN_NAMESPACE
@@ -48,6 +46,14 @@ private slots:
 	void on_CaptureStartPushButton_clicked();
 	void on_CaptureStopPushButton_clicked();
 
+	void emitResetSignal();
+	void emitReadySignal();
+	void emitStartSignal();
+	void emitStopSignal();
+
+    void receive_Pano_Modality();
+    void receive_Ceph_Modality();
+
 private:
 	void resizeEvent(QResizeEvent* event) override;
 
@@ -55,6 +61,7 @@ private:
 	CBCTLogThread* m_logThread;
 	CBCTModelController* m_modelController;
 	CBCTRawImageViewer* m_rawImageViewer;
+    MainWindow* m_mainWindow;
     ControlPanel* m_controlPanel;
 	QMessageBox* m_panoErrorMessage;
 	QMessageBox* m_cephErrorMessage;
@@ -65,7 +72,6 @@ private slots:
 	void slot_panoImage(QImage* pImg);
 	void slot_cephImage(QImage* cImg);
 
-	void on_openGLWidget_All_resized();
 
 signals:
 	void READYSignal(ControlType);
@@ -73,5 +79,8 @@ signals:
 	void STARTSignal(ControlType);
 	void STOPSignal(ControlType);
 
+private:
+	QGraphicsScene* panoScene;
+	QGraphicsScene* cephScene;
 };
 #endif // MAINWINDOW_H
