@@ -34,6 +34,10 @@ ControlPanel::ControlPanel(QWidget *parent) :
                                   "border-color: blue;"
                                   "}");
 
+    modeButtonGroup = new QButtonGroup(this);
+    modeButtonGroup->addButton(ui->panoButton);
+    modeButtonGroup->addButton(ui->cephButton);
+    modeButtonGroup->setExclusive(true);
 
     controlButtonGroup = new QButtonGroup(this);
     controlButtonGroup->addButton(ui->resetButton, RESET);
@@ -110,21 +114,16 @@ void ControlPanel::receiveButtonControl(int buttonIdx)
 
 void ControlPanel::resetControl()
 {
-//    checkTypeButton("NULL|BOTH");
+    ui->panoButton->setCheckable(true);
+    ui->cephButton->setCheckable(true);
 
     if (requestType == "PANO") {
-        ui->panoButton->setCheckable(true);
-        ui->cephButton->setCheckable(false);
         ui->panoButton->setChecked(true);
         ui->cephButton->setChecked(false);
     } else if (requestType == "CEPH") {
-        ui->panoButton->setCheckable(false);
-        ui->cephButton->setCheckable(true);
         ui->panoButton->setChecked(false);
         ui->cephButton->setChecked(true);
     } else if (requestType == "BOTH") {
-        ui->panoButton->setCheckable(true);
-        ui->cephButton->setCheckable(true);
         ui->panoButton->setChecked(false);
         ui->cephButton->setChecked(false);
     }
@@ -170,13 +169,6 @@ bool ControlPanel::readyControl()
 
 bool ControlPanel::startControl()
 {
-//    QMessageBox startBox(QMessageBox::NoIcon, "START",
-//                         QString("%1의 %2 촬영을 시작하시겠습니까?").arg(currentPID, currentType),
-//                         QMessageBox::Yes|QMessageBox::No, this, Qt::Dialog);
-//    startBox.exec();
-
-//    if(startBox.clickedButton()->text() == "&No") return false;
-
     ui->resetButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(true);
@@ -234,36 +226,3 @@ void ControlPanel::finishSlot(QString pid)
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
 }
-
-void ControlPanel::deleteSlot(QString pid)
-{
-    if (currentPID == pid)
-        currentPID = "NULL";
-}
-
-void ControlPanel::on_panoButton_toggled(bool checked)
-{
-//    if (checked)
-//        qDebug("check");
-//    else
-//        qDebug("uncheck");
-}
-
-
-void ControlPanel::on_panoButton_clicked(bool checked)
-{
-    if (checked)
-        qDebug("check");
-    else
-        qDebug("uncheck");
-}
-
-
-void ControlPanel::on_cephButton_clicked(bool checked)
-{
-    if (checked)
-        qDebug("check");
-    else
-        qDebug("uncheck");
-}
-

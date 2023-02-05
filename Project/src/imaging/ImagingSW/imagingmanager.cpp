@@ -11,7 +11,7 @@
 
 
 
-/*
+
 using namespace cv;
 using namespace std;
 
@@ -43,7 +43,7 @@ typedef struct {
     unsigned char rgbRed;
     unsigned char rgbReserved;
 } RGBQUAD;
-*/
+
 
 ImagingManager::ImagingManager(QWidget *parent) :
     QWidget(parent),
@@ -165,7 +165,6 @@ void ImagingManager::loadImage()
 
 void ImagingManager::stopButtonSlot()
 {
-    qDebug("%s %d", __FUNCTION__, __LINE__);
     thread->threadStop();
 //    thread->exit();
 //    delete thread;
@@ -186,6 +185,8 @@ void ImagingManager::isProgressMaximum(int value)
 void ImagingManager::saveButtonSlot()
 {
     emit saveSignal(currentPID + "|" + currentType);
+    ui->reconButton->setEnabled(false);
+    ui->viewLabel->clear();
 }
 
 #include <QFile>
@@ -211,11 +212,15 @@ void ImagingManager::reconImage()
     file.open(QIODevice::WriteOnly);
     file.write(buf);
     file.close();
+
+    ui->saveButton->setEnabled(true);
 }
 
 
 void ImagingManager::on_tempReconButton_clicked()
 {
+    // CEPH
+    /*
     int count = 0;
 
     FILE *file;
@@ -282,147 +287,143 @@ void ImagingManager::on_tempReconButton_clicked()
     cv::medianBlur(src, dst, 5);
     memcpy(out, dst.data, 3000*2400*2);
 
-    file = fopen("./test/RECON.raw", "wb");
+    file = fopen("./test/first.raw", "wb");
     fwrite(out, sizeof(unsigned short), 3000*2400, file);
     fclose(file);
 
     delete[] buf;
     delete[] out;
+    */
+
+    //PANO
+    int count = 0;
+
+    FILE *file;
+
+    unsigned short *buf = new unsigned short[1152*64];
+    unsigned short *out = new unsigned short[2320*1152];
+
+    for (int k = 350; k < 1510; k++) {
+        memset(buf, 0, 1152*64);
+        QString fileName;
+        if (k >= 1000)
+            fileName = QString("./PANO/%1.raw").arg(k);
+        else if (k < 1000 && k >= 100)
+            fileName = QString("./PANO/0%1.raw").arg(k);
+        else if (k < 100 && k >= 10)
+            fileName = QString("./PANO/00%1.raw").arg(k);
+        else
+            fileName = QString("./PANO/000%1.raw").arg(k);
+
+
+        file = fopen(fileName.toStdString().c_str(), "rb");
+        qDebug() << fileName;
+        if (file == nullptr) {
+            qDebug() << "open is failed";
+            return;
+        }
+        fread(buf, sizeof(unsigned short), 1152 * 64, file);
+        fclose(file);
+
+        // 프레임데이터 히스토그램 스트레칭
+        unsigned short min, max,range;
+        min = 0;
+        max = 10000;
+        range = max - min;
+
+        for (int i = 0; i < 1152*64; i++) {
+            if (buf[i] < max)
+                buf[i] = cvRound(((double)(buf[i] - min) / range) * 65535.);
+        }
+
+
+//        cv::Mat src(64, 1152, CV_16UC1, buf);
+//        cv::Mat dst;
+//        cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+//        clahe->setClipLimit(2000);
+//        clahe->setTilesGridSize(cv::Size2i(8, 8));
+//        clahe->apply(src, dst);
+
+//        memcpy(buf, dst.data, 64*1152*2);
+
+
+        // 이미지 스티칭
+        for (int y = 0; y < 1152; y++) {
+            out[(count*2)+y*2320] = buf[(1152*33)+y];
+            out[(count*2)+y*2320+1] = buf[(1152*32)+y];
+        }
+
+        count++;
+    }
+
+
+//    cv::Mat src(1152, 2320, CV_16UC1, out);
+//    cv::Mat dst;
+//    cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+//    clahe->setClipLimit(2000);
+//    clahe->setTilesGridSize(cv::Size2i(10, 20));
+//    clahe->apply(src, dst);
+
+//    memcpy(out, dst.data, 2320*1152*2);
+
+    cv::Mat src(1152, 2320, CV_16UC1, out);
+    cv::Mat dst;
+    cv::medianBlur(src, dst, 5);
+    memcpy(out, dst.data, 2320*1152*2);
+
+    file = fopen("./test/first.raw", "wb");
+    fwrite(out, sizeof(unsigned short), 2320*1152, file);
+    fclose(file);
+
+    delete[] buf;
+    delete[] out;
+
+    qDebug("recon end");
 }
 
 void ImagingManager::on_tempFilterButton_2_clicked()
 {
+    // CEPH
+    /*
     FILE *file;
-    unsigned short *mix = new unsigned short[3000*2400];
-    unsigned short *section1 = new unsigned short[3000*2400];
-    unsigned short *section2 = new unsigned short[3000*2400];
-    unsigned short *section3 = new unsigned short[3000*2400];
+    unsigned short *img = new unsigned short[3000*2400];
 
-    file = fopen("./test/RECON.raw", "rb");
-    fread(section1, sizeof(unsigned short), 3000*2400, file);
-    fseek(file, 0, SEEK_SET);
-    fread(section2, sizeof(unsigned short), 3000*2400, file);
-    fseek(file, 0, SEEK_SET);
-    fread(section3, sizeof(unsigned short), 3000*2400, file);
+    file = fopen("./test/first.raw", "rb");
+    fread(img, sizeof(unsigned short), 3000*2400, file);
     fclose(file);
-
-    for (int i = 0; i < 3000*2400; i++) {
-        if (section1[i] < 21000)
-            section1[i] = cvRound(((double)(section1[i] - 100) / 20900) * 55000.);
-        else if (section1[i] > 21000 && section2[i] < 55000)
-            section1[i] = cvRound(((double)(section1[i] - 21000) / 34000) * 10000.) + 45000;
-    }
-
-
-
-
 
 
 //****************************************************************************************************
 // 감마 보정
-//    for (int i = 0; i < 3000*2400; i++) {
-//        img[i] = 65535 * ((double)pow((double)((double)(img[i]) / (double)65535.0), (double)(6.0 / 10.0)));
-//    }
+    for (int i = 0; i < 3000*2400; i++) {
+        img[i] = 65535 * ((double)pow((double)((double)(img[i]) / (double)65535.0), (double)(5.0 / 10.0)));
+    }
 
 
 //****************************************************************************************************
-// 섹션 분할
-//    for (int i = 0; i < 3000*2400; i++) {
-//        int tmp = section1[i];
-//        if (tmp < 100) {
-//            section2[i] = 0;
-//            section3[i] = 0;
-//        } else if (tmp <= 30000 && tmp > 100) {
-//            section1[i] = 0;
-//            section3[i] = 0;
-//        } else if (tmp > 30000) {
-//            section1[i] = 0;
-//            section2[i] = 0;
-//        }
-//    }
+// CLAHE
+    cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+    clahe->setClipLimit(1);
+    clahe->setTilesGridSize(cv::Size2i(4,4));
 
-
-//    unsigned int *his = new unsigned int[65535];
-//    unsigned int *sum = new unsigned int[65535];
-//    unsigned int *col = new unsigned int[65535];
-//    memset(his, 0, 65535);
-//    memset(sum, 0, 65535);
-//    memset(col, 0, 65535);
-
-
-//    for (int i = 0; i < 3000*2400; i++) {
-//        his[section2[i]]++;
-//    }
-
-//    int tmp = 0;
-//    for (int i = 0; i < 65535; i++) {
-//        tmp += his[i];
-//        sum[i] = tmp;
-//    }
-
-//    for (int i = 0; i < 65535; i++) {
-//        col[i] = cvRound((double)(sum[i] * 65535 / 7200000.));
-//    }
-
-//    for (int i = 0 ; i < 3000*2400; i++) {
-//        section2[i] = col[section2[i]];
-//    }
-
-
-
-
-
-//    cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
-//    clahe->setClipLimit(1);
-//    clahe->setTilesGridSize(cv::Size2i(4,4));
-
-//    cv::Mat src1(2400, 3000, CV_16UC1, section1);
-//    cv::Mat dst1;
-//    clahe->apply(src1, dst1);
-//    memcpy(section1, dst1.data, 3000*2400*2);
-
-//    cv::Mat src2(2400, 3000, CV_16UC1, section2);
-//    cv::Mat dst2;
-//    clahe->apply(src2, dst2);
-//    memcpy(section2, dst2.data, 3000*2400*2);
-
-//    cv::Mat src3(2400, 3000, CV_16UC1, section3);
-//    cv::Mat dst3;
-//    clahe->apply(src3, dst3);
-//    memcpy(section3, dst3.data, 3000*2400*2);
+    cv::Mat src1(2400, 3000, CV_16UC1, img);
+    cv::Mat dst1;
+    clahe->apply(src1, dst1);
+    memcpy(img, dst1.data, 3000*2400*2);
 
 //****************************************************************************************************
 // 미디언 필터
-//    cv::Mat src4(2400, 3000, CV_16UC1, section1);
+//    cv::Mat src4(2400, 3000, CV_16UC1, img);
 //    cv::Mat dst4;
 //    cv::medianBlur(src4, dst4, 3);
-//    memcpy(section1, dst4.data, 3000*2400*2);
-
-//    cv::Mat src5(2400, 3000, CV_16UC1, section2);
-//    cv::Mat dst5;
-//    cv::medianBlur(src5, dst5, 3);
-//    memcpy(section2, dst5.data, 3000*2400*2);
-
-//    cv::Mat src6(2400, 3000, CV_16UC1, section3);
-//    cv::Mat dst6;
-//    cv::medianBlur(src6, dst6, 3);
-//    memcpy(section3, dst6.data, 3000*2400*2);
-
-//****************************************************************************************************
-// 히스토그램 노멀라이징
-
+//    memcpy(img, dst4.data, 3000*2400*2);
 
 
 //****************************************************************************************************
-// 히스토그램 평활화
+// 언샤프드 필터
 
 
 
-//****************************************************************************************************
-// 블렌딩
-    for (int i = 0; i < 3000*2400; i++) {
-        mix[i] = section1[i] + section2[i] + section3[i];
-    }
 
 //****************************************************************************************************
 // 값 역전
@@ -430,27 +431,101 @@ void ImagingManager::on_tempFilterButton_2_clicked()
 
 //****************************************************************************************************
 
-
-
-    file = fopen("./test/section1.raw", "wb");
-    fwrite(section1, sizeof(unsigned short), 3000*2400, file);
-    fclose(file);
-
-    file = fopen("./test/section2.raw", "wb");
-    fwrite(section2, sizeof(unsigned short), 3000*2400, file);
-    fclose(file);
-
-    file = fopen("./test/section3.raw", "wb");
-    fwrite(section3, sizeof(unsigned short), 3000*2400, file);
-    fclose(file);
-
-    file = fopen("./test/mix.raw", "wb");
-    fwrite(mix, sizeof(unsigned short), 3000*2400, file);
+    file = fopen("./test/RECON.raw", "wb");
+    fwrite(img, sizeof(unsigned short), 3000*2400, file);
     fclose(file);
 
     qDebug() << "filter1 end";
-    delete[] section1;
-    delete[] section2;
+    delete[] img;
+    */
 
+
+    // PANO
+    /*
+    FILE *file;
+    unsigned short *img = new unsigned short[2320*1152];
+
+    file = fopen("./test/first.raw", "rb");
+    fread(img, sizeof(unsigned short), 2320*1152, file);
+    fclose(file);
+
+
+//****************************************************************************************************
+// 감마 보정
+    for (int i = 0; i < 2320*1152; i++) {
+        img[i] = 65535 * ((double)pow((double)((double)(img[i]) / (double)65535.0), (double)(5.0 / 10.0)));
+    }
+
+
+//****************************************************************************************************
+// CLAHE
+    cv::Ptr<cv::CLAHE> clahe = cv::createCLAHE();
+    clahe->setClipLimit(1);
+    clahe->setTilesGridSize(cv::Size2i(4,4));
+
+    cv::Mat src1(1152, 2320, CV_16UC1, img);
+    cv::Mat dst1;
+    clahe->apply(src1, dst1);
+    memcpy(img, dst1.data, 2320*1152*2);
+
+//****************************************************************************************************
+// 미디언 필터
+//    cv::Mat src4(1152, 2320, CV_16UC1, img);
+//    cv::Mat dst4;
+//    cv::medianBlur(src4, dst4, 3);
+//    memcpy(img, dst4.data, 2320*1152*2);
+
+
+//****************************************************************************************************
+// 언샤프드 필터
+
+
+
+
+//****************************************************************************************************
+// 값 역전
+
+
+//****************************************************************************************************
+
+    file = fopen("./test/RECON.raw", "wb");
+    fwrite(img, sizeof(unsigned short), 2320*1152, file);
+    fclose(file);
+
+    qDebug() << "filter1 end";
+    delete[] img;
+    */
+
+
+#define PIXELS 1152*2320
+#define Bpp 2
+#define X_RES 2320
+#define Y_RES 1152
+    FILE *file;
+    unsigned char *inImg;
+
+    file = fopen("./test/first.raw", "rb");
+
+    if (file == nullptr) {
+        qDebug("ERROR : Failed file openning! %d", __LINE__);
+        return;
+    }
+
+    inImg = (unsigned char*)malloc(sizeof(unsigned char) * PIXELS * Bpp);
+    memset(inImg, 0, PIXELS*2);
+    fread(inImg, sizeof(unsigned char) * PIXELS * Bpp, 1, file);
+    fclose(file);
+
+
+    cv::Mat src(1152, 2320, CV_16UC1, inImg);
+    cv::Mat dst;
+    src.convertTo(dst, CV_8UC1, 1 / 256.0);
+
+
+    cv::imwrite("./ToBMP.bmp", dst);
+
+    qDebug("END");
+
+    delete inImg;
 }
 

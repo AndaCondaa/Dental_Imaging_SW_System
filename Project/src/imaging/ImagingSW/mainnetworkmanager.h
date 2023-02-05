@@ -26,6 +26,8 @@ private slots:
     void goOnSend(qint64 numBytes);
     void sendFile(QString data);            // data = pid | shoot_type
 
+    void disconnectedFromServer();
+
 
 private:
     QTcpSocket *mainSocket;
@@ -40,6 +42,7 @@ private:
     QByteArray outBlock;            // Block for sending
 
 signals:
+    void sendWaitList(int, QString);
     void sendWaitPatient(QStringList);
     void sendPatientInfo(QStringList);
 };

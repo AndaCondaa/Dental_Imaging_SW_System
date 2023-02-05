@@ -46,7 +46,7 @@ void ImageThread::run()
         pixels = rows * cols;
         buf = (unsigned short*)malloc(sizeof(unsigned short) * pixels);
 
-        for(int k = 0; k < 1749; k++) {
+        for(int k = 0; k < 1750; k++) {
             if (isStop) return;
 
             if (k >= 1000)
@@ -91,7 +91,6 @@ void ImageThread::run()
             emit processFinished(pixmap);
             cnt++;
         }
-        delete buf;
     } if (modeType == "CEPH") {
         rows = 2400;
         cols = 48;
@@ -122,37 +121,6 @@ void ImageThread::run()
                     buf[i] *= 100;
             }
 
-            for (int i = 0; i < pixels; i++) {
-                tmp = buf[i];
-                if (min > tmp)
-                    min = tmp;
-                else if (max < tmp)
-                    max = tmp;
-            }
-
-            range = max - min;
-            for (int i = 0; i < pixels; i++) {
-                buf[i] = (unsigned short)(((double)(buf[i] - min) / (double)(range)) * valueMax);
-            }
-
-//            int hist[sizeof(unsigned short)];
-//            int sum[sizeof(unsigned short)];
-//            memset(hist, 0, sizeof(unsigned short));
-//            memset(sum, 0, sizeof(unsigned short));
-//            for (int i = 0; i < pixels; i++) {
-//                hist[buf[i]]++;
-//            }
-//            for (int i = 0; i < 65535; i++) {
-//                for (int j = 0; j <= i; j++) {
-//                    sum[i] += hist[j];
-//                }
-//                sum[i] = (unsigned short)(((double)sum[i] / pixels) * 65535);
-//                qDebug("%d : %d", i, sum[i]);
-//            }
-//            for (int i = 0; i < pixels; i++) {
-//                buf[i] = sum[buf[i]];
-//            }
-
             Mat mat(rows, cols, CV_16UC1, buf);
             Mat dst;
             flip(mat, dst, 0);
@@ -164,10 +132,11 @@ void ImageThread::run()
             emit processFinished(pixmap);
             cnt++;
         }
-        delete buf;
+
     }
     qDebug("width: %d", width);
     qDebug("height : %d", height);
+    delete buf;
 }
 
 

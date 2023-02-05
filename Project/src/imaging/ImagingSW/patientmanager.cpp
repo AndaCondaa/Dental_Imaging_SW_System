@@ -57,6 +57,13 @@ PatientManager::~PatientManager()
     delete ui;
 }
 
+void PatientManager::receiveWaitList(int waitCount, QString data)   // data : pid|name|status<r>pid|name|status<r>...
+{
+    for (int i = 0; i < waitCount; i++) {
+
+    }
+}
+
 void PatientManager::receiveWaitPatient(QStringList dataList)
 {
     QString pid = dataList[0];

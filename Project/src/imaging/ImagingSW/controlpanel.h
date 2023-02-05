@@ -28,14 +28,6 @@ private slots:
     void saveSlot(QString);
     void shootingEndSlot(QString);
     void finishSlot(QString);
-    void deleteSlot(QString);
-
-
-    void on_panoButton_toggled(bool checked);
-
-    void on_panoButton_clicked(bool checked);
-
-    void on_cephButton_clicked(bool checked);
 
 private:
     Ui::ControlPanel *ui;
@@ -43,6 +35,8 @@ private:
     QString requestType = "NULL";
     QString currentPID = "NULL";
     QString currentType = "NULL";
+
+    QButtonGroup *modeButtonGroup;
     QButtonGroup *controlButtonGroup;
 
 signals:

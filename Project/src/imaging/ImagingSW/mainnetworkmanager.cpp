@@ -25,7 +25,8 @@ void MainNetworkManager::connection(QString address, int port)
 {
 //    mainSocket->connectToHost(address, port);
 //    if (mainSocket->waitForConnected()) {
-//        connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
+//        QObject::connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
+//        QObject::connect(mainSocket, SIGNAL(disconnected()), this, SLOT(disconnectedFromServer()));
 //        sendPacket(mainSocket, "CNT", "IMG", "NULL");
 //    } else {
 //        // 연결 실패 예외처리 구현
@@ -37,6 +38,10 @@ void MainNetworkManager::connection(QString address, int port)
 //    } else {
 //        // 연결 실패  예외처리 구현
 //    }
+}
+
+void MainNetworkManager::disconnectedFromServer()
+{
 }
 
 void MainNetworkManager::sendPacket(QTcpSocket* socket, QString event, QString pid, QString data)
@@ -65,10 +70,12 @@ void MainNetworkManager::receivePacket()
     QString data = packetData[2];
 
     QStringList dataList;
-    if (event == "SRQ") {   // SRQ : 촬영의뢰 요청이 들어온 경우
+    if (event == "WTR") {       // WRT : 대기목록 리시브
+        emit sendWaitList(pid.toInt(), data);
+    } else if (event == "SRQ") {   // SRQ : 촬영의뢰 요청이 들어온 경우
         dataList << pid << data.split("|")[0] << data.split("|")[1];        // pid -> name -> type
         emit sendWaitPatient(dataList);
-    } else if (event == "IPR") {
+    } else if (event == "IPR") {    // IPR : 환자 정보 리시브
         dataList << pid << data.split("|")[0] << data.split("|")[1] << data.split("|")[2];        // pid -> name -> sex -> birth
         emit sendPatientInfo(dataList);
     }
@@ -86,10 +93,10 @@ void MainNetworkManager::endImagingProcess(QString pid)
 
 void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
 {
-    connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
+    QObject::connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
     QString pid = data.split("|")[0];
     QString type = data.split("|")[1];
-    qDebug() << pid;
+
     byteToWrite = 0;
     totalSize = 0;
     outBlock.clear();
@@ -124,22 +131,18 @@ void MainNetworkManager::goOnSend(qint64 numBytes)
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
 
-    int end = -1;
-
     if (byteToWrite - numBytes >= 0) {
         byteToWrite -= numBytes; // Remaining data size
         outBlock = file->read(numBytes);
     } else {
         outBlock = file ->read(byteToWrite);
-        end = byteToWrite;
         byteToWrite = 0;
     }
 
     socket->write(outBlock);
 
-
     if (byteToWrite == 0) { // Send completed
         qDebug("File sending completed!");
-        disconnect(fileSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(goOnSend(qint64)));
+        QObject::disconnect(fileSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(goOnSend(qint64)));
     }
 }
