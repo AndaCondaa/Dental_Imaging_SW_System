@@ -75,6 +75,9 @@ signals:
 //    void sendByteArray(QByteArray*);
    void sendByteArray(const QPixmap&);
 
+   void sendWTRevent(QString);
+
+
 };
 
 #endif // NETWORKMANAGER_H

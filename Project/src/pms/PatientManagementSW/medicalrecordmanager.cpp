@@ -23,6 +23,10 @@ void MedicalRecordManager::recordDataSended(QString sendedID, QString sendedData
 {
     ui->recordTreeWidget->clear();
 
+    if(sendedData == "<NEL>")
+        return;
+
+
     QString patientName, patientSex, patientBirth, patientTel, patientAddress, patientMemo;
     patientName = sendedData.split("|")[0];
     patientSex = sendedData.split("|")[1];

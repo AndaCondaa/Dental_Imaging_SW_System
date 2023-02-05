@@ -41,6 +41,8 @@ private slots:
 
     void inWaitListSlot(int);
 
+    void delFlagSended(int);
+
 //    void byteArraySended(QByteArray*);
     //void byteArraySended(QPixmap&);
 
@@ -53,6 +55,7 @@ signals:
     //void sendWaitToServer(QString);
     void sendModifyData(QString);
     void sendPIDtoWaitList(QString);
+    void sendDelPID(QString);
 };
 
 #endif // PATIENTINFOMANAGER_H

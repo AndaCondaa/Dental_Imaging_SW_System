@@ -26,8 +26,12 @@
            <bold>true</bold>
           </font>
          </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(42, 63, 106);
+color: rgb(255, 255, 255);</string>
+         </property>
          <property name="text">
-          <string>진료대기 정보</string>
+          <string> 진료대기 정보</string>
          </property>
         </widget>
        </item>
@@ -54,15 +58,30 @@
           <property name="text">
            <string>환자 ID</string>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
          </column>
          <column>
           <property name="text">
            <string>환자 이름</string>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
          </column>
          <column>
           <property name="text">
            <string>진료 현황</string>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
           </property>
          </column>
         </widget>
@@ -160,8 +179,12 @@
            <bold>true</bold>
           </font>
          </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(42, 63, 106);
+color: rgb(255, 255, 255);</string>
+         </property>
          <property name="text">
-          <string>수납 대기 정보</string>
+          <string> 수납대기 정보</string>
          </property>
         </widget>
        </item>
@@ -191,10 +214,20 @@
           <property name="text">
            <string>환자 ID</string>
           </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
+          </property>
          </column>
          <column>
           <property name="text">
            <string>환자 이름</string>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>11</pointsize>
+           </font>
           </property>
          </column>
         </widget>

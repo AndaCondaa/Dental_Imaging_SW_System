@@ -40,6 +40,10 @@ private:
     NetworkManager *networkManager;
 
 
+
+
+
+
 signals:
     //void enrollSignal(int, char name[10]);
     void requestPID(QString);

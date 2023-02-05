@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1430</width>
+    <width>1415</width>
     <height>600</height>
    </rect>
   </property>
@@ -28,7 +28,7 @@
     <rect>
      <x>410</x>
      <y>10</y>
-     <width>1011</width>
+     <width>861</width>
      <height>581</height>
     </rect>
    </property>
@@ -104,12 +104,31 @@
       <rect>
        <x>0</x>
        <y>10</y>
-       <width>1001</width>
-       <height>531</height>
+       <width>851</width>
+       <height>541</height>
       </rect>
      </property>
     </widget>
    </widget>
+  </widget>
+  <widget class="QPushButton" name="quitPushButton">
+   <property name="geometry">
+    <rect>
+     <x>1280</x>
+     <y>470</y>
+     <width>121</width>
+     <height>121</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>17</pointsize>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="text">
+    <string>Quit</string>
+   </property>
   </widget>
  </widget>
  <resources/>

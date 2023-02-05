@@ -9,6 +9,7 @@ PatientStatusManager::PatientStatusManager(QWidget *parent) :
 {
     ui->setupUi(this);
 
+
 //    QTreeWidgetItem* paymentRow = new QTreeWidgetItem;
 //    ui->waitPaymentTreeWidget->addTopLevelItem(paymentRow);
 //    paymentRow->setText(0, "P00001");
@@ -67,7 +68,7 @@ void PatientStatusManager::waitInfoSended(QString waitInfoSended){
     ui->waitTreatmentTreeWidget->addTopLevelItem(row);
     row->setText(0, treatPID);
     row->setText(1, treatName);
-    row->setText(2, "대기중");
+    row->setText(2, "진료대기");
 
     //ui->waitTreatmentTreeWidget->findItems()
     qDebug("%d", __LINE__);
@@ -103,15 +104,33 @@ void PatientStatusManager::on_waitTreatmentTreeWidget_itemClicked(QTreeWidgetIte
 
 void PatientStatusManager::on_paymentPushButton_clicked()
 {
-    if(selectedPayRow != nullptr)
-    {                                       //아이템이 있을 때
+    int currentRow = ui->waitPaymentTreeWidget->currentIndex().row();
+
+
+    if(currentRow == -1)    //환자 선택이 안되어있을 때
+    {
+        QMessageBox::critical(this, tr("경고"), \
+                              tr("수납대기 리스트에서 수납처리 할 환자를 선택해주세요."));
+        return;
+    }
+
+
+    //if(selectedPayRow != nullptr)
+    //{                                       //아이템이 있을 때
         //int i = ui->waitPaymentTreeWidget->currentIndex().row();           //i는 현재 인덱스 줄 번호
         ui->waitPaymentTreeWidget->takeTopLevelItem(ui->waitPaymentTreeWidget->indexOfTopLevelItem(selectedPayRow));
 
         ui->waitPaymentTreeWidget->update();                               //treeWidget 업데이트
-        QMessageBox::information(this, tr("정보"), \
-                              tr("수납 처리가 완료되었습니다."));
-    }
+        QMessageBox::information(this, tr("정보"), tr("수납 처리가 완료되었습니다."));
+    //}
+
+
+
+
+        //메인서버로 수납완료된 환자 정보를 보내고, 메인서버에서는 대기정보 기록을 위해 만들어진 텍스트 파일에서 해당 환자의 정보를 삭제
+        QString paymentFinInfo = "WPY<CR>" + payPID + "<CR>" + payName;
+        emit sendPayInfo(paymentFinInfo);
+
 
 }
 
@@ -119,6 +138,17 @@ void PatientStatusManager::on_shootRequestPushButton_clicked()
 {
     qDebug("%d",__LINE__);
     QString imageType;
+    int currentRow = ui->waitTreatmentTreeWidget->currentIndex().row();
+
+
+    if(currentRow == -1)    //환자 선택이 안되어있을 때
+    {
+        QMessageBox::critical(this, tr("경고"), \
+                              tr("진료대기 리스트에서 촬영할 환자를 선택해주세요."));
+        return;
+    }
+
+
 
     if(ui->cephCheckBox->isChecked() == true && ui->panoCheckBox->isChecked() == true)
     {
@@ -147,9 +177,19 @@ void PatientStatusManager::on_shootRequestPushButton_clicked()
     //클릭한 아이템의 3번째 컬럼을 대기중에서 촬영중으로 바꿔야함
     //ui->waitTreatmentTreeWidget->setItemWidget()
 
-    int currentRow = ui->waitTreatmentTreeWidget->currentIndex().row();
+
     qDebug() << "currentRow: " << currentRow;
-    qDebug("%d",__LINE__);
+
+
+    qDebug() << selectedTreatRow->text(2);
+    if(selectedTreatRow->text(2)=="촬영중")
+    {
+        QMessageBox::critical(this, tr("경고"), \
+                              tr("이미 촬영 중인 환자입니다."));
+        return;
+    }
+
+
     selectedTreatRow->setText(2,"촬영중");
 
     //ui->waitTreatmentTreeWidget->setCurrentItem(2)
@@ -213,7 +253,7 @@ void PatientStatusManager::statusRequestSended(QString sendedRequestData)
         foreach(auto i, items)
         {                                            //아이템들을 하나씩 꺼내옴
             QTreeWidgetItem* item = static_cast<QTreeWidgetItem *>(i);
-            item->setText(2, "대기중");
+            item->setText(2, "진료대기");
         }
     }
     else if(event == "VTF"){     //@@@@@@뷰어와 연동했을 때 확인 필요
@@ -233,3 +273,61 @@ void PatientStatusManager::statusRequestSended(QString sendedRequestData)
     }
 }
 
+void PatientStatusManager::delPIDSended(QString pid)
+{
+    int delFlag;
+    int inTreatListOrNot = ui->waitTreatmentTreeWidget->findItems(pid, Qt::MatchFlags(Qt::MatchCaseSensitive)).count();
+    int inPaymentListOrNot = ui->waitPaymentTreeWidget->findItems(pid, Qt::MatchFlags(Qt::MatchCaseSensitive)).count();
+
+    if(inTreatListOrNot+inPaymentListOrNot==0)
+        delFlag = 0;
+    else
+        delFlag = 1;
+
+    emit sendDelFlag(delFlag);
+
+}
+
+
+//오류로 인해 꺼졌을 때 다시 프로그램 실행시키면 이전의 대기 리스트가 보여지도록 만드는 부분
+void PatientStatusManager::oldListSended(QString sendedData)
+{
+    qDebug() << sendedData.split("<CR>")[2];
+    QString data = sendedData.split("<CR>")[2];
+    qDebug() << sendedData.count("<r>")+1;
+    int tempCount = sendedData.count("<r>")+1;
+
+    for(int i=0; i<tempCount; i++)
+    {
+        oldList.insert(i, data.split("<r>")[i]);
+    }
+
+
+    for(int i=0; i<tempCount; i++)
+    {
+        QString tempLine = oldList.value(i);
+        QString tempPID = tempLine.split("|")[0];
+        QString tempName = tempLine.split("|")[1];
+        QString tempStatus = tempLine.split("|")[2];
+
+        //수납대기 상태는 수납대기 리스트에 들어가야 함
+        if(tempStatus == "수납대기")
+        {
+            QTreeWidgetItem* row = new QTreeWidgetItem;
+            ui->waitPaymentTreeWidget->addTopLevelItem(row);
+            row->setText(0, tempPID);
+            row->setText(1, tempName);
+        }
+        //나머지 상태는 진료대기 리스트에 들어가야 함
+        else
+        {
+            QTreeWidgetItem* row = new QTreeWidgetItem;
+            ui->waitTreatmentTreeWidget->addTopLevelItem(row);
+            row->setText(0, tempPID);
+            row->setText(1, tempName);
+            row->setText(2, tempStatus);
+        }
+
+    }
+
+}

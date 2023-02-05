@@ -39,6 +39,16 @@ void PatientInfoManager::on_searchPushButton_clicked()
 
 void PatientInfoManager::searchDataSended(QString id, QString data)
 {
+    //없는 환자 검색했을 때
+    if(data=="<NEL>")
+    {
+        //여기에 QMessageBox 띄우기
+        QMessageBox::critical(this, tr("경고"), tr("해당 환자의 정보를 찾을 수 없습니다.\n"
+                                                 "검색할 내용을 다시 한번 확인해 주세요."));
+        ui->searchLineEdit->clear();
+        return;
+    }
+//    else
 
     pid = id;
     name = data.split("|")[0];
@@ -49,6 +59,7 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
     address = data.split("|")[4];
     memo = data.split("|")[5];
 
+    qDebug("%d", __LINE__);
 
     //    QTableWidgetItem *item = new QTableWidgetItem;
     //    item->setText(pid);
@@ -62,21 +73,92 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
     ui->clientInfoTableWidget->setItem(5, 0, new QTableWidgetItem(address));
     ui->clientInfoTableWidget->setItem(6, 0, new QTableWidgetItem(memo));
 
+    qDebug("%d", __LINE__);
     pixmap = new QPixmap();
     pixmap->load(QString("./Face/%1.png").arg(pid));
     pixmap->scaled(200,180,Qt::IgnoreAspectRatio);
 
+    qDebug("%d", __LINE__);
     ui->patientFace->setPixmap(pixmap->scaled(ui->patientFace->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
 
+    qDebug("%d", __LINE__);
 }
 
 
 void PatientInfoManager::on_deletePushButton_clicked()
 {
-    QString delData = "PDE<CR>" + pid + "<CR> "; //지울 pid를 emit으로 네트워크 매니저로 보냄/네트워크 매니저는 서버로 삭제할 데이터 전달
-    emit sendDelData(delData);
+    int delButtonNum = QMessageBox::critical(this, tr("경고"),
+                                   tr("해당 환자와 연관된 사진이 모두 삭제됩니다.\n"
+                                      "계속하시겠습니까?"), QMessageBox::Yes | QMessageBox::No);
+
+
+    switch (delButtonNum) {
+    case QMessageBox::Yes:
+    {
+        //patientStatusManager쪽으로 pid를 보내줌. patientStatusManager에서는 이 pid를 검색해 대기/수납 명단에 없다면 0, 있다면 1을 반환해줄 것
+        emit sendDelPID(pid);
+
+
+        /*이 부분 슬롯에 넣기
+        QString delData = "PDE<CR>" + pid + "<CR> "; //지울 pid를 emit으로 네트워크 매니저로 보냄/네트워크 매니저는 서버로 삭제할 데이터 전달
+        emit sendDelData(delData);
+
+        ui->searchLineEdit->clear();
+        ui->patientFace->clear();
+
+        //환자 정보 clear
+        for(int i=0; i<7;i++)
+        {
+            ui->clientInfoTableWidget->item(i, 0)->setText("");
+        }
+        */
+
+        break;
+    }
+    case QMessageBox::No:
+    {
+        return;
+        break;
+    }
+    }
+
+
+
+    //    QMessageBox::critical(this, tr("경고"), \
+    //                          tr("해당 환자와 연관된 사진이 모두 삭제됩니다. 계속하시겠습니까?"));
+
+
+
 }
+
+void PatientInfoManager::delFlagSended(int delFlag)
+{
+    if(delFlag == 0)
+    {
+        QString delData = "PDE<CR>" + pid + "<CR> "; //지울 pid를 emit으로 네트워크 매니저로 보냄/네트워크 매니저는 서버로 삭제할 데이터 전달
+        emit sendDelData(delData);
+
+        ui->searchLineEdit->clear();
+        ui->patientFace->clear();
+
+        //환자 정보 clear
+        for(int i=0; i<7;i++)
+        {
+            ui->clientInfoTableWidget->item(i, 0)->setText("");
+        }
+
+        //얼굴 사진도 삭제
+        QFile::remove(QString("./Face/%1.png").arg(pid));
+
+    }
+    else if(delFlag == 1)
+    {
+        QMessageBox::warning(this, tr("경고"), \
+                                      tr("대기리스트에 추가되어 있는 환자의 정보는 삭제하실 수 없습니다.\n"));
+    }
+}
+
 
 
 void PatientInfoManager::on_WaitPushButton_clicked()
@@ -115,9 +197,9 @@ void PatientInfoManager::inWaitListSlot(int inWaitListOrNot)
     if(inWaitListOrNot == 0)
     {
         QString sendData = "AWL<CR>" + pid + "<CR>" + name + "|" + sex + "|" + birthdate + "|" + tel + "|" + address + "|" + memo;
-    //qDebug() << "서버로 보낼 대기환자 데이터: " <<sendData;
+        //qDebug() << "서버로 보낼 대기환자 데이터: " <<sendData;
 
-    emit sendWaitInfo(sendData);
+        emit sendWaitInfo(sendData);
     }
     qDebug()<<" ";
 

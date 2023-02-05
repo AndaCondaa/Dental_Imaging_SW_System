@@ -46,6 +46,7 @@ void ImageManager::reloadImages(QString id)
     };
 
     dir.removeRecursively();    //화면에 사진 띄웠으면 해당 폴더 삭제
+
 }
 
 
@@ -56,4 +57,9 @@ void ImageManager::PSEDataSended(QString id)
     pid = id;
 
     reloadImages(id);
+}
+
+void ImageManager::delPIDSendedToImg(QString id)
+{
+    ui->imageListWidget->clear();
 }
