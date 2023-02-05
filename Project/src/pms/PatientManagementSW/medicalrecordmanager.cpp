@@ -41,7 +41,7 @@ qDebug() << "patientDetail" << patientDetail;
 
 
     QString rowData, reportID, doctorID, reportDate, dentistName;
-    qDebug()<<"<NEL> count: " <<sendedData.count("<NEL>");
+    //qDebug()<<"<NEL> count: " <<sendedData.count("<NEL>");
     for(int i=1; i<sendedData.count("<NEL>"); i++)
     {
         rowData = sendedData.split("<NEL>")[i];
@@ -68,10 +68,10 @@ qDebug() << "patientDetail" << patientDetail;
 
 void MedicalRecordManager::on_recordTreeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
-    qDebug()<<"item row: " << ui->recordTreeWidget->currentIndex().row() <<"/ column: "<<column;
+    //qDebug()<<"item row: " << ui->recordTreeWidget->currentIndex().row() <<"/ column: "<<column;
     int currentRow = ui->recordTreeWidget->currentIndex().row();
 
-    qDebug() <<"ddd: "<<reportInfo.find(currentRow).value();
+    //qDebug() <<"ddd: "<<reportInfo.find(currentRow).value();
 
     reportDetail = reportInfo.find(currentRow).value();
 
@@ -87,7 +87,7 @@ void MedicalRecordManager::on_recordTreeWidget_itemDoubleClicked(QTreeWidgetItem
 
 void MedicalRecordManager::addNewRecord(QString newRecordInfo)
 {
-    qDebug() << "newRecordInfo" << newRecordInfo;
+    //qDebug() << "newRecordInfo" << newRecordInfo;
 
 
 

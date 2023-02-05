@@ -7,7 +7,7 @@ PatientInfoManager::PatientInfoManager(QWidget *parent) :
     ui(new Ui::PatientInfoManager)
 {
     ui->setupUi(this);
-    ui->clientInfoTableWidget->setColumnWidth(0,285);
+    ui->clientInfoTableWidget->setColumnWidth(0,290);
 
     pixmap = new QPixmap();
     pixmap->load("./Face/default.png");
@@ -15,6 +15,7 @@ PatientInfoManager::PatientInfoManager(QWidget *parent) :
 
     ui->patientFace->setPixmap(pixmap->scaled(ui->patientFace->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
     //ui->patientFace->setAlignment(Qt::AlignBottom | Qt::AlignCenter);
+
 }
 
 PatientInfoManager::~PatientInfoManager()
@@ -34,14 +35,32 @@ void PatientInfoManager::on_searchPushButton_clicked()
 
     ui->clientInfoTableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);   //검색하면 테이블 정보들 더블클릭해서 수정가능하도록 만듦
     qDebug() <<"searchData: " << searchData;
+
+
+
+
+
     emit sendSearchData(searchData);
+
+
+
+    emit downloadOrNotSignal(); //새로운 환자 이미지 다운로드 해도 되는지 확인을 위해 signal 보내기
 }
 
 void PatientInfoManager::searchDataSended(QString id, QString data)
 {
+
+    qDebug() << "searchButtonClicked"<<searchButtonClicked;
+    if(searchButtonClicked != 0)    //이전에 검색한 환자의 이미지 파일이 다 다운로드 된 상태가 아닐 때는 return
+        return;
+
+//    if(fileSendedFlag==0)   // 파일이 다 다운로드 된 상태가 아닐 때는 재검색한 환자의 정보를 띄우면 안됨
+//        return;
+
     //없는 환자 검색했을 때
     if(data=="<NEL>")
     {
+        patientInDB = 0;
         //여기에 QMessageBox 띄우기
         QMessageBox::critical(this, tr("경고"), tr("해당 환자의 정보를 찾을 수 없습니다.\n"
                                                  "검색할 내용을 다시 한번 확인해 주세요."));
@@ -50,9 +69,11 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
     }
 //    else
 
+    patientInDB = 1;
+
     pid = id;
     name = data.split("|")[0];
-    qDebug() << "name in searchDataSended: " << name;
+    //qDebug() << "name in searchDataSended: " << name;
     sex = data.split("|")[1];
     birthdate = data.split("|")[2];
     tel = data.split("|")[3];
@@ -66,7 +87,7 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
     ui->clientInfoTableWidget->setItem(0, 0, new QTableWidgetItem(pid)/*item*/);
     ui->clientInfoTableWidget->setItem(1, 0, new QTableWidgetItem(name));
     //    qDebug() << "name in searchDataSended(in table):" << ui->clientInfoTableWidget->itemAt(1)->currentItem()->row()->text();
-    qDebug() << "name in searchDataSended(in table):"<< ui->clientInfoTableWidget->item(1, 0)->text();
+    //qDebug() << "name in searchDataSended(in table):"<< ui->clientInfoTableWidget->item(1, 0)->text();
     ui->clientInfoTableWidget->setItem(2, 0, new QTableWidgetItem(sex));
     ui->clientInfoTableWidget->setItem(3, 0, new QTableWidgetItem(birthdate));
     ui->clientInfoTableWidget->setItem(4, 0, new QTableWidgetItem(tel));
@@ -83,6 +104,14 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
 
 
     qDebug("%d", __LINE__);
+
+    searchButtonClicked+=1;
+
+
+    //search버튼 클릭되면 이전 환자의 이미지가 보이지 않도록 imageManager쪽으로 signal 보내줌
+    emit cleanImageSignal();
+
+
 }
 
 
@@ -177,14 +206,14 @@ void PatientInfoManager::on_WaitPushButton_clicked()
 
     emit sendPIDtoWaitList(pid);
 
-    qDebug() << "waitSignal: " << waitSignal;
+    //qDebug() << "waitSignal: " << waitSignal;
 
 
 }
 
 void PatientInfoManager::inWaitListSlot(int inWaitListOrNot)
 {
-    qDebug()<<"inWaitLsit: " << inWaitListOrNot;
+    //qDebug()<<"inWaitLsit: " << inWaitListOrNot;
 
     if(inWaitListOrNot == 1)
     {
@@ -201,7 +230,7 @@ void PatientInfoManager::inWaitListSlot(int inWaitListOrNot)
 
         emit sendWaitInfo(sendData);
     }
-    qDebug()<<" ";
+    //qDebug()<<" ";
 
 }
 
@@ -218,10 +247,36 @@ void PatientInfoManager::on_modifyPushButton_clicked()
     memo = ui->clientInfoTableWidget->item(6,0)->text();
 
     QString modifyData = "PMO<CR>" + pid + "<CR>" + name + "|" + sex + "|" + birthdate + "|" + tel + "|" + address + "|" + memo;
-    qDebug()<< "modifyData: " << modifyData;
+    //qDebug()<< "modifyData: " << modifyData;
     emit sendModifyData(modifyData);
 
 }
 
+void PatientInfoManager::fileSendedSlot(int fileSendedSignal)
+{
+    //파일이 완전히 전송되었다면 Flag가 0에서 1로 바뀌었을 것.
 
+    fileSendedFlag = fileSendedSignal;
+
+    if(fileSendedFlag==0)
+    {
+        QMessageBox::critical(this, tr("경고"), tr("이전에 검색한 환자 이미지를 불러오는 중입니다.\n"
+                                                 "다운로드가 완료되면 다시 검색해주세요."));
+        return;
+    }
+    else if(fileSendedFlag ==1)
+    {
+        //없는 환자 정보
+        if(patientInDB ==0)
+            return;
+
+        QMessageBox::information(this, tr("정보"), tr("검색한 환자 이미지가 전부 로드되었습니다."));
+
+        //환자정보 테이블에 띄울 수 있는 상태로 초기화
+        searchButtonClicked=0;
+    }
+
+
+
+}
 

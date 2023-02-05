@@ -63,3 +63,9 @@ void ImageManager::delPIDSendedToImg(QString id)
 {
     ui->imageListWidget->clear();
 }
+
+
+void ImageManager::cleanImageSlot()
+{
+    ui->imageListWidget->clear();
+}

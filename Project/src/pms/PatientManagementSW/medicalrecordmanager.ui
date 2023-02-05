@@ -18,19 +18,46 @@
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
       <widget class="QLabel" name="label_7">
+       <property name="minimumSize">
+        <size>
+         <width>0</width>
+         <height>30</height>
+        </size>
+       </property>
        <property name="font">
         <font>
          <pointsize>12</pointsize>
          <bold>true</bold>
         </font>
        </property>
+       <property name="styleSheet">
+        <string notr="true">background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, 
+                                                        y2:1, stop:0 rgba(149, 210, 253, 255),
+                                                        stop:1 rgba(152, 136, 248, 255));
+border-radius:10px;
+color:#ffffff;</string>
+       </property>
        <property name="text">
-        <string>진료 기록</string>
+        <string> 진료 기록</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QTreeWidget" name="recordTreeWidget">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QTreeWidget {
+border-radius:10px;
+border: 1px solid rgba(190, 190, 190, 150);
+selection-background-color: qlineargradient(spread:pad, x1:0.7, y1:0.7, x2:1, 
+y2:1, stop:0 rgba(149, 210, 253, 0),
+stop:1 rgba(152, 136, 248, 50));
+}</string>
+       </property>
        <column>
         <property name="text">
          <string>차트 번호</string>
