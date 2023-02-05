@@ -20,6 +20,24 @@ MainWindow::MainWindow(QWidget *parent)
     this->showMaximized();
 
 
+//    ui->enrollButton->setStyleSheet("QPushButton { "
+//                                            "qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(149, 210, 253, 255), stop:1 rgba(152, 136, 248, 255));"
+//                                            "border-radius:10px;"
+//                                            "color:#ffffff;"
+//                                            "padding-right:10px;"
+//                                            "outline: 0; "
+//                                        "}"
+//                                        "QPushButton:hover { "
+//                                            "background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgb(66, 130, 220), stop:1 rgb(184, 58, 166)); "
+//                                            "border-radius:10px;"
+//                                            "color:#ffffff;"
+//                                            "outline: 0; "
+//                                        "}");
+
+
+
+
+
     imageManager = new ImageManager(this);
     medicalRecordManager = new MedicalRecordManager(this);
     patientInfoManager = new PatientInfoManager(this);
@@ -111,9 +129,21 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
+    connect(patientInfoManager, SIGNAL(downloadOrNotSignal()), networkManager, SLOT(downloadOrNotSlot()));
+
+
+
+
+
 //    connect(networkManager, SIGNAL(sendByteArray(QByteArray*)), patientInfoManager, SLOT(byteArraySended(QByteArray*)));
 //    connect(networkManager, SIGNAL(sendByteArray(const QPixmap&)), patientInfoManager, SLOT(byteArraySended(const QPixmap&)));
 
+
+    connect(networkManager, SIGNAL(fileSendedSig(int)), patientInfoManager, SLOT(fileSendedSlot(int)));
+
+
+    //search버튼 클릭되면 이전 환자의 이미지가 보이지 않도록 imageManager쪽으로 signal 보내줌
+    connect(patientInfoManager, SIGNAL(cleanImageSignal()), imageManager, SLOT(cleanImageSlot()));   //인자 필요없지만 signal 재활용 위해 사용
 
 }
 

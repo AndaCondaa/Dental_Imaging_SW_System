@@ -28,6 +28,14 @@ private:
     int waitSignal;
     int count =0;
 
+
+int fileSendedFlag =0;
+int searchButtonClicked=0;
+
+
+int patientInDB = 0;
+
+
 private slots:
     //void on_modifyPatientInfo_pushButton_clicked();
     void on_searchPushButton_clicked();
@@ -46,6 +54,7 @@ private slots:
 //    void byteArraySended(QByteArray*);
     //void byteArraySended(QPixmap&);
 
+void fileSendedSlot(int);
 
 signals:
     void sendSearchData(QString);
@@ -56,6 +65,10 @@ signals:
     void sendModifyData(QString);
     void sendPIDtoWaitList(QString);
     void sendDelPID(QString);
+
+    void downloadOrNotSignal();
+
+    void cleanImageSignal();
 };
 
 #endif // PATIENTINFOMANAGER_H
