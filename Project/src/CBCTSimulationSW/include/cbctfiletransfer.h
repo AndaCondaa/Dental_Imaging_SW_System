@@ -19,17 +19,12 @@ public:
     ~CBCTFileTransfer();
     void sendingControl(int buttonIdx, QString msg);
 
-    void sendPanoFile();
-    void sendCephFile();
+    void sendPanoFile(int panoValue);
+    void sendCephFile(int cephValue);
 
 private slots:
-    void receiveModality();
     void receiveControl();
- //   void goOnSend(qint64 numBytes);
 
-    //    void sendCBCTProtocol();
-    //    void sendRawImages();
-    //    void disconnect();
 private:
     Protocol *protocol;
 

@@ -11,7 +11,7 @@ CBCTFileTransfer::CBCTFileTransfer(QObject*parent):QObject{parent}
     {
         qDebug("CBCT Connected");
         connect(CBCTSocket, SIGNAL(readyRead()), this, SLOT(receiveControl()));
-//        connect(CBCTSocket, SIGNAL(readyRead()), this, SLOT(receiveModality()));
+        //        connect(CBCTSocket, SIGNAL(readyRead()), this, SLOT(receiveModality()));
         protocol->sendProtocol(CBCTSocket, "NEW", ConnectType::MODALITY, "NEW CBCT CONNECTED");
     }
     else
@@ -24,116 +24,130 @@ CBCTFileTransfer::CBCTFileTransfer(QObject*parent):QObject{parent}
     if(fileSocket->waitForConnected())
     {
         qDebug("File Transfer Ready");
-//        connect(fileSocket, SIGNAL(readyRead()), this, SLOT(receiveControl()));
-//        protocol->sendProtocol(fileSocket, "NEW", ConnectType::MODALITY, "NEW CBCT CONNECTED");
+        connect(fileSocket, SIGNAL(readyRead()), this, SLOT(receiveControl()));
+        //        connect(CBCTSocket, SIGNAL(readyRead()), this, SLOT(receiveModality()));
+        protocol->sendProtocol(fileSocket, "NEW", ConnectType::MODALITY, "CBCT FILE TRANSFER READY");
     }
     else
     {
         qDebug("File Transfer Not Ready");
     }
-
-
-//    FileSocket = new QTcpSocket(this);
-//    FileSocket->connectToHost("127.0.0.1", 8009);
-//    FileSocket->waitForConnected();
 }
-void CBCTFileTransfer::sendPanoFile()
+
+void CBCTFileTransfer::sendPanoFile(int panoValue)
 {
-    QFile file;
-    QString fileName;
-    QString fileInfo;
+    QString modality = protocol->packetData()->msg();
 
-    for (int i = 10; i < 1750; i++) {
-        if (i >= 100)
-            fileName = QString("./Pano_Frame/0%1.raw").arg(i);
-        else
-            fileName = QString("./Pano_Frame/00%1.raw").arg(i);
+    qDebug() << protocol->packetData()->msg();
 
+     int countMax = 0;
 
-        file.setFileName(fileName);
-        file.open(QIODevice::ReadOnly);
-        panoData.append(file.readAll());
-        file.close();
+    //if(modality == "PANO")
+    //{
+        countMax = 1750;
+ //   }
+    // PANO MODE
+        QFile *panoFile;
+        panoFile = new QFile;
+        QString panoFileName;
+   
+
+    if(panoValue >= countMax)
+    {
+        return;
     }
-    qDebug("TOTAL SIZE : %d", panoData.size());
-    fileInfo = "<CR>" + QString::number(panoData.size()) + "<CR>" + QString::number(48*2400);
-    //    totalData.append(fileInfo.toStdString());
-    fileSocket->write(panoData);                                       // 영상 파일 전송
-    fileSocket->flush();
-    panoData.clear();
+    if (panoValue >= 1000)
+    {
+        qDebug() << panoValue;
+        panoFileName = QString(".C:/Qt_VTK_CT/build/Debug/Pano_Frame(1152x64)/%1.raw").arg(panoValue);
+    }
+    else if (panoValue < 1000 && panoValue >= 100)
+    {
+        qDebug() << panoValue;
+        panoFileName = QString("C:/Qt_VTK_CT/build/Debug/Pano_Frame(1152x64)/0%1.raw").arg(panoValue);
+    }
+    else if (panoValue < 100 && panoValue >= 10)
+    {
+        qDebug() << panoValue;
+        panoFileName = QString("C:/Qt_VTK_CT/resources/Pano_Frame(1152x64)/00%1.raw").arg(panoValue);
+    }
+    else
+    {
+        qDebug() << panoValue;
+        panoFileName = QString("C:/Qt_VTK_CT/resources/Pano_Frame(1152x64)/000%1.raw").arg(panoValue);
+    }
+    panoFile->setFileName(panoFileName);
+    qDebug() << panoFileName;
+    if(!panoFile->exists())
+    {
 
-    fileSocket->write(fileInfo.toStdString().data());                   // 영상 파일 정보 전송
+        return;
+    }
+    panoFile->open(QIODevice::ReadOnly);
+    fileSocket->write(panoFile->readAll());
+    panoFile->close();
+    panoFile->deleteLater();
 }
 
-void CBCTFileTransfer::sendCephFile()
+void CBCTFileTransfer::sendCephFile(int cephValue)
 {
-    QFile file;
-    QString fileName;
-    QString fileInfo;
+    QString modality = protocol->packetData()->msg();
 
-    for (int i = 10; i < 1250; i++) {
-        if (i >= 100)
-            fileName = QString("./Ceph_Frame/0%1.raw").arg(i);
-        else
-            fileName = QString("./Ceph_Frame/00%1.raw").arg(i);
+    qDebug() << protocol->packetData()->msg();
+
+int countMax = 0;
+
+ //   if(modality == "CEPH")
+ //   {
+        countMax = 1250;
+ //   }
 
 
-        file.setFileName(fileName);
-        file.open(QIODevice::ReadOnly);
-        cephData.append(file.readAll());
-        file.close();
+    // CEPH MODE
+        QFile* cephFile;
+        cephFile = new QFile;
+        QString cephFileName;
+
+    if(cephValue >= countMax)
+    {
+        return;
     }
-    qDebug("TOTAL SIZE : %d", cephData.size());
-    fileInfo = "<CR>" + QString::number(cephData.size()) + "<CR>" + QString::number(48*2400);
-    //    totalData.append(fileInfo.toStdString());
-    fileSocket->write(cephData);                                       // 영상 파일 전송
-    fileSocket->flush();
-    cephData.clear();
-
-    fileSocket->write(fileInfo.toStdString().data());                   // 영상 파일 정보 전송
+    if (cephValue >= 1000)
+    {
+        qDebug() << cephValue;
+        cephFileName = QString("C:/Qt_VTK_CT/resources/Ceph_Frame(48x2400)/%1.raw").arg(cephValue);
+    }
+    else if (cephValue < 1000 && cephValue >= 100)
+    {
+        qDebug() << cephValue;
+        cephFileName = QString("C:/Qt_VTK_CT/resources/Ceph_Frame(48x2400)/0%1.raw").arg(cephValue);
+    }
+    else if (cephValue < 100 && cephValue >= 10)
+    {
+        qDebug() << cephValue;
+        cephFileName = QString("C:/Qt_VTK_CT/resources/Ceph_Frame(48x2400)/00%1.raw").arg(cephValue);
+    }
+    else
+    {
+        qDebug() << cephValue;
+        cephFileName = QString("C:/Qt_VTK_CT/resources/Ceph_Frame(48x2400)/000%1.raw").arg(cephValue);
+    }
+    cephFile->setFileName(cephFileName);
+    if(!cephFile->exists())
+    {
+        return;
+    }
+    cephFile->open(QIODevice::ReadOnly);
+    fileSocket->write(cephFile->readAll());
+    cephFile->close();
+    cephFile->deleteLater();
 }
-
-
-
-//void CBCTFileTransfer::sendButtonControl(int buttonIdx, QString data)
-//{
-//    if (buttonIdx == 1 || buttonIdx == 2) {   // 1: RESET , 2: START
-//        currentPID = data.split("|")[0];
-//        currentType.split("|")[1];
-//    }
-
-//    protocol->sendProtocol(CBCTSocket, "CTL", buttonIdx, QString());
-//}
 
 void CBCTFileTransfer::sendingControl(int buttonIdx, QString msg)
 {
     protocol->sendProtocol(CBCTSocket, "CTL", buttonIdx, msg);
 }
 
-void CBCTFileTransfer::receiveModality()
-{
-//    qDebug("modality test");
-//    CBCTSocket = dynamic_cast<QTcpSocket*>(sender());
-//    protocol->receiveProtocol(CBCTSocket);
-//    qDebug()<<protocol->packetData()->event();
-//    if(protocol->packetData()->event() == "CTL")
-//    {
-
-//        QString modality = protocol->packetData()->msg();
-//        if(modality == "PANO"){
-//            qDebug("Pano Modality Received");
-//            emit panoSignal();
-//        }
-//        else if (modality == "CEPH"){
-//            qDebug("Ceph Modlality Received");
-//            emit cephSignal();
-//        }
-//        else{
-//            qDebug("WRONG MODAL STATE");
-//        }
-//    }
-}
-/* 촬영 SW 에서 받은 신호를 동작을 위한 시그널로 변환 */
 void CBCTFileTransfer::receiveControl()
 {
     qDebug("control receive test");
@@ -142,9 +156,9 @@ void CBCTFileTransfer::receiveControl()
 
     if(protocol->packetData()->event() == "CTL")
     {
-
         int control = protocol->packetData()->type();
         QString modality = protocol->packetData()->msg();
+
         switch (control) {
         case 0:
             qDebug("RESET Received");
@@ -178,18 +192,6 @@ void CBCTFileTransfer::receiveControl()
     }
 }
 
-//void CBCTFileTransfer::goOnSend(qint64 numBytes)
-//{
-//    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
-//    byteToWrite -= numBytes; // Remaining data size
-//    outBlock = file->read(qMin(byteToWrite, numBytes));
-//    socket->write(outBlock);
-
-//    if (byteToWrite == 0) { // Send completed
-//        qDebug("File sending completed!");
-//    }
-//}
-
 
 CBCTFileTransfer::~CBCTFileTransfer()
 {
@@ -199,7 +201,3 @@ CBCTFileTransfer::~CBCTFileTransfer()
     delete fileSocket;
     delete protocol;
 }
-//void CBCTFileTransfer::sendCTProtocol()
-//{
-
-//}

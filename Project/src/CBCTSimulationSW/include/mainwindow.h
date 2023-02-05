@@ -17,7 +17,6 @@
 #include "cbctlogthread.h"
 #include "controlpanel.h"
 #include "protocol.h"
-#include "fileprotocol.h"
 #include "packetdata.h"
 
 class QMessageBox;
@@ -27,7 +26,6 @@ class CBCTFileTransfer;
 class CBCTLogThread;
 class ControlPanel;
 class Protocol;
-class FileProtocol;
 class PacketData;
 
 QT_BEGIN_NAMESPACE
@@ -74,7 +72,6 @@ private slots:
 	void slot_panoImage(QImage* pImg);
 	void slot_cephImage(QImage* cImg);
 
-	void on_openGLWidget_All_resized();
 
 signals:
 	void READYSignal(ControlType);

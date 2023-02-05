@@ -220,26 +220,9 @@ QPushButton:default {
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">QPushButton {
-    border: 2px solid #8f8f91;
-    border-radius: 6px;
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                      stop: 0 #f6f7fa, stop: 1 #dadbde);
-	transform: scale(1.0, 1.0);
-}
-
-QPushButton:pressed {
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                      stop: 0 #dadbde, stop: 1 #f6f7fa);
-}
-
-QPushButton:flat {
-    border: none; /* no border for a flat push button */
-}
-
-QPushButton:default {
-    border-color: navy; /* make the default button prominent */
-}</string>
+      <string notr="true">QPushButton{border-radius: 7px;  font-size: 16px; background-color:#00ce81; color:#ffffff;}
+QPushButton:hover{background-color: #E7E7E7; color:#677381;}
+QPushButton:pressed{background-color: #DFDFDF;}</string>
      </property>
      <property name="text">
       <string>ASCENT</string>
@@ -267,27 +250,9 @@ QPushButton:default {
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">QPushButton {
-    border: 2px solid #8f8f91;
-    border-radius: 6px;
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                      stop: 0 #f6f7fa, stop: 1 #dadbde);
-
-    transform: scale(1.0, 1.0);
-}
-
-QPushButton:pressed {
-    background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,
-                                      stop: 0 #dadbde, stop: 1 #f6f7fa);
-}
-
-QPushButton:flat {
-    border: none; /* no border for a flat push button */
-}
-
-QPushButton:default {
-    border-color: navy; /* make the default button prominent */
-}</string>
+      <string notr="true">QPushButton{color: #8b98a7;  font-size: 16px;  font-weight: bold; border:none; background-color:rgba(0,0,0,0); border-bottom: 4px solid rgba(0,0,0,0);}
+QPushButton:checked{background-color: rgba(0,0,0,0); color:#0c243b; border-bottom: 4px solid #00ce81;}
+QPushButton:hover{color: #495B6C;}</string>
      </property>
      <property name="text">
       <string>DESCENT</string>
@@ -1120,7 +1085,7 @@ QProgressBar {
      <x>0</x>
      <y>0</y>
      <width>1248</width>
-     <height>22</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuCBCT_Simulator">
