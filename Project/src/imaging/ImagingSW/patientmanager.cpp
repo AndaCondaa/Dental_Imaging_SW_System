@@ -70,7 +70,7 @@ void PatientManager::receiveWaitList(int waitCount, QString data)   // data : pi
     typeMap.clear();
 
     for (int i = 0; i < waitCount; i++) {
-        QString newPatient = data.split("<r>")[waitCount];
+        QString newPatient = data.split("<r>")[i];
         QStringList insertList;
         insertList << newPatient.split("|")[0] << newPatient.split("|")[1] << newPatient.split("|")[2];
         receiveWaitPatient(insertList);

@@ -1,5 +1,6 @@
 #include "mainnetworkmanager.h"
 
+#include <QApplication>
 #include <QMessageBox>
 #include <QDate>
 #include <QPushButton>
@@ -15,57 +16,55 @@ MainNetworkManager::MainNetworkManager(QObject *parent)
     mainSocket = new QTcpSocket(this);
     fileSocket = new QTcpSocket(this);
 
-    disconnectBox = new QMessageBox;
-    disconnectBox->setWindowTitle("Disconnect");
-    disconnectBox->setText("서버와 연결이 끊어졌습니다. 재접속 하시겠습니까?");
-    disconnectBox->addButton(QMessageBox::Retry);
-
-//    mainConnection("192.168.0.39", 8000);
-//    fileConnection("192.168.0.39", 8001);
+    connectSever("192.168.0.39", 8000);
 }
 
 MainNetworkManager::~MainNetworkManager()
 {
+//    mainSocket->close();
+//    fileSocket->close();
+//    delete mainSocket;
+//    delete fileSocket;
+}
+
+void MainNetworkManager::connectSever(QString address, int port)
+{
+//    mainSocket->connectToHost("192.168.0.39", 8000);
+//    if (mainSocket->waitForConnected()) {
+//        connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
+//        connect(mainSocket, SIGNAL(disconnected()), this, SLOT(disconnectServer()));
+//        sendPacket(mainSocket, "CNT", "IMG", "NULL");
+//    } else {
+//        qDebug("FAIL (MAIN)");
+//    }
+
+//    fileSocket->connectToHost("192.168.0.39", 8001);
+//    if (fileSocket->waitForConnected()) {
+//        connect(fileSocket, SIGNAL(disconnected()), this, SLOT(disconnectServer()));
+//        sendPacket(fileSocket, "CNT", "IMG", "NULL");
+//    } else {
+//        qDebug("FAIL (FILE)");
+//    }
+}
+
+void MainNetworkManager::disconnectServer()
+{
+    disconnect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
+    disconnect(mainSocket, SIGNAL(disconnected()), this, SLOT(disconnectSever()));
+    disconnect(fileSocket, SIGNAL(disconnected()), this, SLOT(disconnectSever()));
+
     mainSocket->close();
     fileSocket->close();
     delete mainSocket;
     delete fileSocket;
-}
 
-void MainNetworkManager::mainConnection(QString address, int port)
-{
-    mainSocket->connectToHost(address, port);
-    if (mainSocket->waitForConnected()) {
-        connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
-        connect(mainSocket, SIGNAL(disconnected()), this, SLOT(mainDisconnection()));
-        sendPacket(mainSocket, "CNT", "IMG", "NULL");
-    } else {
-        mainDisconnection();
-    }
-}
+    disconnectBox = new QMessageBox;
+    disconnectBox->setWindowTitle("Disconnect");
+    disconnectBox->setText("서버와 연결이 끊어졌습니다.");
+    disconnectBox->addButton(QMessageBox::Close);
 
-void MainNetworkManager::fileConnection(QString address, int port)
-{
-    fileSocket->connectToHost(address, port+1);
-    if (fileSocket->waitForConnected()) {
-        connect(mainSocket, SIGNAL(disconnected()), this, SLOT(fileDisconnection()));
-        sendPacket(fileSocket, "CNT", "IMG", "NULL");
-    } else {
-        fileDisconnection();
-    }
-}
-
-void MainNetworkManager::mainDisconnection()
-{
-    if (disconnectBox->exec() == QMessageBox::Retry) {
-        mainConnection("192.168.0.39", 8000);
-    }
-}
-
-void MainNetworkManager::fileDisconnection()
-{
-    if (disconnectBox->exec() == QMessageBox::Retry) {
-        fileConnection("192.168.0.39", 8001);
+    if (disconnectBox->exec() == QMessageBox::Close) {
+        qApp->quit();
     }
 }
 
@@ -73,7 +72,7 @@ void MainNetworkManager::sendPacket(QTcpSocket* socket, QString event, QString p
 {
     QString sendData = event + "<CR>" + pid + "<CR>" + data;
     QByteArray sendArray = sendData.toStdString().c_str();
-    socket->write(sendArray);
+    socket->write(sendArray);   
 }
 
 QStringList MainNetworkManager::packetParser(QByteArray receiveArray)
@@ -93,6 +92,7 @@ void MainNetworkManager::receivePacket()
     QString event = packetData[0];
     QString pid = packetData[1];
     QString data = packetData[2];
+
 
     QStringList dataList;
     if (event == "WTR") {       // WRT : 대기목록 리시브
@@ -126,8 +126,8 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
     totalSize = 0;
     outBlock.clear();
 
-    QString imgName = pid + "_" + type + ".bmp";
-    QString fileName = QString("recon/%1/%2").arg(QDate::currentDate().toString("yyyyMMdd"), imgName);
+    QString imgName = pid + "_" + type;
+    QString fileName = QString("image/recon/%1.bmp").arg(imgName);
     qDebug() << fileName;
     if(fileName.length()) {
         file = new QFile(fileName);

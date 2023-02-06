@@ -31,21 +31,21 @@ SubNetworkManager::~SubNetworkManager()
 
 void SubNetworkManager::connection(QString address, int port)
 {
-    subSocket->connectToHost(address, port);
-    if (subSocket->waitForConnected()) {
-        connect(subSocket, SIGNAL(readyRead()), SLOT(receiveControl()));
-        protocol->sendProtocol(subSocket, "NEW", ConnectType::SW, "SW");
-    } else {
-        // 연결 실패 예외처리 구현
-    }
+//    subSocket->connectToHost(address, port);
+//    if (subSocket->waitForConnected()) {
+//        connect(subSocket, SIGNAL(readyRead()), SLOT(receiveControl()));
+//        protocol->sendProtocol(subSocket, "NEW", ConnectType::SW, "SW");
+//    } else {
+//        // 연결 실패 예외처리 구현
+//    }
 
-    fileSocket->connectToHost(address, port+1);
-    if (fileSocket->waitForConnected()) {
-        connect(fileSocket, SIGNAL(readyRead()), SLOT(receiveFile()));
-        protocol->sendProtocol(fileSocket, "NEW", ConnectType::SW, "SW");
-    } else {
-        // 연결 실패  예외처리 구현
-    }
+//    fileSocket->connectToHost(address, port+1);
+//    if (fileSocket->waitForConnected()) {
+//        connect(fileSocket, SIGNAL(readyRead()), SLOT(receiveFile()));
+//        protocol->sendProtocol(fileSocket, "NEW", ConnectType::SW, "SW");
+//    } else {
+//        // 연결 실패  예외처리 구현
+//    }
 }
 
 void SubNetworkManager::receiveControl()
@@ -54,7 +54,6 @@ void SubNetworkManager::receiveControl()
     protocol->receiveProtocol(subSocket);
 
     if (protocol->packetData()->event() == "CTL") {
-        qDebug("%d", __LINE__);
         emit buttonSignal(protocol->packetData()->type());
     }
 }
@@ -89,7 +88,7 @@ void SubNetworkManager::receiveFile()
         QString fileName;
         QByteArray frameData = totalData.first(frameSize);
 
-        QDir dir(QString("frame/%1/%2").arg(QDate::currentDate().toString("yyyyMMdd")).arg(currentType));
+        QDir dir(QString("image/frame/%1/").arg(currentType));
         if (!dir.exists())
             dir.mkpath(".");
 
@@ -109,7 +108,7 @@ void SubNetworkManager::receiveFile()
         totalData.remove(0, frameSize);
         emit sendFrameImg(count);
         count++;
-//        qDebug("%d", count);
+        qDebug("%d", count);
         if (count == countMax) {
             qDebug() << QString("%1 Frame Data Send End!").arg(currentType);
             count = 0;

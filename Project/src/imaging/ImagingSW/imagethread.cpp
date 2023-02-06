@@ -144,21 +144,8 @@ void ImageThread::threadStop()
 //}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 void ImageThread::run()
 {
-    qDebug("%d", __LINE__);
     QPixmap pixmap(width, height);
     pixmap.fill(Qt::white);
 
@@ -184,13 +171,13 @@ void ImageThread::run()
             if (isStop) return;
 
             if (k >= 1000)
-                fileName = QString("./PANO/%1.raw").arg(k);
+                fileName = QString("./image/%1/%2.raw").arg(modeType).arg(k);
             else if (k < 1000 && k >= 100)
-                fileName = QString("./PANO/0%1.raw").arg(k);
+                fileName = QString("./image/%1/0%2.raw").arg(modeType).arg(k);
             else if (k < 100 && k >= 10)
-                fileName = QString("./PANO/00%1.raw").arg(k);
+                fileName = QString("./image/%1/00%2.raw").arg(modeType).arg(k);
             else
-                fileName = QString("./PANO/000%1.raw").arg(k);
+                fileName = QString("./image/%1/000%2.raw").arg(modeType).arg(k);
 
             file = fopen(fileName.toStdString().c_str(), "rb");
             memset(buf, 0, pixels);
@@ -235,13 +222,13 @@ void ImageThread::run()
             if (isStop) return;
 
             if (k >= 1000)
-                fileName = QString("./CEPH/%1.raw").arg(k);
+                fileName = QString("./image/%1/%2.raw").arg(modeType).arg(k);
             else if (k < 1000 && k >= 100)
-                fileName = QString("./CEPH/0%1.raw").arg(k);
+                fileName = QString("./image/%1/0%2.raw").arg(modeType).arg(k);
             else if (k < 100 && k >= 10)
-                fileName = QString("./CEPH/00%1.raw").arg(k);
+                fileName = QString("./image/%1/00%2.raw").arg(modeType).arg(k);
             else
-                fileName = QString("./CEPH/000%1.raw").arg(k);
+                fileName = QString("./image/%1/000%2.raw").arg(modeType).arg(k);
 
             file = fopen(fileName.toStdString().c_str(), "rb");
             memset(buf, 0, pixels);

@@ -14,7 +14,6 @@ ControlPanel::ControlPanel(QWidget *parent) :
 {
     ui->setupUi(this);
 
-
     ui->panoButton->setStyleSheet("QPushButton {"
                                   "border-style: solid;"
                                   "border-width: 1px;"
