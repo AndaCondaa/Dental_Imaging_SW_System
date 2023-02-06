@@ -18,20 +18,25 @@ public:
     ~ImagingManager();
 
 private slots:
-    void raw16ToBmp8();
-
     void setPID(QString);
     void setType(QString);
 
-    void loadImage();
     void reconImage();
     void saveButtonSlot();
     void stopButtonSlot();
 
     void isProgressMaximum(int);
 
-    void on_tempReconButton_clicked();
-    void on_tempFilterButton_2_clicked();
+    void recvFrameImg(int);
+
+    QString makeFileName(QString type, int count);
+    void histoStretch(unsigned short *input, int inputSize, int min, int max, double valueMax);
+    void CLAHE(unsigned short *input, int rows, int cols, int clipLimit, int gridX, int gridY);
+    void medianFilter(unsigned short *input, int rows, int cols, int ksize);
+    void gammaCorrection(unsigned short *input, int inputSize, double valueMax, double gamma);
+    void unsharpFilter();
+    void saveAsBmp(unsigned short *input, int rows, int cols);
+    void viewReconImage(int rows, int cols);
 
 private:
     Ui::ImagingManager *ui;
@@ -42,6 +47,7 @@ private:
     ImageThread *thread;
 
 signals:
+    void sendCount(int);
     void shootingEndSignal(QString);
     void saveSignal(QString);
     void stopThread();

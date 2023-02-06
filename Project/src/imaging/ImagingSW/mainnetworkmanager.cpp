@@ -1,6 +1,9 @@
 #include "mainnetworkmanager.h"
 
-#include <QFileDialog>
+#include <QApplication>
+#include <QMessageBox>
+#include <QDate>
+#include <QPushButton>
 
 // 환자 준비 : IPR<CR>PID<CR>"NULL"
 // 환자 준비 후 정보 리시브 : IPR<CR>PID<CR>"name|sex|birth"
@@ -13,42 +16,63 @@ MainNetworkManager::MainNetworkManager(QObject *parent)
     mainSocket = new QTcpSocket(this);
     fileSocket = new QTcpSocket(this);
 
-    connection("192.168.0.39", 8000);
+    connectSever("192.168.0.39", 8000);
 }
 
 MainNetworkManager::~MainNetworkManager()
 {
-
+//    mainSocket->close();
+//    fileSocket->close();
+//    delete mainSocket;
+//    delete fileSocket;
 }
 
-void MainNetworkManager::connection(QString address, int port)
+void MainNetworkManager::connectSever(QString address, int port)
 {
-//    mainSocket->connectToHost(address, port);
+//    mainSocket->connectToHost("192.168.0.39", 8000);
 //    if (mainSocket->waitForConnected()) {
-//        QObject::connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
-//        QObject::connect(mainSocket, SIGNAL(disconnected()), this, SLOT(disconnectedFromServer()));
+//        connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
+//        connect(mainSocket, SIGNAL(disconnected()), this, SLOT(disconnectServer()));
 //        sendPacket(mainSocket, "CNT", "IMG", "NULL");
 //    } else {
-//        // 연결 실패 예외처리 구현
+//        qDebug("FAIL (MAIN)");
 //    }
 
-//    fileSocket->connectToHost(address, port+1);
+//    fileSocket->connectToHost("192.168.0.39", 8001);
 //    if (fileSocket->waitForConnected()) {
+//        connect(fileSocket, SIGNAL(disconnected()), this, SLOT(disconnectServer()));
 //        sendPacket(fileSocket, "CNT", "IMG", "NULL");
 //    } else {
-//        // 연결 실패  예외처리 구현
+//        qDebug("FAIL (FILE)");
 //    }
 }
 
-void MainNetworkManager::disconnectedFromServer()
+void MainNetworkManager::disconnectServer()
 {
+    disconnect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
+    disconnect(mainSocket, SIGNAL(disconnected()), this, SLOT(disconnectSever()));
+    disconnect(fileSocket, SIGNAL(disconnected()), this, SLOT(disconnectSever()));
+
+    mainSocket->close();
+    fileSocket->close();
+    delete mainSocket;
+    delete fileSocket;
+
+    disconnectBox = new QMessageBox;
+    disconnectBox->setWindowTitle("Disconnect");
+    disconnectBox->setText("서버와 연결이 끊어졌습니다.");
+    disconnectBox->addButton(QMessageBox::Close);
+
+    if (disconnectBox->exec() == QMessageBox::Close) {
+        qApp->quit();
+    }
 }
 
 void MainNetworkManager::sendPacket(QTcpSocket* socket, QString event, QString pid, QString data)
 {
     QString sendData = event + "<CR>" + pid + "<CR>" + data;
     QByteArray sendArray = sendData.toStdString().c_str();
-    socket->write(sendArray);
+    socket->write(sendArray);   
 }
 
 QStringList MainNetworkManager::packetParser(QByteArray receiveArray)
@@ -69,6 +93,7 @@ void MainNetworkManager::receivePacket()
     QString pid = packetData[1];
     QString data = packetData[2];
 
+
     QStringList dataList;
     if (event == "WTR") {       // WRT : 대기목록 리시브
         emit sendWaitList(pid.toInt(), data);
@@ -86,9 +111,9 @@ void MainNetworkManager::requestPatientInfo(QString pid)
     sendPacket(mainSocket, "IPR", pid, "NULL");     // 서버로 환자정보 요청
 }
 
-void MainNetworkManager::endImagingProcess(QString pid)
+void MainNetworkManager::endImagingProcess(QString pid, QString type)
 {
-    sendPacket(mainSocket, "ISV", pid, "NULL");     // 촬영 종료 안내 패킷
+    sendPacket(mainSocket, "ISV", pid, type);     // 촬영 종료 안내 패킷
 }
 
 void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
@@ -101,8 +126,8 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
     totalSize = 0;
     outBlock.clear();
 
-    QString imgName = pid + "_" + type + ".bmp";
-    QString fileName = QString("recon/%1/%2").arg(QDate::currentDate().toString("yyyyMMdd"), imgName);
+    QString imgName = pid + "_" + type;
+    QString fileName = QString("image/recon/%1.bmp").arg(imgName);
     qDebug() << fileName;
     if(fileName.length()) {
         file = new QFile(fileName);
@@ -143,6 +168,6 @@ void MainNetworkManager::goOnSend(qint64 numBytes)
 
     if (byteToWrite == 0) { // Send completed
         qDebug("File sending completed!");
-        QObject::disconnect(fileSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(goOnSend(qint64)));
+        disconnect(fileSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(goOnSend(qint64)));
     }
 }

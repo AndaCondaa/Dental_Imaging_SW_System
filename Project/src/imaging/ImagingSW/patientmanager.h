@@ -37,8 +37,8 @@ signals:
     void sendPid(QString);
     void sendType(QString);
     void sendPidToImagingManager(QString);
-    void deleteSignal(QString);                     // 환자준비를 한 후에 삭제한 경우, control클래스에 시그널 전송 (for currentPID 재설정)
-    void finishSignal(QString);                     // currentPID
+    void deleteSignal(QString);                          // 환자준비를 한 후에 삭제한 경우, control클래스에 시그널 전송 (for currentPID 재설정)
+    void finishSignal(QString, QString);                     // currentPID , Type
 
 };
 

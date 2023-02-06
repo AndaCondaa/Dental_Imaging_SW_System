@@ -41,6 +41,7 @@ SubServer::~SubServer()
 {
     delete ui;
     controlServer->close();
+    fileServer->close();
     delete controlServer;
     delete protocol;
 }
@@ -131,6 +132,8 @@ void SubServer::receiveControl()
             ui->logEdit->append((QString("%1가 %2 촬영종료 명령을 보냈습니다.")).arg(client, msg));
             break;
         }
+
+//        protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", command, msg);
     }
 }
 
@@ -141,7 +144,6 @@ void SubServer::receiveFile()
     tempArray = socket->readAll();
     fileSocketMap.key(SW)->write(tempArray);
     receiveData.append(tempArray);
-
 
     if (receiveData.size() >= frameSize) {
         QDir dir(QString("receive/%1/%2/%3").arg(QDate::currentDate().toString("yyyyMMdd"), currentPID, currentType));
@@ -171,5 +173,4 @@ void SubServer::receiveFile()
             return;
         }
     }
-
 }

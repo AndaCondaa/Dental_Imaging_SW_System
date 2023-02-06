@@ -59,8 +59,21 @@ PatientManager::~PatientManager()
 
 void PatientManager::receiveWaitList(int waitCount, QString data)   // data : pid|name|status<r>pid|name|status<r>...
 {
-    for (int i = 0; i < waitCount; i++) {
+    if (ui->infoTableWidget->item(0,0) != nullptr) {
+        delete ui->infoTableWidget->takeItem(0,0);
+        delete ui->infoTableWidget->takeItem(0,1);
+        delete ui->infoTableWidget->takeItem(0,2);
+        delete ui->infoTableWidget->takeItem(0,3);
+        delete ui->infoTableWidget->takeItem(0,4);
+    }
+    ui->waitTreeWidget->clear();
+    typeMap.clear();
 
+    for (int i = 0; i < waitCount; i++) {
+        QString newPatient = data.split("<r>")[i];
+        QStringList insertList;
+        insertList << newPatient.split("|")[0] << newPatient.split("|")[1] << newPatient.split("|")[2];
+        receiveWaitPatient(insertList);
     }
 }
 
@@ -78,11 +91,10 @@ void PatientManager::receiveWaitPatient(QStringList dataList)
     waitItem->setText(2, name);
     ui->waitTreeWidget->addTopLevelItem(waitItem);
 
-    waitItem->setTextAlignment(1, Qt::AlignHCenter);
-    waitItem->setTextAlignment(2, Qt::AlignHCenter);
-    ui->waitTreeWidget->resizeColumnToContents(0);
-    ui->waitTreeWidget->resizeColumnToContents(1);
-    ui->waitTreeWidget->resizeColumnToContents(2);
+    for (int i = 0; i < 3; i++) {
+        waitItem->setTextAlignment(i, Qt::AlignHCenter);
+        ui->waitTreeWidget->resizeColumnToContents(i);
+    }
 
 //    ui->waitTreeWidget->setCurrentItem(nullptr);    // 자동으로 처음 등록한 item이 currentitem으로 설정되지 않게 함
 }
@@ -97,11 +109,9 @@ void PatientManager::readyButtonSlot()
 
 void PatientManager::receivePatientInfo(QStringList dataList)           // pid -> name -> sex -> birth
 {
-    delete ui->infoTableWidget->takeItem(0,0);
-    delete ui->infoTableWidget->takeItem(0,1);
-    delete ui->infoTableWidget->takeItem(0,2);
-    delete ui->infoTableWidget->takeItem(0,3);
-    delete ui->infoTableWidget->takeItem(0,4);
+    for (int i = 0; i < 5; i++) {
+        delete ui->infoTableWidget->takeItem(0,i);
+    }
 
     QTableWidgetItem *pid = new QTableWidgetItem(dataList[0]);
     QTableWidgetItem *type = new QTableWidgetItem(typeMap.value(dataList[0]));
@@ -154,11 +164,16 @@ void PatientManager::saveSlot(QString data) // pid|type
 }
 
 void PatientManager::finishButtonSlot()
-{       
+{
     QString pid = ui->infoTableWidget->item(0,0)->text();
+    QString requestType = typeMap.value(pid);
+    QString type;
+    if (requestType == "BOTH") type = "BO";
+    else if (requestType == "PANO") type = "PA";
+    else if (requestType == "CEPH") type = "CE";
 
     QMessageBox finishBox(QMessageBox::NoIcon, "FINISH",
-                          QString(""), QMessageBox::Yes|QMessageBox::No,
+                          "", QMessageBox::Yes|QMessageBox::No,
                           this, Qt::Dialog);
 
     if (shootingStatus == "BOTH") {
@@ -176,7 +191,7 @@ void PatientManager::finishButtonSlot()
     finishBox.exec();
     if(finishBox.clickedButton()->text() == "&No") return;
 
-    typeMap.remove(ui->infoTableWidget->item(0,0)->text());
+    typeMap.remove(pid);
 
     foreach (auto item, ui->waitTreeWidget->findItems(pid, Qt::MatchExactly, 1)) {
         delete ui->waitTreeWidget->takeTopLevelItem(ui->waitTreeWidget->indexOfTopLevelItem(item));
@@ -186,14 +201,12 @@ void PatientManager::finishButtonSlot()
         ui->waitTreeWidget->topLevelItem(idx)->setText(0, QString::number(idx+1));
     }
 
-    delete ui->infoTableWidget->takeItem(0,0);
-    delete ui->infoTableWidget->takeItem(0,1);
-    delete ui->infoTableWidget->takeItem(0,2);
-    delete ui->infoTableWidget->takeItem(0,3);
-    delete ui->infoTableWidget->takeItem(0,4);
+    for (int i = 0; i < 5; i++) {
+        delete ui->infoTableWidget->takeItem(0,i);
+    }
 
     shootingStatus = "NULL";
     ui->finishButton->setEnabled(false);
 
-    emit finishSignal(pid);
+    emit finishSignal(pid, type);
 }

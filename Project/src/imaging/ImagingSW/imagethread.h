@@ -2,6 +2,8 @@
 #define IMAGETHREAD_H
 
 #include <QThread>
+#include <QPixmap>
+#include <QPainter>
 
 class ImageThread : public QThread
 {
@@ -12,9 +14,13 @@ public:
 
 public slots:
     void threadStop();
+    void setCount(int count);
 
 private:
     void run();
+
+    int before = 0;
+    int count = 0;
 
     bool isStop = false;
 

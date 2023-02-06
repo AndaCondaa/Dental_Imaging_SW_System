@@ -5,6 +5,7 @@
 #include <QTcpSocket>
 #include <QFile>
 #include <QProgressDialog>
+#include <QMessageBox>
 
 class MainNetworkManager : public QObject
 {
@@ -14,22 +15,25 @@ public:
     ~MainNetworkManager();
 
 private slots:
-    void connection(QString address, int port);
+    void connectSever(QString address, int port);
+    void disconnectServer();
+
     void sendPacket(QTcpSocket* socket, QString event, QString pid, QString data);
     QStringList packetParser(QByteArray receiveArray);
     void receivePacket();
 
     void requestPatientInfo(QString pid);       // 환자매니저에서 환자준비버튼 눌렀을 때, 서버로 패킷전송
-    void endImagingProcess(QString pid);        // 이미징매니저에서 환자 촬영이 모두 끝난 경우, 서버로 패킷전송
-
+    void endImagingProcess(QString pid, QString type);        // 이미징매니저에서 환자 촬영이 모두 끝난 경우, 서버로 패킷전송
 
     void goOnSend(qint64 numBytes);
     void sendFile(QString data);            // data = pid | shoot_type
 
-    void disconnectedFromServer();
+
 
 
 private:
+    QMessageBox *disconnectBox;
+
     QTcpSocket *mainSocket;
     QTcpSocket *fileSocket;
 

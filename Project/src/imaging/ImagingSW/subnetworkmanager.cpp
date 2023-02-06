@@ -54,7 +54,6 @@ void SubNetworkManager::receiveControl()
     protocol->receiveProtocol(subSocket);
 
     if (protocol->packetData()->event() == "CTL") {
-        qDebug("%d", __LINE__);
         emit buttonSignal(protocol->packetData()->type());
     }
 }
@@ -87,8 +86,9 @@ void SubNetworkManager::receiveFile()
     if (totalData.size() >= frameSize) {
         QFile file;
         QString fileName;
+        QByteArray frameData = totalData.first(frameSize);
 
-        QDir dir(QString("frame/%1/%2").arg(QDate::currentDate().toString("yyyyMMdd")).arg(currentType));
+        QDir dir(QString("image/frame/%1/").arg(currentType));
         if (!dir.exists())
             dir.mkpath(".");
 
@@ -103,9 +103,10 @@ void SubNetworkManager::receiveFile()
 
         file.setFileName(fileName);
         file.open(QIODevice::WriteOnly);
-        file.write(totalData.first(frameSize));
+        file.write(frameData);
         file.close();
         totalData.remove(0, frameSize);
+        emit sendFrameImg(count);
         count++;
         qDebug("%d", count);
         if (count == countMax) {
