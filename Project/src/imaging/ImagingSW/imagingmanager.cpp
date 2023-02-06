@@ -4,46 +4,14 @@
 
 #include <QProgressDialog>
 #include <QDir>
+#include <QPainter>
 
 #include <opencv2/opencv.hpp>
 #include <stdio.h>
 #include <math.h>
 
-
-
-
 using namespace cv;
 using namespace std;
-
-typedef struct {
-    unsigned short bfType;
-    unsigned int bfSize;
-    unsigned short bfReserved1;
-    unsigned short bfReserved2;
-    unsigned int bfOffBits;
-} BITMAPFILEHEADER;
-
-typedef struct {
-    unsigned int biSize;
-    unsigned int biWidth;
-    unsigned int biHeight;
-    unsigned short biPlanes;
-    unsigned short biBitCount;
-    unsigned int biCompression;
-    unsigned int SizeImage;
-    unsigned int biXPelsPerMeter;
-    unsigned int biYPelsPerMeter;
-    unsigned int biClrUsed;
-    unsigned int biClrImportant;
-} BITMAPINFOHEADER;
-
-typedef struct {
-    unsigned char rgbBlue;
-    unsigned char rgbGreen;
-    unsigned char rgbRed;
-    unsigned char rgbReserved;
-} RGBQUAD;
-
 
 ImagingManager::ImagingManager(QWidget *parent) :
     QWidget(parent),
@@ -69,99 +37,23 @@ void ImagingManager::setPID(QString pid)
 void ImagingManager::setType(QString type)
 {
     currentType = type;
-}
 
-void ImagingManager::raw16ToBmp8()
-{
-    /*
-    FILE *file;
-    BITMAPFILEHEADER bmpHeader;
-    BITMAPINFOHEADER bmpInfoHeader;
-    RGBQUAD *pal;
-    unsigned char *inImg, *outImg;
-
-    file = fopen("CEPH.raw", "rb");
-
-    if (file == nullptr) {
-        qDebug("ERROR : Failed file openning! %d", __LINE__);
-        return;
-    }
-
-    inImg = (unsigned char*)malloc(sizeof(unsigned char) * PIXELS * Bpp);
-    outImg = (unsigned char*)malloc(sizeof(unsigned char) * PIXELS);
-    pal = (RGBQUAD*)malloc(sizeof(RGBQUAD) * 256);
-    memset(inImg, 0, PIXELS*2);
-    memset(outImg, 0, PIXELS);
-
-    fread(inImg, sizeof(unsigned char) * PIXELS * Bpp, 1, file);
-    fclose(file);
-
-    for (int i = 0; i < 256; i++) {
-        pal[i].rgbBlue = i;
-        pal[i].rgbGreen = i;
-        pal[i].rgbRed = i;
-        pal[i].rgbReserved = i;
-    }
-
-    for (int i = 0; i < PIXELS; i++) {
-        outImg[i] = (unsigned char)(((double)(((inImg[(i*Bpp)] << 8) | (inImg[(i*Bpp)+1])) / 65536)) * 255);
-    }
-
-    bmpHeader.bfType = 0x4D42;
-    bmpHeader.bfSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) * 256
-                                + sizeof(unsigned char) * PIXELS;
-    bmpHeader.bfReserved1 = 0;
-    bmpHeader.bfReserved2 = 0;
-    bmpHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + sizeof(RGBQUAD) * 256;
-
-    bmpInfoHeader.biSize = sizeof(BITMAPINFOHEADER);
-    bmpInfoHeader.biWidth = X_RES;
-    bmpInfoHeader.biHeight = Y_RES;
-    bmpInfoHeader.biPlanes = 1;
-    bmpInfoHeader.biBitCount = 8;
-    bmpInfoHeader.biCompression = 0;
-    bmpInfoHeader.SizeImage = sizeof(unsigned char) * PIXELS;
-    bmpInfoHeader.biXPelsPerMeter = X_RES;
-    bmpInfoHeader.biYPelsPerMeter = Y_RES;
-    bmpInfoHeader.biClrUsed = 0;
-    bmpInfoHeader.biClrImportant = 0;
-
-    file = fopen("rawToBMP.bmp", "wb");
-    if (file == nullptr) {
-        qDebug("ERROR : Failed file openning! %d", __LINE__);
-        return;
-    }
-
-    fwrite(&bmpHeader, sizeof(BITMAPFILEHEADER), 1, file);
-    fwrite(&bmpInfoHeader, sizeof(BITMAPINFOHEADER), 1, file);
-    fwrite(pal, sizeof(RGBQUAD), 256, file);
-    fwrite(outImg, sizeof(unsigned char) * PIXELS, 1, file);
-    fclose(file);
-
-    qDebug("END");
-
-    delete inImg;
-    delete outImg;
-    delete pal;
-    */
-}
-
-void ImagingManager::loadImage()
-{
     if (currentType == "CEPH") {
-        ui->progressBar->setRange(0, 865);
+        ui->progressBar->setRange(0, 1250);
     } else if (currentType == "PANO") {
-        ui->progressBar->setRange(0, 1589);
-    } else {
-        return;
+        ui->progressBar->setRange(0, 1750);
     }
-
-    thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), currentType, this);
-    connect(thread, SIGNAL(imageProgressed(int)), ui->progressBar, SLOT(setValue(int)));
-    connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
-    thread->start();
 }
 
+void ImagingManager::recvFrameImg(int count)
+{
+    if (count == 0) {
+        thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), currentType, this);
+        connect(thread, SIGNAL(imageProgressed(int)), ui->progressBar, SLOT(setValue(int)));
+        connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
+        thread->start();
+    }
+}
 
 void ImagingManager::stopButtonSlot()
 {
@@ -187,6 +79,8 @@ void ImagingManager::saveButtonSlot()
     emit saveSignal(currentPID + "|" + currentType);
     ui->reconButton->setEnabled(false);
     ui->viewLabel->clear();
+//    pixmap.scaled(ui->viewLabel->width(), ui->viewLabel->height());
+//    pixmap.fill(Qt::white);
 }
 
 #include <QFile>

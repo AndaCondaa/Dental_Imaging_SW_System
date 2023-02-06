@@ -23,11 +23,11 @@ private slots:
     void receiveButtonControl(int);
     void resetControl();
     bool readyControl();
-    bool startControl();
+    void startControl();
     void stopControl();
     void saveSlot(QString);
     void shootingEndSlot(QString);
-    void finishSlot(QString);
+    void finishSlot(QString, QString);
 
 private:
     Ui::ControlPanel *ui;

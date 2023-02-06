@@ -84,7 +84,7 @@ void ControlPanel::controlButtonClicked(QAbstractButton* button)
         if (!readyControl()) return;
         break;
     case START:
-        if (!startControl()) return;
+        startControl();
         break;
     case STOP:
         stopControl();
@@ -104,7 +104,7 @@ void ControlPanel::receiveButtonControl(int buttonIdx)
         if (!readyControl()) return;
         break;
     case START:
-        if (!startControl()) return;
+        startControl();
         break;
     case STOP:
         stopControl();
@@ -167,15 +167,11 @@ bool ControlPanel::readyControl()
     return true;
 }
 
-bool ControlPanel::startControl()
+void ControlPanel::startControl()
 {
     ui->resetButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(true);
-
-    emit startSignal();
-
-    return true;
 }
 
 void ControlPanel::stopControl()
@@ -212,8 +208,11 @@ void ControlPanel::saveSlot(QString)
     ui->stopButton->setEnabled(false);
 }
 
-void ControlPanel::finishSlot(QString pid)
+void ControlPanel::finishSlot(QString pid, QString type)
 {
+    Q_UNUSED(pid);
+    Q_UNUSED(type);
+
     currentType = "NULL";
     requestType = "NULL";
     currentPID = "NULL";

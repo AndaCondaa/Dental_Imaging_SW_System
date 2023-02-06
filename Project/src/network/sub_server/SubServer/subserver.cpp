@@ -41,6 +41,7 @@ SubServer::~SubServer()
 {
     delete ui;
     controlServer->close();
+    fileServer->close();
     delete controlServer;
     delete protocol;
 }

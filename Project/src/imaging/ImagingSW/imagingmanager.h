@@ -18,12 +18,9 @@ public:
     ~ImagingManager();
 
 private slots:
-    void raw16ToBmp8();
-
     void setPID(QString);
     void setType(QString);
 
-    void loadImage();
     void reconImage();
     void saveButtonSlot();
     void stopButtonSlot();
@@ -32,6 +29,8 @@ private slots:
 
     void on_tempReconButton_clicked();
     void on_tempFilterButton_2_clicked();
+
+    void recvFrameImg(int);
 
 private:
     Ui::ImagingManager *ui;
@@ -42,6 +41,7 @@ private:
     ImageThread *thread;
 
 signals:
+    void sendCount(int);
     void shootingEndSignal(QString);
     void saveSignal(QString);
     void stopThread();

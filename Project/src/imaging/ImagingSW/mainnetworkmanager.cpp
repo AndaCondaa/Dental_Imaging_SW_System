@@ -1,6 +1,8 @@
 #include "mainnetworkmanager.h"
 
-#include <QFileDialog>
+#include <QMessageBox>
+#include <QDate>
+#include <QPushButton>
 
 // 환자 준비 : IPR<CR>PID<CR>"NULL"
 // 환자 준비 후 정보 리시브 : IPR<CR>PID<CR>"name|sex|birth"
@@ -13,35 +15,58 @@ MainNetworkManager::MainNetworkManager(QObject *parent)
     mainSocket = new QTcpSocket(this);
     fileSocket = new QTcpSocket(this);
 
-    connection("192.168.0.39", 8000);
+    disconnectBox = new QMessageBox;
+    disconnectBox->setWindowTitle("Disconnect");
+    disconnectBox->setText("서버와 연결이 끊어졌습니다. 재접속 하시겠습니까?");
+    disconnectBox->addButton(QMessageBox::Retry);
+
+//    mainConnection("192.168.0.39", 8000);
+//    fileConnection("192.168.0.39", 8001);
 }
 
 MainNetworkManager::~MainNetworkManager()
 {
-
+    mainSocket->close();
+    fileSocket->close();
+    delete mainSocket;
+    delete fileSocket;
 }
 
-void MainNetworkManager::connection(QString address, int port)
+void MainNetworkManager::mainConnection(QString address, int port)
 {
-//    mainSocket->connectToHost(address, port);
-//    if (mainSocket->waitForConnected()) {
-//        QObject::connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
-//        QObject::connect(mainSocket, SIGNAL(disconnected()), this, SLOT(disconnectedFromServer()));
-//        sendPacket(mainSocket, "CNT", "IMG", "NULL");
-//    } else {
-//        // 연결 실패 예외처리 구현
-//    }
-
-//    fileSocket->connectToHost(address, port+1);
-//    if (fileSocket->waitForConnected()) {
-//        sendPacket(fileSocket, "CNT", "IMG", "NULL");
-//    } else {
-//        // 연결 실패  예외처리 구현
-//    }
+    mainSocket->connectToHost(address, port);
+    if (mainSocket->waitForConnected()) {
+        connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
+        connect(mainSocket, SIGNAL(disconnected()), this, SLOT(mainDisconnection()));
+        sendPacket(mainSocket, "CNT", "IMG", "NULL");
+    } else {
+        mainDisconnection();
+    }
 }
 
-void MainNetworkManager::disconnectedFromServer()
+void MainNetworkManager::fileConnection(QString address, int port)
 {
+    fileSocket->connectToHost(address, port+1);
+    if (fileSocket->waitForConnected()) {
+        connect(mainSocket, SIGNAL(disconnected()), this, SLOT(fileDisconnection()));
+        sendPacket(fileSocket, "CNT", "IMG", "NULL");
+    } else {
+        fileDisconnection();
+    }
+}
+
+void MainNetworkManager::mainDisconnection()
+{
+    if (disconnectBox->exec() == QMessageBox::Retry) {
+        mainConnection("192.168.0.39", 8000);
+    }
+}
+
+void MainNetworkManager::fileDisconnection()
+{
+    if (disconnectBox->exec() == QMessageBox::Retry) {
+        fileConnection("192.168.0.39", 8001);
+    }
 }
 
 void MainNetworkManager::sendPacket(QTcpSocket* socket, QString event, QString pid, QString data)
@@ -86,9 +111,9 @@ void MainNetworkManager::requestPatientInfo(QString pid)
     sendPacket(mainSocket, "IPR", pid, "NULL");     // 서버로 환자정보 요청
 }
 
-void MainNetworkManager::endImagingProcess(QString pid)
+void MainNetworkManager::endImagingProcess(QString pid, QString type)
 {
-    sendPacket(mainSocket, "ISV", pid, "NULL");     // 촬영 종료 안내 패킷
+    sendPacket(mainSocket, "ISV", pid, type);     // 촬영 종료 안내 패킷
 }
 
 void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
@@ -143,6 +168,6 @@ void MainNetworkManager::goOnSend(qint64 numBytes)
 
     if (byteToWrite == 0) { // Send completed
         qDebug("File sending completed!");
-        QObject::disconnect(fileSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(goOnSend(qint64)));
+        disconnect(fileSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(goOnSend(qint64)));
     }
 }
