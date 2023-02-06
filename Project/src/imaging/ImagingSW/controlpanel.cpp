@@ -15,22 +15,24 @@ ControlPanel::ControlPanel(QWidget *parent) :
     ui->setupUi(this);
 
     ui->panoButton->setStyleSheet("QPushButton {"
+                                  "background-color: rgb(150, 150, 150);"
+                                  "border-radius: 10px;"
                                   "border-style: solid;"
-                                  "border-width: 1px;"
-                                  "border-color: gray;"
                                   "}"
                                   "QPushButton:checked {"
+                                  "background-color: rgb(250, 250, 250);"
                                   "border-width: 3px;"
-                                  "border-color: blue;"
+                                  "border-color: #ED8817;"
                                   "}");
     ui->cephButton->setStyleSheet("QPushButton {"
+                                  "background-color: rgb(150, 150, 150);"
+                                  "border-radius: 10px;"
                                   "border-style: solid;"
-                                  "border-width: 1px;"
-                                  "border-color: gray;"
                                   "}"
                                   "QPushButton:checked {"
+                                  "background-color: rgb(250, 250, 250);"
                                   "border-width: 3px;"
-                                  "border-color: blue;"
+                                  "border-color: #ED8817;"
                                   "}");
 
     modeButtonGroup = new QButtonGroup(this);
@@ -223,4 +225,9 @@ void ControlPanel::finishSlot(QString pid, QString type)
     ui->readyButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
+}
+
+void ControlPanel::setStyle()
+{
+
 }

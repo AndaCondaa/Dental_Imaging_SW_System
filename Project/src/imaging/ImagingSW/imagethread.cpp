@@ -153,7 +153,7 @@ void ImageThread::run()
 
     FILE *file;
     QString fileName;
-    unsigned short *buf;
+
     int cnt = 0;
     int valueMax = 65535;
     int min = 65535;
@@ -165,19 +165,20 @@ void ImageThread::run()
         rows = 64;
         cols = 1152;
         pixels = rows * cols;
-        buf = (unsigned short*)malloc(sizeof(unsigned short) * pixels);
+        unsigned short *buf = new unsigned short[pixels];
+
 
         for(int k = 0; k < 1750; k++) {
             if (isStop) return;
 
             if (k >= 1000)
-                fileName = QString("./image/%1/%2.raw").arg(modeType).arg(k);
+                fileName = QString("./image/frame/%1/%2.raw").arg(modeType).arg(k);
             else if (k < 1000 && k >= 100)
-                fileName = QString("./image/%1/0%2.raw").arg(modeType).arg(k);
+                fileName = QString("./image/frame/%1/0%2.raw").arg(modeType).arg(k);
             else if (k < 100 && k >= 10)
-                fileName = QString("./image/%1/00%2.raw").arg(modeType).arg(k);
+                fileName = QString("./image/frame/%1/00%2.raw").arg(modeType).arg(k);
             else
-                fileName = QString("./image/%1/000%2.raw").arg(modeType).arg(k);
+                fileName = QString("./image/frame/%1/000%2.raw").arg(modeType).arg(k);
 
             file = fopen(fileName.toStdString().c_str(), "rb");
             memset(buf, 0, pixels);
@@ -207,28 +208,31 @@ void ImageThread::run()
             Mat rotateMat;
             rotate(mat, rotateMat, cv::ROTATE_90_CLOCKWISE);
             QImage frameImage(rotateMat.data, rotateMat.cols, rotateMat.rows , QImage::Format_Grayscale16);
-            painter.drawImage(cnt*((double)width/1750.), 0, frameImage.scaled(cvRound((double)width/1750.), cvRound((double)width/1750.)*1750/2.5));
+            painter.drawImage(cnt*((double)width/1750.), 0, frameImage.scaledToHeight(height));
             emit imageProgressed(cnt);
             emit processFinished(pixmap);
             cnt++;
+            qDebug("%d", cnt);
         }
-    } if (modeType == "CEPH") {
+        delete[] buf;
+    } else if (modeType == "CEPH") {
         rows = 2400;
         cols = 48;
         pixels = rows * cols;
-        buf = (unsigned short*)malloc(sizeof(unsigned short) * pixels);
+        unsigned short *buf = new unsigned short[pixels];
+
 
         for(int k = 1249; k >= 0; k--) {
             if (isStop) return;
 
             if (k >= 1000)
-                fileName = QString("./image/%1/%2.raw").arg(modeType).arg(k);
+                fileName = QString("./image/frame/%1/%2.raw").arg(modeType).arg(k);
             else if (k < 1000 && k >= 100)
-                fileName = QString("./image/%1/0%2.raw").arg(modeType).arg(k);
+                fileName = QString("./image/frame/%1/0%2.raw").arg(modeType).arg(k);
             else if (k < 100 && k >= 10)
-                fileName = QString("./image/%1/00%2.raw").arg(modeType).arg(k);
+                fileName = QString("./image/frame/%1/00%2.raw").arg(modeType).arg(k);
             else
-                fileName = QString("./image/%1/000%2.raw").arg(modeType).arg(k);
+                fileName = QString("./image/frame/%1/000%2.raw").arg(modeType).arg(k);
 
             file = fopen(fileName.toStdString().c_str(), "rb");
             memset(buf, 0, pixels);
@@ -252,11 +256,11 @@ void ImageThread::run()
             emit imageProgressed(cnt);
             emit processFinished(pixmap);
             cnt++;
+            qDebug("%d", cnt);
         }
-
+        delete[] buf;
     }
     qDebug("width: %d", width);
     qDebug("height : %d", height);
-    delete buf;
 }
 

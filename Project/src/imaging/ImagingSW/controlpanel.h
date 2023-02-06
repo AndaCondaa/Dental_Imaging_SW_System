@@ -18,6 +18,7 @@ public:
     ~ControlPanel();
 
 private slots:
+    void setStyle();
     void checkTypeButton(QString);
     void controlButtonClicked(QAbstractButton*);
     void receiveButtonControl(int);

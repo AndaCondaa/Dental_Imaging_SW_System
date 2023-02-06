@@ -48,11 +48,29 @@
          <height>30</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(128, 255, 69);</string>
+        <string notr="true">background-color: rgb(200, 200, 200);</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::NoFrame</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Plain</enum>
        </property>
        <property name="text">
-        <string>TextLabel</string>
+        <string>모드 선택</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
+       </property>
+       <property name="indent">
+        <number>-1</number>
        </property>
       </widget>
      </item>
@@ -80,6 +98,9 @@
            <width>130</width>
            <height>130</height>
           </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>ArrowCursor</cursorShape>
          </property>
          <property name="autoFillBackground">
           <bool>false</bool>
@@ -185,11 +206,20 @@
          <height>30</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(128, 255, 69);</string>
+        <string notr="true">background-color: rgb(200, 200, 200);</string>
        </property>
        <property name="text">
-        <string>TextLabel</string>
+        <string>장비 제어</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>

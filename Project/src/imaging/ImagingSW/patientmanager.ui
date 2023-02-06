@@ -48,11 +48,20 @@
          <height>30</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(64, 255, 182);</string>
+        <string notr="true">background-color: rgb(200, 200, 200);</string>
        </property>
        <property name="text">
-        <string>TextLabel</string>
+        <string>대기 목록</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>
@@ -187,11 +196,20 @@
          <height>30</height>
         </size>
        </property>
+       <property name="font">
+        <font>
+         <pointsize>12</pointsize>
+         <bold>true</bold>
+        </font>
+       </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(64, 255, 182);</string>
+        <string notr="true">background-color: rgb(237, 136, 23);</string>
        </property>
        <property name="text">
-        <string>TextLabel</string>
+        <string>촬영 환자</string>
+       </property>
+       <property name="alignment">
+        <set>Qt::AlignCenter</set>
        </property>
       </widget>
      </item>

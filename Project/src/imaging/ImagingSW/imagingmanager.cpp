@@ -45,6 +45,12 @@ void ImagingManager::setType(QString type)
     } else if (currentType == "PANO") {
         ui->progressBar->setRange(0, 1749);
     }
+
+
+
+    thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), "CEPH", this);
+    connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
+    thread->start();
 }
 
 void ImagingManager::recvFrameImg(int count)
