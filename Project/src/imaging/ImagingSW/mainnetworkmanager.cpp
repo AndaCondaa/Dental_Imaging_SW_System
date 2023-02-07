@@ -29,7 +29,7 @@ MainNetworkManager::~MainNetworkManager()
 
 void MainNetworkManager::connectSever(QString address, int port)
 {
-    mainSocket->connectToHost(address, 8000);
+    mainSocket->connectToHost(address, port);
     if (mainSocket->waitForConnected()) {
         connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
         connect(mainSocket, SIGNAL(disconnected()), this, SLOT(disconnectServer()));
@@ -38,7 +38,7 @@ void MainNetworkManager::connectSever(QString address, int port)
         qDebug("Connection FAIL! (MAIN)");
     }
 
-    fileSocket->connectToHost(address, 8001);
+    fileSocket->connectToHost(address, port++);
     if (fileSocket->waitForConnected()) {
         connect(fileSocket, SIGNAL(disconnected()), this, SLOT(disconnectServer()));
         sendPacket(fileSocket, "CNT", "IMG", "NULL");

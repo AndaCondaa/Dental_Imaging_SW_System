@@ -46,6 +46,7 @@ void ImagingManager::setType(QString type)
     }
 
     thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), currentType, this);
+    connect(thread, SIGNAL(imageProgressed(int)), ui->progressBar, SLOT(setValue(int)));
     connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
     thread->start();
 }
@@ -98,7 +99,7 @@ void ImagingManager::reconImage()
 
         unsigned short *buf = new unsigned short[frameRows*frameCols];
         unsigned short *out = new unsigned short[reconRows*reconCols];
-
+        memset(out, 0, reconRows*reconCols);
 
         for (int k = 350; k < 1510; k++) {
             memset(buf, 0, frameRows*frameCols);
@@ -117,11 +118,13 @@ void ImagingManager::reconImage()
 
             histoStretch(buf, frameRows*frameCols, 0, 14296, 65535.);
 
-            // 이미지 스티칭
-            for (int y = 0; y < 1152; y++) {
-                out[(count*2)+y*2320] = buf[(1152*33)+y];
-                out[(count*2)+y*2320+1] = buf[(1152*32)+y];
-            }
+//            // 이미지 스티칭
+//            for (int y = 0; y < 1152; y++) {
+//                out[(count*2)+y*2320] = buf[(1152*33)+y];
+//                out[(count*2)+y*2320+1] = buf[(1152*32)+y];
+//            }
+
+
             count++;
             qDebug("%d", count);
         }
@@ -142,6 +145,7 @@ void ImagingManager::reconImage()
 
         unsigned short *buf = new unsigned short[frameRows*frameCols];
         unsigned short *out = new unsigned short[reconRows*reconCols];
+        memset(out, 0, reconRows*reconCols);
 
         for (int k = 1000; k > 0; k--) {
             memset(buf, 0, frameRows*frameCols);
@@ -160,11 +164,16 @@ void ImagingManager::reconImage()
             histoStretch(buf, frameRows*frameCols, 0, 400, 65535.);
 
             // 이미지 스티칭
-            for (int y = 0; y < 2400; y++) {
-                out[(count*3)+y*3000] = buf[(25)+(2400-(y+1))*48];
-                out[(count*3)+y*3000+1] = buf[(24)+(2400-(y+1))*48];
-                out[(count*3)+y*3000+2] = buf[(23)+(2400-(y+1))*48];
-            }
+//            for (int y = 0; y < 2400; y++) {
+//                out[(count*3)+y*3000] = buf[(25)+(2400-(y+1))*48];
+//                out[(count*3)+y*3000+1] = buf[(24)+(2400-(y+1))*48];
+//                out[(count*3)+y*3000+2] = buf[(23)+(2400-(y+1))*48];
+//            }
+
+
+
+
+
 
             count++;
             qDebug("%d", count);
