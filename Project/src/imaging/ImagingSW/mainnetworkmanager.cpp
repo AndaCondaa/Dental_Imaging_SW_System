@@ -16,7 +16,7 @@ MainNetworkManager::MainNetworkManager(QObject *parent)
     mainSocket = new QTcpSocket(this);
     fileSocket = new QTcpSocket(this);
 
-    connectSever("192.168.0.39", 8000);
+//    connectSever("10.222.0.153", 8000);
 }
 
 MainNetworkManager::~MainNetworkManager()
@@ -29,22 +29,22 @@ MainNetworkManager::~MainNetworkManager()
 
 void MainNetworkManager::connectSever(QString address, int port)
 {
-//    mainSocket->connectToHost("192.168.0.39", 8000);
-//    if (mainSocket->waitForConnected()) {
-//        connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
-//        connect(mainSocket, SIGNAL(disconnected()), this, SLOT(disconnectServer()));
-//        sendPacket(mainSocket, "CNT", "IMG", "NULL");
-//    } else {
-//        qDebug("FAIL (MAIN)");
-//    }
+    mainSocket->connectToHost(address, 8000);
+    if (mainSocket->waitForConnected()) {
+        connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
+        connect(mainSocket, SIGNAL(disconnected()), this, SLOT(disconnectServer()));
+        sendPacket(mainSocket, "CNT", "IMG", "NULL");
+    } else {
+        qDebug("Connection FAIL! (MAIN)");
+    }
 
-//    fileSocket->connectToHost("192.168.0.39", 8001);
-//    if (fileSocket->waitForConnected()) {
-//        connect(fileSocket, SIGNAL(disconnected()), this, SLOT(disconnectServer()));
-//        sendPacket(fileSocket, "CNT", "IMG", "NULL");
-//    } else {
-//        qDebug("FAIL (FILE)");
-//    }
+    fileSocket->connectToHost(address, 8001);
+    if (fileSocket->waitForConnected()) {
+        connect(fileSocket, SIGNAL(disconnected()), this, SLOT(disconnectServer()));
+        sendPacket(fileSocket, "CNT", "IMG", "NULL");
+    } else {
+        qDebug("Connection FAIL! (FILE)");
+    }
 }
 
 void MainNetworkManager::disconnectServer()

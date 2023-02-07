@@ -13,7 +13,6 @@
 #include <math.h>
 
 using namespace cv;
-//using namespace std;
 
 ImagingManager::ImagingManager(QWidget *parent) :
     QWidget(parent),
@@ -46,21 +45,19 @@ void ImagingManager::setType(QString type)
         ui->progressBar->setRange(0, 1749);
     }
 
-
-
-    thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), "CEPH", this);
-    connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
-    thread->start();
+//    thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), "PANO", this);
+//    connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
+//    thread->start();
 }
 
 void ImagingManager::recvFrameImg(int count)
 {
-    ui->progressBar->setValue(count);
-    if (count == 0) {
-        thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), currentType, this);
-        connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
-        thread->start();
-    }
+//    ui->progressBar->setValue(count);
+//    if (count == 0) {
+//        thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), currentType, this);
+//        connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
+//        thread->start();
+//    }
 }
 
 void ImagingManager::stopButtonSlot()
@@ -128,7 +125,10 @@ void ImagingManager::reconImage()
             count++;
             qDebug("%d", count);
         }
-        saveAsBmp(out, reconRows, reconCols);
+
+        gammaCorrection(out, reconRows*reconCols, 65535.0, 0.5);
+        invertImage(out, reconRows*reconCols);
+        saveAsJpg(out, reconRows, reconCols);
         viewReconImage(reconRows, reconCols);
 
         delete[] buf;
@@ -158,7 +158,6 @@ void ImagingManager::reconImage()
             fclose(file);
 
             histoStretch(buf, frameRows*frameCols, 0, 400, 65535.);
-//            CLAHE(buf, frameRows, frameCols, 32, 2, 30);
 
             // 이미지 스티칭
             for (int y = 0; y < 2400; y++) {
@@ -166,20 +165,50 @@ void ImagingManager::reconImage()
                 out[(count*3)+y*3000+1] = buf[(24)+(2400-(y+1))*48];
                 out[(count*3)+y*3000+2] = buf[(23)+(2400-(y+1))*48];
             }
+
             count++;
             qDebug("%d", count);
         }
-        medianFilter(out, reconRows, reconCols, 5);
-        gammaCorrection(out, reconRows*reconCols, 65535.0, 6.0);
-        CLAHE(out, reconRows, reconCols, 1, 8, 8);
-        medianFilter(out, reconRows, reconCols, 5);
-        //****************************************************************************************************
-        // 언샤프드 필터
-        // 값 역전
 
-        saveAsBmp(out, reconRows, reconCols);
-        viewReconImage(reconRows, reconCols);
+        ui->progressBar->setValue(ui->progressBar->maximum()/3);
+//        gammaCorrection(out, reconRows*reconCols, 65535.0, 0.9);
+        CLAHE(out, reconRows, reconCols, 16.0, 16, 16);
+        medianFilter(out, reconRows, reconCols, 3);
 
+        ui->progressBar->setValue(ui->progressBar->maximum()*2/3);
+        invertImage(out, reconRows*reconCols);
+
+        unsigned short *tmp1 = new unsigned short[reconRows*reconCols];
+        unsigned short *tmp2 = new unsigned short[reconRows*reconCols];
+        memcpy(tmp1, out, reconRows*reconCols*2);
+        memcpy(tmp2, out, reconRows*reconCols*2);
+
+        gammaCorrection(tmp1, reconRows*reconCols, 65535.0, 10);
+        gammaCorrection(tmp2, reconRows*reconCols, 65535.0, 0.4);
+        CLAHE(tmp1, reconRows, reconCols, 16.0, 8, 8);
+        CLAHE(tmp2, reconRows, reconCols, 16.0, 8, 8);
+//        medianFilter(tmp1, reconRows, reconCols, 3);
+        medianFilter(tmp2, reconRows, reconCols, 3);
+//        for (int i = 0; i < reconRows*reconCols; i++) {
+//            out[i] = (tmp1[i] + tmp2[i])/2;
+//        }
+//        medianFilter(out, reconRows, reconCols, 3);
+
+        ui->progressBar->setValue(ui->progressBar->maximum());
+        unsharpFilter(tmp1, reconRows, reconCols, 65535);
+//        medianFilter(out, reconRows, reconCols, 5);
+
+//        saveAsJpg(out, reconRows, reconCols);
+//        saveAsJpg(tmp1, reconRows, reconCols);
+//        viewReconImage(reconRows, reconCols);
+
+        FILE *file;
+        file = fopen("./recon.raw", "wb");
+        fwrite(tmp1, sizeof(unsigned short), reconRows*reconCols, file);
+        fclose(file);
+
+        delete[] tmp1;
+        delete[] tmp2;
         delete[] buf;
         delete[] out;
     } else {
@@ -247,18 +276,46 @@ void ImagingManager::medianFilter(unsigned short *input, int rows, int cols, int
 void ImagingManager::gammaCorrection(unsigned short *input, int inputSize, double valueMax, double gamma)
 {
     for (int i = 0; i < inputSize; i++) {
-        input[i] = valueMax * ((double)pow((double)((double)(input[i]) / valueMax), (double)(gamma / 10.0)));
+        input[i] = valueMax * (double)((double)pow((double)((double)(input[i]) / valueMax), (double)gamma));
     }
 }
 
-void ImagingManager::unsharpFilter()
+void ImagingManager::unsharpFilter(unsigned short *input, int rows, int cols, int valueMax)
 {
+    unsigned short *result = new unsigned short[rows*cols];
+    memcpy(result, input, rows*cols*2);
 
+    double kernel[3][3] = {{0., -1., 0.},
+                           {-1., 5., -1.},
+                           {0., -1., 0.}};
+
+    for(int y = 1; y < rows-1; y++) {
+        for(int x = 1; x < cols-1; x++) {
+            double sum = 0.0;
+            for (int i = -1; i < 2; i++) {
+                for(int j = -1; j < 2; j++) {
+                    sum += kernel[i+1][j+1]*input[(x+i)+(y+j)*cols];
+                }
+            }
+            result[(x-1)+(y-1)*cols] = (sum >= valueMax) ? valueMax : sum;
+        }
+    }
+
+    memcpy(input, result, rows*cols*2);
+
+    delete[] result;
 }
 
-void ImagingManager::saveAsBmp(unsigned short *input, int rows, int cols)
+void ImagingManager::invertImage(unsigned short *input, int inputSize)
 {
-    QString reconName = QString("./image/recon/%1.bmp").arg(currentPID + "_" + currentType);
+    for (int i = 0; i < inputSize; i++) {
+        input[i] = ~input[i];
+    }
+}
+
+void ImagingManager::saveAsJpg(unsigned short *input, int rows, int cols)
+{
+    QString reconName = QString("./image/recon/%1.jpg").arg(currentPID + "_" + currentType);
     cv::Mat src(rows, cols, CV_16UC1, input);
     cv::Mat dst;
     src.convertTo(dst, CV_8UC1, 1 / 256.0);
@@ -267,7 +324,7 @@ void ImagingManager::saveAsBmp(unsigned short *input, int rows, int cols)
 
 void ImagingManager::viewReconImage(int rows, int cols)
 {
-    QFile file(QString("./image/recon/%1.bmp").arg(currentPID+"_"+currentType));
+    QFile file(QString("./image/recon/%1.jpg").arg(currentPID+"_"+currentType));
     file.open(QIODevice::ReadOnly);
     QByteArray buf = file.readAll();
     file.close();
@@ -276,4 +333,5 @@ void ImagingManager::viewReconImage(int rows, int cols)
     pix.loadFromData(buf);
     ui->viewLabel->setPixmap(pix.scaled(ui->viewLabel->width(), ui->viewLabel->height(), Qt::KeepAspectRatio));
 }
+
 

@@ -19,7 +19,7 @@ SubNetworkManager::SubNetworkManager(QObject *parent)
     fileSocket = new QTcpSocket(this);
     protocol = new Protocol();
 
-    connection("127.0.0.1", 8002);
+    connection("10.222.0.164", 8002);
 }
 
 SubNetworkManager::~SubNetworkManager()

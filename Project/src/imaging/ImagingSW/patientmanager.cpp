@@ -60,8 +60,17 @@ void PatientManager::receiveWaitList(int waitCount, QString data)   // data : pi
 
     for (int i = 0; i < waitCount; i++) {
         QString newPatient = data.split("<r>")[i];
+
+        QString type;
+        if (newPatient.split("|")[2] == "BO")
+            type = "BOTH";
+        else if (newPatient.split("|")[2] == "PA")
+            type = "PANO";
+        else if (newPatient.split("|")[2] == "CE")
+            type = "CEPH";
+
         QStringList insertList;
-        insertList << newPatient.split("|")[0] << newPatient.split("|")[1] << newPatient.split("|")[2];
+        insertList << newPatient.split("|")[0] << newPatient.split("|")[1] << type;
         receiveWaitPatient(insertList);
     }
 }

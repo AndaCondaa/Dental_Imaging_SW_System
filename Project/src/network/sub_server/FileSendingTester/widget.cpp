@@ -19,7 +19,7 @@ Widget::Widget(QWidget *parent)
     protocol = new Protocol;
 
     fileSocket = new QTcpSocket;
-    fileSocket->connectToHost("127.0.0.1", 8003);
+    fileSocket->connectToHost("10.222.0.164", 8003);
     if (fileSocket->waitForConnected()) {
         protocol->sendProtocol(fileSocket, "NEW", ConnectType::MODALITY, "MODALITY");
     } else {

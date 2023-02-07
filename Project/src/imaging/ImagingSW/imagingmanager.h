@@ -34,8 +34,9 @@ private slots:
     void CLAHE(unsigned short *input, int rows, int cols, int clipLimit, int gridX, int gridY);
     void medianFilter(unsigned short *input, int rows, int cols, int ksize);
     void gammaCorrection(unsigned short *input, int inputSize, double valueMax, double gamma);
-    void unsharpFilter();
-    void saveAsBmp(unsigned short *input, int rows, int cols);
+    void unsharpFilter(unsigned short *input, int rows, int cols, int valueMax);
+    void invertImage(unsigned short *input, int inputSize);
+    void saveAsJpg(unsigned short *input, int rows, int cols);
     void viewReconImage(int rows, int cols);
 
 private:

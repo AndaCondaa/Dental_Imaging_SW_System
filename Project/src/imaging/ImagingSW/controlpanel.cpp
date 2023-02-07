@@ -119,6 +119,7 @@ void ControlPanel::resetControl()
     ui->cephButton->setCheckable(true);
 
     if (requestType == "PANO") {
+        ui->cephButton->setCheckable(false);
         ui->panoButton->setChecked(true);
         ui->cephButton->setChecked(false);
     } else if (requestType == "CEPH") {

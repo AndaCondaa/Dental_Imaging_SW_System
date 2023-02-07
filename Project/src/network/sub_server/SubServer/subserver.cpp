@@ -116,19 +116,15 @@ void SubServer::receiveControl()
         int command = protocol->packetData()->type();
         switch (command) {
         case RESET:
-//            protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", RESET, msg);
             ui->logEdit->append((QString("%1가 장비 초기화 명령을 보냈습니다.")).arg(client));
             break;
         case READY:
-//            protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", READY, msg);
             ui->logEdit->append((QString("%1가 %2 촬영준비 명령을 보냈습니다.")).arg(client, msg));
             break;
         case START:
-//            protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", START, msg);
             ui->logEdit->append((QString("%1가 %2 촬영시작 명령을 보냈습니다.")).arg(client, msg));
             break;
         case STOP:
-//            protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", STOP, msg);
             ui->logEdit->append((QString("%1가 %2 촬영종료 명령을 보냈습니다.")).arg(client, msg));
             break;
         }
