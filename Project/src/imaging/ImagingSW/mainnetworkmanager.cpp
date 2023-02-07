@@ -133,14 +133,10 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
         file = new QFile(fileName);
         file->open(QFile::ReadOnly);
 
-        qDebug() << QString("file %1 is opened").arg(fileName);
-
         byteToWrite = totalSize = file->size(); // Data remained yet
 
         QDataStream out(&outBlock, QIODevice::WriteOnly);
         out << qint64(0) << qint64(0) << pid << type;
-        qDebug() << pid;
-        qDebug() << type;
 
         totalSize += outBlock.size();
         byteToWrite += outBlock.size();

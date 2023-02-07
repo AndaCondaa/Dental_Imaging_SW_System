@@ -13,6 +13,7 @@
 #include "packetdata.h"
 
 #include <QDir>
+#include <QMessageBox>
 
 SubServer::SubServer(QWidget *parent)
     : QWidget(parent)
@@ -25,24 +26,39 @@ SubServer::SubServer(QWidget *parent)
     // 장비제어 명령 서버 오픈
     controlServer = new QTcpServer();
     connect(controlServer, SIGNAL(newConnection()), this, SLOT(newClient()));
-    if(!controlServer->listen(QHostAddress::Any, 8002)) {
-        // 서버 listen 실패
+    if(controlServer->listen(QHostAddress::Any, 8002)) {
+        ui->controlLabel->setText(QString("[PORT %1]  LISTEN...").arg(controlServer->serverPort()));
+    } else {
+        QMessageBox errorBox(QMessageBox::Critical, "SERVER ERROR",
+                             QString("Listen Fail..."),
+                             QMessageBox::Ok, this, Qt::Dialog);
+        errorBox.exec();
+        qApp->quit();
     }
 
-    // 이미지 서버 오픈
+    // 파일 서버 오픈
     fileServer = new QTcpServer();
     connect(fileServer, SIGNAL(newConnection()), this, SLOT(newFileClient()));
-    if(!fileServer->listen(QHostAddress::Any, 8003)) {
-        // 파일 서버 listen 실패
+    if(fileServer->listen(QHostAddress::Any, 8003)) {
+        ui->fileLabel->setText(QString("[PORT %1]  LISTEN...").arg(fileServer->serverPort()));
+    } else {
+        QMessageBox errorBox(QMessageBox::Critical, "SERVER ERROR",
+                             QString("Listen Fail..."),
+                             QMessageBox::Ok, this, Qt::Dialog);
+        errorBox.exec();
+        qApp->quit();
     }
 }
 
 SubServer::~SubServer()
 {
     delete ui;
+
     controlServer->close();
     fileServer->close();
+
     delete controlServer;
+    delete fileServer;
     delete protocol;
 }
 
@@ -86,7 +102,8 @@ void SubServer::receiveControl()
 
     QString event = protocol->packetData()->event();
     QString msg = protocol->packetData()->msg();
-    QString client = controlSocketMap.value(socket) ? "CT" : "촬영SW";      // controlSocketMap.value(socket) -> 0: 촬영SW, 1: 영상장비
+    QString ip = QString(socket->peerAddress().toString());
+    QString date = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
 
     int receiver;
     if (controlSocketMap.value(socket)) {
@@ -96,7 +113,7 @@ void SubServer::receiveControl()
     }
 
     if (event == "NEW") {
-        ui->logEdit->append((QString("%1가 연결되었습니다.")).arg(client));
+        ui->logEdit->append(QString(QString("[%1] [%2] [%3]").arg(date, ip, event)));
     } else if (event == "CTL") {
         if (receiver == MODALITY) {
             currentPID = msg.split("|")[0];
@@ -116,19 +133,18 @@ void SubServer::receiveControl()
         int command = protocol->packetData()->type();
         switch (command) {
         case RESET:
-            ui->logEdit->append((QString("%1가 장비 초기화 명령을 보냈습니다.")).arg(client));
+            ui->logEdit->append((QString("[%1] [%2] [%3_%4]").arg(date, ip, "RESET", msg)));
             break;
         case READY:
-            ui->logEdit->append((QString("%1가 %2 촬영준비 명령을 보냈습니다.")).arg(client, msg));
+            ui->logEdit->append((QString("[%1] [%2] [%3_%4]").arg(date, ip, "READY", msg)));
             break;
         case START:
-            ui->logEdit->append((QString("%1가 %2 촬영시작 명령을 보냈습니다.")).arg(client, msg));
+            ui->logEdit->append((QString("[%1] [%2] [%3_%4]").arg(date, ip, "START", msg)));
             break;
         case STOP:
-            ui->logEdit->append((QString("%1가 %2 촬영종료 명령을 보냈습니다.")).arg(client, msg));
+            ui->logEdit->append((QString("[%1] [%2] [%3_%4]").arg(date, ip, "STOP", msg)));
             break;
         }
-
 //        protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", command, msg);
     }
 }

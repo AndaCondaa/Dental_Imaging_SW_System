@@ -178,9 +178,15 @@ void ImageThread::run()
             else if (k < 100 && k >= 10)
                 fileName = QString("./image/frame/%1/00%2.raw").arg(modeType).arg(k);
             else
-                fileName = QString("./image/frame/%1/000%2.raw").arg(modeType).arg(k);
+                fileName = QString("./image/frame/%1/000%2.ra").arg(modeType).arg(k);
 
-            file = fopen(fileName.toStdString().c_str(), "rb");
+            fopen_s(&file, fileName.toStdString().c_str(), "rb");
+
+            if (file == nullptr) {
+                qDebug() << "파일 오픈 오류!";
+                return;
+            }
+
             memset(buf, 0, pixels);
             fread(buf, sizeof(unsigned short), pixels, file);
             fclose(file);
@@ -234,7 +240,13 @@ void ImageThread::run()
             else
                 fileName = QString("./image/frame/%1/000%2.raw").arg(modeType).arg(k);
 
-            file = fopen(fileName.toStdString().c_str(), "rb");
+            fopen_s(&file, fileName.toStdString().c_str(), "rb");
+
+            if (file == nullptr) {
+                qDebug() << "파일 오픈 오류!";
+                return;
+            }
+
             memset(buf, 0, pixels);
             fread(buf, sizeof(unsigned short), pixels, file);
             fclose(file);
