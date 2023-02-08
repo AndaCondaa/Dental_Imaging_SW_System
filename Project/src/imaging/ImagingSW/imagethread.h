@@ -30,7 +30,7 @@ private:
 
 signals:
     void imageProgressed(int);
-    void processFinished(const QPixmap &);
+    void processFinished(const QPixmap&);
 };
 
 #endif // IMAGETHREAD_H

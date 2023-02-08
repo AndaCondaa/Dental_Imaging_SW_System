@@ -26,20 +26,23 @@ public:
     ~SubNetworkManager();
 
 private slots:
+    void connectServer(QString address, int port);
+    void disconnectServer();
+
     void receiveControl();
     void sendButtonControl(int, QString);
     void receiveFile();
 
 private:
-    void connection(QString address, int port);
+
 
     QString currentPID = "NULL";
     QString currentType = "NULL";
 
-    Protocol *protocol;
+    Protocol *protocol = nullptr;
 
-    QTcpSocket *subSocket;
-    QTcpSocket *fileSocket;
+    QTcpSocket *subSocket = nullptr;
+    QTcpSocket *fileSocket = nullptr;
 
     int count = 0;
     int countMax = 0;
@@ -47,6 +50,7 @@ private:
     QByteArray totalData;
 
 signals:
+    void connectionStatusChanged(bool);
     void buttonSignal(int);         // 영상 장비로부터 직접 명령이 왔을 때 발생
     void sendFrameImg(int);
 };

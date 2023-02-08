@@ -13,66 +13,72 @@
 MainNetworkManager::MainNetworkManager(QObject *parent)
     : QObject{parent}
 {
-    mainSocket = new QTcpSocket(this);
-    fileSocket = new QTcpSocket(this);
 
-//    connectSever("10.222.0.153", 8000);
 }
 
 MainNetworkManager::~MainNetworkManager()
 {
-//    mainSocket->close();
-//    fileSocket->close();
-//    delete mainSocket;
-//    delete fileSocket;
+    mainSocket->deleteLater();
+    fileSocket->deleteLater();
 }
 
 void MainNetworkManager::connectSever(QString address, int port)
 {
+    mainSocket = new QTcpSocket(this);
+    fileSocket = new QTcpSocket(this);
+
     mainSocket->connectToHost(address, port);
-    if (mainSocket->waitForConnected()) {
+    fileSocket->connectToHost(address, port++);
+
+    if (mainSocket->waitForConnected(1000) && fileSocket->waitForConnected(1000)) {
         connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
         connect(mainSocket, SIGNAL(disconnected()), this, SLOT(disconnectServer()));
-        sendPacket(mainSocket, "CNT", "IMG", "NULL");
-    } else {
-        qDebug("Connection FAIL! (MAIN)");
-    }
 
-    fileSocket->connectToHost(address, port++);
-    if (fileSocket->waitForConnected()) {
-        connect(fileSocket, SIGNAL(disconnected()), this, SLOT(disconnectServer()));
+        sendPacket(mainSocket, "CNT", "IMG", "NULL");
         sendPacket(fileSocket, "CNT", "IMG", "NULL");
+
+        emit connectionStatusChanged(true);
     } else {
-        qDebug("Connection FAIL! (FILE)");
+        QMessageBox disconnectBox(QMessageBox::Warning, "ERROR",
+                                  "서버와 연결되지 않았습니다.",
+                                  QMessageBox::Ok);
+        disconnectBox.exec();
+        return;
     }
 }
 
 void MainNetworkManager::disconnectServer()
 {
-    disconnect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
-    disconnect(mainSocket, SIGNAL(disconnected()), this, SLOT(disconnectSever()));
-    disconnect(fileSocket, SIGNAL(disconnected()), this, SLOT(disconnectSever()));
-
     mainSocket->close();
     fileSocket->close();
-    delete mainSocket;
-    delete fileSocket;
 
-    disconnectBox = new QMessageBox;
-    disconnectBox->setWindowTitle("Disconnect");
-    disconnectBox->setText("서버와 연결이 끊어졌습니다.");
-    disconnectBox->addButton(QMessageBox::Close);
+    mainSocket->deleteLater();
+    fileSocket->deleteLater();
 
-    if (disconnectBox->exec() == QMessageBox::Close) {
-        qApp->quit();
-    }
+    emit connectionStatusChanged(false);
+
+    QMessageBox disconnectBox(QMessageBox::Warning, "ERROR",
+                              "서버와 연결이 끊어졌습니다. 재접속 해주세요.",
+                              QMessageBox::Ok);
+    disconnectBox.exec();
+    return;
 }
 
 void MainNetworkManager::sendPacket(QTcpSocket* socket, QString event, QString pid, QString data)
 {
+    if (socket == nullptr) {
+        emit connectionStatusChanged(false);
+
+        QMessageBox disconnectBox(QMessageBox::Warning, "ERROR",
+                                  "서버와 연결이 끊어졌습니다. 재접속 해주세요.",
+                                  QMessageBox::Ok);
+        disconnectBox.exec();
+        return;
+    }
+
     QString sendData = event + "<CR>" + pid + "<CR>" + data;
     QByteArray sendArray = sendData.toStdString().c_str();
-    socket->write(sendArray);   
+    socket->write(sendArray);
 }
 
 QStringList MainNetworkManager::packetParser(QByteArray receiveArray)
@@ -92,7 +98,6 @@ void MainNetworkManager::receivePacket()
     QString event = packetData[0];
     QString pid = packetData[1];
     QString data = packetData[2];
-
 
     QStringList dataList;
     if (event == "WTR") {       // WRT : 대기목록 리시브
@@ -118,6 +123,16 @@ void MainNetworkManager::endImagingProcess(QString pid, QString type)
 
 void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
 {
+    if (fileSocket == nullptr) {                    // 연결 체크
+        emit connectionStatusChanged(false);
+
+        QMessageBox disconnectBox(QMessageBox::Warning, "ERROR",
+                                  "서버와 연결이 끊어졌습니다. 재접속 해주세요.",
+                                  QMessageBox::Ok);
+        disconnectBox.exec();
+        return;
+    }
+
     QObject::connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
     QString pid = data.split("|")[0];
     QString type = data.split("|")[1];
@@ -127,11 +142,14 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
     outBlock.clear();
 
     QString imgName = pid + "_" + type;
-    QString fileName = QString("image/recon/%1.bmp").arg(imgName);
+    QString fileName = QString("image/recon/%1.jpg").arg(imgName);
     qDebug() << fileName;
     if(fileName.length()) {
         file = new QFile(fileName);
-        file->open(QFile::ReadOnly);
+        if (!file->open(QFile::ReadOnly)) {
+            qDebug("%d", __LINE__);
+            return;
+        }
 
         byteToWrite = totalSize = file->size(); // Data remained yet
 

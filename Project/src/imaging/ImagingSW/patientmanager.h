@@ -18,6 +18,7 @@ public:
 
 //private slots:
 public slots:
+    void settingStyleSheet();
     void receiveWaitList(int, QString);     // 서버와 연결할 때, 기존 대기목록 리시브
     void receiveWaitPatient(QStringList dataList);      // 촬영의뢰 받은 경우
     void readyButtonSlot();                            // 환자준비 버튼을 눌러서, 서버에 환자 정보 요청하는 함수

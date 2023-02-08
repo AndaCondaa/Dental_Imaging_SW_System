@@ -37,5 +37,9 @@ private:
     ImagingManager *imagingManager;
     MainNetworkManager *mainNetworkManager;
     SubNetworkManager *subNetworkManager;
+
+signals:
+    void connectMainServer(QString ip, int port);
+    void connectSubServer(QString ip, int port);
 };
 #endif // MAINWINDOW_H
