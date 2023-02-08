@@ -20,9 +20,15 @@ private slots:
     void on_pushButton_clicked();
     void newPIDSended(QString);
 
+    void on_selectFilePushButton_clicked();
+
 private:
     Ui::EnrollManager *ui;
     QString newPID;
+
+
+    QString pidPhoto;
+    QString fileName;
 
 signals:
     void sendNewData(QString);

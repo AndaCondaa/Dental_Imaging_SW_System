@@ -3,7 +3,7 @@
 #include <QDir>
 #include <QListWidget>
 #include <windows.h>
-
+#include <QGraphicsEffect>
 
 ImageManager::ImageManager(QWidget *parent) :
     QWidget(parent),
@@ -11,7 +11,20 @@ ImageManager::ImageManager(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    QString labelStyle = "QLabel { "
+                              "background-color: rgb(150, 150, 150);"
+                            "border-radius:10px;"
+                              "color:#ffffff;"
+                              "outline: 0; "
+                          "}";
+    ui->label_4->setStyleSheet(labelStyle);
 
+    QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
+    effect->setBlurRadius(5);
+    effect->setXOffset(5);
+    effect->setYOffset(5);
+    effect->setColor(QColor(220,220,220));
+    ui->label_4->setGraphicsEffect(effect);
 
 
 

@@ -1,6 +1,7 @@
 #include "patientinfomanager.h"
 #include "ui_patientinfomanager.h"
 #include <QMessageBox>
+#include <QGraphicsEffect>
 
 PatientInfoManager::PatientInfoManager(QWidget *parent) :
     QWidget(parent),
@@ -8,6 +9,60 @@ PatientInfoManager::PatientInfoManager(QWidget *parent) :
 {
     ui->setupUi(this);
     ui->clientInfoTableWidget->setColumnWidth(0,290);
+
+    ui->searchPushButton->setIcon(QIcon("./search.png"));
+
+
+    QString pushButtonStyle = "QPushButton { "
+                              "background-color: #ED8817;"
+                              "border-radius:10px;"
+                              "color:#ffffff;"
+                              "outline: 0; "
+                          "}"
+                          "QPushButton:hover { "
+                              "background-color: #F2A754;"
+                              "border-radius:10px;"
+                              "color:#ffffff;"
+                              "outline: 0; "
+                          "}";
+    QString comboBoxStyle = "QComboBox { "
+                              "background-color: #ED8817;"
+                            "border-radius:10px;"
+                              "color:#ffffff;"
+                              "outline: 0; "
+                          "}"
+                          "QComboBox:hover { "
+                              "background-color: #F2A754;"
+                              "border-radius:10px;"
+                              "color:#ffffff;"
+                              "outline: 0; "
+                          "}";
+
+    QString labelStyle = "QLabel { "
+                              "background-color: rgb(150, 150, 150);"
+                            "border-radius:10px;"
+                              "color:#ffffff;"
+                              "outline: 0; "
+                          "}";
+
+    QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
+    effect->setBlurRadius(5);
+    effect->setXOffset(5);
+    effect->setYOffset(5);
+    effect->setColor(QColor(220,220,220));
+    ui->label_2->setGraphicsEffect(effect);
+
+
+    ui->modifyPushButton->setStyleSheet(pushButtonStyle);
+    ui->deletePushButton->setStyleSheet(pushButtonStyle);
+    ui->WaitPushButton->setStyleSheet(pushButtonStyle);
+    ui->searchPushButton->setStyleSheet(pushButtonStyle);
+    ui->searchComboBox->setStyleSheet(comboBoxStyle);
+    ui->label_2->setStyleSheet(labelStyle);
+
+
+
+
 
     pixmap = new QPixmap();
     pixmap->load("./Face/default.png");
@@ -79,6 +134,15 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
     tel = data.split("|")[3];
     address = data.split("|")[4];
     memo = data.split("|")[5];
+    fileName = data.split("|")[6];
+    int editFlag = data.split("|")[7].toInt();
+    qDebug() << "editFlag: " <<editFlag;
+
+    //등록이 되었을 때부터 수정이 가능하도록 만드는 부분
+    if(editFlag == 1)
+        ui->clientInfoTableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
+
+
 
     qDebug("%d", __LINE__);
 
@@ -96,7 +160,7 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
 
     qDebug("%d", __LINE__);
     pixmap = new QPixmap();
-    pixmap->load(QString("./Face/%1.png").arg(pid));
+    pixmap->load(QString("%1").arg(fileName));
     pixmap->scaled(200,180,Qt::IgnoreAspectRatio);
 
     qDebug("%d", __LINE__);

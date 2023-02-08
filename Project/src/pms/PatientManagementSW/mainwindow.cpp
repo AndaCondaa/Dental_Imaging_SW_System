@@ -17,22 +17,23 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
+    ui->enrollButton->setIcon(QIcon("./enroll.png"));
+
     this->showMaximized();
 
 
-//    ui->enrollButton->setStyleSheet("QPushButton { "
-//                                            "qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgba(149, 210, 253, 255), stop:1 rgba(152, 136, 248, 255));"
-//                                            "border-radius:10px;"
-//                                            "color:#ffffff;"
-//                                            "padding-right:10px;"
-//                                            "outline: 0; "
-//                                        "}"
-//                                        "QPushButton:hover { "
-//                                            "background-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:1, stop:0 rgb(66, 130, 220), stop:1 rgb(184, 58, 166)); "
-//                                            "border-radius:10px;"
-//                                            "color:#ffffff;"
-//                                            "outline: 0; "
-//                                        "}");
+    ui->enrollButton->setStyleSheet("QPushButton { "
+                                    "background-color: #ED8817;"
+                                    "border-radius:10px;"
+                                    "color:#ffffff;"
+                                    "outline: 0; "
+                                "}"
+                                "QPushButton:hover { "
+                                    "background-color: #F2A754;"
+                                    "border-radius:10px;"
+                                    "color:#ffffff;"
+                                    "outline: 0; "
+                                "}");
 
 
 

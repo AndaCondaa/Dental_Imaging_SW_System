@@ -57,7 +57,7 @@ border: 1px solid rgba(190, 190, 190, 150);
 }</string>
        </property>
        <property name="verticalScrollBarPolicy">
-        <enum>Qt::ScrollBarAsNeeded</enum>
+        <enum>Qt::ScrollBarAlwaysOff</enum>
        </property>
        <property name="horizontalScrollBarPolicy">
         <enum>Qt::ScrollBarAlwaysOn</enum>
@@ -67,6 +67,9 @@ border: 1px solid rgba(190, 190, 190, 150);
          <width>300</width>
          <height>300</height>
         </size>
+       </property>
+       <property name="movement">
+        <enum>QListView::Static</enum>
        </property>
        <property name="flow">
         <enum>QListView::TopToBottom</enum>

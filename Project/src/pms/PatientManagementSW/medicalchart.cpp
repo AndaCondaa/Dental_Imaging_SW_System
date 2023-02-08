@@ -1,12 +1,38 @@
 #include "medicalchart.h"
 #include "ui_medicalchart.h"
 
+#include <QPrintDialog>
+#include <QPrinter>
+#include <QPainter>
+#include <QRectF>
+
+
+
 MedicalChart::MedicalChart(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MedicalChart)
 {
     ui->setupUi(this);
     this->setFixedSize(610, 645);
+
+
+
+//    QString pushButtonStyle = "QPushButton { "
+//                              "qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
+//                              "border-radius:10px;"
+//                              "border-color: gray;"
+//                          "}"
+//                          "QPushButton:hover { "
+//                              "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(237, 136, 23, 50));"
+//                              "border-radius:10px;"
+//                          "}";
+
+
+//    ui->pushButton_2->setStyleSheet(pushButtonStyle);
+
+
+    ui->printPushButton->setIcon(QIcon("./print.png"));
+    ui->emailPushButton->setIcon(QIcon("./email.png"));
 }
 
 MedicalChart::~MedicalChart()
@@ -50,4 +76,28 @@ void MedicalChart::patientReportInfoSended(QString patientDetail, QString report
     ui->dentistNameLineEdit->setText(dentistName);
 
 
+
+
 }
+
+void MedicalChart::on_printPushButton_clicked()
+{
+    QPrinter printer(QPrinter::HighResolution);
+    printer.setFullPage(true);
+    printer.setPageSize(QPageSize::A4);
+    //printer.setOutputFormat(QPrinter::PdfFormat);
+    //printer.setOutputFileName("test.pdf");
+
+    QPrintDialog* printDialog = new QPrintDialog(&printer, this);
+    if (printDialog->exec() == QDialog::Accepted) {
+        // print …
+        QPainter painter(&printer);
+        QPixmap buffer = grab();
+        //        QRect rect = painter.viewport();
+        QRect rect = printer.pageRect(QPrinter::DevicePixel).toRect();
+        painter.drawPixmap(0, 0, buffer.scaled(rect.size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        painter.end();
+        //        this->render(&painter);
+    }
+}
+

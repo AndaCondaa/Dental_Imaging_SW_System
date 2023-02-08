@@ -125,7 +125,7 @@ color:#ffffff;</string>
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>C:/Users/sun/Downloads/enroll.png</normaloff>C:/Users/sun/Downloads/enroll.png</iconset>
+             <normaloff>../../enroll.png</normaloff>../../enroll.png</iconset>
            </property>
            <property name="iconSize">
             <size>

@@ -28,6 +28,7 @@ private slots:
 
 
     void downloadOrNotSlot();
+    void disconnect();
 
 private:
     QTcpSocket *socket;

@@ -20,6 +20,7 @@ private:
 
 private slots:
     void patientReportInfoSended(QString, QString);
+    void on_printPushButton_clicked();
 };
 
 #endif // MEDICALCHART_H
