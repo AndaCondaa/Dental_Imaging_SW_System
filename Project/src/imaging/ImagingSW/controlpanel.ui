@@ -27,7 +27,19 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <property name="spacing">
-    <number>25</number>
+    <number>40</number>
+   </property>
+   <property name="leftMargin">
+    <number>0</number>
+   </property>
+   <property name="topMargin">
+    <number>10</number>
+   </property>
+   <property name="rightMargin">
+    <number>0</number>
+   </property>
+   <property name="bottomMargin">
+    <number>10</number>
    </property>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -36,6 +48,12 @@
      </property>
      <item>
       <widget class="QLabel" name="label">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -55,7 +73,9 @@
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(200, 200, 200);</string>
+        <string notr="true">background-color: rgb(200, 200, 200);
+border-radius: 10px;
+</string>
        </property>
        <property name="frameShape">
         <enum>QFrame::NoFrame</enum>
@@ -194,6 +214,12 @@
      </property>
      <item>
       <widget class="QLabel" name="label_2">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
        <property name="minimumSize">
         <size>
          <width>0</width>
@@ -213,7 +239,8 @@
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(200, 200, 200);</string>
+        <string notr="true">background-color: rgb(200, 200, 200);
+border-radius: 10px;</string>
        </property>
        <property name="text">
         <string>장비 제어</string>
@@ -239,7 +266,7 @@
          <property name="minimumSize">
           <size>
            <width>160</width>
-           <height>90</height>
+           <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -273,7 +300,7 @@
          <property name="minimumSize">
           <size>
            <width>160</width>
-           <height>90</height>
+           <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -307,7 +334,7 @@
          <property name="minimumSize">
           <size>
            <width>160</width>
-           <height>90</height>
+           <height>0</height>
           </size>
          </property>
          <property name="maximumSize">
@@ -335,7 +362,7 @@
          <property name="minimumSize">
           <size>
            <width>160</width>
-           <height>90</height>
+           <height>0</height>
           </size>
          </property>
          <property name="maximumSize">

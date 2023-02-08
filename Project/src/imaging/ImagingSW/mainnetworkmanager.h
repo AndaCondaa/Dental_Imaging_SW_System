@@ -5,7 +5,6 @@
 #include <QTcpSocket>
 #include <QFile>
 #include <QProgressDialog>
-#include <QMessageBox>
 
 class MainNetworkManager : public QObject
 {
@@ -28,24 +27,21 @@ private slots:
     void goOnSend(qint64 numBytes);
     void sendFile(QString data);            // data = pid | shoot_type
 
-
-
-
 private:
-    QMessageBox *disconnectBox;
+    QTcpSocket *mainSocket = nullptr;
+    QTcpSocket *fileSocket = nullptr;
 
-    QTcpSocket *mainSocket;
-    QTcpSocket *fileSocket;
-
-    QFile* file;                                // File Object for FileSending Protocol
+    QFile* file = nullptr;                                // File Object for FileSending Protocol
     qint64 totalSize;                           // Total size of File that clients are sending
     qint64 byteReceived = 0;                    // size of File read currently
     QByteArray inBlock;                         // Units divided to transfer files
     QString fileName;                           // Receiving FileName
     qint64 byteToWrite;             // File Size per a block
     QByteArray outBlock;            // Block for sending
+    QMap<int, QTcpSocket*> socketMap; // 0: main , 1: file
 
 signals:
+    void connectionStatusChanged(bool);
     void sendWaitList(int, QString);
     void sendWaitPatient(QStringList);
     void sendPatientInfo(QStringList);

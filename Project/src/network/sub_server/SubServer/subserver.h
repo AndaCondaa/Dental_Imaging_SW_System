@@ -45,10 +45,10 @@ private:
     QString currentPID = "NULL";
     QString currentType = "NULL";
 
-    Protocol *protocol;
+    Protocol *protocol = nullptr;
 
-    QTcpServer *controlServer;
-    QTcpServer *fileServer;
+    QTcpServer *controlServer = nullptr;
+    QTcpServer *fileServer = nullptr;
     QMap<QTcpSocket*, int> controlSocketMap;    // <socket, SW or MODALITY>
     QMap<QTcpSocket*, int> fileSocketMap;       // <socket, SW or MODALITY>
 

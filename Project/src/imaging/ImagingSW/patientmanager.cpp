@@ -14,31 +14,7 @@ PatientManager::PatientManager(QWidget *parent) :
     connect(ui->finishButton, SIGNAL(clicked()), this, SLOT(finishButtonSlot()));
     connect(ui->waitTreeWidget, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(waitDoubleClicked(QTreeWidgetItem*,int)));
 
-    ui->finishButton->setStyleSheet("QPushButton { "
-                                        "background-color:rgb(241,156,72); "        // 주황색
-                                        "border-radius:10px;"
-                                        "border:1px solid rgb(241,156,72);"
-                                        "color:#ffffff;"
-                                        "text-decoration:none;"
-                                        "padding-right:10px;"
-                                        "outline: 0; "
-                                    "}"
-                                    "QPushButton:hover { "
-                                        "background-color: rgb(141,156,0); "
-                                        "border-radius:10px;"
-                                        "border:1px solid rgb(141,156,0);"
-                                        "color:#ffffff;"
-                                        "padding-right:10px;"
-                                        "outline: 0; "
-                                    "}"
-                                    "QPushButton:disabled { "
-                                        "background-color: rgb(132,132,132); "      // 회색
-                                        "border-radius:10px;"
-                                        "border:1px solid rgb(132,132,132);"
-                                        "color:#ffffff;"
-                                        "padding-right:10px;"
-                                        "outline: 0; "
-                                    "}");
+    settingStyleSheet();
 }
 
 PatientManager::~PatientManager()
@@ -105,6 +81,13 @@ void PatientManager::readyButtonSlot()
     emit sendPid(ui->waitTreeWidget->currentItem()->text(1));
 }
 
+void PatientManager::waitDoubleClicked(QTreeWidgetItem* item, int col)
+{
+    Q_UNUSED(col);
+
+    emit sendPid(item->text(1));
+}
+
 void PatientManager::receivePatientInfo(QStringList dataList)           // pid -> name -> sex -> birth
 {
     for (int i = 0; i < 5; i++) {
@@ -134,13 +117,6 @@ void PatientManager::receivePatientInfo(QStringList dataList)           // pid -
 
     emit sendType(dataList[0] + "|" + typeMap.value(dataList[0]));
     emit sendPidToImagingManager(dataList[0]);
-}
-
-void PatientManager::waitDoubleClicked(QTreeWidgetItem* item, int col)
-{
-    Q_UNUSED(col);
-
-    emit sendPid(item->text(1));
 }
 
 void PatientManager::saveSlot(QString data) // pid|type
@@ -207,4 +183,35 @@ void PatientManager::finishButtonSlot()
     ui->finishButton->setEnabled(false);
 
     emit finishSignal(pid, type);
+}
+
+void PatientManager::settingStyleSheet()
+{
+    ui->patientReadyButton->setStyleSheet("QPushButton { "
+                                          "background-color:rgb(241,156,72);"
+                                          "border-radius:10px;"
+                                          "color:#ffffff;"
+                                          "}"
+                                          "QPushButton:hover { "
+                                          "background-color: rgb(255,200,100);"
+                                          "color:#ffffff;"
+                                          "}"
+                                          "QPushButton:disabled { "
+                                          "background-color: rgb(50,50,50);"
+                                          "color:#ffffff;"
+                                          "}");
+
+    ui->finishButton->setStyleSheet("QPushButton { "
+                                    "background-color:rgb(241,156,72);"
+                                    "border-radius:10px;"
+                                    "color:#ffffff;"
+                                    "}"
+                                    "QPushButton:hover { "
+                                    "background-color: rgb(255,200,100);"
+                                    "color:#ffffff;"
+                                    "}"
+                                    "QPushButton:disabled { "
+                                    "background-color: rgb(50,50,50);"
+                                    "color:#ffffff;"
+                                    "}");
 }

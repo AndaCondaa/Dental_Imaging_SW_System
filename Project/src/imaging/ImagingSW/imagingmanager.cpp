@@ -124,7 +124,6 @@ void ImagingManager::reconImage()
 //                out[(count*2)+y*2320+1] = buf[(1152*32)+y];
 //            }
 
-
             count++;
             qDebug("%d", count);
         }
@@ -171,10 +170,6 @@ void ImagingManager::reconImage()
 //            }
 
 
-
-
-
-
             count++;
             qDebug("%d", count);
         }
@@ -212,7 +207,13 @@ void ImagingManager::reconImage()
 //        viewReconImage(reconRows, reconCols);
 
         FILE *file;
-        file = fopen("./recon.raw", "wb");
+        fopen_s(&file, "./recon.raw", "wb");
+
+        // *****************************************************************************
+        if (file == nullptr) {
+
+        }
+
         fwrite(tmp1, sizeof(unsigned short), reconRows*reconCols, file);
         fclose(file);
 

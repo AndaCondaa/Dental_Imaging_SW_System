@@ -10,43 +10,65 @@
 #include "protocol.h"
 #include "packetdata.h"
 
+#include <QApplication>
 #include <QDir>
+#include <QMessageBox>
+#include <QAbstractButton>
+
 
 SubNetworkManager::SubNetworkManager(QObject *parent)
     : QObject{parent}
 {
     subSocket = new QTcpSocket(this);
-    fileSocket = new QTcpSocket(this);
-    protocol = new Protocol();
+    fileSocket= new QTcpSocket(this);
 
-//    connection("10.222.0.164", 8002);
+    protocol = new Protocol();
 }
 
 SubNetworkManager::~SubNetworkManager()
 {
-    subSocket->close();
-    delete subSocket;
+    subSocket->deleteLater();
     delete protocol;
 }
 
-void SubNetworkManager::connection(QString address, int port)
+void SubNetworkManager::connectServer(QString address, int port)
 {
-    subSocket->connectToHost(address, port);
-    if (subSocket->waitForConnected()) {
-        connect(subSocket, SIGNAL(readyRead()), SLOT(receiveControl()));
-        protocol->sendProtocol(subSocket, "NEW", ConnectType::SW, "SW");
-    } else {
-        // 연결 실패 예외처리 구현
-    }
+    subSocket = new QTcpSocket(this);
+    fileSocket= new QTcpSocket(this);
 
+    subSocket->connectToHost(address, port);
     fileSocket->connectToHost(address, port+1);
-    if (fileSocket->waitForConnected()) {
+
+    if (subSocket->waitForConnected(1000) && fileSocket->waitForConnected(1000)) {
+        connect(subSocket, SIGNAL(readyRead()), SLOT(receiveControl()));
+        connect(subSocket, SIGNAL(disconnected()), this, SLOT(disconnectServer()));
         connect(fileSocket, SIGNAL(readyRead()), SLOT(receiveFile()));
+
+        protocol->sendProtocol(subSocket, "NEW", ConnectType::SW, "SW");
         protocol->sendProtocol(fileSocket, "NEW", ConnectType::SW, "SW");
+
+        emit connectionStatusChanged(true);
     } else {
-        // 연결 실패  예외처리 구현
+        qDebug("SUB Connection FAIL!");
     }
 }
+
+void SubNetworkManager::disconnectServer()
+{
+    subSocket->close();
+    fileSocket->close();
+
+//    subSocket->deleteLater();
+//    fileSocket->deleteLater();
+
+    emit connectionStatusChanged(false);
+
+    QMessageBox disconnectBox(QMessageBox::Warning, "ERROR",
+                              "검사실 서버와 연결이 끊어졌습니다. 재접속 해주세요.",
+                              QMessageBox::Ok);
+    disconnectBox.exec();
+}
+
 
 void SubNetworkManager::receiveControl()
 {
@@ -73,6 +95,15 @@ void SubNetworkManager::sendButtonControl(int buttonIdx, QString data)
             countMax = 1250;
             frameSize = 48 * 2400 * 2;
         }
+    }
+
+    if (subSocket == nullptr) {
+        emit connectionStatusChanged(false);
+
+        QMessageBox disconnectBox(QMessageBox::Warning, "ERROR",
+                                  "서버와 연결이 끊어졌습니다. 재접속 해주세요.",
+                                  QMessageBox::Ok);
+        disconnectBox.exec();
     }
 
     protocol->sendProtocol(subSocket, "CTL", buttonIdx, data);
@@ -117,3 +148,4 @@ void SubNetworkManager::receiveFile()
         }
     }
 }
+

@@ -59,20 +59,30 @@ void ControlPanel::checkTypeButton(QString data)
 {
     currentPID = data.split("|")[0];
     requestType = data.split("|")[1];
+    currentType = requestType;
 
-    if (requestType == "PANO") {
-        currentType = "PANO";
-        ui->panoButton->setCheckable(true);
-        ui->cephButton->setCheckable(false);
-    } else if (requestType == "CEPH") {
-        currentType = "CEPH";
-        ui->panoButton->setCheckable(false);
-        ui->cephButton->setCheckable(true);
-    } else if (requestType == "BOTH") {
-        currentType = "PANO";
-        ui->panoButton->setCheckable(true);
-        ui->cephButton->setCheckable(true);
-    }
+    //******************************************************************************
+    // 대기환자 변경할 때마다, 바뀌는지 체크하기
+    resetControl();
+//    modeButtonGroup->setExclusive(false);
+//    if (requestType == "PANO") {
+//        ui->panoButton->setCheckable(true);
+//        ui->cephButton->setCheckable(false);
+//        ui->panoButton->setChecked(true);
+//        ui->cephButton->setChecked(false);
+//    } else if (requestType == "CEPH") {
+//        ui->panoButton->setCheckable(false);
+//        ui->cephButton->setCheckable(true);
+//        ui->panoButton->setChecked(false);
+//        ui->cephButton->setChecked(true);
+//    } else if (requestType == "BOTH") {
+//        ui->panoButton->setCheckable(true);
+//        ui->cephButton->setCheckable(true);
+//        ui->panoButton->setChecked(false);
+//        ui->cephButton->setChecked(false);
+//    }
+//    modeButtonGroup->setExclusive(false);
+    //*******************************************************************************
 }
 
 void ControlPanel::controlButtonClicked(QAbstractButton* button)
@@ -115,20 +125,27 @@ void ControlPanel::receiveButtonControl(int buttonIdx)
 
 void ControlPanel::resetControl()
 {
-    ui->panoButton->setCheckable(true);
-    ui->cephButton->setCheckable(true);
-
+    modeButtonGroup->setExclusive(false);
     if (requestType == "PANO") {
+        ui->panoButton->setCheckable(true);
         ui->cephButton->setCheckable(false);
+
         ui->panoButton->setChecked(true);
         ui->cephButton->setChecked(false);
     } else if (requestType == "CEPH") {
+        ui->panoButton->setCheckable(false);
+        ui->cephButton->setCheckable(true);
+
         ui->panoButton->setChecked(false);
         ui->cephButton->setChecked(true);
     } else if (requestType == "BOTH") {
+        ui->panoButton->setCheckable(true);
+        ui->cephButton->setCheckable(true);
+
         ui->panoButton->setChecked(false);
         ui->cephButton->setChecked(false);
     }
+    modeButtonGroup->setExclusive(true);
 
     ui->resetButton->setEnabled(true);
     ui->readyButton->setEnabled(true);
@@ -226,9 +243,4 @@ void ControlPanel::finishSlot(QString pid, QString type)
     ui->readyButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
-}
-
-void ControlPanel::setStyle()
-{
-
 }
