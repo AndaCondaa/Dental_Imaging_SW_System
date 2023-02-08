@@ -3,13 +3,35 @@
 
 #include "medicalchart.h"
 
+#include <QGraphicsEffect>
+#include <QPainter>
+#include <QPrinter>
+#include <QPrintDialog>
+#include <QRectF>
+
+
 MedicalRecordManager::MedicalRecordManager(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::MedicalRecordManager)
 {
     ui->setupUi(this);
-    medicalChart = new MedicalChart(0);
 
+    QString labelStyle = "QLabel { "
+                              "background-color: rgb(150, 150, 150);"
+                            "border-radius:10px;"
+                              "color:#ffffff;"
+                              "outline: 0; "
+                          "}";
+    ui->label_7->setStyleSheet(labelStyle);
+
+    QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
+    effect->setBlurRadius(5);
+    effect->setXOffset(5);
+    effect->setYOffset(5);
+    effect->setColor(QColor(220,220,220));
+    ui->label_7->setGraphicsEffect(effect);
+
+    medicalChart = new MedicalChart(0);
     connect(this, SIGNAL(sendPatientReportInfo(QString, QString)), medicalChart, SLOT(patientReportInfoSended(QString, QString)));
 }
 
@@ -62,8 +84,6 @@ qDebug() << "patientDetail" << patientDetail;
 
         totalRowCount += 1;
     }
-
-
 }
 
 void MedicalRecordManager::on_recordTreeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column)
@@ -81,6 +101,60 @@ void MedicalRecordManager::on_recordTreeWidget_itemDoubleClicked(QTreeWidgetItem
 //    }
 
     medicalChart->show();
+
+
+//    QPixmap pixmap = medicalChart->grab();
+////    pixmap.save("medicalChart.png");
+
+//    QPrinter *printer = new QPrinter(QPrinter::HighResolution);
+//    printer->setFullPage(true);
+////    printer.setOutputFormat(QPrinter::PdfFormat);
+////    printer.setOutputFileName("medicalChart.pdf");
+
+//    QPrintDialog* printDialog = new QPrintDialog(printer, this);
+//    if (printDialog->exec() == QDialog::Accepted) {
+//        // print ...
+//        QPainter painter;
+//        if (! painter.begin(printer)) { // failed to open file
+//            qWarning("failed to open file, is it writable?");
+//            return;
+//        }
+
+//        painter.drawPixmap(0, 0, pixmap);
+
+//        if (! printer->newPage()) {
+//            qWarning("failed in flushing page to disk, disk full?");
+//            return;
+//        }
+//        painter.end();
+//    }
+//    delete printer;
+//    delete printDialog;
+
+
+
+//        QPrinter printer(QPrinter::HighResolution);
+//        printer.setFullPage(true);
+//        printer.setPageSize(QPageSize::A4);
+//        //printer.setOutputFormat(QPrinter::PdfFormat);
+//        //printer.setOutputFileName("test.pdf");
+
+//        QPrintDialog* printDialog = new QPrintDialog(&printer, this);
+//        if (printDialog->exec() == QDialog::Accepted) {
+//            // print …
+//            QPainter painter(&printer);
+//            QPixmap buffer = grab();
+//            //        QRect rect = painter.viewport();
+//            QRect rect = printer.pageRect(QPrinter::DevicePixel).toRect();
+//            painter.drawPixmap(0, 0, buffer.scaled(rect.size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+//            painter.end();
+//            //        this->render(&painter);
+//        }
+
+
+
+
+
 
     emit sendPatientReportInfo(patientDetail, reportDetail);
 }

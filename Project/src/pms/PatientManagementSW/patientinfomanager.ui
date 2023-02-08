@@ -33,7 +33,7 @@
            </property>
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>13</pointsize>
              <bold>true</bold>
             </font>
            </property>
@@ -69,7 +69,7 @@ color:#ffffff;</string>
            </property>
            <property name="font">
             <font>
-             <pointsize>11</pointsize>
+             <pointsize>13</pointsize>
             </font>
            </property>
            <property name="styleSheet">
@@ -104,13 +104,16 @@ color:#ffffff;</string>
            </property>
            <property name="icon">
             <iconset>
-             <normaloff>C:/Users/sun/Downloads/search.png</normaloff>C:/Users/sun/Downloads/search.png</iconset>
+             <normaloff>../../search.png</normaloff>../../search.png</iconset>
            </property>
            <property name="iconSize">
             <size>
              <width>20</width>
              <height>20</height>
             </size>
+           </property>
+           <property name="shortcut">
+            <string/>
            </property>
           </widget>
          </item>
@@ -126,7 +129,7 @@ color:#ffffff;</string>
          </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>13</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -224,7 +227,7 @@ border-radius:7px;</string>
         <widget class="QTableWidget" name="clientInfoTableWidget">
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>13</pointsize>
           </font>
          </property>
          <property name="styleSheet">
@@ -414,15 +417,21 @@ selection-color: black;
       <layout class="QHBoxLayout" name="horizontalLayout">
        <item>
         <widget class="QPushButton" name="modifyPushButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>45</height>
+           <height>55</height>
           </size>
          </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>13</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -434,22 +443,28 @@ border-radius:10px;
 color:#ffffff;</string>
          </property>
          <property name="text">
-          <string>환자 정보
+          <string>정보
 수정</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="deletePushButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>45</height>
+           <height>55</height>
           </size>
          </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>13</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -461,22 +476,28 @@ border-radius:10px;
 color:#ffffff;</string>
          </property>
          <property name="text">
-          <string>환자 정보
+          <string>정보
 삭제</string>
          </property>
         </widget>
        </item>
        <item>
         <widget class="QPushButton" name="WaitPushButton">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
          <property name="minimumSize">
           <size>
            <width>0</width>
-           <height>45</height>
+           <height>55</height>
           </size>
          </property>
          <property name="font">
           <font>
-           <pointsize>11</pointsize>
+           <pointsize>13</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -488,7 +509,7 @@ border-radius:10px;
 color:#ffffff;</string>
          </property>
          <property name="text">
-          <string>대기 명단에
+          <string>대기
 추가</string>
          </property>
         </widget>

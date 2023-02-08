@@ -2,12 +2,57 @@
 #include "ui_patientstatusmanager.h"
 #include <QTreeWidget>
 #include <QMessageBox>
-
+#include <QGraphicsEffect>
 PatientStatusManager::PatientStatusManager(QWidget *parent) :
     QWidget(parent),
     ui(new Ui::PatientStatusManager)
 {
     ui->setupUi(this);
+
+
+
+
+    QString labelStyle = "QLabel { "
+                              "background-color: rgb(150, 150, 150);"
+                            "border-radius:10px;"
+                              "color:#ffffff;"
+                              "outline: 0; "
+                          "}";
+
+
+    QString pushButtonStyle = "QPushButton { "
+                              "background-color: #ED8817;"
+                              "border-radius:10px;"
+                              "color:#ffffff;"
+                              "outline: 0; "
+                          "}"
+                          "QPushButton:hover { "
+                              "background-color: #F2A754;"
+                              "border-radius:10px;"
+                              "color:#ffffff;"
+                              "outline: 0; "
+                          "}";
+
+    QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
+    effect->setBlurRadius(5);
+    effect->setXOffset(5);
+    effect->setYOffset(5);
+    effect->setColor(QColor(220,220,220));
+    ui->label_5->setGraphicsEffect(effect);
+
+    QGraphicsDropShadowEffect *effect2 = new QGraphicsDropShadowEffect;
+    effect2->setBlurRadius(5);
+    effect2->setXOffset(5);
+    effect2->setYOffset(5);
+    effect2->setColor(QColor(220,220,220));
+    ui->label_6->setGraphicsEffect(effect2);
+
+    ui->label_5->setStyleSheet(labelStyle);
+    ui->label_6->setStyleSheet(labelStyle);
+
+
+    ui->paymentPushButton->setStyleSheet(pushButtonStyle);
+    ui->shootRequestPushButton->setStyleSheet(pushButtonStyle);
 
 
 //    QTreeWidgetItem* paymentRow = new QTreeWidgetItem;
@@ -309,6 +354,16 @@ void PatientStatusManager::oldListSended(QString sendedData)
         QString tempPID = tempLine.split("|")[0];
         QString tempName = tempLine.split("|")[1];
         QString tempStatus = tempLine.split("|")[2];
+
+        if(tempStatus == "WT")
+            tempStatus = "진료대기";
+        else if(tempStatus == "TM")
+            tempStatus = "진료중";
+        else if(tempStatus == "CE" || tempStatus == "PA" || tempStatus =="BO")
+            tempStatus = "촬영중";
+        else if(tempStatus == "WP")
+            tempStatus = "수납대기";
+
 
         //수납대기 상태는 수납대기 리스트에 들어가야 함
         if(tempStatus == "수납대기")

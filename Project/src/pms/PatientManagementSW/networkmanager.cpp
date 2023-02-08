@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QFileInfo>
+#include <QMessageBox>
 
 NetworkManager::NetworkManager(QObject *parent)
     : QObject{parent}
@@ -13,6 +14,8 @@ NetworkManager::NetworkManager(QObject *parent)
     socket = new QTcpSocket(this);
     fd_flag = connectToMainHost("127.0.0.1"); // localhost
     connect(socket, SIGNAL(readyRead()), this, SLOT(receiveData()));
+
+connect(socket, SIGNAL(disconnected()), SLOT(disconnect()));
 
     if(!fd_flag)
         qDebug()<<("DataSocket connect fail\n");
@@ -41,7 +44,11 @@ NetworkManager::NetworkManager(QObject *parent)
 
 }
 
-
+void NetworkManager::disconnect()
+{
+    QMessageBox::critical(nullptr, tr("경고"), tr("서버와의 연결이 끊어졌습니다."));
+    qApp->quit();
+}
 
 
 
