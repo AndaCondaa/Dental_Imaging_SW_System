@@ -7,8 +7,6 @@
 
 #include <opencv2/opencv.hpp>
 
-using namespace cv;
-
 ImageThread::ImageThread(int width, int height, QString modeType, QObject *parent)
     : QThread{parent}
 {
@@ -83,8 +81,8 @@ void ImageThread::run()
             }
 
 
-            Mat mat(rows, cols, CV_16UC1, buf);
-            Mat rotateMat;
+            cv::Mat mat(rows, cols, CV_16UC1, buf);
+            cv::Mat rotateMat;
             rotate(mat, rotateMat, cv::ROTATE_90_CLOCKWISE);
 
             double transHeight = width / 2.;
@@ -138,8 +136,8 @@ void ImageThread::run()
                     buf[i] *= 100;
             }
 
-            Mat mat(rows, cols, CV_16UC1, buf);
-            Mat dst;
+            cv::Mat mat(rows, cols, CV_16UC1, buf);
+            cv::Mat dst;
             flip(mat, dst, 0);
 
             double transWidth = (double)(height * 5) / 4.;
