@@ -138,7 +138,7 @@ void ImageThread::run()
 
             cv::Mat mat(rows, cols, CV_16UC1, buf);
             cv::Mat dst;
-            flip(mat, dst, 0);
+            cv::rotate(mat, dst, cv::ROTATE_180);
 
             double transWidth = (double)(height * 5) / 4.;
             double offset = width - ((width - transWidth) / 2.);    // CEPH 영상 비율 5:4

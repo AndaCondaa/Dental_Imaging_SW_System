@@ -94,13 +94,13 @@ void ImagingManager::reconImage()
         frameCols = 1152;
 
         reconRows = 1152;
-        reconCols = 2320;
+        reconCols = 1623;
 
         unsigned short *buf = new unsigned short[frameRows*frameCols];
         unsigned short *tmpOut = new unsigned short[reconRows*reconCols];
         memset(tmpOut, 0, reconRows*reconCols);
 
-        for (int k = 350; k < 1510; k++) {
+        for (int k = 1679; k >= 120; k--) { //1560
             memset(buf, 0, frameRows*frameCols);
             fileName = makeFileName(currentType, k);
 
@@ -115,26 +115,48 @@ void ImagingManager::reconImage()
             fread(buf, sizeof(unsigned short), frameRows*frameCols, file);
             fclose(file);
 
-            histoStretch(buf, frameRows*frameCols, 0, 14296, maxValue);
-
-//            // 이미지 스티칭
-//            for (int y = 0; y < 1152; y++) {
-//                out[(count*2)+y*2320] = buf[(1152*33)+y];
-//                out[(count*2)+y*2320+1] = buf[(1152*32)+y];
-//            }
+            // 이미지 스티칭
+            for (int y = 0; y < frameCols; y++) {
+                for (int x = 0; x < frameRows; x++) {
+                    tmpOut[(count+x)+(y*reconCols)] = buf[(y)+(x*frameCols)];
+                }
+            }
 
             count++;
             qDebug("%d", count);
         }
 
-        gammaCorrection(tmpOut, reconRows*reconCols, maxValue, 0.5);
-        invertImage(tmpOut, reconRows*reconCols);
-        saveAsJpg(tmpOut, reconRows, reconCols);
-        viewReconImage(tmpOut, reconRows, reconCols);
+        cv::Mat src(reconRows, reconCols, CV_16UC1, tmpOut);
+        reconRows = 1152;
+        reconCols = 2320;
+        cv::Mat dst(reconRows, reconCols, CV_16UC1);
+        cv::resize(src, dst, dst.size(), 0, 0, cv::INTER_NEAREST);
+
+        unsigned short *out = new unsigned short[reconRows*reconCols];
+        memcpy(out, dst.data, reconRows*reconCols*2);
+
+        histoStretch(out, reconRows*reconCols, 0, 10000, maxValue);
+        invertImage(out, reconRows*reconCols);
+        gammaCorrection(out, reconRows*reconCols, maxValue, 2);
+        CLAHE(out, reconRows, reconCols, 40.0, 8, 8);
+        medianFilter(out, reconRows, reconCols, 3);
+        unsharpFilter(out, reconRows, reconCols, maxValue);
+        medianFilter(out, reconRows, reconCols, 3);
+        medianFilter(out, reconRows, reconCols, 3);
+
+
+        FILE *file;
+        fopen_s(&file, "./RECON.raw", "wb");
+        fwrite(out, sizeof(unsigned short), reconRows*reconCols, file);
+        fclose(file);
+
+        viewReconImage(out, reconRows, reconCols);
+        saveAsJpg(out, reconRows, reconCols);
 
         delete[] buf;
-        delete[] tmpOut;
-    }/* else if (currentType == "CEPH") {
+//        delete[] tmpOut;
+        delete[] out;
+    } else if (currentType == "CEPH") {
         frameRows = 2400;
         frameCols = 48;
 
@@ -162,44 +184,34 @@ void ImagingManager::reconImage()
             // 이미지 스티칭
             for (int y = 0; y < reconRows; y++) {
                 for (int x = 0; x < frameCols; x++) {
-                    double weight;
-                    if (x < 24)
-                        weight = ((x % 24)+1) * (0.04);
-                    else
-                        weight = 0.96 - ((x % 24)) * (0.04);
-                    tmpOut[(count*2+x)+(y*reconCols)] =
-                            ((double)tmpOut[(count*2+x)+(y*reconCols)] * (1.0 - weight))+ ((double)buf[x+((frameRows-y-1)*frameCols)] * weight);
+//                    double weight;
+//                    if (x < 24)
+//                        weight = ((x % 24)+1) * (0.04);
+//                    else
+//                        weight = 0.96 - ((x % 24)) * (0.04);
+//                    tmpOut[(count*2+x)+(y*reconCols)] =
+//                            ((double)tmpOut[(count*2+x)+(y*reconCols)] * (1.0 - weight))+ ((double)buf[x+((frameRows-y-1)*frameCols)] * weight);
+                    tmpOut[(count*2+x)+(y*reconCols)] = buf[x+((frameRows-y-1)*frameCols)];
                 }
             }
-
             count++;
-            ui->progressBar->setValue((double)(ui->progressBar->maximum()/5) * ((double)k/11197.0));
+            qDebug("%d", count);
+            ui->progressBar->setValue((double)(ui->progressBar->maximum() / 5.) * ((double)k/11197.0));
         }
 
-        // 이미지 스케일 조정
+        cv::Mat src(reconRows, reconCols, CV_16UC1, tmpOut);
         reconRows = 2400;
         reconCols = 3000;
-        unsigned short *out = new unsigned short[reconRows*reconCols];
-        memset(out, 0, reconRows*reconCols*2);
+        cv::Mat dst(reconRows, reconCols, CV_16UC1);
+        cv::resize(src, dst, dst.size(), 0, 0, cv::INTER_NEAREST);
 
-        int check = 1;
-        int offset = 0;
-        for (int i = 0; i < 2500 * 2400; i++) {
-            if ((check % 5) == 0) {
-                out[i+offset] = tmpOut[i];
-                out[i+offset+1] = (double)(tmpOut[i] + tmpOut[i+1]) / 2.0;
-                offset++;
-                check++;
-            } else {
-                out[i+offset] = tmpOut[i];
-                check++;
-            }
-        }
+        unsigned short *out = new unsigned short[reconRows*reconCols];
+        memcpy(out, dst.data, reconRows*reconCols*2);
 
         histoStretch(out, reconRows*reconCols, 0, 381, maxValue);
         invertImage(out, reconRows*reconCols);
 
-        ui->progressBar->setValue(ui->progressBar->maximum()*2/5);
+        ui->progressBar->setValue(ui->progressBar->maximum()*2/5.);
 
         unsigned short *tmp1 = new unsigned short[reconRows*reconCols];
         unsigned short *tmp2 = new unsigned short[reconRows*reconCols];
@@ -209,23 +221,22 @@ void ImagingManager::reconImage()
         gammaCorrection(tmp1, reconRows*reconCols, maxValue, 15);
         gammaCorrection(tmp2, reconRows*reconCols, maxValue, 0.3);
 
-        ui->progressBar->setValue(ui->progressBar->maximum()*3/5);
+        CLAHE(tmp1, reconRows, reconCols, 4000.0, 8, 8);
+        medianFilter(tmp1, reconRows, reconCols, 3);
+
+        ui->progressBar->setValue(ui->progressBar->maximum()*3/5.);
 
         for (int i = 0; i < reconRows*reconCols; i++) {
-            out[i] = (double)(tmp1[i] * 0.7) + (double)(tmp2[i] * 0.3);
+            out[i] = (double)(tmp1[i] * 0.8) + (double)(tmp2[i] * 0.2);
         }
 
-        medianFilter(out, reconRows, reconCols, 3);
+        medianFilter(out, reconRows, reconCols, 5);
 
-        FILE *file;
-        fopen_s(&file, "./recon.raw", "wb");
-        fwrite(out, sizeof(unsigned short), reconRows*reconCols, file);
-        fclose(file);
-
-        ui->progressBar->setValue(ui->progressBar->maximum()*4/5);
+        ui->progressBar->setValue(ui->progressBar->maximum()*4/5.);
 
         saveAsJpg(out, reconRows, reconCols);
         viewReconImage(out, reconRows, reconCols);
+
         ui->progressBar->setValue(ui->progressBar->maximum());
 
         delete[] tmp1;
@@ -239,7 +250,7 @@ void ImagingManager::reconImage()
                               this, Qt::Dialog);
         checkType.exec();
         return;
-    }*/
+    }
 
     ui->saveButton->setEnabled(true);
 }
@@ -271,7 +282,7 @@ void ImagingManager::histoStretch(unsigned short *input, int inputSize, int min,
     }
 }
 
-void ImagingManager::CLAHE(unsigned short *input, int rows, int cols, int clipLimit, int gridX, int gridY)
+void ImagingManager::CLAHE(unsigned short *input, int rows, int cols, double clipLimit, int gridX, int gridY)
 {
     cv::Mat src(rows, cols, CV_16UC1, input);
     cv::Mat dst;

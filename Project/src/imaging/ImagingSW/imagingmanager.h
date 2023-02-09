@@ -31,7 +31,7 @@ private slots:
 
     QString makeFileName(QString type, int count);
     void histoStretch(unsigned short *input, int inputSize, int min, int max, double maxValue);
-    void CLAHE(unsigned short *input, int rows, int cols, int clipLimit, int gridX, int gridY);
+    void CLAHE(unsigned short *input, int rows, int cols, double clipLimit, int gridX, int gridY);
     void medianFilter(unsigned short *input, int rows, int cols, int ksize);
     void gammaCorrection(unsigned short *input, int inputSize, double maxValue, double gamma);
     void unsharpFilter(unsigned short *input, int rows, int cols, double maxValue);
