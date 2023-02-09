@@ -96,21 +96,28 @@ void SubServer::receiveControl()
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
     protocol->receiveProtocol(socket);
 
-    if (!controlSocketMap.contains(socket)) {
-        controlSocketMap.insert(socket, protocol->packetData()->type());
-    }
-
     QString event = protocol->packetData()->event();
     QString msg = protocol->packetData()->msg();
     QString ip = QString(socket->peerAddress().toString());
     QString date = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+    int receiver = -1;
 
-    int receiver;
-    if (controlSocketMap.value(socket)) {
-        receiver = SW;
-    } else {
-        receiver = MODALITY;
+
+    if (!controlSocketMap.contains(socket)) {
+        controlSocketMap.insert(socket, protocol->packetData()->type());
+        connect(socket, &QTcpSocket::disconnected, this, [=](){
+            ui->logEdit->append((QString("[%1] [%2] [%3]").arg(date, ip, "DISCONNECT")));
+            controlSocketMap.remove(socket);
+        });
     }
+
+
+    if (controlSocketMap.value(socket) == ConnectType::SW) {
+        receiver = ConnectType::MODALITY;
+    } else if (controlSocketMap.value(socket) == ConnectType::MODALITY) {
+        receiver = ConnectType::SW;
+    }
+
 
     if (event == "NEW") {
         ui->logEdit->append(QString(QString("[%1] [%2] [%3]").arg(date, ip, event)));
@@ -145,7 +152,12 @@ void SubServer::receiveControl()
             ui->logEdit->append((QString("[%1] [%2] [%3_%4]").arg(date, ip, "STOP", msg)));
             break;
         }
-//        protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", command, msg);
+
+        if (controlSocketMap.key(receiver, nullptr) == nullptr) {
+            protocol->sendProtocol(socket, "NOM", command, msg);
+            return;
+        }
+        protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", command, msg);
     }
 }
 

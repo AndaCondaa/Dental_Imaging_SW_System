@@ -45,10 +45,10 @@ void ImagingManager::setType(QString type)
         ui->progressBar->setRange(0, 1749);
     }
 
-    thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), currentType, this);
-    connect(thread, SIGNAL(imageProgressed(int)), ui->progressBar, SLOT(setValue(int)));
-    connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
-    thread->start();
+//    thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), currentType, this);
+//    connect(thread, SIGNAL(imageProgressed(int)), ui->progressBar, SLOT(setValue(int)));
+//    connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
+//    thread->start();
 }
 
 void ImagingManager::recvFrameImg(int count)
@@ -140,13 +140,13 @@ void ImagingManager::reconImage()
         frameCols = 48;
 
         reconRows = 2400;
-        reconCols = 3000;
+        reconCols = 2446;
 
         unsigned short *buf = new unsigned short[frameRows*frameCols];
         unsigned short *out = new unsigned short[reconRows*reconCols];
-        memset(out, 0, reconRows*reconCols);
+        memset(out, 0, reconRows*reconCols*2);
 
-        for (int k = 1000; k > 0; k--) {
+        for (int k = 1199; k >= 0; k--) {
             memset(buf, 0, frameRows*frameCols);
             fileName = makeFileName(currentType, k);
 
@@ -160,26 +160,29 @@ void ImagingManager::reconImage()
             fread(buf, sizeof(unsigned short), frameRows*frameCols, file);
             fclose(file);
 
-            histoStretch(buf, frameRows*frameCols, 0, 400, 65535.);
-
             // 이미지 스티칭
-//            for (int y = 0; y < 2400; y++) {
-//                out[(count*3)+y*3000] = buf[(25)+(2400-(y+1))*48];
-//                out[(count*3)+y*3000+1] = buf[(24)+(2400-(y+1))*48];
-//                out[(count*3)+y*3000+2] = buf[(23)+(2400-(y+1))*48];
-//            }
-
+            for (int y = 0; y < reconRows; y++) {
+                for (int x = 0; x < frameCols; x++) {
+                    double weight;
+                    if (x < 24) weight = ((x % 12)+1) * (0.04);
+                    else weight = 0.96 - ((x % 12)) * (0.04);
+                    out[(count*2+x)+(y*reconCols)] =
+                            ((double)out[(count*2+x)+(y*reconCols)] * (1.0 - weight))+ ((double)buf[x+((frameRows-y-1)*frameCols)] * weight);
+                }
+            }
 
             count++;
             qDebug("%d", count);
         }
 
-        ui->progressBar->setValue(ui->progressBar->maximum()/3);
-//        gammaCorrection(out, reconRows*reconCols, 65535.0, 0.9);
-        CLAHE(out, reconRows, reconCols, 16.0, 16, 16);
-        medianFilter(out, reconRows, reconCols, 3);
+        histoStretch(out, reconRows*reconCols, 0, 420, 65535.);
 
-        ui->progressBar->setValue(ui->progressBar->maximum()*2/3);
+
+        ui->progressBar->setValue(ui->progressBar->maximum()/3);
+        CLAHE(out, reconRows, reconCols, 40.0, 16, 16);
+//        medianFilter(out, reconRows, reconCols, 3);
+
+//        ui->progressBar->setValue(ui->progressBar->maximum()*2/3);
         invertImage(out, reconRows*reconCols);
 
         unsigned short *tmp1 = new unsigned short[reconRows*reconCols];
@@ -191,16 +194,15 @@ void ImagingManager::reconImage()
         gammaCorrection(tmp2, reconRows*reconCols, 65535.0, 0.4);
         CLAHE(tmp1, reconRows, reconCols, 16.0, 8, 8);
         CLAHE(tmp2, reconRows, reconCols, 16.0, 8, 8);
-//        medianFilter(tmp1, reconRows, reconCols, 3);
-        medianFilter(tmp2, reconRows, reconCols, 3);
-//        for (int i = 0; i < reconRows*reconCols; i++) {
-//            out[i] = (tmp1[i] + tmp2[i])/2;
-//        }
-//        medianFilter(out, reconRows, reconCols, 3);
+
+        for (int i = 0; i < reconRows*reconCols; i++) {
+            out[i] = (tmp1[i] + tmp2[i])/2;
+        }
+        medianFilter(out, reconRows, reconCols, 3);
 
         ui->progressBar->setValue(ui->progressBar->maximum());
-        unsharpFilter(tmp1, reconRows, reconCols, 65535);
-//        medianFilter(out, reconRows, reconCols, 5);
+        unsharpFilter(out, reconRows, reconCols, 65535);
+//        medianFilter(out, reconRows, reconCols, 3);
 
 //        saveAsJpg(out, reconRows, reconCols);
 //        saveAsJpg(tmp1, reconRows, reconCols);
@@ -213,10 +215,9 @@ void ImagingManager::reconImage()
         if (file == nullptr) {
 
         }
-
-        fwrite(tmp1, sizeof(unsigned short), reconRows*reconCols, file);
+        fwrite(out, sizeof(unsigned short), reconRows*reconCols, file);
         fclose(file);
-
+        qDebug("%d", __LINE__);
         delete[] tmp1;
         delete[] tmp2;
         delete[] buf;
@@ -252,8 +253,11 @@ void ImagingManager::histoStretch(unsigned short *input, int inputSize, int min,
     double range = max - min;
 
     for (int i = 0; i < inputSize; i++) {
-        if (input[i] < max)
+        if (input[i] <= max)
             input[i] = cvRound(((double)(input[i] - min) / range) * valueMax);
+        else {
+            input[i] = valueMax;
+        }
     }
 }
 
@@ -292,6 +296,25 @@ void ImagingManager::gammaCorrection(unsigned short *input, int inputSize, doubl
 
 void ImagingManager::unsharpFilter(unsigned short *input, int rows, int cols, int valueMax)
 {
+//    unsigned short *result = new unsigned short[rows*cols];
+//    memcpy(result, input, rows*cols*2);
+
+//    double kernel[3][3] = {{0., -1., 0.},
+//                           {-1., 5., -1.},
+//                           {0., -1., 0.}};
+
+//    for(int y = 1; y < rows-1; y++) {
+//        for(int x = 1; x < cols-1; x++) {
+//            double sum = 0.0;
+//            for (int i = -1; i < 2; i++) {
+//                for(int j = -1; j < 2; j++) {
+//                    sum += kernel[i+1][j+1]*input[(x+i)+(y+j)*cols];
+//                }
+//            }
+//            result[(x-1)+(y-1)*cols] = (sum >= valueMax) ? valueMax : sum;
+//        }
+//    }
+
     unsigned short *result = new unsigned short[rows*cols];
     memcpy(result, input, rows*cols*2);
 

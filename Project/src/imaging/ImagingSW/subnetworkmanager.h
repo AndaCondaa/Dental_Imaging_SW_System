@@ -53,6 +53,7 @@ signals:
     void connectionStatusChanged(bool);
     void buttonSignal(int);         // 영상 장비로부터 직접 명령이 왔을 때 발생
     void sendFrameImg(int);
+    void noConnectionCT();
 };
 
 #endif // SUBNETWORKMANAGER_H

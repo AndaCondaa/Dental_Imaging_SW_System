@@ -77,6 +77,13 @@ void SubNetworkManager::receiveControl()
 
     if (protocol->packetData()->event() == "CTL") {
         emit buttonSignal(protocol->packetData()->type());
+    } else if (protocol->packetData()->event() == "NOM") {
+        emit noConnectionCT();
+
+        QMessageBox disconnectCT(QMessageBox::Warning, "ERROR",
+                                  "CT 장비가 연결되어 있지 않습니다.",
+                                  QMessageBox::Ok);
+        disconnectCT.exec();
     }
 }
 

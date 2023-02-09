@@ -124,7 +124,7 @@ void ControlPanel::receiveButtonControl(int buttonIdx)
 }
 
 void ControlPanel::resetControl()
-{
+{   
     modeButtonGroup->setExclusive(false);
     if (requestType == "PANO") {
         ui->panoButton->setCheckable(true);
@@ -138,7 +138,7 @@ void ControlPanel::resetControl()
 
         ui->panoButton->setChecked(false);
         ui->cephButton->setChecked(true);
-    } else if (requestType == "BOTH") {
+    } else {
         ui->panoButton->setCheckable(true);
         ui->cephButton->setCheckable(true);
 
