@@ -7,8 +7,6 @@
 
 #include <opencv2/opencv.hpp>
 
-using namespace cv;
-
 ImageThread::ImageThread(int width, int height, QString modeType, QObject *parent)
     : QThread{parent}
 {
@@ -83,8 +81,8 @@ void ImageThread::run()
             }
 
 
-            Mat mat(rows, cols, CV_16UC1, buf);
-            Mat rotateMat;
+            cv::Mat mat(rows, cols, CV_16UC1, buf);
+            cv::Mat rotateMat;
             rotate(mat, rotateMat, cv::ROTATE_90_CLOCKWISE);
 
             double transHeight = width / 2.;
@@ -138,9 +136,9 @@ void ImageThread::run()
                     buf[i] *= 100;
             }
 
-            Mat mat(rows, cols, CV_16UC1, buf);
-            Mat dst;
-            flip(mat, dst, 0);
+            cv::Mat mat(rows, cols, CV_16UC1, buf);
+            cv::Mat dst;
+            cv::rotate(mat, dst, cv::ROTATE_180);
 
             double transWidth = (double)(height * 5) / 4.;
             double offset = width - ((width - transWidth) / 2.);    // CEPH 영상 비율 5:4

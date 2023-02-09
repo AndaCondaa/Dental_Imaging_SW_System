@@ -21,6 +21,8 @@ private slots:
     void checkTypeButton(QString);
     void controlButtonClicked(QAbstractButton*);
     void receiveButtonControl(int);
+
+
     void resetControl();
     bool readyControl();
     void startControl();
@@ -28,6 +30,8 @@ private slots:
     void saveSlot(QString);
     void shootingEndSlot(QString);
     void finishSlot(QString, QString);
+
+
 
 private:
     Ui::ControlPanel *ui;
