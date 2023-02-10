@@ -164,7 +164,7 @@
                        </size>
                       </property>
                       <property name="text">
-                       <string>192.168.0.39</string>
+                       <string>192.168.0.10</string>
                       </property>
                       <property name="alignment">
                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

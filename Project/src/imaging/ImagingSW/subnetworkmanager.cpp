@@ -44,8 +44,8 @@ void SubNetworkManager::connectServer(QString address, int port)
         connect(subSocket, SIGNAL(disconnected()), this, SLOT(disconnectServer()));
         connect(fileSocket, SIGNAL(readyRead()), SLOT(receiveFile()));
 
-        protocol->sendProtocol(subSocket, "NEW", ConnectType::SW, "SW");
-        protocol->sendProtocol(fileSocket, "NEW", ConnectType::SW, "SW");
+        protocol->sendProtocol(subSocket, "SEN", "NEW", ConnectType::SW, "SW");
+        protocol->sendProtocol(fileSocket, "SEN", "NEW", ConnectType::SW, "SW");
 
         emit connectionStatusChanged(true);
     } else {
@@ -69,21 +69,20 @@ void SubNetworkManager::disconnectServer()
     disconnectBox.exec();
 }
 
-
 void SubNetworkManager::receiveControl()
 {
     subSocket = dynamic_cast<QTcpSocket*>(sender());
     protocol->receiveProtocol(subSocket);
 
-    if (protocol->packetData()->event() == "CTL") {
-        emit buttonSignal(protocol->packetData()->type());
-    } else if (protocol->packetData()->event() == "NOM") {
-        emit noConnectionCT();
-
+    if (protocol->packetData()->header() == "ERR") {
         QMessageBox disconnectCT(QMessageBox::Warning, "ERROR",
                                   "CT 장비가 연결되어 있지 않습니다.",
                                   QMessageBox::Ok);
         disconnectCT.exec();
+    } else if (protocol->packetData()->header() == "ACK") {
+        if (protocol->packetData()->event() == "CTL") {
+            emit buttonSignal(protocol->packetData()->type());
+        }
     }
 }
 
@@ -113,7 +112,7 @@ void SubNetworkManager::sendButtonControl(int buttonIdx, QString data)
         disconnectBox.exec();
     }
 
-    protocol->sendProtocol(subSocket, "CTL", buttonIdx, data);
+    protocol->sendProtocol(subSocket, "SEN", "CTL", buttonIdx, data);
 }
 
 void SubNetworkManager::receiveFile()

@@ -78,6 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
             ui->subConnectButton->setEnabled(false);
             ui->subConnectButton->setText("정상연결");
 
+            ui->pageStackedWidget->setCurrentIndex(1);
             if (!ui->mainConnectButton->isEnabled())
                 ui->pageStackedWidget->setCurrentIndex(1);
         } else if (op == false) {
@@ -95,7 +96,6 @@ MainWindow::MainWindow(QWidget *parent)
     connect(mainNetworkManager, SIGNAL(sendWaitList(int,QString)), patientManager, SLOT(receiveWaitList(int,QString)));     // 메인서버 연결 시, 기존 대기목록 리시브
     connect(controlPanel, SIGNAL(buttonSignal(int,QString)), subNetworkManager, SLOT(sendButtonControl(int,QString)));   // 제어명령 전송을 위해 네트워크매니저로 시그널 전송
     connect(subNetworkManager, SIGNAL(buttonSignal(int)), controlPanel, SLOT(receiveButtonControl(int)));   // 장비로부터 제어명령이 들어왔을 경우, 버튼 제어
-    connect(subNetworkManager, SIGNAL(noConnectionCT()), controlPanel, SLOT(resetControl()));       // CT가 연결되지 않았을 경우, reset동작
     connect(mainNetworkManager, SIGNAL(sendWaitPatient(QStringList)), patientManager, SLOT(receiveWaitPatient(QStringList)));   // 촬영의뢰가 들어온 경우, 환자관리 매니저에게 전송
     connect(patientManager, SIGNAL(sendPid(QString)), mainNetworkManager, SLOT(requestPatientInfo(QString)));   // 환자준비 버튼을 누르면, pid를 서버로 전송하여 환자정보요청
     connect(mainNetworkManager, SIGNAL(sendPatientInfo(QStringList)), patientManager, SLOT(receivePatientInfo(QStringList)));   // 요청한 환자 정보를 받음
@@ -113,7 +113,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->quitButton, SIGNAL(clicked()), qApp, SLOT(quit()));
 
-    ui->pageStackedWidget->setCurrentIndex(1);
+//    ui->pageStackedWidget->setCurrentIndex(1);
 
     QStringList dataList;
     dataList << "P00001" << "김유선" << "BOTH";

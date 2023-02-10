@@ -2,11 +2,25 @@
 
 #include <QIODevice>
 
-PacketData::PacketData(QString event, int type, QString msg, QObject* parent)
-    : QObject(parent), m_event(event), m_type(type), m_msg(msg)
+PacketData::PacketData(QString header, QString event, int type, QString msg, QObject* parent)
+    : QObject(parent), m_header(header), m_event(event), m_type(type), m_msg(msg)
 {
 
 }
+
+QString PacketData::header()
+{
+    return m_header;
+}
+
+void PacketData::setHeader(QString header)
+{
+    if (m_header != header) {
+        m_header = header;
+        emit headerChanged();
+    }
+}
+
 
 QString PacketData::event()
 {
