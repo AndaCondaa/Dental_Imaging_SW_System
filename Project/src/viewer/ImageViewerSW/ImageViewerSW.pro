@@ -1,5 +1,5 @@
 
-QT       += core gui network
+QT       += core gui network charts printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -12,7 +12,6 @@ CONFIG += c++17
 SOURCES += \
     imagealbum.cpp \
     imagescene.cpp \
-    imageview.cpp \
     loginform.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -23,7 +22,6 @@ SOURCES += \
 HEADERS += \
     imagealbum.h \
     imagescene.h \
-    imageview.h \
     loginform.h \
     mainwindow.h \
     networkmanager.h \
@@ -33,6 +31,7 @@ HEADERS += \
 FORMS += \
     imagealbum.ui \
     loginform.ui \
+    mainwindow.ui \
     mainwindow.ui \
     patientinfo.ui \
     prescription.ui

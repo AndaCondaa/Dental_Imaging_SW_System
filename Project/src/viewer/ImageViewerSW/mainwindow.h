@@ -1,7 +1,6 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "prescription.h"
 #include <QMainWindow>
 #include <QLabel>
 #include <QScrollArea>
@@ -40,5 +39,9 @@ private:
 
 private slots:
     void ViewerOpen(QString, QString);
+    void on_actionPrinter_triggered();
+
+signals:
+    void sendPrintStart();
 };
 #endif // MAINWINDOW_H

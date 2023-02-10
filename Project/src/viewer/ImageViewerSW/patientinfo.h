@@ -25,6 +25,7 @@ private:
     QString patientName;
     bool Ceph;
     bool Pano;
+    bool AllSendImageCheck;
 
 private slots:
     void receiveWaitingList(QString, QString);
@@ -39,12 +40,15 @@ private slots:
     void receiveDoctorName(QString, QString);
     void receivePhotoEnd(QString);
     void receiveEndTreatment(QString);
+    void receiveWaitTreatment(int, QString);
+    void receiveEndSignal();
+    void receiveAllImageFileP(bool);
 
 signals:
     void sendWaitingPatient(QString);
     void sendCameraPatient(QString);
     void sendPatientInfo(QString, QString, QString);
-    void sendImageFile(QString);
+    void sendCameraStart();
 };
 
 #endif // PATIENTINFO_H

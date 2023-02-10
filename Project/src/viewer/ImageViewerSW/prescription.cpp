@@ -8,6 +8,7 @@ Prescription::Prescription(QWidget *parent) :
     ui(new Ui::Prescription)
 {
     ui->setupUi(this);
+    this->setFixedSize(592, 714);
 }
 
 Prescription::~Prescription()
@@ -59,5 +60,4 @@ void Prescription::on_Finish_clicked()
     ui->PatientID->clear();
     ui->textEdit->clear();
 }
-
 
