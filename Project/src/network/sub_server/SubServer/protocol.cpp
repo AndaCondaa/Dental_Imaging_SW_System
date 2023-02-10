@@ -24,6 +24,7 @@ void Protocol::sendProtocol(QTcpSocket* socket, QString header, QString event, i
     m_packetData->setMsg(msg);
 
     socket->write(m_packetData->makeSendData());
+    socket->flush();
 }
 
 void Protocol::receiveProtocol(QTcpSocket* socket)

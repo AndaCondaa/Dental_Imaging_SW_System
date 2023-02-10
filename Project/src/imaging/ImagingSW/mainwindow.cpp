@@ -92,7 +92,6 @@ MainWindow::MainWindow(QWidget *parent)
         }
     });
 
-
     connect(mainNetworkManager, SIGNAL(sendWaitList(int,QString)), patientManager, SLOT(receiveWaitList(int,QString)));     // 메인서버 연결 시, 기존 대기목록 리시브
     connect(controlPanel, SIGNAL(buttonSignal(int,QString)), subNetworkManager, SLOT(sendButtonControl(int,QString)));   // 제어명령 전송을 위해 네트워크매니저로 시그널 전송
     connect(subNetworkManager, SIGNAL(buttonSignal(int)), controlPanel, SLOT(receiveButtonControl(int)));   // 장비로부터 제어명령이 들어왔을 경우, 버튼 제어
@@ -102,6 +101,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(patientManager, SIGNAL(sendType(QString)), controlPanel, SLOT(checkTypeButton(QString)));   // 촬영요청 타입확인 후 , 촬영타입에 따라서 타입버튼 조작 (PID|TYPE)
     connect(patientManager, SIGNAL(sendPidToImagingManager(QString)), imagingManager, SLOT(setPID(QString)));   // 촬영준비 시, 이미징클래스에 현재환자번호 저장
     connect(controlPanel, SIGNAL(readySignal(QString)), imagingManager, SLOT(setType(QString)));        // ready버튼 클릭 시, 이미징클래스에 타입 전송
+    connect(controlPanel, SIGNAL(startSignal(QString,QString)), imagingManager, SLOT(startSetting(QString,QString)));   // start버튼 클릭 시, 이미징클래스에서 촬영 준비(쓰레드)
     connect(controlPanel, SIGNAL(stopSignal()), imagingManager, SLOT(stopButtonSlot()));    // 촬영중단 시, 이미징클래스에서 스레드 종료
     connect(imagingManager, SIGNAL(saveSignal(QString)), patientManager, SLOT(saveSlot(QString)));            // 저장버튼 클릭 시, 환자클래스에 노티
     connect(imagingManager, SIGNAL(saveSignal(QString)), controlPanel, SLOT(saveSlot(QString)));            // 저장버튼 클릭 시, 버튼 셋팅

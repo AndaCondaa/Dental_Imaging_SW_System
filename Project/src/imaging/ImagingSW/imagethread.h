@@ -19,17 +19,19 @@ public slots:
 private:
     void run();
 
-    int before = 0;
     int count = 0;
+    int currentCount = 0;
+    int maxCount = 0;
 
     bool isStop = false;
+    bool *checkCount;
 
     int width;
     int height;
     QString modeType;
 
 signals:
-    void imageProgressed(int);
+    void processCount(int);
     void processFinished(const QPixmap&);
 };
 

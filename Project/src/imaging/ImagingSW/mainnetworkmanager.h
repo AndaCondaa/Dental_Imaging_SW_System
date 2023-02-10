@@ -17,7 +17,7 @@ private slots:
     void connectSever(QString address, int port);
     void disconnectServer();
 
-    void sendPacket(QTcpSocket* socket, QString event, QString pid, QString data);
+    void sendPacket(QTcpSocket* socket, QString header, QString event, QString pid, QString data);
     QStringList packetParser(QByteArray receiveArray);
     void receivePacket();
 

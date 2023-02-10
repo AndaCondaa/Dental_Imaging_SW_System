@@ -20,11 +20,15 @@ public:
     Widget(QWidget *parent = nullptr);
     ~Widget();
 
+private slots:
+    void receiveControl();
+
 private:
     Protocol *protocol;
+    QTcpSocket *controlSocket;
     QTcpSocket *fileSocket;
 
-    QString currentType;
+    QString currentType = "NULL";
 
     QFile file;
     QString fileName;

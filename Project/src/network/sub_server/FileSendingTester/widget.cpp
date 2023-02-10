@@ -1,4 +1,5 @@
 #include "widget.h"
+#include "packetdata.h"
 #include <QTcpSocket>
 #include <QPushButton>
 
@@ -18,10 +19,21 @@ Widget::Widget(QWidget *parent)
 
     protocol = new Protocol;
 
+    controlSocket = new QTcpSocket;
+
+    controlSocket->connectToHost("192.168.0.20", 8002);
+
+    if (controlSocket->waitForConnected()) {
+
+        connect(controlSocket, SIGNAL(readyRead()), SLOT(receiveControl()));
+        protocol->sendProtocol(controlSocket, "SEN", "NEW", ConnectType::MODALITY, "MODALITY");
+
+    }
+
     fileSocket = new QTcpSocket;
-    fileSocket->connectToHost("10.222.0.164", 8003);
+    fileSocket->connectToHost("192.168.0.20", 8003);
     if (fileSocket->waitForConnected()) {
-        protocol->sendProtocol(fileSocket, "NEW", ConnectType::MODALITY, "MODALITY");
+        protocol->sendProtocol(fileSocket, "SEN", "NEW", ConnectType::MODALITY, "MODALITY");
     } else {
         // 연결 실패  예외처리 구현
     }
@@ -30,6 +42,17 @@ Widget::Widget(QWidget *parent)
 Widget::~Widget()
 {
 }
+
+void Widget::receiveControl()
+{
+    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
+    protocol->receiveProtocol(socket);
+    if (protocol->packetData()->type() == ControlType::START) {
+        sendFile();
+    }
+
+}
+
 void Widget::buttonClicked()
 {
     sendFile();
@@ -67,5 +90,6 @@ void Widget::sendFile()
         file.open(QIODevice::ReadOnly);
         fileSocket->write(file.readAll());
         file.close();
+        qDebug("%d", i);
     }
 }

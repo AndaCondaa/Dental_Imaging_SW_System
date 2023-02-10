@@ -74,6 +74,7 @@ void SubServer::newFileClient()
     connect(fileSocket, SIGNAL(readyRead()), this, SLOT(firstFileSocket()));
 }
 
+
 void SubServer::firstFileSocket()
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
@@ -84,10 +85,14 @@ void SubServer::firstFileSocket()
         int id = protocol->packetData()->type();
         fileSocketMap.insert(socket, id);
         disconnect(socket, SIGNAL(readyRead()), this, SLOT(firstFileSocket()));
+        connect(socket, &QTcpSocket::disconnected, this, [=](){
+            fileSocketMap.remove(socket);
+            socket->deleteLater();
+        });
     }
 
     // MODALITY 소켓에만 리시브파일 연결
-    if (protocol->packetData()->type() == MODALITY)
+    if (protocol->packetData()->type() == ConnectType::MODALITY)
         connect(socket, SIGNAL(readyRead()), this, SLOT(receiveFile()));
 }
 
@@ -97,20 +102,20 @@ void SubServer::receiveControl()
     protocol->receiveProtocol(socket);
 
     QString event = protocol->packetData()->event();
+    int controlType = protocol->packetData()->type();
     QString msg = protocol->packetData()->msg();
     QString ip = QString(socket->peerAddress().toString());
     QString date = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
     int receiver = -1;
-
 
     if (!controlSocketMap.contains(socket)) {
         controlSocketMap.insert(socket, protocol->packetData()->type());
         connect(socket, &QTcpSocket::disconnected, this, [=](){
             ui->logEdit->append((QString("[%1] [%2] [%3]").arg(date, ip, "DISCONNECT")));
             controlSocketMap.remove(socket);
+            socket->deleteLater();
         });
     }
-
 
     if (controlSocketMap.value(socket) == ConnectType::SW) {
         receiver = ConnectType::MODALITY;
@@ -118,46 +123,37 @@ void SubServer::receiveControl()
         receiver = ConnectType::SW;
     }
 
-
     if (event == "NEW") {
         ui->logEdit->append(QString(QString("[%1] [%2] [%3]").arg(date, ip, event)));
-    } else if (event == "CTL") {
+    } else if (event == "CTL") {    
+        if (controlSocketMap.key(receiver, nullptr) == nullptr) {
+            protocol->sendProtocol(socket, "ERR", event, protocol->packetData()->type(), msg);
+            return;
+        }
+
         if (receiver == MODALITY) {
             currentPID = msg.split("|")[0];
             currentType = msg.split("|")[1];
             msg = currentType;
             if (currentType == "PANO") {
-                count = 0;
                 countMax = 1750;
                 frameSize = 1152 * 64 * 2;
             } else if (currentType == "CEPH") {
-                count = 0;
                 countMax = 1250;
                 frameSize = 48 * 2400 * 2;
             }
         }
 
-        int command = protocol->packetData()->type();
-        switch (command) {
-        case RESET:
-            ui->logEdit->append((QString("[%1] [%2] [%3_%4]").arg(date, ip, "RESET", msg)));
-            break;
-        case READY:
-            ui->logEdit->append((QString("[%1] [%2] [%3_%4]").arg(date, ip, "READY", msg)));
-            break;
-        case START:
-            ui->logEdit->append((QString("[%1] [%2] [%3_%4]").arg(date, ip, "START", msg)));
-            break;
-        case STOP:
-            ui->logEdit->append((QString("[%1] [%2] [%3_%4]").arg(date, ip, "STOP", msg)));
-            break;
+        if (controlType == ControlType::START || controlType == ControlType::STOP) {
+            count = 0;
+            receiveData.clear();
         }
 
-        if (controlSocketMap.key(receiver, nullptr) == nullptr) {
-            protocol->sendProtocol(socket, "NOM", command, msg);
-            return;
-        }
-        protocol->sendProtocol(controlSocketMap.key(receiver), "CTL", command, msg);
+
+        ui->logEdit->append((QString("[%1] [%2] [%3_%4]").arg(date, ip, QString::number(controlType), msg)));
+
+        protocol->sendProtocol(socket, "ACK", "CTL", controlType, msg);
+        protocol->sendProtocol(controlSocketMap.key(receiver), "ACK", "CTL", controlType, msg);
     }
 }
 

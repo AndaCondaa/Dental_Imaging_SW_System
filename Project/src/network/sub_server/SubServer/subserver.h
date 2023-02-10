@@ -49,8 +49,8 @@ private:
 
     QTcpServer *controlServer = nullptr;
     QTcpServer *fileServer = nullptr;
-    QMap<QTcpSocket*, int> controlSocketMap;    // <socket, SW or MODALITY>
-    QMap<QTcpSocket*, int> fileSocketMap;       // <socket, SW or MODALITY>
+    QMap<QTcpSocket*, int> controlSocketMap;    // <socket, SW = 0,  MODALITY = 1>
+    QMap<QTcpSocket*, int> fileSocketMap;       // <socket, SW = 0,  MODALITY = 1>
 
     int count = 0;
     int countMax = 0;

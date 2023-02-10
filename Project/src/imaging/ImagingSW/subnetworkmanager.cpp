@@ -58,8 +58,8 @@ void SubNetworkManager::disconnectServer()
     subSocket->close();
     fileSocket->close();
 
-//    subSocket->deleteLater();
-//    fileSocket->deleteLater();
+    subSocket->deleteLater();
+    fileSocket->deleteLater();
 
     emit connectionStatusChanged(false);
 
@@ -79,8 +79,14 @@ void SubNetworkManager::receiveControl()
                                   "CT 장비가 연결되어 있지 않습니다.",
                                   QMessageBox::Ok);
         disconnectCT.exec();
+        return;
     } else if (protocol->packetData()->header() == "ACK") {
         if (protocol->packetData()->event() == "CTL") {
+            if (protocol->packetData()->type() == ControlType::START ||
+                    protocol->packetData()->type() == ControlType::STOP) {
+                count = 0;
+                totalData.clear();
+            }
             emit buttonSignal(protocol->packetData()->type());
         }
     }
@@ -110,6 +116,7 @@ void SubNetworkManager::sendButtonControl(int buttonIdx, QString data)
                                   "서버와 연결이 끊어졌습니다. 재접속 해주세요.",
                                   QMessageBox::Ok);
         disconnectBox.exec();
+        return;
     }
 
     protocol->sendProtocol(subSocket, "SEN", "CTL", buttonIdx, data);
@@ -145,7 +152,7 @@ void SubNetworkManager::receiveFile()
         totalData.remove(0, frameSize);
         emit sendFrameImg(count);
         count++;
-        qDebug("%d", count);
+//        qDebug("%d", count);
         if (count == countMax) {
             qDebug() << QString("%1 Frame Data Send End!").arg(currentType);
             count = 0;
