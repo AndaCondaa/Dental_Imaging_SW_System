@@ -87,20 +87,20 @@ void ControlPanel::checkTypeButton(QString data)
 
 void ControlPanel::controlButtonClicked(QAbstractButton* button)
 {
-    switch (controlButtonGroup->id(button)) {
-    case RESET:
-        resetControl();
-        break;
-    case READY:
-        if (!readyControl()) return;
-        break;
-    case START:
-        startControl();
-        break;
-    case STOP:
-        stopControl();
-        break;
-    }
+//    switch (controlButtonGroup->id(button)) {
+//    case RESET:
+//        resetControl();
+//        break;
+//    case READY:
+//        if (!readyControl()) return;
+//        break;
+//    case START:
+//        startControl();
+//        break;
+//    case STOP:
+//        stopControl();
+//        break;
+//    }
 
     emit buttonSignal(controlButtonGroup->id(button), currentPID + "|" + currentType);
 }

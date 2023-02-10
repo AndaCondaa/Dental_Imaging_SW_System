@@ -16,8 +16,9 @@ PacketData* Protocol::packetData()
     return m_packetData;
 }
 
-void Protocol::sendProtocol(QTcpSocket* socket, QString event, int type, QString msg)
+void Protocol::sendProtocol(QTcpSocket* socket, QString header, QString event, int type, QString msg)
 {
+    m_packetData->setHeader(header);
     m_packetData->setEvent(event);
     m_packetData->setType(type);
     m_packetData->setMsg(msg);
@@ -27,6 +28,7 @@ void Protocol::sendProtocol(QTcpSocket* socket, QString event, int type, QString
 
 void Protocol::receiveProtocol(QTcpSocket* socket)
 {
+    QString header;
     QString event;
     int type;
     QString msg;
@@ -34,10 +36,12 @@ void Protocol::receiveProtocol(QTcpSocket* socket)
     QByteArray receiveArray = socket->readAll();
     QDataStream in(&receiveArray, QIODevice::ReadOnly);
     in.device()->seek(0);
+    in >> header;
     in >> event;
     in >> type;
     in >> msg;
 
+    m_packetData->setHeader(header);
     m_packetData->setEvent(event);
     m_packetData->setType(type);
     m_packetData->setMsg(msg);
