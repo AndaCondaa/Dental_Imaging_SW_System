@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    this->showMaximized();
 
     m_patientInfo = new PatientInfo(this);
     m_imageAlbum = new ImageAlbum(this);
@@ -56,9 +57,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(m_networkManager, SIGNAL(sendSelectPatient(QString, QString)), m_patientInfo, SLOT(receiveSelectPatient(QString, QString)));
     connect(m_patientInfo, SIGNAL(sendCameraPatient(QString)), m_networkManager, SLOT(newDataSended(QString)));
 
-    //진료 시작 버튼 클릭 시 리스트 위젯에 해당 환자의 이미지 업로드
-    connect(m_patientInfo, SIGNAL(sendImageFile(QString)), m_imageAlbum, SLOT(reloadImages(QString)));
+    //뷰어 SW 로그인 시 기존에 추가되어있던 대기 리스트 환자 목록을 받아와 띄워주기 위한 시그널-슬롯
+    connect(m_networkManager, SIGNAL(sendWaitTreatment(int, QString)), m_patientInfo, SLOT(receiveWaitTreatment(int, QString)));
 
+    //진료 시작 버튼 클릭 시 리스트 위젯에 해당 환자의 이미지 업로드
+    connect(m_networkManager, SIGNAL(sendImageFile()), m_imageAlbum, SLOT(reloadImages()));
 
     //PMS에서 촬영 의뢰를 눌렀을 시 Viewer의 대기 환자 리스트에서도 환자의 진행 상황을 "촬영중"으로 변경
     connect(m_networkManager, SIGNAL(sendPMSCameraPatient(QString, QString)), m_patientInfo, SLOT(receivePMSCameraPatient(QString, QString)));
@@ -66,8 +69,17 @@ MainWindow::MainWindow(QWidget *parent)
     //촬영 SW에서 촬영 완료 신호가 오면 환자 클래스에서 해당 환자의 진행 상황을 촬영중->대기중으로 변경
     connect(m_networkManager, SIGNAL(sendPhotoEnd(QString)), m_patientInfo, SLOT(receivePhotoEnd(QString)));
 
+    //서버에서 환자의 다중 이미지 파일의 수신이 완료되었다는 신호가 오면 환자 관리 클래스에서 촬영 의뢰를 하도록 설정
+    connect(m_networkManager, SIGNAL(sendAllImageFile(bool)), m_patientInfo, SLOT(receiveAllImageFileP(bool)));
+
+    //서버에서 환자의 다중 이미지 파일의 수신이 완료되었다는 신호가 오면 진료 종료를 하도록 설정
+    connect(m_networkManager, SIGNAL(sendAllImageFile(bool)), m_imageAlbum, SLOT(receiveAllImageFileA(bool)));
+
     //환자 정보 클래스에서 대기 리스트 내에서 해당 환자 클릭된 후 진료 시작을 눌렀을 때 처방전 작성 폼에 띄워지도록 하기 위한 시그널-슬롯
     connect(m_patientInfo, SIGNAL(sendPatientInfo(QString, QString, QString)), m_imageAlbum, SLOT(receivePatientInfo(QString, QString, QString)));
+
+    //환자 정보 클래스에서 촬영 의뢰 버튼 클릭 시 이미지 listWidget에 있는 사진들 삭제시켜주기 위한 시그널-슬롯
+    connect(m_patientInfo, SIGNAL(sendCameraStart()), m_imageAlbum, SLOT(receiveCameraStart()));
 
     //처방전 창에서 작성 완료 버튼 클릭 시 서버로 처방전의 내용을 전송하기 위한 시그널-슬롯
     connect(m_imageAlbum, SIGNAL(sendPrescriptiontoServer(QString)), m_networkManager, SLOT(newDataSended(QString)));
@@ -75,6 +87,11 @@ MainWindow::MainWindow(QWidget *parent)
     //진료 종료 클릭 시 해당 환자의 정보를 서버로 전송하기 위한 시그널-슬롯
     connect(m_imageAlbum, SIGNAL(sendEndTreatment(QString)), m_networkManager, SLOT(newDataSended(QString)));
     connect(m_imageAlbum, SIGNAL(sendEndTreatment(QString)), m_patientInfo, SLOT(receiveEndTreatment(QString)));
+    connect(m_imageAlbum, SIGNAL(sendEndSignal()), m_patientInfo, SLOT(receiveEndSignal()));
+
+    //프린트 버튼 클릭 시 ImageAlbum 클래스에서 이미지 출력 기능 수행
+    connect(this, SIGNAL(sendPrintStart()), m_imageAlbum, SLOT(receivePrintStart()));
+
 }
 
 MainWindow::~MainWindow()
@@ -85,5 +102,11 @@ MainWindow::~MainWindow()
 void MainWindow::ViewerOpen(QString, QString)
 {
     ui->stackedWidget->setCurrentIndex(1);
+}
+
+//프린트 버튼 클릭 시 ImageAlbum 클래스로 시그널 전송
+void MainWindow::on_actionPrinter_triggered()
+{
+    emit sendPrintStart();
 }
 

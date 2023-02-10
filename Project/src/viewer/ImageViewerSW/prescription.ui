@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>592</width>
-    <height>560</height>
+    <height>714</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
      <x>10</x>
      <y>140</y>
      <width>571</width>
-     <height>16</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -40,7 +40,7 @@ border-radius: 0px;</string>
      <x>10</x>
      <y>6</y>
      <width>571</width>
-     <height>52</height>
+     <height>54</height>
     </rect>
    </property>
    <layout class="QGridLayout" name="gridLayout">
@@ -64,12 +64,12 @@ border-radius: 0px;</string>
      <widget class="QLabel" name="label">
       <property name="font">
        <font>
-        <pointsize>16</pointsize>
+        <pointsize>18</pointsize>
         <bold>true</bold>
        </font>
       </property>
       <property name="text">
-       <string>처방전</string>
+       <string>처         방         전</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignCenter</set>
@@ -106,7 +106,7 @@ border-radius: 0px;</string>
    <property name="font">
     <font>
      <pointsize>11</pointsize>
-     <bold>true</bold>
+     <bold>false</bold>
     </font>
    </property>
    <property name="styleSheet">
@@ -146,6 +146,9 @@ border-radius: 0px;</string>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QLabel" name="label_3">
    <property name="geometry">
@@ -159,7 +162,7 @@ border-radius: 0px;</string>
    <property name="font">
     <font>
      <pointsize>11</pointsize>
-     <bold>true</bold>
+     <bold>false</bold>
     </font>
    </property>
    <property name="styleSheet">
@@ -199,6 +202,9 @@ border-radius: 0px;</string>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QLabel" name="label_6">
    <property name="geometry">
@@ -212,7 +218,7 @@ border-radius: 0px;</string>
    <property name="font">
     <font>
      <pointsize>11</pointsize>
-     <bold>true</bold>
+     <bold>false</bold>
     </font>
    </property>
    <property name="styleSheet">
@@ -252,6 +258,9 @@ border-radius: 0px;</string>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QLabel" name="label_5">
    <property name="geometry">
@@ -265,7 +274,7 @@ border-radius: 0px;</string>
    <property name="font">
     <font>
      <pointsize>11</pointsize>
-     <bold>true</bold>
+     <bold>false</bold>
     </font>
    </property>
    <property name="styleSheet">
@@ -305,20 +314,23 @@ border-radius: 0px;</string>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
    </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
   </widget>
   <widget class="QLabel" name="label_7">
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>150</y>
+     <y>270</y>
      <width>81</width>
-     <height>361</height>
+     <height>391</height>
     </rect>
    </property>
    <property name="font">
     <font>
      <pointsize>11</pointsize>
-     <bold>true</bold>
+     <bold>false</bold>
     </font>
    </property>
    <property name="styleSheet">
@@ -340,9 +352,9 @@ border-radius: 0px;</string>
    <property name="geometry">
     <rect>
      <x>90</x>
-     <y>150</y>
+     <y>270</y>
      <width>491</width>
-     <height>361</height>
+     <height>391</height>
     </rect>
    </property>
    <property name="font">
@@ -360,7 +372,7 @@ border-radius: 0px;</string>
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>520</y>
+     <y>670</y>
      <width>571</width>
      <height>31</height>
     </rect>
@@ -406,7 +418,7 @@ border-radius: 0px;</string>
    <property name="font">
     <font>
      <pointsize>11</pointsize>
-     <bold>true</bold>
+     <bold>false</bold>
     </font>
    </property>
    <property name="styleSheet">
@@ -445,6 +457,237 @@ border-radius: 0px;</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
+   </property>
+   <property name="readOnly">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_9">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>160</y>
+     <width>81</width>
+     <height>91</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-width: 1px;
+border-style: solid;
+border-radius: 0px;</string>
+   </property>
+   <property name="text">
+    <string>의료 기관</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="buddy">
+    <cstring>DoctorName</cstring>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_10">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>160</y>
+     <width>351</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-width: 1px;
+border-style: solid;
+border-radius: 0px;</string>
+   </property>
+   <property name="text">
+    <string>오스템</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="buddy">
+    <cstring>DoctorName</cstring>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_11">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>160</y>
+     <width>141</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-width: 1px;
+border-style: solid;
+border-radius: 0px;</string>
+   </property>
+   <property name="text">
+    <string>명칭</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="buddy">
+    <cstring>DoctorName</cstring>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_12">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>250</y>
+     <width>571</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-width: 1px;
+border-style: solid;
+border-radius: 0px;</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_13">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>220</y>
+     <width>141</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-width: 1px;
+border-style: solid;
+border-radius: 0px;</string>
+   </property>
+   <property name="text">
+    <string>이메일 주소</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="buddy">
+    <cstring>DoctorName</cstring>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_14">
+   <property name="geometry">
+    <rect>
+     <x>90</x>
+     <y>190</y>
+     <width>141</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-width: 1px;
+border-style: solid;
+border-radius: 0px;</string>
+   </property>
+   <property name="text">
+    <string>전화 번호</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="buddy">
+    <cstring>DoctorName</cstring>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_15">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>190</y>
+     <width>351</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-width: 1px;
+border-style: solid;
+border-radius: 0px;</string>
+   </property>
+   <property name="text">
+    <string>010-1234-5678</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="buddy">
+    <cstring>DoctorName</cstring>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_16">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>220</y>
+     <width>351</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+     <bold>false</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">border-width: 1px;
+border-style: solid;
+border-radius: 0px;</string>
+   </property>
+   <property name="text">
+    <string>hello@hi.com</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+   <property name="buddy">
+    <cstring>DoctorName</cstring>
    </property>
   </widget>
  </widget>

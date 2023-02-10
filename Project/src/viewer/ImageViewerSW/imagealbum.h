@@ -20,6 +20,8 @@ class QListWidgetItem;
 class QGroupBox;
 class ImageScene;
 class Prescription;
+class QChart;
+class QChartView;
 
 
 namespace Ui {
@@ -45,11 +47,16 @@ private:
     int Brightvalue = 0;
     QColor paintColor;
     int penThickness;
+    QString imageType;
 
     ImageScene* imageScene;
-
+    ImageScene::DrawType m_drawType;
     Prescription* m_prescription;
+    QChart *chart;
+    QChartView *view;
+
     bool prescriptionCheck;
+    bool AllSendImageCheck;
 
     QString DoctorID;
     QString DoctorName;
@@ -59,10 +66,13 @@ private:
 
     QImage image_Contrast;
     QImage image_brightness;
+    QImage image_Gamma;
+
+    void Histogram();
 
 
 public slots:
-    void reloadImages(QString);
+    void reloadImages();
     void selectItem(QListWidgetItem*);
     void ZoomIn();
     void ZoomOut();
@@ -70,8 +80,8 @@ public slots:
     void RightRotate();
     void BrushColor();
     void OrigImage();
-    void Contrast(double value);
-    void Brightness(int value);
+    void Contrast(int);
+    void Brightness(int);
     void VReverse();
     void HReverse();
     void Blur();
@@ -90,10 +100,14 @@ public slots:
     void Length();
     void Angle();
     void Capture();
+    void Implant();
+    void Gamma(int);
 
     void receiveDoctorInfo(QString, QString);
     void receivePatientInfo(QString, QString, QString);
     void receivePrescriptionFinish(QString);
+    void receiveAllImageFileA(bool);
+    void receivePrintStart();
 
 
 signals:
@@ -104,18 +118,23 @@ signals:
     void sendPrescriptiontoServer(QString);
     void sendEndTreatment(QString);
     void SendText(QString);
-    void SendLength(int, int, int, int);
+    void SendLength(int, int, int, int, QString);
     void SendFontSize(int);
+    void sendEndSignal();
+    void sendImplantType(int);
 
 private slots:
     void on_Prescription_clicked();
     void on_EndTreatment_clicked();
     void ReceiveMeasurement(QString, double);
-    void on_horizontalSlider_sliderReleased();
-    void on_Contrast_editingFinished();
-    void on_tabWidget_tabBarClicked(int index);
     void ReceiveCapturePos(QPointF, QPointF);
     void on_Fontsize_valueChanged(int arg1);
+    void receiveCameraStart();
+    void on_Brightness_sliderReleased();
+    void on_Contrast_sliderReleased();
+    void on_Gamma_sliderReleased();
+    void on_ImplantcomboBox_activated(int index);
+    void on_tabWidget_currentChanged(int index);
 };
 
 #endif // IMAGEALBUM_H

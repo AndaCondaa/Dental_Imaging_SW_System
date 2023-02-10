@@ -8,6 +8,8 @@ LoginForm::LoginForm(QWidget *parent) :
     ui(new Ui::LoginForm)
 {
     ui->setupUi(this);
+    QPixmap pixmap("./Icon/login.png");
+    ui->Icon->setPixmap(pixmap.scaled(200, 200));
 }
 
 LoginForm::~LoginForm()
@@ -43,7 +45,7 @@ void LoginForm::on_LogIn_clicked()
 
     if(DoctorID == "" || DoctorName == "")
     {
-        QMessageBox:: critical(this, "경고", "아이디/이름을 입력하세요");
+        QMessageBox::critical(this, "경고", "아이디/이름을 입력하세요");
     }
 
     QString Data = "VLG<CR>" + DoctorID + "<CR>" + DoctorName;

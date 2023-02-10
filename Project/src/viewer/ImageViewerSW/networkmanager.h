@@ -19,9 +19,8 @@ private slots:
     void newDataSended(QString);
     void receiveData();
     void receiveFile();
-//    void newConnection();
-//    void disconnected();
-
+    void makeFiles();
+    void disconnect();
 
 private:
     QTcpSocket *socket;
@@ -30,22 +29,13 @@ private:
     bool send_flag = false;
     QByteArray *buffer;
     QString saveData;
-    QHash<QTcpSocket*, QByteArray*> buffers; //We need a buffer to store data until block has completely received
     QTcpServer *server;
-    QHash<QTcpSocket*, qint32*> sizes; //We need to store the size to verify if a block has received completely
 
-    QString patientID;
-
-
-    qint64 totalSize;
-    qint64 byteReceived = 0;
     QString fileName;                           // Receiving FileName
     QString checkFileName;
-    QFile* file;
-    QByteArray inBlock;
-    QString currentPID = "NULL";
 
-
+    QByteArray allFile;
+    int allFileSize = 0;
 
 signals:
     void sendWaitingList(QString, QString);
@@ -53,6 +43,9 @@ signals:
     void sendPMSCameraPatient(QString, QString);
     void sendLogInCheck(QString);
     void sendPhotoEnd(QString);
+    void sendWaitTreatment(int, QString);
+    void sendImageFile();
+    void sendAllImageFile(bool);
 };
 
 #endif // NETWORKMANAGER_H
