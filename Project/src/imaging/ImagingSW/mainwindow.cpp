@@ -78,6 +78,7 @@ MainWindow::MainWindow(QWidget *parent)
             ui->subConnectButton->setEnabled(false);
             ui->subConnectButton->setText("정상연결");
 
+            ui->pageStackedWidget->setCurrentIndex(1);
             if (!ui->mainConnectButton->isEnabled())
                 ui->pageStackedWidget->setCurrentIndex(1);
         } else if (op == false) {
@@ -113,7 +114,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(ui->quitButton, SIGNAL(clicked()), qApp, SLOT(quit()));
 
-    ui->pageStackedWidget->setCurrentIndex(1);
+//    ui->pageStackedWidget->setCurrentIndex(1);
 
     QStringList dataList;
     dataList << "P00001" << "김유선" << "BOTH";
