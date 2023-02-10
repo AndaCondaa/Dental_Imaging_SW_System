@@ -59,7 +59,6 @@ void ControlPanel::checkTypeButton(QString data)
 {
     currentPID = data.split("|")[0];
     requestType = data.split("|")[1];
-    currentType = requestType;
 
     //******************************************************************************
     // 대기환자 변경할 때마다, 바뀌는지 체크하기
@@ -101,6 +100,21 @@ void ControlPanel::controlButtonClicked(QAbstractButton* button)
 //        stopControl();
 //        break;
 //    }
+    if (ui->panoButton->isChecked()) {
+        currentType = "PANO";
+    } else if (ui->cephButton->isChecked()) {
+        currentType = "CEPH";
+    } else {
+        currentType = "NULL";
+    }
+
+    if (controlButtonGroup->id(button) == 1 && currentType == "NULL") {
+        QMessageBox messageBox(QMessageBox::NoIcon, "NO TYPE",
+                             QString("촬영타입을 선택해주세요."),
+                             QMessageBox::Ok, this, Qt::Window);
+        messageBox.exec();
+        return;
+    }
 
     emit buttonSignal(controlButtonGroup->id(button), currentPID + "|" + currentType);
 }
@@ -191,6 +205,8 @@ void ControlPanel::startControl()
     ui->resetButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(true);
+
+    emit startSignal(currentPID, currentType);
 }
 
 void ControlPanel::stopControl()

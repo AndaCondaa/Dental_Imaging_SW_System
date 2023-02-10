@@ -36,27 +36,26 @@ void ImagingManager::setPID(QString pid)
 void ImagingManager::setType(QString type)
 {
     currentType = type;
+}
 
-    if (currentType == "CEPH") {
-        ui->progressBar->setRange(0, 1249);
-    } else if (currentType == "PANO") {
-        ui->progressBar->setRange(0, 1749);
+void ImagingManager::startSetting(QString pid, QString type)
+{
+    if (type == "PANO") {
+        ui->progressBar->setMaximum(1749);
+    } else if (type == "CEPH") {
+        ui->progressBar->setMaximum(1249);
     }
 
-//    thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), currentType, this);
-//    connect(thread, SIGNAL(imageProgressed(int)), ui->progressBar, SLOT(setValue(int)));
-//    connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
-//    thread->start();
+    thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), currentType, this);
+    connect(this, SIGNAL(sendCount(int)), thread, SLOT(setCount(int)), Qt::QueuedConnection);
+    connect(thread, SIGNAL(processCount(int)), ui->progressBar, SLOT(setValue(int)));
+    connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
+    thread->start();
 }
 
 void ImagingManager::recvFrameImg(int count)
 {
-//    ui->progressBar->setValue(count);
-//    if (count == 0) {
-//        thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), currentType, this);
-//        connect(thread, SIGNAL(processFinished(const QPixmap&)), ui->viewLabel, SLOT(setPixmap(const QPixmap&)));
-//        thread->start();
-//    }
+    emit sendCount(count);
 }
 
 void ImagingManager::stopButtonSlot()

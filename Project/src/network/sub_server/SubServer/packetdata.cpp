@@ -66,6 +66,7 @@ QByteArray PacketData::makeSendData()
     QByteArray sendArray;
     QDataStream out(&sendArray, QIODevice::WriteOnly);
     out.device()->seek(0);
+    out << m_header;
     out << m_event;
     out << m_type;
     out << m_msg;

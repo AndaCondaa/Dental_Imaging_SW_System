@@ -5,7 +5,6 @@
 #include <QStringList>
 #include <QDataStream>
 
-
 typedef enum {
     SW,
     MODALITY
@@ -18,7 +17,6 @@ typedef enum {
     STOP
 } ControlType;
 
-
 class PacketData;
 
 class Protocol
@@ -30,7 +28,7 @@ public:
     PacketData* packetData();
 
     // send
-    void sendProtocol(QTcpSocket* socket, QString event, int type, QString msg);
+    void sendProtocol(QTcpSocket* socket, QString header, QString event, int type, QString msg);
 
     // receive
     void receiveProtocol(QTcpSocket* socket);

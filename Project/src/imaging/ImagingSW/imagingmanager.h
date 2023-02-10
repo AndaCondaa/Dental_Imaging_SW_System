@@ -22,6 +22,7 @@ private slots:
     void setType(QString);
 
     void reconImage();
+    void startSetting(QString pid, QString type);
     void saveButtonSlot();
     void stopButtonSlot();
 

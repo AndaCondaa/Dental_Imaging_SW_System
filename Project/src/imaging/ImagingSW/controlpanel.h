@@ -46,7 +46,7 @@ private:
 signals:
     void buttonSignal(int, QString);
     void readySignal(QString);
-    void startSignal();
+    void startSignal(QString, QString);
     void stopSignal();
 };
 

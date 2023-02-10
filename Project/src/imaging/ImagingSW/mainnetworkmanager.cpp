@@ -34,8 +34,8 @@ void MainNetworkManager::connectSever(QString address, int port)
         connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
         connect(mainSocket, SIGNAL(disconnected()), this, SLOT(disconnectServer()));
 
-        sendPacket(mainSocket, "CNT", "IMG", "NULL");
-        sendPacket(fileSocket, "CNT", "IMG", "NULL");
+        sendPacket(mainSocket, "SEN", "CNT", "IMG", "NULL");
+        sendPacket(fileSocket, "SEN", "CNT", "IMG", "NULL");
 
         emit connectionStatusChanged(true);
     } else {
@@ -64,7 +64,7 @@ void MainNetworkManager::disconnectServer()
     return;
 }
 
-void MainNetworkManager::sendPacket(QTcpSocket* socket, QString event, QString pid, QString data)
+void MainNetworkManager::sendPacket(QTcpSocket* socket, QString header, QString event, QString pid, QString data)
 {
     if (socket == nullptr) {
         emit connectionStatusChanged(false);
@@ -76,7 +76,7 @@ void MainNetworkManager::sendPacket(QTcpSocket* socket, QString event, QString p
         return;
     }
 
-    QString sendData = event + "<CR>" + pid + "<CR>" + data;
+    QString sendData = header + "^" + event + "<CR>" + pid + "<CR>" + data;
     QByteArray sendArray = sendData.toStdString().c_str();
     socket->write(sendArray);
 }
@@ -84,41 +84,49 @@ void MainNetworkManager::sendPacket(QTcpSocket* socket, QString event, QString p
 QStringList MainNetworkManager::packetParser(QByteArray receiveArray)
 {
     QString receiveData = QString(receiveArray);
+    QString header = (receiveData.split("<CR>")[0]).split("^")[0];
+    QString event = (receiveData.split("<CR>")[0]).split("^")[1];
 
     QStringList dataList;
-    dataList << receiveData.split("<CR>")[0] << receiveData.split("<CR>")[1] << receiveData.split("<CR>")[2];
+    dataList << header << event << receiveData.split("<CR>")[1] << receiveData.split("<CR>")[2];
 
     return dataList;
 }
 
+//
 void MainNetworkManager::receivePacket()
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
     QStringList packetData = packetParser(socket->readAll());
-    QString event = packetData[0];
-    QString pid = packetData[1];
-    QString data = packetData[2];
+    QString header = packetData[0];
+    QString event = packetData[1];
+    QString pid = packetData[2];
+    QString data = packetData[3];
 
     QStringList dataList;
-    if (event == "WTR") {       // WRT : 대기목록 리시브
-        emit sendWaitList(pid.toInt(), data);
-    } else if (event == "SRQ") {   // SRQ : 촬영의뢰 요청이 들어온 경우
-        dataList << pid << data.split("|")[0] << data.split("|")[1];        // pid -> name -> type
-        emit sendWaitPatient(dataList);
-    } else if (event == "IPR") {    // IPR : 환자 정보 리시브
-        dataList << pid << data.split("|")[0] << data.split("|")[1] << data.split("|")[2];        // pid -> name -> sex -> birth
-        emit sendPatientInfo(dataList);
+
+
+    if (header == "ACK") {
+        if (event == "WTR") {       // WRT : 기존 대기목록 리시브
+            emit sendWaitList(pid.toInt(), data);
+        } else if (event == "SRQ") {   // SRQ : 촬영의뢰 요청이 들어온 경우
+            dataList << pid << data.split("|")[0] << data.split("|")[1];        // pid -> name -> type
+            emit sendWaitPatient(dataList);
+        } else if (event == "IPR") {    // IPR : 환자 정보 리시브
+            dataList << pid << data.split("|")[0] << data.split("|")[1] << data.split("|")[2];        // pid -> name -> sex -> birth
+            emit sendPatientInfo(dataList);
+        }
     }
 }
 
 void MainNetworkManager::requestPatientInfo(QString pid)
 {
-    sendPacket(mainSocket, "IPR", pid, "NULL");     // 서버로 환자정보 요청
+    sendPacket(mainSocket, "SEN", "IPR", pid, "NULL");     // 서버로 환자정보 요청
 }
 
 void MainNetworkManager::endImagingProcess(QString pid, QString type)
 {
-    sendPacket(mainSocket, "ISV", pid, type);     // 촬영 종료 안내 패킷
+    sendPacket(mainSocket, "SEN", "ISV", pid, type);     // 촬영 종료 안내 패킷
 }
 
 void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
