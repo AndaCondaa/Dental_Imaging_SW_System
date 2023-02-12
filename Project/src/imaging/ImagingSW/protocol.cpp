@@ -1,3 +1,11 @@
+/*
+ * 프로그램명 : ImagingSW
+ * 파일명 : protocol.cpp
+ * 설명 : 서브서버용 네트워크(프로토콜) API
+ * 작성자 : 안다미로
+ * 최종 수정일 : 2023.02.12
+ */
+
 #include "protocol.h"
 #include "packetdata.h"
 

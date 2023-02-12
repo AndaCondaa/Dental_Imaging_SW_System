@@ -3,7 +3,7 @@
  * 파일명 : mainwindow.h
  * 설명 : 촬영SW 메인GUI
  * 작성자 : 안다미로
- * 최종 수정일 : 2023.01.09
+ * 최종 수정일 : 2023.02.13
  */
 
 #ifndef MAINWINDOW_H

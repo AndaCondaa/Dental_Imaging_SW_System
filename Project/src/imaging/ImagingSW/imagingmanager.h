@@ -1,3 +1,11 @@
+/*
+ * 프로그램명 : ImagingSW
+ * 파일명 : imagingmanager.h
+ * 설명 : 이미지 정합 및 저장 구현
+ * 작성자 : 안다미로
+ * 최종 수정일 : 2023.02.13
+ */
+
 #ifndef IMAGINGMANAGER_H
 #define IMAGINGMANAGER_H
 

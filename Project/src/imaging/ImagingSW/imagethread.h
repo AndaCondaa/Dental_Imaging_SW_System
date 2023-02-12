@@ -1,3 +1,11 @@
+/*
+ * 프로그램명 : ImagingSW
+ * 파일명 : imagethread.h
+ * 설명 : 프레임데이터 수신 후 화면에 출력하는 스레드 구현
+ * 작성자 : 안다미로
+ * 최종 수정일 : 2023.02.13
+ */
+
 #ifndef IMAGETHREAD_H
 #define IMAGETHREAD_H
 

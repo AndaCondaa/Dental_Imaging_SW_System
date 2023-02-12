@@ -1,3 +1,12 @@
+/*
+ * 프로그램명 : ImagingSW
+ * 파일명 : mainnetworkmanager.cpp
+ * 설명 : 메인 서버와 통신 구현
+ * 작성자 : 안다미로
+ * 최종 수정일 : 2023.02.13
+ */
+
+
 #include "mainnetworkmanager.h"
 
 #include <QApplication>

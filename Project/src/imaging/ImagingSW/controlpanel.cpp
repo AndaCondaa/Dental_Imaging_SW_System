@@ -1,3 +1,11 @@
+/*
+ * 프로그램명 : ImagingSW
+ * 파일명 : controlpanel.cpp
+ * 설명 : CT 장비 제어동작 구현
+ * 작성자 : 안다미로
+ * 최종 수정일 : 2023.02.13
+ */
+
 #include "controlpanel.h"
 #include "ui_controlpanel.h"
 

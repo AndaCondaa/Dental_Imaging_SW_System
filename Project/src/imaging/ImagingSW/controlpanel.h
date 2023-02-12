@@ -1,3 +1,12 @@
+/*
+ * 프로그램명 : ImagingSW
+ * 파일명 : controlpanel.h
+ * 설명 : CT 장비 제어동작 구현
+ * 작성자 : 안다미로
+ * 최종 수정일 : 2023.02.13
+ */
+
+
 #ifndef CONTROLPANEL_H
 #define CONTROLPANEL_H
 
@@ -22,7 +31,6 @@ private slots:
     void controlButtonClicked(QAbstractButton*);
     void receiveButtonControl(int);
 
-
     void resetControl();
     bool readyControl();
     void startControl();
@@ -30,8 +38,6 @@ private slots:
     void saveSlot(QString);
     void shootingEndSlot(QString);
     void finishSlot(QString, QString);
-
-
 
 private:
     Ui::ControlPanel *ui;

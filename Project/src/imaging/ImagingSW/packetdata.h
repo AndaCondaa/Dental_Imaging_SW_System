@@ -1,3 +1,11 @@
+/*
+ * 프로그램명 : ImagingSW
+ * 파일명 : packetdata.h
+ * 설명 : 서브서버용 패킷 데이터 클래스
+ * 작성자 : 안다미로
+ * 최종 수정일 : 2023.02.12
+ */
+
 #ifndef PACKETDATA_H
 #define PACKETDATA_H
 

@@ -1,3 +1,12 @@
+/*
+ * 프로그램명 : SubServer
+ * 파일명 : packetdata.cpp
+ * 설명 : 서브서버용 패킷 데이터 클래스
+ * 작성자 : 안다미로
+ * 최종 수정일 : 2023.02.12
+ */
+
+
 #include "packetdata.h"
 
 #include <QIODevice>
