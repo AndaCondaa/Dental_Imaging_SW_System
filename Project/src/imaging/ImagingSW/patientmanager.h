@@ -1,3 +1,12 @@
+/*
+ * 프로그램명 : ImagingSW
+ * 파일명 : patientmanager.h
+ * 설명 : 대기 환자 및 촬영 중인 환자 정보 관리
+ * 작성자 : 안다미로
+ * 최종 수정일 : 2023.02.13
+ */
+
+
 #ifndef PATIENTMANAGER_H
 #define PATIENTMANAGER_H
 
