@@ -1,10 +1,3 @@
-^C:\QT_VTK_CT\BUILD\CMAKEFILES\E7D2E410F232E74B8EE6460588F12958\GENERATE.STAMP.RULE
-setlocal
-"C:\Program Files\CMake\bin\cmake.exe" -SC:/Qt_VTK_CT -BC:/Qt_VTK_CT/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file C:/Qt_VTK_CT/build/Qt_VTK_CT.sln
-if %errorlevel% neq 0 goto :cmEnd
-:cmEnd
-endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
-:cmErrorLevel
-exit /b %1
-:cmDone
-if %errorlevel% neq 0 goto :VCEnd
+version https://git-lfs.github.com/spec/v1
+oid sha256:80561862f6f3dad5d8269b1b781f2a0693d5bdb315bc449531663d268e858f00
+size 474

@@ -17,7 +17,7 @@ public:
 
     explicit CBCTFileTransfer(QObject * parent = nullptr);
     ~CBCTFileTransfer();
-    void sendingControl(int buttonIdx, QString msg);
+    void sendingControl(QString header, QString event, int type, QString msg);
 
     void sendPanoFile(int panoValue);
     void sendCephFile(int cephValue);
@@ -45,16 +45,20 @@ private:
     QString fileName;                           // Receiving FileName
     QString fileSender;                         // Receiving File's Sender
     QString checkFileName;                      // Previous File Name for checking new file
-    //    QTcpSocket * FileSocket;
+
 
 
 signals:
-    void resetSignal();
-    void readySignal();
-    void startSignal();
-    void stopSignal();
-    void panoSignal();
-    void cephSignal();
+    void receiveResetSignal(QString receiveMsg);
+    void receiveReadySignal(QString receiveMsg);
+    void receiveStartSignal(QString receiveMsg);
+    void receiveStopSignal(QString receiveMsg);
+    void receivePanoSignal(QString receiveMsg);
+    void receiveCephSignal(QString receiveMsg);
+
+  //  void modality_Signal(QString msg);
+    void fileLogSignal(QString mode, QString fileLog);
+    void sending_Control_Signal(QString msg);
 };
 
 #endif // CBCTFILETRANSFER_H

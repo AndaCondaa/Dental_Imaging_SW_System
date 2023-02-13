@@ -1,2 +1,3 @@
-PlatformToolSet=v142:VCToolArchitecture=Native64Bit:VCToolsVersion=14.29.30133:VCServicingVersionMFC=14.29.30136:TargetPlatformVersion=10.0.22000.0:
-Debug|x64|C:\Qt_VTK_CT\build\|
+version https://git-lfs.github.com/spec/v1
+oid sha256:af49c46ab5922261198bb7f607f19e45acf6916f4ac8fa7220538753c82572eb
+size 155
