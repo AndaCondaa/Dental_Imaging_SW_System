@@ -11,8 +11,9 @@
 #define CONTROLPANEL_H
 
 #include <QWidget>
-#include <QButtonGroup>
-#include <QImage>
+
+class QAbstractButton;
+class QButtonGroup;
 
 namespace Ui {
 class ControlPanel;
@@ -27,6 +28,7 @@ public:
     ~ControlPanel();
 
 private slots:
+    void settingStyleSheet();
     void checkTypeButton(QString);
     void controlButtonClicked(QAbstractButton*);
     void receiveButtonControl(int);

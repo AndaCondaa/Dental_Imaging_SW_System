@@ -6,19 +6,14 @@
  * 최종 수정일 : 2023.02.13
  */
 
-
 #include "imagingmanager.h"
 #include "ui_imagingmanager.h"
 #include "imagethread.h"
 
-#include <QFile>
 #include <QProgressDialog>
-#include <QDir>
-#include <QPainter>
 #include <QMessageBox>
 
 #include <opencv2/opencv.hpp>
-#include <stdio.h>
 #include <math.h>
 
 ImagingManager::ImagingManager(QWidget *parent) :
@@ -26,6 +21,7 @@ ImagingManager::ImagingManager(QWidget *parent) :
     ui(new Ui::ImagingManager)
 {
     ui->setupUi(this);
+    settingStyleSheet();
 
     connect(ui->reconButton, SIGNAL(clicked()), this, SLOT(reconImage()));
     connect(ui->saveButton, SIGNAL(clicked()), this, SLOT(saveButtonSlot()));
@@ -84,7 +80,10 @@ void ImagingManager::isProgressMaximum(int value)
 void ImagingManager::saveButtonSlot()
 {
     emit saveSignal(currentPID + "|" + currentType);
+
+    ui->progressBar->setValue(0);
     ui->reconButton->setEnabled(false);
+    ui->saveButton->setEnabled(false);
     ui->viewLabel->clear();
 }
 
@@ -319,7 +318,7 @@ void ImagingManager::medianFilter(unsigned short *input, int rows, int cols, int
 void ImagingManager::gammaCorrection(unsigned short *input, int inputSize, double maxValue, double gamma)
 {
     for (int i = 0; i < inputSize; i++) {
-        input[i] = maxValue * (double)((double)pow((double)((double)(input[i]) / maxValue), (double)gamma));
+        input[i] = maxValue * ((double)pow((double)(input[i]) / maxValue, (double)gamma));
     }
 }
 
@@ -374,4 +373,27 @@ void ImagingManager::viewReconImage(unsigned short *input, int rows, int cols)
     ui->viewLabel->setPixmap(QPixmap::fromImage(image.scaled(ui->viewLabel->width(), ui->viewLabel->height(), Qt::KeepAspectRatio)));
 }
 
+void ImagingManager::settingStyleSheet()
+{
+    ui->reconButton->setStyleSheet("QPushButton:disabled {"
+                                  "background-color: rgb(150, 150, 150);"
+                                  "border-radius: 10px;"
+                                  "border-style: solid;"
+                                  "}"
+                                  "QPushButton {"
+                                  "background-color: rgb(200, 200, 200);"
+                                  "border-radius: 10px;"
+                                  "border-style: solid;"
+                                  "}");
 
+    ui->saveButton->setStyleSheet("QPushButton:disabled {"
+                                  "background-color: rgb(150, 150, 150);"
+                                  "border-radius: 10px;"
+                                  "border-style: solid;"
+                                  "}"
+                                  "QPushButton {"
+                                  "background-color: rgb(200, 200, 200);"
+                                  "border-radius: 10px;"
+                                  "border-style: solid;"
+                                  "}");
+}

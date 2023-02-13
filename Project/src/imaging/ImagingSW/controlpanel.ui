@@ -73,8 +73,9 @@
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(200, 200, 200);
+        <string notr="true">background-color: rgb(150, 150, 150);
 border-radius: 10px;
+color:#ffffff;
 </string>
        </property>
        <property name="frameShape">
@@ -121,6 +122,9 @@ border-radius: 10px;
          </property>
          <property name="cursor">
           <cursorShape>ArrowCursor</cursorShape>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
          </property>
          <property name="autoFillBackground">
           <bool>false</bool>
@@ -239,8 +243,10 @@ border-radius: 10px;
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(200, 200, 200);
-border-radius: 10px;</string>
+        <string notr="true">background-color: rgb(150, 150, 150);
+border-radius: 10px;
+color:#ffffff;
+</string>
        </property>
        <property name="text">
         <string>장비 제어</string>

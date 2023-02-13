@@ -10,13 +10,9 @@
 #define SUBNETWORKMANAGER_H
 
 #include <QObject>
-#include <QTcpSocket>
-#include <QDataStream>
-#include <QFile>
-#include <QFileInfo>
 
-class QTcpSocket;
 class Protocol;
+class QTcpSocket;
 
 class SubNetworkManager : public QObject
 {
@@ -34,8 +30,6 @@ private slots:
     void receiveFile();
 
 private:
-
-
     QString currentPID = "NULL";
     QString currentType = "NULL";
 

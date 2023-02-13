@@ -10,8 +10,8 @@
 #define IMAGETHREAD_H
 
 #include <QThread>
-#include <QPixmap>
-#include <QPainter>
+
+class QPixmap;
 
 class ImageThread : public QThread
 {

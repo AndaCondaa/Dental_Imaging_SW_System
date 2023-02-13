@@ -73,8 +73,10 @@
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(200, 200, 200);
-border-radius: 10px;</string>
+        <string notr="true">background-color: rgb(150, 150, 150);
+border-radius: 10px;
+color:#ffffff;
+</string>
        </property>
        <property name="text">
         <string>대기 목록</string>
@@ -225,8 +227,10 @@ border-radius: 10px;</string>
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(200, 200, 200);
-border-radius: 10px;</string>
+        <string notr="true">background-color: rgb(150, 150, 150);
+border-radius: 10px;
+color:#ffffff;
+</string>
        </property>
        <property name="text">
         <string>촬영 환자</string>

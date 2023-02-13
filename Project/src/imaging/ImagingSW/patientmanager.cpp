@@ -148,6 +148,10 @@ void PatientManager::saveSlot(QString data) // pid|type
 
 void PatientManager::finishButtonSlot()
 {
+    if (ui->infoTableWidget->item(0,0) == nullptr) {
+        return;
+    }
+
     QString pid = ui->infoTableWidget->item(0,0)->text();
     QString requestType = typeMap.value(pid);
     QString type;
@@ -197,30 +201,27 @@ void PatientManager::finishButtonSlot()
 void PatientManager::settingStyleSheet()
 {
     ui->patientReadyButton->setStyleSheet("QPushButton { "
-                                          "background-color:rgb(241,156,72);"
+                                          "background-color:rgb(200,200,200);"
                                           "border-radius:10px;"
-                                          "color:#ffffff;"
                                           "}"
                                           "QPushButton:hover { "
-                                          "background-color: rgb(255,200,100);"
+                                          "background-color: rgb(241,156,72);"
                                           "color:#ffffff;"
                                           "}"
                                           "QPushButton:disabled { "
-                                          "background-color: rgb(50,50,50);"
-                                          "color:#ffffff;"
+                                          "background-color: rgb(150,150,150);"
+
                                           "}");
 
     ui->finishButton->setStyleSheet("QPushButton { "
-                                    "background-color:rgb(241,156,72);"
+                                    "background-color:rgb(200,200,200);"
                                     "border-radius:10px;"
-                                    "color:#ffffff;"
                                     "}"
                                     "QPushButton:hover { "
-                                    "background-color: rgb(255,200,100);"
+                                    "background-color: rgb(241,156,72);"
                                     "color:#ffffff;"
                                     "}"
                                     "QPushButton:disabled { "
-                                    "background-color: rgb(50,50,50);"
-                                    "color:#ffffff;"
+                                    "background-color: rgb(150,150,150);"
                                     "}");
 }

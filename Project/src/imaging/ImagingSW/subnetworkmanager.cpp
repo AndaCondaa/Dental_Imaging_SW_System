@@ -10,11 +10,9 @@
 #include "protocol.h"
 #include "packetdata.h"
 
-#include <QApplication>
+#include <QTcpSocket>
 #include <QDir>
 #include <QMessageBox>
-#include <QAbstractButton>
-
 
 SubNetworkManager::SubNetworkManager(QObject *parent)
     : QObject{parent}
@@ -49,7 +47,11 @@ void SubNetworkManager::connectServer(QString address, int port)
 
         emit connectionStatusChanged(true);
     } else {
-        qDebug("SUB Connection FAIL!");
+        QMessageBox disconnectBox(QMessageBox::Warning, "ERROR",
+                                  "서버와 연결되지 않았습니다.",
+                                  QMessageBox::Ok);
+        disconnectBox.exec();
+        return;
     }
 }
 
@@ -61,12 +63,12 @@ void SubNetworkManager::disconnectServer()
     subSocket->deleteLater();
     fileSocket->deleteLater();
 
-    emit connectionStatusChanged(false);
-
     QMessageBox disconnectBox(QMessageBox::Warning, "ERROR",
                               "검사실 서버와 연결이 끊어졌습니다. 재접속 해주세요.",
                               QMessageBox::Ok);
     disconnectBox.exec();
+
+    emit connectionStatusChanged(false);
 }
 
 void SubNetworkManager::receiveControl()
@@ -152,7 +154,7 @@ void SubNetworkManager::receiveFile()
         totalData.remove(0, frameSize);
         emit sendFrameImg(count);
         count++;
-//        qDebug("%d", count);
+        qDebug("%d", count);
         if (count == countMax) {
             qDebug() << QString("%1 Frame Data Send End!").arg(currentType);
             count = 0;

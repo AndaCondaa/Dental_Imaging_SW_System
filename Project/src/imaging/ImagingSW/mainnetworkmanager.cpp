@@ -102,7 +102,6 @@ QStringList MainNetworkManager::packetParser(QByteArray receiveArray)
     return dataList;
 }
 
-//
 void MainNetworkManager::receivePacket()
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
@@ -113,7 +112,6 @@ void MainNetworkManager::receivePacket()
     QString data = packetData[3];
 
     QStringList dataList;
-
 
     if (header == "ACK") {
         if (event == "WTR") {       // WRT : 기존 대기목록 리시브
@@ -141,12 +139,11 @@ void MainNetworkManager::endImagingProcess(QString pid, QString type)
 void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
 {
     if (fileSocket == nullptr) {                    // 연결 체크
-        emit connectionStatusChanged(false);
-
         QMessageBox disconnectBox(QMessageBox::Warning, "ERROR",
                                   "서버와 연결이 끊어졌습니다. 재접속 해주세요.",
                                   QMessageBox::Ok);
         disconnectBox.exec();
+        emit connectionStatusChanged(false);
         return;
     }
 

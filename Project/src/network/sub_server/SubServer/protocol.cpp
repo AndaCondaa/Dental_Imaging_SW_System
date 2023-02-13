@@ -9,6 +9,9 @@
 #include "protocol.h"
 #include "packetdata.h"
 
+#include <QTcpSocket>
+#include <QDataStream>
+
 Protocol::Protocol()
 {
     m_packetData = new PacketData();

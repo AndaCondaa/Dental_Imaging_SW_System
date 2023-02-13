@@ -11,7 +11,8 @@
 #define PATIENTMANAGER_H
 
 #include <QWidget>
-#include <QTreeWidget>
+
+class QTreeWidgetItem;
 
 namespace Ui {
 class PatientManager;

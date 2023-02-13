@@ -16,6 +16,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    setWindowTitle("Imaging SW");
 
     patientManager = new PatientManager(this);
     controlPanel = new ControlPanel(this);
