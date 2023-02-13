@@ -37,7 +37,7 @@ void MainNetworkManager::connectSever(QString address, int port)
     fileSocket = new QTcpSocket(this);
 
     mainSocket->connectToHost(address, port);
-    fileSocket->connectToHost(address, port++);
+    fileSocket->connectToHost(address, port+1);
 
     if (mainSocket->waitForConnected(1000) && fileSocket->waitForConnected(1000)) {
         connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
@@ -147,7 +147,7 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
         return;
     }
 
-    QObject::connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
+    connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
     QString pid = data.split("|")[0];
     QString type = data.split("|")[1];
 
@@ -166,6 +166,7 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
         }
 
         byteToWrite = totalSize = file->size(); // Data remained yet
+        qDebug("totalSize : %d", totalSize);
 
         QDataStream out(&outBlock, QIODevice::WriteOnly);
         out << qint64(0) << qint64(0) << pid << type;

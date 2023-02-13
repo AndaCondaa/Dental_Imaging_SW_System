@@ -254,7 +254,7 @@ void ControlPanel::finishSlot(QString pid, QString type)
 void ControlPanel::settingStyleSheet()
 {
     ui->panoButton->setStyleSheet("QPushButton:disabled {"
-                                  "background-color: rgb(150, 150, 150);"
+                                  "background-color: rgb(100, 100, 100);"
                                   "border-radius: 10px;"
                                   "border-style: solid;"
                                   "}"
@@ -269,7 +269,7 @@ void ControlPanel::settingStyleSheet()
                                   "border-color: #ED8817;"
                                   "}");
     ui->cephButton->setStyleSheet("QPushButton:disabled {"
-                                  "background-color: rgb(150, 150, 150);"
+                                  "background-color: rgb(100, 100, 100);"
                                   "border-radius: 10px;"
                                   "border-style: solid;"
                                   "}"
@@ -285,7 +285,7 @@ void ControlPanel::settingStyleSheet()
                                   "}");
 
     ui->resetButton->setStyleSheet("QPushButton:disabled {"
-                                   "background-color: rgb(150, 150, 150);"
+                                   "background-color: rgb(100, 100, 100);"
                                    "border-radius: 10px;"
                                    "border-style: solid;"
                                    "}"
@@ -301,7 +301,7 @@ void ControlPanel::settingStyleSheet()
                                    "}");
 
     ui->readyButton->setStyleSheet("QPushButton:disabled {"
-                                   "background-color: rgb(150, 150, 150);"
+                                   "background-color: rgb(100, 100, 100);"
                                    "border-radius: 10px;"
                                    "border-style: solid;"
                                    "}"
@@ -317,7 +317,7 @@ void ControlPanel::settingStyleSheet()
                                    "}");
 
     ui->startButton->setStyleSheet("QPushButton:disabled {"
-                                   "background-color: rgb(150, 150, 150);"
+                                   "background-color: rgb(100, 100, 100);"
                                    "border-radius: 10px;"
                                    "border-style: solid;"
                                    "}"
@@ -333,7 +333,7 @@ void ControlPanel::settingStyleSheet()
                                    "}");
 
     ui->stopButton->setStyleSheet("QPushButton:disabled {"
-                                  "background-color: rgb(150, 150, 150);"
+                                  "background-color: rgb(100, 100, 100);"
                                   "border-radius: 10px;"
                                   "border-style: solid;"
                                   "}"

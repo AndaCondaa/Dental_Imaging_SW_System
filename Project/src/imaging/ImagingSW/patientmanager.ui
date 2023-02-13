@@ -186,6 +186,13 @@ color:#ffffff;
            <height>16777215</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <family>맑은 고딕</family>
+           <pointsize>12</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>환자 준비</string>
          </property>
@@ -389,6 +396,12 @@ color:#ffffff;
            <width>16777215</width>
            <height>16777215</height>
           </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>13</pointsize>
+           <bold>false</bold>
+          </font>
          </property>
          <property name="styleSheet">
           <string notr="true"/>

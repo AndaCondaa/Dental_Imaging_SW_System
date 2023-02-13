@@ -68,7 +68,7 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
+         <pointsize>16</pointsize>
          <bold>true</bold>
         </font>
        </property>
@@ -238,8 +238,9 @@ color:#ffffff;
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
-         <bold>true</bold>
+         <family>HY헤드라인M</family>
+         <pointsize>14</pointsize>
+         <bold>false</bold>
         </font>
        </property>
        <property name="styleSheet">
@@ -281,11 +282,18 @@ color:#ffffff;
            <height>16777215</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <family>Arial Black</family>
+           <pointsize>20</pointsize>
+           <bold>false</bold>
+          </font>
+         </property>
          <property name="styleSheet">
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>장비 초기화</string>
+          <string>RESET</string>
          </property>
          <property name="checkable">
           <bool>false</bool>
@@ -314,6 +322,13 @@ color:#ffffff;
            <width>160</width>
            <height>16777215</height>
           </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial Black</family>
+           <pointsize>20</pointsize>
+           <bold>false</bold>
+          </font>
          </property>
          <property name="text">
           <string>READY</string>
@@ -349,6 +364,16 @@ color:#ffffff;
            <height>16777215</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <family>Arial Black</family>
+           <pointsize>20</pointsize>
+           <bold>true</bold>
+           <strikeout>false</strikeout>
+           <stylestrategy>PreferDefault</stylestrategy>
+           <kerning>true</kerning>
+          </font>
+         </property>
          <property name="text">
           <string>START</string>
          </property>
@@ -376,6 +401,13 @@ color:#ffffff;
            <width>160</width>
            <height>16777215</height>
           </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial Black</family>
+           <pointsize>20</pointsize>
+           <bold>false</bold>
+          </font>
          </property>
          <property name="text">
           <string>STOP</string>

@@ -100,8 +100,14 @@
            <height>100</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <family>Arial Rounded MT Bold</family>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
          <property name="text">
-          <string>재구성</string>
+          <string>RECON</string>
          </property>
         </widget>
        </item>
@@ -122,8 +128,14 @@
            <height>100</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <family>Arial Rounded MT Bold</family>
+           <pointsize>20</pointsize>
+          </font>
+         </property>
          <property name="text">
-          <string>저장</string>
+          <string>SAVE</string>
          </property>
         </widget>
        </item>

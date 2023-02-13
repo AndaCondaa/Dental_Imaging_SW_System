@@ -86,7 +86,7 @@ void SubNetworkManager::receiveControl()
         if (protocol->packetData()->event() == "CTL") {
             if (protocol->packetData()->type() == ControlType::START ||
                     protocol->packetData()->type() == ControlType::STOP) {
-                count = 0;
+//                count = 0;
                 totalData.clear();
             }
             emit buttonSignal(protocol->packetData()->type());

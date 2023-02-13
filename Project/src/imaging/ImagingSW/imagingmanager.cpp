@@ -46,9 +46,9 @@ void ImagingManager::setType(QString type)
 void ImagingManager::startSetting(QString pid, QString type)
 {
     if (type == "PANO") {
-        ui->progressBar->setMaximum(1749);
+        ui->progressBar->setMaximum(1748);
     } else if (type == "CEPH") {
-        ui->progressBar->setMaximum(1249);
+        ui->progressBar->setMaximum(1248);
     }
 
     thread = new ImageThread(ui->viewLabel->width(), ui->viewLabel->height(), currentType, this);
@@ -376,7 +376,7 @@ void ImagingManager::viewReconImage(unsigned short *input, int rows, int cols)
 void ImagingManager::settingStyleSheet()
 {
     ui->reconButton->setStyleSheet("QPushButton:disabled {"
-                                  "background-color: rgb(150, 150, 150);"
+                                  "background-color: rgb(100, 100, 100);"
                                   "border-radius: 10px;"
                                   "border-style: solid;"
                                   "}"
@@ -387,7 +387,7 @@ void ImagingManager::settingStyleSheet()
                                   "}");
 
     ui->saveButton->setStyleSheet("QPushButton:disabled {"
-                                  "background-color: rgb(150, 150, 150);"
+                                  "background-color: rgb(100, 100, 100);"
                                   "border-radius: 10px;"
                                   "border-style: solid;"
                                   "}"
