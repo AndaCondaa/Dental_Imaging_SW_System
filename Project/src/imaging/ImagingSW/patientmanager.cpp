@@ -148,6 +148,10 @@ void PatientManager::saveSlot(QString data) // pid|type
 
 void PatientManager::finishButtonSlot()
 {
+    if (ui->infoTableWidget->item(0,0) == nullptr) {
+        return;
+    }
+
     QString pid = ui->infoTableWidget->item(0,0)->text();
     QString requestType = typeMap.value(pid);
     QString type;
@@ -196,31 +200,67 @@ void PatientManager::finishButtonSlot()
 
 void PatientManager::settingStyleSheet()
 {
+//    ui->patientReadyButton->setStyleSheet("QPushButton { "
+//                                          "background-color:rgb(200,200,200);"
+//                                          "border-radius:10px;"
+//                                          "color:#ffffff;"
+//                                          "}"
+//                                          "QPushButton:hover { "
+//                                          "background-color: rgb(241,156,72);"
+//                                          "color:#ffffff;"
+//                                          "}"
+//                                          "QPushButton:disabled { "
+//                                          "background-color: rgb(100,100,100);"
+//                                          "}");
+
+//    ui->finishButton->setStyleSheet("QPushButton { "
+//                                    "background-color:rgb(200,200,200);"
+//                                    "border-radius:10px;"
+//                                    "color:#ffffff;"
+//                                    "}"
+//                                    "QPushButton:hover { "
+//                                    "background-color: rgb(241,156,72);"
+//                                    "color:#ffffff;"
+//                                    "}"
+//                                    "QPushButton:disabled { "
+//                                    "background-color: rgb(100,100,100);"
+//                                    "}");
+
     ui->patientReadyButton->setStyleSheet("QPushButton { "
                                           "background-color:rgb(241,156,72);"
                                           "border-radius:10px;"
                                           "color:#ffffff;"
                                           "}"
                                           "QPushButton:hover { "
-                                          "background-color: rgb(255,200,100);"
+                                          "background-color: rgb(241,156,72);"
+                                          "font-weight:bold;"
                                           "color:#ffffff;"
                                           "}"
                                           "QPushButton:disabled { "
-                                          "background-color: rgb(50,50,50);"
-                                          "color:#ffffff;"
+                                          "background-color: rgb(100,100,100);"
                                           "}");
 
     ui->finishButton->setStyleSheet("QPushButton { "
-                                    "background-color:rgb(241,156,72);"
-                                    "border-radius:10px;"
-                                    "color:#ffffff;"
+                                    "background-color:rgb(255,255,255);"
+                                    "border-style: outset;"
+                                    "border-width: 2px;"
+                                    "border-radius: 10px;"
+                                    "border-color: orange;"
+                                    "color:orange;"
                                     "}"
                                     "QPushButton:hover { "
-                                    "background-color: rgb(255,200,100);"
-                                    "color:#ffffff;"
+                                    "background-color: rgb(255,255,255);"
+                                    "border-style: outset;"
+                                    "border-width: 4px;"
+                                    "border-radius: 10px;"
+                                    "border-color: orange;"
+                                    "font-weight: bold;"
+                                    "color:orange;"
                                     "}"
                                     "QPushButton:disabled { "
-                                    "background-color: rgb(50,50,50);"
-                                    "color:#ffffff;"
+                                    "background-color: rgb(100,100,100);"
+                                    "border-radius: 10px;"
+                                    "border-width: 10px;"
+                                    "border-color: rgb(241,156,72);"
                                     "}");
 }

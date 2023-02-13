@@ -6,9 +6,11 @@
  * 최종 수정일 : 2023.02.13
  */
 
+
 #include "controlpanel.h"
 #include "ui_controlpanel.h"
 
+#include <QButtonGroup>
 #include <QMessageBox>
 
 #define RESET 0
@@ -21,27 +23,7 @@ ControlPanel::ControlPanel(QWidget *parent) :
     ui(new Ui::ControlPanel)
 {
     ui->setupUi(this);
-
-    ui->panoButton->setStyleSheet("QPushButton {"
-                                  "background-color: rgb(150, 150, 150);"
-                                  "border-radius: 10px;"
-                                  "border-style: solid;"
-                                  "}"
-                                  "QPushButton:checked {"
-                                  "background-color: rgb(250, 250, 250);"
-                                  "border-width: 3px;"
-                                  "border-color: #ED8817;"
-                                  "}");
-    ui->cephButton->setStyleSheet("QPushButton {"
-                                  "background-color: rgb(150, 150, 150);"
-                                  "border-radius: 10px;"
-                                  "border-style: solid;"
-                                  "}"
-                                  "QPushButton:checked {"
-                                  "background-color: rgb(250, 250, 250);"
-                                  "border-width: 3px;"
-                                  "border-color: #ED8817;"
-                                  "}");
+    settingStyleSheet();
 
     modeButtonGroup = new QButtonGroup(this);
     modeButtonGroup->addButton(ui->panoButton);
@@ -267,4 +249,103 @@ void ControlPanel::finishSlot(QString pid, QString type)
     ui->readyButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
+}
+
+void ControlPanel::settingStyleSheet()
+{
+    ui->panoButton->setStyleSheet("QPushButton:disabled {"
+                                  "background-color: rgb(100, 100, 100);"
+                                  "border-radius: 10px;"
+                                  "border-style: solid;"
+                                  "}"
+                                  "QPushButton {"
+                                  "background-color: rgb(200, 200, 200);"
+                                  "border-radius: 10px;"
+                                  "border-style: solid;"
+                                  "}"
+                                  "QPushButton:checked {"
+                                  "background-color: rgb(250, 250, 250);"
+                                  "border-width: 3px;"
+                                  "border-color: #ED8817;"
+                                  "}");
+    ui->cephButton->setStyleSheet("QPushButton:disabled {"
+                                  "background-color: rgb(100, 100, 100);"
+                                  "border-radius: 10px;"
+                                  "border-style: solid;"
+                                  "}"
+                                  "QPushButton {"
+                                  "background-color: rgb(200, 200, 200);"
+                                  "border-radius: 10px;"
+                                  "border-style: solid;"
+                                  "}"
+                                  "QPushButton:checked {"
+                                  "background-color: rgb(250, 250, 250);"
+                                  "border-width: 3px;"
+                                  "border-color: #ED8817;"
+                                  "}");
+
+    ui->resetButton->setStyleSheet("QPushButton:disabled {"
+                                   "background-color: rgb(100, 100, 100);"
+                                   "border-radius: 10px;"
+                                   "border-style: solid;"
+                                   "}"
+                                   "QPushButton {"
+                                   "background-color: rgb(200, 200, 200);"
+                                   "border-radius: 10px;"
+                                   "border-style: solid;"
+                                   "}"
+                                   "QPushButton:hover {"
+                                   "background-color:rgb(241,156,72);"
+                                   "border-radius:10px;"
+                                   "color:#ffffff;"
+                                   "}");
+
+    ui->readyButton->setStyleSheet("QPushButton:disabled {"
+                                   "background-color: rgb(100, 100, 100);"
+                                   "border-radius: 10px;"
+                                   "border-style: solid;"
+                                   "}"
+                                   "QPushButton {"
+                                   "background-color: rgb(200, 200, 200);"
+                                   "border-radius: 10px;"
+                                   "border-style: solid;"
+                                   "}"
+                                   "QPushButton:hover {"
+                                   "background-color:rgb(241,156,72);"
+                                   "border-radius:10px;"
+                                   "color:#ffffff;"
+                                   "}");
+
+    ui->startButton->setStyleSheet("QPushButton:disabled {"
+                                   "background-color: rgb(100, 100, 100);"
+                                   "border-radius: 10px;"
+                                   "border-style: solid;"
+                                   "}"
+                                   "QPushButton {"
+                                   "background-color: rgb(200, 200, 200);"
+                                   "border-radius: 10px;"
+                                   "border-style: solid;"
+                                   "}"
+                                   "QPushButton:hover {"
+                                   "background-color:rgb(241,156,72);"
+                                   "border-radius:10px;"
+                                   "color:#ffffff;"
+                                   "}");
+
+    ui->stopButton->setStyleSheet("QPushButton:disabled {"
+                                  "background-color: rgb(100, 100, 100);"
+                                  "border-radius: 10px;"
+                                  "border-style: solid;"
+                                  "}"
+                                  "QPushButton {"
+                                  "background-color: rgb(200, 200, 200);"
+                                  "border-radius: 10px;"
+                                  "border-style: solid;"
+                                  "}"
+                                  "QPushButton:hover {"
+                                  "background-color:rgb(241,156,72);"
+                                  "border-radius:10px;"
+                                  "color:#ffffff;"
+                                  "}");
+
 }

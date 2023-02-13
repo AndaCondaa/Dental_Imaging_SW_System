@@ -73,8 +73,10 @@
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(200, 200, 200);
-border-radius: 10px;</string>
+        <string notr="true">background-color: rgb(150, 150, 150);
+border-radius: 10px;
+color:#ffffff;
+</string>
        </property>
        <property name="text">
         <string>대기 목록</string>
@@ -184,6 +186,13 @@ border-radius: 10px;</string>
            <height>16777215</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <family>맑은 고딕</family>
+           <pointsize>12</pointsize>
+           <bold>true</bold>
+          </font>
+         </property>
          <property name="text">
           <string>환자 준비</string>
          </property>
@@ -225,8 +234,10 @@ border-radius: 10px;</string>
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(200, 200, 200);
-border-radius: 10px;</string>
+        <string notr="true">background-color: rgb(150, 150, 150);
+border-radius: 10px;
+color:#ffffff;
+</string>
        </property>
        <property name="text">
         <string>촬영 환자</string>
@@ -385,6 +396,12 @@ border-radius: 10px;</string>
            <width>16777215</width>
            <height>16777215</height>
           </size>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>13</pointsize>
+           <bold>false</bold>
+          </font>
          </property>
          <property name="styleSheet">
           <string notr="true"/>

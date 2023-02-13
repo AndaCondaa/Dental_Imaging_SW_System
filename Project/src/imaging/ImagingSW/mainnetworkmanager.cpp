@@ -37,7 +37,7 @@ void MainNetworkManager::connectSever(QString address, int port)
     fileSocket = new QTcpSocket(this);
 
     mainSocket->connectToHost(address, port);
-    fileSocket->connectToHost(address, port++);
+    fileSocket->connectToHost(address, port+1);
 
     if (mainSocket->waitForConnected(1000) && fileSocket->waitForConnected(1000)) {
         connect(mainSocket, SIGNAL(readyRead()), this, SLOT(receivePacket()));
@@ -102,7 +102,6 @@ QStringList MainNetworkManager::packetParser(QByteArray receiveArray)
     return dataList;
 }
 
-//
 void MainNetworkManager::receivePacket()
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
@@ -113,7 +112,6 @@ void MainNetworkManager::receivePacket()
     QString data = packetData[3];
 
     QStringList dataList;
-
 
     if (header == "ACK") {
         if (event == "WTR") {       // WRT : 기존 대기목록 리시브
@@ -141,16 +139,15 @@ void MainNetworkManager::endImagingProcess(QString pid, QString type)
 void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
 {
     if (fileSocket == nullptr) {                    // 연결 체크
-        emit connectionStatusChanged(false);
-
         QMessageBox disconnectBox(QMessageBox::Warning, "ERROR",
                                   "서버와 연결이 끊어졌습니다. 재접속 해주세요.",
                                   QMessageBox::Ok);
         disconnectBox.exec();
+        emit connectionStatusChanged(false);
         return;
     }
 
-    QObject::connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
+    connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
     QString pid = data.split("|")[0];
     QString type = data.split("|")[1];
 
@@ -169,6 +166,7 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
         }
 
         byteToWrite = totalSize = file->size(); // Data remained yet
+        qDebug("totalSize : %d", totalSize);
 
         QDataStream out(&outBlock, QIODevice::WriteOnly);
         out << qint64(0) << qint64(0) << pid << type;

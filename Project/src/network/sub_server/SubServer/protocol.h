@@ -9,9 +9,9 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-#include <QTcpSocket>
-#include <QStringList>
-#include <QDataStream>
+class QTcpSocket;
+class PacketData;
+class QString;
 
 typedef enum {
     SW,

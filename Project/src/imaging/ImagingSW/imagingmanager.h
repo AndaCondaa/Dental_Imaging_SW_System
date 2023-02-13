@@ -11,11 +11,11 @@
 
 #include <QWidget>
 
+class ImageThread;
+
 namespace Ui {
 class ImagingManager;
 }
-
-class ImageThread;
 
 class ImagingManager : public QWidget
 {
@@ -26,6 +26,7 @@ public:
     ~ImagingManager();
 
 private slots:
+    void settingStyleSheet();
     void setPID(QString);
     void setType(QString);
 

@@ -68,13 +68,14 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
+         <pointsize>16</pointsize>
          <bold>true</bold>
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(200, 200, 200);
+        <string notr="true">background-color: rgb(150, 150, 150);
 border-radius: 10px;
+color:#ffffff;
 </string>
        </property>
        <property name="frameShape">
@@ -121,6 +122,9 @@ border-radius: 10px;
          </property>
          <property name="cursor">
           <cursorShape>ArrowCursor</cursorShape>
+         </property>
+         <property name="layoutDirection">
+          <enum>Qt::LeftToRight</enum>
          </property>
          <property name="autoFillBackground">
           <bool>false</bool>
@@ -234,13 +238,16 @@ border-radius: 10px;
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
-         <bold>true</bold>
+         <family>HY헤드라인M</family>
+         <pointsize>14</pointsize>
+         <bold>false</bold>
         </font>
        </property>
        <property name="styleSheet">
-        <string notr="true">background-color: rgb(200, 200, 200);
-border-radius: 10px;</string>
+        <string notr="true">background-color: rgb(150, 150, 150);
+border-radius: 10px;
+color:#ffffff;
+</string>
        </property>
        <property name="text">
         <string>장비 제어</string>
@@ -275,11 +282,18 @@ border-radius: 10px;</string>
            <height>16777215</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <family>Arial Black</family>
+           <pointsize>20</pointsize>
+           <bold>false</bold>
+          </font>
+         </property>
          <property name="styleSheet">
           <string notr="true"/>
          </property>
          <property name="text">
-          <string>장비 초기화</string>
+          <string>RESET</string>
          </property>
          <property name="checkable">
           <bool>false</bool>
@@ -308,6 +322,13 @@ border-radius: 10px;</string>
            <width>160</width>
            <height>16777215</height>
           </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial Black</family>
+           <pointsize>20</pointsize>
+           <bold>false</bold>
+          </font>
          </property>
          <property name="text">
           <string>READY</string>
@@ -343,6 +364,16 @@ border-radius: 10px;</string>
            <height>16777215</height>
           </size>
          </property>
+         <property name="font">
+          <font>
+           <family>Arial Black</family>
+           <pointsize>20</pointsize>
+           <bold>true</bold>
+           <strikeout>false</strikeout>
+           <stylestrategy>PreferDefault</stylestrategy>
+           <kerning>true</kerning>
+          </font>
+         </property>
          <property name="text">
           <string>START</string>
          </property>
@@ -370,6 +401,13 @@ border-radius: 10px;</string>
            <width>160</width>
            <height>16777215</height>
           </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Arial Black</family>
+           <pointsize>20</pointsize>
+           <bold>false</bold>
+          </font>
          </property>
          <property name="text">
           <string>STOP</string>

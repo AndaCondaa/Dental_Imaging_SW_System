@@ -12,6 +12,8 @@
 #include "protocol.h"
 #include "packetdata.h"
 
+#include <QTcpServer>
+#include <QTcpSocket>
 #include <QDir>
 #include <QMessageBox>
 

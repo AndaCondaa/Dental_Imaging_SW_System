@@ -6,13 +6,13 @@
  * 최종 수정일 : 2023.02.13
  */
 
-
 #ifndef CONTROLPANEL_H
 #define CONTROLPANEL_H
 
 #include <QWidget>
-#include <QButtonGroup>
-#include <QImage>
+
+class QAbstractButton;
+class QButtonGroup;
 
 namespace Ui {
 class ControlPanel;
@@ -27,6 +27,7 @@ public:
     ~ControlPanel();
 
 private slots:
+    void settingStyleSheet();
     void checkTypeButton(QString);
     void controlButtonClicked(QAbstractButton*);
     void receiveButtonControl(int);

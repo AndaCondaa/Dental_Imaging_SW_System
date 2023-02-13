@@ -10,15 +10,12 @@
 #define SUBSERVER_H
 
 #include <QWidget>
-#include <QTcpServer>
-#include <QTcpSocket>
-#include <QMap>
 #include <QFile>
-#include <QFileInfo>
-#include <QFileDialog>
-#include <QProgressDialog>
 
 class Protocol;
+class QTcpServer;
+class QTcpSocket;
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class SubServer; }
