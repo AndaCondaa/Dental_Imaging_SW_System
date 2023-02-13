@@ -77,6 +77,8 @@ void PatientManager::receiveWaitPatient(QStringList dataList)
     for (int i = 0; i < 3; i++) {
         waitItem->setTextAlignment(i, Qt::AlignHCenter);
         ui->waitTreeWidget->resizeColumnToContents(i);
+        waitItem->setSizeHint(i, QSize(0, 25));
+        waitItem->setTextAlignment(i, Qt::AlignHCenter|Qt::AlignVCenter);
     }
 
 //    ui->waitTreeWidget->setCurrentItem(nullptr);    // 자동으로 처음 등록한 item이 currentitem으로 설정되지 않게 함
@@ -251,7 +253,7 @@ void PatientManager::settingStyleSheet()
                                     "QPushButton:hover { "
                                     "background-color: rgb(255,255,255);"
                                     "border-style: outset;"
-                                    "border-width: 4px;"
+                                    "border-width: 3px;"
                                     "border-radius: 10px;"
                                     "border-color: orange;"
                                     "font-weight: bold;"

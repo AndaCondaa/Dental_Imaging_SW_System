@@ -119,12 +119,12 @@ MainWindow::MainWindow(QWidget *parent)
     QStringList dataList;
     dataList << "P00001" << "김유선" << "BOTH";
     patientManager->receiveWaitPatient(dataList);
-//    dataList.clear();
-//    dataList << "P00004" << "김도예" << "BOTH";
-//    patientManager->receiveWaitPatient(dataList);
-//    dataList.clear();
-//    dataList << "P00005" << "김영희" << "BOTH";
-//    patientManager->receiveWaitPatient(dataList);
+    dataList.clear();
+    dataList << "P00004" << "김도예" << "BOTH";
+    patientManager->receiveWaitPatient(dataList);
+    dataList.clear();
+    dataList << "P00005" << "김영희" << "BOTH";
+    patientManager->receiveWaitPatient(dataList);
 
     QStringList test1;
     test1 << "P00001" << "김유선" << "F" << "asdf";
