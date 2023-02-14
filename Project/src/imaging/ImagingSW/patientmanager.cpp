@@ -80,8 +80,6 @@ void PatientManager::receiveWaitPatient(QStringList dataList)
         waitItem->setSizeHint(i, QSize(0, 25));
         waitItem->setTextAlignment(i, Qt::AlignHCenter|Qt::AlignVCenter);
     }
-
-//    ui->waitTreeWidget->setCurrentItem(nullptr);    // 자동으로 처음 등록한 item이 currentitem으로 설정되지 않게 함
 }
 
 
@@ -136,15 +134,17 @@ void PatientManager::saveSlot(QString data) // pid|type
     QString saveType = data.split("|")[1];
 
     if (saveType == "PANO") {
-        if (shootingStatus == "CEPH")
+        if (shootingStatus == "CEPH") {
             shootingStatus = "BOTH";
-        else
+        } else {
             shootingStatus = "PANO";
+        }
     } else if (saveType == "CEPH") {
-        if (shootingStatus == "PANO")
+        if (shootingStatus == "PANO") {
             shootingStatus = "BOTH";
-        else
+        } else {
             shootingStatus = "CEPH";
+        }
     }
 }
 
@@ -162,7 +162,7 @@ void PatientManager::finishButtonSlot()
     else if (requestType == "CEPH") type = "CE";
 
     QMessageBox finishBox(QMessageBox::NoIcon, "FINISH",
-                          "", QMessageBox::Yes|QMessageBox::No,
+                          "", QMessageBox::Yes | QMessageBox::No,
                           this, Qt::Dialog);
 
     if (shootingStatus == "BOTH") {
@@ -202,45 +202,29 @@ void PatientManager::finishButtonSlot()
 
 void PatientManager::settingStyleSheet()
 {
-//    ui->patientReadyButton->setStyleSheet("QPushButton { "
-//                                          "background-color:rgb(200,200,200);"
-//                                          "border-radius:10px;"
-//                                          "color:#ffffff;"
-//                                          "}"
-//                                          "QPushButton:hover { "
-//                                          "background-color: rgb(241,156,72);"
-//                                          "color:#ffffff;"
-//                                          "}"
-//                                          "QPushButton:disabled { "
-//                                          "background-color: rgb(100,100,100);"
-//                                          "}");
-
-//    ui->finishButton->setStyleSheet("QPushButton { "
-//                                    "background-color:rgb(200,200,200);"
-//                                    "border-radius:10px;"
-//                                    "color:#ffffff;"
-//                                    "}"
-//                                    "QPushButton:hover { "
-//                                    "background-color: rgb(241,156,72);"
-//                                    "color:#ffffff;"
-//                                    "}"
-//                                    "QPushButton:disabled { "
-//                                    "background-color: rgb(100,100,100);"
-//                                    "}");
-
     ui->patientReadyButton->setStyleSheet("QPushButton { "
-                                          "background-color:rgb(241,156,72);"
-                                          "border-radius:10px;"
-                                          "color:#ffffff;"
-                                          "}"
-                                          "QPushButton:hover { "
-                                          "background-color: rgb(241,156,72);"
-                                          "font-weight:bold;"
-                                          "color:#ffffff;"
-                                          "}"
-                                          "QPushButton:disabled { "
-                                          "background-color: rgb(100,100,100);"
-                                          "}");
+                                    "background-color:rgb(255,255,255);"
+                                    "border-style: outset;"
+                                    "border-width: 2px;"
+                                    "border-radius: 10px;"
+                                    "border-color: orange;"
+                                    "font-size: 12pt;"
+                                    "color:orange;"
+                                    "}"
+                                    "QPushButton:hover { "
+                                    "background-color: orange;"
+                                    "border-style: outset;"
+                                    "border-width: 0px;"
+                                    "border-radius: 11px;"
+                                    "border-color: orange;"
+                                    "color:white;"
+                                    "}"
+                                    "QPushButton:disabled { "
+                                    "background-color: rgb(150, 150, 150);"
+                                    "border-radius: 10px;"
+                                    "border-width: 10px;"
+                                    "border-color: rgb(241,156,72);"
+                                    "}");
 
     ui->finishButton->setStyleSheet("QPushButton { "
                                     "background-color:rgb(255,255,255);"
@@ -251,18 +235,15 @@ void PatientManager::settingStyleSheet()
                                     "color:orange;"
                                     "}"
                                     "QPushButton:hover { "
-                                    "background-color: rgb(255,255,255);"
+                                    "background-color: orange;"
                                     "border-style: outset;"
-                                    "border-width: 3px;"
-                                    "border-radius: 10px;"
+                                    "border-width: 0px;"
+                                    "border-radius: 11px;"
                                     "border-color: orange;"
-                                    "font-weight: bold;"
-                                    "color:orange;"
+                                    "color:white;"
                                     "}"
-                                    "QPushButton:disabled { "
-                                    "background-color: rgb(100,100,100);"
-                                    "border-radius: 10px;"
-                                    "border-width: 10px;"
-                                    "border-color: rgb(241,156,72);"
+                                    "QPushButton:disabled {"
+                                    "background-color: rgb(150, 150, 150);"
+                                    "color: rgb(120,120,120);"
                                     "}");
 }

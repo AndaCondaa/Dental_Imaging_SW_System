@@ -40,9 +40,8 @@ public slots:
 private:
     Ui::PatientManager *ui;
 
-    QString shootingStatus = "CEPH";                    // 현재 환자가 어느 사진을 찍었는지 확인하는 지표 (NULL, PANO, CEPH, BOTH)
+    QString shootingStatus = "NULL";                    // 현재 환자가 어느 사진을 찍었는지 확인하는 지표 (NULL, PANO, CEPH, BOTH)
     QMap<QString, QString> typeMap;                     // <pid, type>
-
 
 signals:
     void sendPid(QString);
@@ -50,7 +49,6 @@ signals:
     void sendPidToImagingManager(QString);
     void deleteSignal(QString);                          // 환자준비를 한 후에 삭제한 경우, control클래스에 시그널 전송 (for currentPID 재설정)
     void finishSignal(QString, QString);                     // currentPID , Type
-
 };
 
 #endif // PATIENTMANAGER_H

@@ -102,7 +102,7 @@
          </property>
          <property name="font">
           <font>
-           <family>Arial Rounded MT Bold</family>
+           <family>Arial Black</family>
            <pointsize>20</pointsize>
           </font>
          </property>
@@ -130,7 +130,7 @@
          </property>
          <property name="font">
           <font>
-           <family>Arial Rounded MT Bold</family>
+           <family>Arial Black</family>
            <pointsize>20</pointsize>
           </font>
          </property>
