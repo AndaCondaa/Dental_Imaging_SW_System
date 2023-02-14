@@ -1,9 +1,28 @@
 #include "cbctlogthread.h"
+#include <QDebug>
+#include <QThread>
 
-CBCTLogThread::CBCTLogThread(QObject *parent)
-    : QObject{parent}
+CBCTLogThread::CBCTLogThread()
 {
+ }
+
+
+void CBCTLogThread::run(){
 
 }
 
-// Load Obj 를 Thread 안에 넣을 것 -> 효율성 증가
+void CBCTLogThread::runMethod()
+{
+    m_modelController = new CBCTModelController;
+    m_rawImageViewer = new CBCTRawImageViewer;
+
+    QThread* modelThread = new QThread;
+    QThread* viewThread = new QThread;
+
+    m_modelController->moveToThread(modelThread);
+    m_rawImageViewer->moveToThread(viewThread);
+
+ //   connect(modelThread, &QThread::started, m_modelController, &CBCTModelController::on_MainPushButton_clicked);
+ //   connect(viewThread, &QThread::started, m_rawImageViewer, &CBCTRawImageViewer::viewer_Output);
+
+}

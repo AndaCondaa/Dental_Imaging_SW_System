@@ -8,6 +8,7 @@
 class QDir;
 class QDirIterator;
 class QTimer;
+class QElapsedTimer;
 
 class CBCTRawImageViewer : public QObject
 {
@@ -15,7 +16,7 @@ class CBCTRawImageViewer : public QObject
 public:
     explicit CBCTRawImageViewer();
     ~CBCTRawImageViewer();
-    Ui::MainWindow* m_mainwindowUi = nullptr;
+    Ui::MainWindow* m_parentUI = nullptr;
 
     QPixmap PanoImageViewer();
     QPixmap CephImageViewer();
@@ -36,15 +37,16 @@ public:
 private:
 
 
-    QDirIterator *panoImageIterator;
-    QDirIterator *cephImageIterator;
-    QTimer *panoImageTimer;
-    QTimer *cephImageTimer;
+    QDirIterator* panoImageIterator;
+    QDirIterator* cephImageIterator;
+    QTimer* panoImageTimer;
+    QTimer* cephImageTimer;
+public slots:
+    void viewer_Output();
 
 private slots:
         void timeoutPanoTimer();
         void timeoutCephTimer();
-
 //    void slot_panoImage(QImage* panoImage);
 //    void slot_cephImage(QImage* cephImage);
 
