@@ -12,7 +12,6 @@
 
 #include <QProgressDialog>
 #include <QMessageBox>
-
 #include <opencv2/opencv.hpp>
 #include <math.h>
 
@@ -161,7 +160,7 @@ void ImagingManager::reconImage()
         saveAsJpg(out, reconRows, reconCols);
 
         delete[] buf;
-//        delete[] tmpOut;
+        delete[] tmpOut;
         delete[] out;
     } else if (currentType == "CEPH") {
         frameRows = 2400;
@@ -261,8 +260,6 @@ void ImagingManager::reconImage()
 
     ui->saveButton->setEnabled(true);
 }
-
-
 
 QString ImagingManager::makeFileName(QString type, int count)
 {
@@ -376,7 +373,7 @@ void ImagingManager::viewReconImage(unsigned short *input, int rows, int cols)
 void ImagingManager::settingStyleSheet()
 {
     ui->reconButton->setStyleSheet("QPushButton:disabled {"
-                                  "background-color: rgb(100, 100, 100);"
+                                  "background-color: rgb(150, 150, 150);"
                                   "border-radius: 10px;"
                                   "border-style: solid;"
                                   "}"
@@ -387,7 +384,7 @@ void ImagingManager::settingStyleSheet()
                                   "}");
 
     ui->saveButton->setStyleSheet("QPushButton:disabled {"
-                                  "background-color: rgb(100, 100, 100);"
+                                  "background-color: rgb(150, 150, 150);"
                                   "border-radius: 10px;"
                                   "border-style: solid;"
                                   "}"

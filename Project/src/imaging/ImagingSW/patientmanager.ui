@@ -68,7 +68,7 @@
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
+         <pointsize>14</pointsize>
          <bold>true</bold>
         </font>
        </property>
@@ -189,7 +189,7 @@ color:#ffffff;
          <property name="font">
           <font>
            <family>맑은 고딕</family>
-           <pointsize>12</pointsize>
+           <pointsize>13</pointsize>
            <bold>true</bold>
           </font>
          </property>
@@ -229,7 +229,7 @@ color:#ffffff;
        </property>
        <property name="font">
         <font>
-         <pointsize>12</pointsize>
+         <pointsize>14</pointsize>
          <bold>true</bold>
         </font>
        </property>
@@ -400,7 +400,7 @@ color:#ffffff;
          <property name="font">
           <font>
            <pointsize>13</pointsize>
-           <bold>false</bold>
+           <bold>true</bold>
           </font>
          </property>
          <property name="styleSheet">

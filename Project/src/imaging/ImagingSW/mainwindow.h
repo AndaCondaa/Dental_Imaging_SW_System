@@ -30,6 +30,8 @@ public:
     ~MainWindow();
 
 private:
+    void settingStyleSheet();
+
     Ui::MainWindow *ui;
 
     PatientManager *patientManager;

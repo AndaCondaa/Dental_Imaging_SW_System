@@ -10,7 +10,6 @@
 
 #include <QPainter>
 #include <QPixmap>
-
 #include <opencv2/opencv.hpp>
 
 ImageThread::ImageThread(int width, int height, QString modeType, QObject *parent)
@@ -23,17 +22,19 @@ ImageThread::ImageThread(int width, int height, QString modeType, QObject *paren
     memset(checkCount, false, 1750);
 }
 
+// 스레드 중지 (플래그 값 변경)
+void ImageThread::threadStop()
+{
+    isStop = true;
+}
+
+// 프레임데이터 수신 카운팅
 void ImageThread::setCount(int count)
 {
     this->count = count;
     if (count < maxCount) {
         checkCount[count] = true;
     }
-}
-
-void ImageThread::threadStop()
-{
-    isStop = true;
 }
 
 void ImageThread::run()
@@ -101,8 +102,8 @@ void ImageThread::run()
 
                 QImage frameImage(rotateMat.data, rotateMat.cols, rotateMat.rows , QImage::Format_Grayscale16);
                 painter.drawImage(width - currentCount*((double)width/1750.), offset, frameImage.scaledToHeight(transHeight));
-                emit processFinished(pixmap);
-                emit processCount(currentCount);
+                emit processFinished(pixmap);           // 프레임데이터 한 장마다 display
+                emit processCount(currentCount);        // 진행상황 display (QProgressBar)
                 currentCount++;
                 if (currentCount == maxCount) {
                     isStop = true;
@@ -163,8 +164,8 @@ void ImageThread::run()
 
                 QImage frameImage(dst.data, dst.cols, dst.rows, QImage::Format_Grayscale16);
                 painter.drawImage(offset - ((currentCount+1) * ((transWidth)/1250.)), 0, frameImage.scaledToHeight(height));
-                emit processFinished(pixmap);
-                emit processCount(currentCount);
+                emit processFinished(pixmap);           // 프레임데이터 한 장마다 display
+                emit processCount(currentCount);        // 진행상황 display (QProgressBar)
                 currentCount++;
                 if (currentCount == maxCount) {
                     isStop = true;

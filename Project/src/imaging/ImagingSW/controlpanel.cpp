@@ -6,13 +6,13 @@
  * 최종 수정일 : 2023.02.13
  */
 
-
 #include "controlpanel.h"
 #include "ui_controlpanel.h"
 
 #include <QButtonGroup>
 #include <QMessageBox>
 
+// 제어명령 버튼그룹 인덱스
 #define RESET 0
 #define READY 1
 #define START 2
@@ -44,52 +44,21 @@ ControlPanel::~ControlPanel()
     delete ui;
 }
 
-//촬영요청 타입확인 후 , 촬영타입에 따라서 타입버튼 조작
+
+// 촬영타입에 따른 버튼 조작
+// QString data: PID|TYPE (ex: P00001|PANO)
 void ControlPanel::checkTypeButton(QString data)
 {
     currentPID = data.split("|")[0];
     requestType = data.split("|")[1];
 
-    //******************************************************************************
-    // 대기환자 변경할 때마다, 바뀌는지 체크하기
     resetControl();
-//    modeButtonGroup->setExclusive(false);
-//    if (requestType == "PANO") {
-//        ui->panoButton->setCheckable(true);
-//        ui->cephButton->setCheckable(false);
-//        ui->panoButton->setChecked(true);
-//        ui->cephButton->setChecked(false);
-//    } else if (requestType == "CEPH") {
-//        ui->panoButton->setCheckable(false);
-//        ui->cephButton->setCheckable(true);
-//        ui->panoButton->setChecked(false);
-//        ui->cephButton->setChecked(true);
-//    } else if (requestType == "BOTH") {
-//        ui->panoButton->setCheckable(true);
-//        ui->cephButton->setCheckable(true);
-//        ui->panoButton->setChecked(false);
-//        ui->cephButton->setChecked(false);
-//    }
-//    modeButtonGroup->setExclusive(false);
-    //*******************************************************************************
 }
 
+// 제어명령 요청에 따른 패킷 전송
+// QAbstractButton* button: 제어명령 버튼 (RESET, READY, START, STOP)
 void ControlPanel::controlButtonClicked(QAbstractButton* button)
 {
-//    switch (controlButtonGroup->id(button)) {
-//    case RESET:
-//        resetControl();
-//        break;
-//    case READY:
-//        if (!readyControl()) return;
-//        break;
-//    case START:
-//        startControl();
-//        break;
-//    case STOP:
-//        stopControl();
-//        break;
-//    }
     if (ui->panoButton->isChecked()) {
         currentType = "PANO";
     } else if (ui->cephButton->isChecked()) {
@@ -109,6 +78,8 @@ void ControlPanel::controlButtonClicked(QAbstractButton* button)
     emit buttonSignal(controlButtonGroup->id(button), currentPID + "|" + currentType);
 }
 
+// 제어명령 패킷 수신
+// int buttonIdx : (0: RESET, 1: READY, 2: START, 3: STOP)
 void ControlPanel::receiveButtonControl(int buttonIdx)
 {
     switch (buttonIdx) {
@@ -127,6 +98,7 @@ void ControlPanel::receiveButtonControl(int buttonIdx)
     }
 }
 
+// RESET 동작
 void ControlPanel::resetControl()
 {   
     modeButtonGroup->setExclusive(false);
@@ -157,6 +129,7 @@ void ControlPanel::resetControl()
     ui->stopButton->setEnabled(false);
 }
 
+// READY 동작
 bool ControlPanel::readyControl()
 {
     if (currentPID == "NULL") {
@@ -185,20 +158,22 @@ bool ControlPanel::readyControl()
     ui->readyButton->setEnabled(false);
     ui->startButton->setEnabled(true);
 
-    emit readySignal(currentType);
+    emit readySignal(currentType);      // 촬영타입 전송
 
     return true;
 }
 
+// START 동작
 void ControlPanel::startControl()
 {
     ui->resetButton->setEnabled(false);
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(true);
 
-    emit startSignal(currentPID, currentType);
+    emit startSignal(currentPID, currentType);   // 프레임데이터 수신용 쓰레드 준비 요청
 }
 
+// STOP 동작
 void ControlPanel::stopControl()
 {
     currentType = "NULL";
@@ -211,9 +186,10 @@ void ControlPanel::stopControl()
     ui->startButton->setEnabled(false);
     ui->stopButton->setEnabled(false);
 
-    emit stopSignal();
+    emit stopSignal();      // 프레임데이터 수신용 쓰레드 중지 요청
 }
 
+// 촬영완료 동작 (PANO, CEPH)
 void ControlPanel::shootingEndSlot(QString type)
 {
     ui->resetButton->setEnabled(true);
@@ -222,6 +198,7 @@ void ControlPanel::shootingEndSlot(QString type)
     ui->stopButton->setEnabled(false);
 }
 
+// SAVE 동작 후 버튼 리셋
 void ControlPanel::saveSlot(QString)
 {
     ui->panoButton->setCheckable(false);
@@ -233,6 +210,7 @@ void ControlPanel::saveSlot(QString)
     ui->stopButton->setEnabled(false);
 }
 
+// 특정 환자의 촬영프로세스 종료
 void ControlPanel::finishSlot(QString pid, QString type)
 {
     Q_UNUSED(pid);
@@ -251,10 +229,11 @@ void ControlPanel::finishSlot(QString pid, QString type)
     ui->stopButton->setEnabled(false);
 }
 
+// GUI 스타일시트 설정
 void ControlPanel::settingStyleSheet()
 {
     ui->panoButton->setStyleSheet("QPushButton:disabled {"
-                                  "background-color: rgb(100, 100, 100);"
+                                  "background-color: rgb(150, 150, 150);"
                                   "border-radius: 10px;"
                                   "border-style: solid;"
                                   "}"
@@ -265,11 +244,13 @@ void ControlPanel::settingStyleSheet()
                                   "}"
                                   "QPushButton:checked {"
                                   "background-color: rgb(250, 250, 250);"
+                                  "border-style: outset;"
                                   "border-width: 3px;"
                                   "border-color: #ED8817;"
                                   "}");
+
     ui->cephButton->setStyleSheet("QPushButton:disabled {"
-                                  "background-color: rgb(100, 100, 100);"
+                                  "background-color: rgb(150, 150, 150);"
                                   "border-radius: 10px;"
                                   "border-style: solid;"
                                   "}"
@@ -280,12 +261,13 @@ void ControlPanel::settingStyleSheet()
                                   "}"
                                   "QPushButton:checked {"
                                   "background-color: rgb(250, 250, 250);"
+                                  "border-style: outset;"
                                   "border-width: 3px;"
                                   "border-color: #ED8817;"
                                   "}");
 
     ui->resetButton->setStyleSheet("QPushButton:disabled {"
-                                   "background-color: rgb(100, 100, 100);"
+                                   "background-color: rgb(150, 150, 150);"
                                    "border-radius: 10px;"
                                    "border-style: solid;"
                                    "}"
@@ -301,7 +283,7 @@ void ControlPanel::settingStyleSheet()
                                    "}");
 
     ui->readyButton->setStyleSheet("QPushButton:disabled {"
-                                   "background-color: rgb(100, 100, 100);"
+                                   "background-color: rgb(150, 150, 150);"
                                    "border-radius: 10px;"
                                    "border-style: solid;"
                                    "}"
@@ -317,7 +299,7 @@ void ControlPanel::settingStyleSheet()
                                    "}");
 
     ui->startButton->setStyleSheet("QPushButton:disabled {"
-                                   "background-color: rgb(100, 100, 100);"
+                                   "background-color: rgb(150, 150, 150);"
                                    "border-radius: 10px;"
                                    "border-style: solid;"
                                    "}"
@@ -333,7 +315,7 @@ void ControlPanel::settingStyleSheet()
                                    "}");
 
     ui->stopButton->setStyleSheet("QPushButton:disabled {"
-                                  "background-color: rgb(100, 100, 100);"
+                                  "background-color: rgb(150, 150, 150);"
                                   "border-radius: 10px;"
                                   "border-style: solid;"
                                   "}"
@@ -347,5 +329,4 @@ void ControlPanel::settingStyleSheet()
                                   "border-radius:10px;"
                                   "color:#ffffff;"
                                   "}");
-
 }

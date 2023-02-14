@@ -26,18 +26,18 @@ public:
     ~ImagingManager();
 
 private slots:
-    void settingStyleSheet();
-    void setPID(QString);
-    void setType(QString);
+    void setPID(QString);                   // 현재 PID 저장
+    void setType(QString);                  // 현재 촬영타입 저장
 
-    void reconImage();
-    void startSetting(QString pid, QString type);
-    void saveButtonSlot();
-    void stopButtonSlot();
+    void startSetting(QString pid, QString type);       // 프레임데이터 display 스레드 실행
+    void recvFrameImg(int);                             // 프레임데이터 전송
+    void stopButtonSlot();                              //
+    void isProgressMaximum(int);                        //
 
-    void isProgressMaximum(int);
+    void saveButtonSlot();                  //
+    void reconImage();                      // 영상 재구성
 
-    void recvFrameImg(int);
+
 
     QString makeFileName(QString type, int count);
     void histoStretch(unsigned short *input, int inputSize, int min, int max, double maxValue);
@@ -50,6 +50,8 @@ private slots:
     void viewReconImage(unsigned short *input, int rows, int cols);
 
 private:
+    void settingStyleSheet();
+
     Ui::ImagingManager *ui;
 
     QString currentPID = "NULL";
