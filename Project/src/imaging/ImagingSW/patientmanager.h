@@ -28,7 +28,6 @@ public:
 
 //private slots:
 public slots:
-    void settingStyleSheet();
     void receiveWaitList(int, QString);     // 서버와 연결할 때, 기존 대기목록 리시브
     void receiveWaitPatient(QStringList dataList);      // 촬영의뢰 받은 경우
     void readyButtonSlot();                            // 환자준비 버튼을 눌러서, 서버에 환자 정보 요청하는 함수
@@ -38,6 +37,8 @@ public slots:
     void finishButtonSlot();
 
 private:
+    void settingStyleSheet();
+
     Ui::PatientManager *ui;
 
     QString shootingStatus = "NULL";                    // 현재 환자가 어느 사진을 찍었는지 확인하는 지표 (NULL, PANO, CEPH, BOTH)

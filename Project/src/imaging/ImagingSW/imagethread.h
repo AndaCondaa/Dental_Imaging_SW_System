@@ -24,9 +24,10 @@ public slots:
     void threadStop();                      // 스레드 중지 (플래그 값 변경)
     void setCount(int count);               // 프레임데이터 수신 카운팅
 
-private:
+protected:
     void run();
 
+private:
     int count = 0;                          // 수신된 프레임데이터 개수
     int currentCount = 0;                   // display 완료한 프레임데이터 개수
     int maxCount = 0;                       // 프레임데이터 총 개수 (PANO: 1750, CEPH: 1250)
