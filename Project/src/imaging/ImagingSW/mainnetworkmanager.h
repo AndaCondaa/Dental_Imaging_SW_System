@@ -23,7 +23,7 @@ public:
     ~MainNetworkManager();
 
 private slots:
-    void connectSever(QString address, int port);
+    void connectServer(QString address, int port);
     void disconnectServer();
 
     void sendPacket(QTcpSocket* socket, QString header, QString event, QString pid, QString data);

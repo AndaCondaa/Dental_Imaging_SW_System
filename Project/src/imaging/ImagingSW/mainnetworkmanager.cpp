@@ -31,7 +31,7 @@ MainNetworkManager::~MainNetworkManager()
     fileSocket->deleteLater();
 }
 
-void MainNetworkManager::connectSever(QString address, int port)
+void MainNetworkManager::connectServer(QString address, int port)
 {
     mainSocket = new QTcpSocket(this);
     fileSocket = new QTcpSocket(this);
