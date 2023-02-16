@@ -33,7 +33,7 @@ private slots:
     void requestPatientInfo(QString pid);       // 환자매니저에서 환자준비버튼 눌렀을 때, 서버로 패킷전송
     void endImagingProcess(QString pid, QString type);        // 이미징매니저에서 환자 촬영이 모두 끝난 경우, 서버로 패킷전송
 
-    void goOnSend(qint64 numBytes);
+    void sendingFile(qint64 numBytes);
     void sendFile(QString data);            // data = pid | shoot_type
 
 private:
@@ -45,9 +45,9 @@ private:
     qint64 byteReceived = 0;                    // size of File read currently
     QByteArray inBlock;                         // Units divided to transfer files
     QString fileName;                           // Receiving FileName
-    qint64 byteToWrite;             // File Size per a block
-    QByteArray outBlock;            // Block for sending
-    QMap<int, QTcpSocket*> socketMap; // 0: main , 1: file
+    qint64 byteToWrite;                   // File Size per a block
+    QByteArray outBlock;                // Block for sending
+    QMap<int, QTcpSocket*> socketMap;   // 0: main , 1: file
 
 signals:
     void connectionStatusChanged(bool);

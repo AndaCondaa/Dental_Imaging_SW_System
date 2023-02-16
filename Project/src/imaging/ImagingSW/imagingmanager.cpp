@@ -190,14 +190,13 @@ void ImagingManager::reconImage()
             // 이미지 스티칭
             for (int y = 0; y < reconRows; y++) {
                 for (int x = 0; x < frameCols; x++) {
-//                    double weight;
-//                    if (x < 24)
-//                        weight = ((x % 24)+1) * (0.04);
-//                    else
-//                        weight = 0.96 - ((x % 24)) * (0.04);
-//                    tmpOut[(count*2+x)+(y*reconCols)] =
-//                            ((double)tmpOut[(count*2+x)+(y*reconCols)] * (1.0 - weight))+ ((double)buf[x+((frameRows-y-1)*frameCols)] * weight);
-                    tmpOut[(count*2+x)+(y*reconCols)] = buf[x+((frameRows-y-1)*frameCols)];
+                    double weight;
+                    if (x < 24)
+                        weight = ((x % 24)+1) * (0.04);
+                    else
+                        weight = 0.96 - ((x % 24)) * (0.04);
+                    tmpOut[(count*2+x)+(y*reconCols)] =
+                            ((double)tmpOut[(count*2+x)+(y*reconCols)] * (1.0 - weight))+ ((double)buf[x+((frameRows-y-1)*frameCols)] * weight);
                 }
             }
             count++;
@@ -236,7 +235,7 @@ void ImagingManager::reconImage()
             out[i] = (double)(tmp1[i] * 0.8) + (double)(tmp2[i] * 0.2);
         }
 
-        medianFilter(out, reconRows, reconCols, 5);
+        medianFilter(out, reconRows, reconCols, 3);
 
         ui->progressBar->setValue(ui->progressBar->maximum()*4/5.);
 
@@ -373,18 +372,28 @@ void ImagingManager::viewReconImage(unsigned short *input, int rows, int cols)
 void ImagingManager::settingStyleSheet()
 {
     ui->reconButton->setStyleSheet("QPushButton:disabled {"
+                                   "background-color: rgb(150, 150, 150);"
+                                   "border-radius: 10px;"
+                                   "border-style: solid;"
+                                   "}"
+                                   "QPushButton {"
+                                   "background-color: rgb(200, 200, 200);"
+                                   "border-radius: 10px;"
+                                   "border-style: solid;"
+                                   "}"
+                                   "QPushButton {"
+                                   "background-color: rgb(200, 200, 200);"
+                                   "border-radius: 10px;"
+                                   "border-style: solid;"
+                                   "}");
+
+    ui->saveButton->setStyleSheet("QPushButton:disabled {"
                                   "background-color: rgb(150, 150, 150);"
                                   "border-radius: 10px;"
                                   "border-style: solid;"
                                   "}"
                                   "QPushButton {"
                                   "background-color: rgb(200, 200, 200);"
-                                  "border-radius: 10px;"
-                                  "border-style: solid;"
-                                  "}");
-
-    ui->saveButton->setStyleSheet("QPushButton:disabled {"
-                                  "background-color: rgb(150, 150, 150);"
                                   "border-radius: 10px;"
                                   "border-style: solid;"
                                   "}"

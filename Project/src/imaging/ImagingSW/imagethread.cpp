@@ -87,10 +87,9 @@ void ImageThread::run()
                 fclose(file);
 
                 for (int i = 0; i < pixels; i++) {
-                    if (buf[i] * 5 > valueMax)
-                        buf[i] = valueMax;
-                    else
-                        buf[i] *= 5;
+                    if (buf[i] * 5 > valueMax) buf[i] = valueMax;
+                    else buf[i] *= 5;
+                    buf[i] = ~buf[i];
                 }
 
                 cv::Mat mat(rows, cols, CV_16UC1, buf);
@@ -149,10 +148,9 @@ void ImageThread::run()
                 fclose(file);
 
                 for (int i = 0; i < pixels; i++) {
-                    if (buf[i] * 100 > valueMax)
-                        buf[i] = valueMax;
-                    else
-                        buf[i] *= 100;
+                    if (buf[i] * 100 > valueMax) buf[i] = valueMax;
+                    else buf[i] *= 100;
+                    buf[i] = ~buf[i];
                 }
 
                 cv::Mat mat(rows, cols, CV_16UC1, buf);

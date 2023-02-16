@@ -147,7 +147,7 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
         return;
     }
 
-    connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(goOnSend(qint64)));
+    connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(sendingFile(qint64)));
     QString pid = data.split("|")[0];
     QString type = data.split("|")[1];
 
@@ -181,7 +181,7 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
     }
 }
 
-void MainNetworkManager::goOnSend(qint64 numBytes)
+void MainNetworkManager::sendingFile(qint64 numBytes)
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
 
@@ -197,6 +197,6 @@ void MainNetworkManager::goOnSend(qint64 numBytes)
 
     if (byteToWrite == 0) { // Send completed
         qDebug("File sending completed!");
-        disconnect(fileSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(goOnSend(qint64)));
+        disconnect(fileSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(sendingFile(qint64)));
     }
 }

@@ -52,6 +52,17 @@ void ControlPanel::checkTypeButton(QString data)
     currentPID = data.split("|")[0];
     requestType = data.split("|")[1];
 
+    if (requestType == "BOTH") {
+        ui->panoButton->setEnabled(true);
+        ui->cephButton->setEnabled(true);
+    } else if (requestType == "PANO") {
+        ui->panoButton->setEnabled(true);
+        ui->cephButton->setEnabled(false);
+    } else if (requestType == "CEPH") {
+        ui->panoButton->setEnabled(false);
+        ui->cephButton->setEnabled(true);
+    }
+
     resetControl();
 }
 
@@ -103,18 +114,27 @@ void ControlPanel::resetControl()
 {   
     modeButtonGroup->setExclusive(false);
     if (requestType == "PANO") {
+        ui->panoButton->setEnabled(true);
+        ui->cephButton->setEnabled(false);
+
         ui->panoButton->setCheckable(true);
         ui->cephButton->setCheckable(false);
 
         ui->panoButton->setChecked(true);
         ui->cephButton->setChecked(false);
     } else if (requestType == "CEPH") {
+        ui->panoButton->setEnabled(false);
+        ui->cephButton->setEnabled(true);
+
         ui->panoButton->setCheckable(false);
         ui->cephButton->setCheckable(true);
 
         ui->panoButton->setChecked(false);
         ui->cephButton->setChecked(true);
     } else {
+        ui->panoButton->setEnabled(true);
+        ui->cephButton->setEnabled(true);
+
         ui->panoButton->setCheckable(true);
         ui->cephButton->setCheckable(true);
 
@@ -135,22 +155,24 @@ bool ControlPanel::readyControl()
     if (currentPID == "NULL") {
         QMessageBox messageBox(QMessageBox::NoIcon, "NO TYPE",
                              QString("촬영환자를 선택해주세요."),
-                             QMessageBox::Ok, this, Qt::Window);
+                             QMessageBox::Ok, 0, Qt::Window);
         messageBox.exec();
         return false;
     }
 
     if (ui->panoButton->isChecked()) {
         currentType = "PANO";
+        ui->cephButton->setEnabled(false);
         ui->cephButton->setCheckable(false);
     }
     else if (ui->cephButton->isChecked()) {
         currentType = "CEPH";
+        ui->panoButton->setEnabled(false);
         ui->panoButton->setCheckable(false);
     } else {
         QMessageBox messageBox(QMessageBox::NoIcon, "NO TYPE",
                              QString("촬영타입을 선택해주세요."),
-                             QMessageBox::Ok, this, Qt::Window);
+                             QMessageBox::Ok, nullptr, Qt::Window);
         messageBox.exec();
         return false;
     }
@@ -220,6 +242,8 @@ void ControlPanel::finishSlot(QString pid, QString type)
     requestType = "NULL";
     currentPID = "NULL";
 
+    ui->panoButton->setEnabled(false);
+    ui->cephButton->setEnabled(false);
     ui->panoButton->setCheckable(false);
     ui->cephButton->setCheckable(false);
 
@@ -242,6 +266,12 @@ void ControlPanel::settingStyleSheet()
                                   "border-radius: 10px;"
                                   "border-style: solid;"
                                   "}"
+                                  "QPushButton:hover {"
+                                  "background-color: rgb(250, 250, 250);"
+                                  "border-style: outset;"
+                                  "border-width: 3px;"
+                                  "border-color: #ED8817;"
+                                  "}"
                                   "QPushButton:checked {"
                                   "background-color: rgb(250, 250, 250);"
                                   "border-style: outset;"
@@ -258,6 +288,12 @@ void ControlPanel::settingStyleSheet()
                                   "background-color: rgb(200, 200, 200);"
                                   "border-radius: 10px;"
                                   "border-style: solid;"
+                                  "}"
+                                  "QPushButton:hover {"
+                                  "background-color: rgb(250, 250, 250);"
+                                  "border-style: outset;"
+                                  "border-width: 3px;"
+                                  "border-color: #ED8817;"
                                   "}"
                                   "QPushButton:checked {"
                                   "background-color: rgb(250, 250, 250);"

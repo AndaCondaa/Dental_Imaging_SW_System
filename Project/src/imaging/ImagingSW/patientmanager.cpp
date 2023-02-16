@@ -244,6 +244,7 @@ void PatientManager::settingStyleSheet()
                                     "}"
                                     "QPushButton:disabled {"
                                     "background-color: rgb(150, 150, 150);"
+                                    "border-width: 0px;"
                                     "color: rgb(120,120,120);"
                                     "}");
 }
