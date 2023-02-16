@@ -1,3 +1,12 @@
+/*
+ * 프로그램명 : PatientManagementSW
+ * 파일명 : medicalRecordManager.cpp
+ * 설명 : 검색한 환자에 대한 진료기록 목록을 확인
+ * 작성자 : 김유선
+ * 최종 수정일 : 2023.02.16
+ */
+
+
 #include "medicalrecordmanager.h"
 #include "ui_medicalrecordmanager.h"
 
@@ -16,14 +25,16 @@ MedicalRecordManager::MedicalRecordManager(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    // 라벨 스타일 설정
     QString labelStyle = "QLabel { "
-                              "background-color: rgb(150, 150, 150);"
-                            "border-radius:10px;"
-                              "color:#ffffff;"
-                              "outline: 0; "
-                          "}";
+                         "background-color: rgb(150, 150, 150);"
+                         "border-radius:10px;"
+                         "color:#ffffff;"
+                         "outline: 0; "
+                         "}";
     ui->label_7->setStyleSheet(labelStyle);
 
+    // 라벨에 설정할 그림자 효과
     QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
     effect->setBlurRadius(5);
     effect->setXOffset(5);
@@ -31,6 +42,7 @@ MedicalRecordManager::MedicalRecordManager(QWidget *parent) :
     effect->setColor(QColor(220,220,220));
     ui->label_7->setGraphicsEffect(effect);
 
+    // 진료기록을 띄울 때는 새 창으로 띄움
     medicalChart = new MedicalChart(0);
     connect(this, SIGNAL(sendPatientReportInfo(QString, QString)), medicalChart, SLOT(patientReportInfoSended(QString, QString)));
 }
@@ -40,14 +52,19 @@ MedicalRecordManager::~MedicalRecordManager()
     delete ui;
 }
 
-
-void MedicalRecordManager::recordDataSended(QString sendedID, QString sendedData)   // id는 필요없을수도 있겠다
+// 검색한 환자에 대한 진료기록들을 가져옴
+void MedicalRecordManager::recordDataSended(QString sendedID, QString sendedData)
 {
+    qDebug() << "sendedID, sendedData: " << sendedID << ", "<<sendedData;
+
     ui->recordTreeWidget->clear();
 
     if(sendedData == "<NEL>")
         return;
 
+    // 동명이인일 경우 진료기록 데이터를 묶어 보내지 않기 때문에 <NEL>을 포함하지 않을 시를 대비해 예외처리
+    if(sendedData.contains("<NEL>", Qt::CaseInsensitive) == false)
+        return;
 
     QString patientName, patientSex, patientBirth, patientTel, patientAddress, patientMemo;
     patientName = sendedData.split("|")[0];
@@ -59,16 +76,14 @@ void MedicalRecordManager::recordDataSended(QString sendedID, QString sendedData
 
 
     patientDetail = sendedID + "|" + sendedData.split("<NEL>")[0];
-qDebug() << "patientDetail" << patientDetail;
+    qDebug() << "patientDetail" << patientDetail;
 
-
+    // 진료기록 목록이 띄워지는 recordTreeWidget에 저장
     QString rowData, reportID, doctorID, reportDate, dentistName;
-    //qDebug()<<"<NEL> count: " <<sendedData.count("<NEL>");
     for(int i=1; i<sendedData.count("<NEL>"); i++)
     {
         rowData = sendedData.split("<NEL>")[i];
         reportID = rowData.split("|")[0];
-        //QString patientID = rowData.split("|")[1];
         doctorID = rowData.split("|")[2];
         reportDate = rowData.split("|")[3];
         QString patientNote = rowData.split("|")[4];
@@ -86,90 +101,23 @@ qDebug() << "patientDetail" << patientDetail;
     }
 }
 
+// recordTreeWidget에서 특정 진료기록을 더블클릭하면 상세 진료기록 창을 띄워줌
 void MedicalRecordManager::on_recordTreeWidget_itemDoubleClicked(QTreeWidgetItem *item, int column)
 {
-    //qDebug()<<"item row: " << ui->recordTreeWidget->currentIndex().row() <<"/ column: "<<column;
     int currentRow = ui->recordTreeWidget->currentIndex().row();
-
-    //qDebug() <<"ddd: "<<reportInfo.find(currentRow).value();
 
     reportDetail = reportInfo.find(currentRow).value();
 
-//    for(int i=0; i<totalRowCount;i++)
-//    {
-//        if(i == reportInfo.firstKey())
-//    }
-
     medicalChart->show();
-
-
-//    QPixmap pixmap = medicalChart->grab();
-////    pixmap.save("medicalChart.png");
-
-//    QPrinter *printer = new QPrinter(QPrinter::HighResolution);
-//    printer->setFullPage(true);
-////    printer.setOutputFormat(QPrinter::PdfFormat);
-////    printer.setOutputFileName("medicalChart.pdf");
-
-//    QPrintDialog* printDialog = new QPrintDialog(printer, this);
-//    if (printDialog->exec() == QDialog::Accepted) {
-//        // print ...
-//        QPainter painter;
-//        if (! painter.begin(printer)) { // failed to open file
-//            qWarning("failed to open file, is it writable?");
-//            return;
-//        }
-
-//        painter.drawPixmap(0, 0, pixmap);
-
-//        if (! printer->newPage()) {
-//            qWarning("failed in flushing page to disk, disk full?");
-//            return;
-//        }
-//        painter.end();
-//    }
-//    delete printer;
-//    delete printDialog;
-
-
-
-//        QPrinter printer(QPrinter::HighResolution);
-//        printer.setFullPage(true);
-//        printer.setPageSize(QPageSize::A4);
-//        //printer.setOutputFormat(QPrinter::PdfFormat);
-//        //printer.setOutputFileName("test.pdf");
-
-//        QPrintDialog* printDialog = new QPrintDialog(&printer, this);
-//        if (printDialog->exec() == QDialog::Accepted) {
-//            // print …
-//            QPainter painter(&printer);
-//            QPixmap buffer = grab();
-//            //        QRect rect = painter.viewport();
-//            QRect rect = printer.pageRect(QPrinter::DevicePixel).toRect();
-//            painter.drawPixmap(0, 0, buffer.scaled(rect.size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-//            painter.end();
-//            //        this->render(&painter);
-//        }
-
-
-
-
-
 
     emit sendPatientReportInfo(patientDetail, reportDetail);
 }
 
+
+// 처방전 작성하면 환자진료기록 바로 띄우기
 void MedicalRecordManager::addNewRecord(QString newRecordInfo)
 {
-    //qDebug() << "newRecordInfo" << newRecordInfo;
-
-
-
-
-    //다시 서치한거같은 효과 주기
-    QString searchData = "PSE<CR>0<CR>" + newRecordInfo.split("<CR>")[1]; //pid담아서 pse를 써서 보냄
+    // 다시 서치한거같은 효과 주기
+    QString searchData = "SEN^PSE<CR>0<CR>" + newRecordInfo.split("<CR>")[1]; // pid담아서 pse를 써서 보냄
     emit sendReSearchData(searchData);
-
-
-
 }

@@ -1,8 +1,20 @@
+/*
+ * 프로그램명 : PatientManagementSW
+ * 파일명 : patientStatusManager.h
+ * 설명 : 대기 환자 목록 확인, 촬영요청, 수납처리
+ * 작성자 : 김유선
+ * 최종 수정일 : 2023.02.16
+ */
+
+
 #ifndef PATIENTSTATUSMANAGER_H
 #define PATIENTSTATUSMANAGER_H
 
 #include <QWidget>
 #include <QTreeWidget>
+
+#include <QtTest/QtTest>
+#include <QTest>
 
 namespace Ui {
 class PatientStatusManager;
@@ -20,22 +32,16 @@ private:
     Ui::PatientStatusManager *ui;
     QString treatPID, treatName, payPID, payName;
 
-    //QTreeWidgetItem* row;
     QTreeWidgetItem* selectedTreatRow, *selectedPayRow;
-    QString tempTreatPID;
 
     QMap<int,QString> oldList;
+    QString header;
 
 private slots:
-    //void waitInfoSended(QString, QString);
-    void waitInfoSended(QString);
+    void waitInfoSended(QString, QString);
     void on_waitPaymentTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void on_waitTreatmentTreeWidget_itemClicked(QTreeWidgetItem *item, int column);
     void on_shootRequestPushButton_clicked();
-    //void sendSRQRequest(QString);
-
-
-    //void SRQRequestSended(QString);
 
     void statusRequestSended(QString);
 
@@ -46,6 +52,8 @@ private slots:
     void delPIDSended(QString);
 
     void oldListSended(QString);
+
+    void waitListClearSlot();
 
 signals:
     void sendRequest(QString);

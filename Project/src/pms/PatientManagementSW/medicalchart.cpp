@@ -1,3 +1,12 @@
+/*
+ * 프로그램명 : PatientManagementSW
+ * 파일명 : medicalChart.cpp
+ * 설명 : 상세 진료기록을 확인, pdf로 저장/프린트
+ * 작성자 : 김유선
+ * 최종 수정일 : 2023.02.16
+ */
+
+
 #include "medicalchart.h"
 #include "ui_medicalchart.h"
 
@@ -5,7 +14,7 @@
 #include <QPrinter>
 #include <QPainter>
 #include <QRectF>
-
+#include <QDate>
 
 
 MedicalChart::MedicalChart(QWidget *parent) :
@@ -13,26 +22,21 @@ MedicalChart::MedicalChart(QWidget *parent) :
     ui(new Ui::MedicalChart)
 {
     ui->setupUi(this);
-    this->setFixedSize(610, 645);
+    this->setFixedSize(601, 840);
+
+    // 프린트 아이콘 설정
+    ui->printPushButton->setIcon(QIcon(":/img/print.png"));
+
+    // 오늘의 날짜 설정
+    QString year = QDate::currentDate().toString("yyyy");
+    QString month = QDate::currentDate().toString("MM");
+    QString day = QDate::currentDate().toString("dd");
+
+    ui->yearLabel->setText(year);
+    ui->monthLabel->setText(month);
+    ui->dayLabel->setText(day);
 
 
-
-//    QString pushButtonStyle = "QPushButton { "
-//                              "qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(90, 90, 90, 100));"
-//                              "border-radius:10px;"
-//                              "border-color: gray;"
-//                          "}"
-//                          "QPushButton:hover { "
-//                              "background-color: qlineargradient(spread:pad, x1:0.0, y1:0.0, x2:1, y2:1, stop:0 rgba(150, 150, 150, 50), stop:1 rgba(237, 136, 23, 50));"
-//                              "border-radius:10px;"
-//                          "}";
-
-
-//    ui->pushButton_2->setStyleSheet(pushButtonStyle);
-
-
-    ui->printPushButton->setIcon(QIcon("./print.png"));
-    ui->emailPushButton->setIcon(QIcon("./email.png"));
 }
 
 MedicalChart::~MedicalChart()
@@ -40,19 +44,19 @@ MedicalChart::~MedicalChart()
     delete ui;
 }
 
+// 진료기록 차트에 환자 정보와 진료기록 정보를 띄워주는 부분
 void MedicalChart::patientReportInfoSended(QString patientDetail, QString reportDetail)
 {
     qDebug() << "patientDetail: " << patientDetail;
     qDebug() << "reportDetail: " << reportDetail;
 
-    QString patientID, patientName, patientSex, patientBirth, patientTel, patientAddress, patientMemo;
+    QString patientID, patientName, patientSex, patientBirth, patientTel, patientAddress;
     patientID = patientDetail.split("|")[0];
     patientName = patientDetail.split("|")[1];
     patientSex = patientDetail.split("|")[2];
     patientBirth = patientDetail.split("|")[3];
     patientTel = patientDetail.split("|")[4];
     patientAddress = patientDetail.split("|")[5];
-    //patientMemo = patientDetail.split("|")[6];
 
     ui->patientIDLineEdit->setText(patientID);
     ui->patientNameLineEdit->setText(patientName);
@@ -63,7 +67,6 @@ void MedicalChart::patientReportInfoSended(QString patientDetail, QString report
 
     QString reportID, dentistID, reportDate, patientNote, dentistName;
     reportID = reportDetail.split("|")[0];
-    //QString patientID = reportDetail.split("|")[1];
     dentistID = reportDetail.split("|")[2];
     reportDate = reportDetail.split("|")[3];
     patientNote = reportDetail.split("|")[4];
@@ -75,29 +78,26 @@ void MedicalChart::patientReportInfoSended(QString patientDetail, QString report
     ui->notePlainTextEdit->setPlainText(patientNote);
     ui->dentistNameLineEdit->setText(dentistName);
 
-
-
-
 }
 
+// 프린트, pdf저장 기능
 void MedicalChart::on_printPushButton_clicked()
 {
     QPrinter printer(QPrinter::HighResolution);
-    printer.setFullPage(true);
     printer.setPageSize(QPageSize::A4);
-    //printer.setOutputFormat(QPrinter::PdfFormat);
-    //printer.setOutputFileName("test.pdf");
 
     QPrintDialog* printDialog = new QPrintDialog(&printer, this);
     if (printDialog->exec() == QDialog::Accepted) {
-        // print …
         QPainter painter(&printer);
-        QPixmap buffer = grab();
-        //        QRect rect = painter.viewport();
+        QPixmap buffer = ui->frame_2->grab();
         QRect rect = printer.pageRect(QPrinter::DevicePixel).toRect();
-        painter.drawPixmap(0, 0, buffer.scaled(rect.size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+
+        buffer.setDevicePixelRatio(1);
+
+        buffer = buffer.scaled(rect.size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+        painter.drawPixmap(0,0, buffer);
+
         painter.end();
-        //        this->render(&painter);
     }
 }
 

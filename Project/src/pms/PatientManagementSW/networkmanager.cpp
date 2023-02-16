@@ -1,3 +1,13 @@
+/*
+ * 프로그램명 : PatientManagementSW
+ * 파일명 : networkManager.cpp
+ * 설명 : 메인서버와 통신
+ * 작성자 : 김유선
+ * 최종 수정일 : 2023.02.16
+ */
+
+
+
 #include "networkmanager.h"
 
 #include <QBoxLayout>
@@ -11,72 +21,86 @@
 NetworkManager::NetworkManager(QObject *parent)
     : QObject{parent}
 {
+
+}
+
+// 소켓을 생성해 서버와 연결을 시도하는 함수
+void NetworkManager::connectSocket(QString ip, int port)
+{
+    // 데이터 소켓을 생성해 서버와 연결 시도
     socket = new QTcpSocket(this);
-    fd_flag = connectToMainHost("127.0.0.1"); // localhost
+    socket->connectToHost(ip, port);
+
     connect(socket, SIGNAL(readyRead()), this, SLOT(receiveData()));
+    connect(socket, SIGNAL(disconnected()), SLOT(disconnect()));
 
-connect(socket, SIGNAL(disconnected()), SLOT(disconnect()));
 
-    if(!fd_flag)
-        qDebug()<<("DataSocket connect fail\n");
-    else{
+    if(socket->waitForConnected(1000))          // 1초 동안 기다려 연결이 되면 서버쪽으로 PMS가 연결했다는 이벤트를 보내줌
+    {
+        connectCount = 1;                       // 연결된 상태
+
         qDebug()<<("DataSocket connect\n");
-        QString connectData = "CNT<CR>PMS<CR>";
+        QString connectData = "SEN^CNT<CR>PMS<CR>NULL";
 
         QByteArray sendTest = connectData.toStdString().c_str();
         socket->write(sendTest);
+
+        emit changeScreenSignal(1);             // 정상연결되었으니 PMS의 메인화면으로 이동
+    }
+    else                                        // 1초 동안 기다렸는데 연결이 되지 않으면 연결을 끊고 소켓을 delete함
+    {
+        disconnect();
+        qDebug()<<("DataSocket connect fail\n");
     }
 
 
+    // 이미지 파일 소켓을 생성해 서버와 연결 시도
     fileSocket = new QTcpSocket(this);
-    fileSocket->connectToHost("127.0.0.1", 8001);
-    //file_flag = connectToFileHost("127.0.0.1");
+    fileSocket->connectToHost(ip, port+1);
 
-    connect(fileSocket, SIGNAL(readyRead()), this, SLOT(receiveFile()));
-
-
-    if(fileSocket->waitForConnected())
+    if(fileSocket->waitForConnected(1000))
         fileSocket->write("CNT<CR>PMS<CR>NULL");
     else
         qDebug()<<("FileServer connect failed\n");
 
-
+    connect(fileSocket, SIGNAL(readyRead()), this, SLOT(receiveFile()));
 
 }
 
+// 연결이 잘 되다가 끊겼을 때
 void NetworkManager::disconnect()
 {
-    QMessageBox::critical(nullptr, tr("경고"), tr("서버와의 연결이 끊어졌습니다."));
-    qApp->quit();
+    if(connectCount == 1){
+
+        QMessageBox::critical(nullptr, tr("경고"),
+                              tr("서버와의 연결이 끊어졌습니다"));
+        connectCount = 0;   // 로그인화면으로 돌아가니까 0으로 초기화
+        emit changeScreenSignal(0);
+
+        // 대기리스트 clear
+        emit waitListClearSignal();
+
+    }
+    else if(connectCount == 0)
+    {
+        QMessageBox::critical(nullptr, tr("경고"),
+                              tr("서버에 연결할 수 없습니다."));
+        return;
+
+    }
+    socket->deleteLater();
+    fileSocket->deleteLater();
 }
 
 
 
-bool NetworkManager::connectToMainHost(QString host)
+
+
+void NetworkManager::receiveFile() // P00004 파일 2개짜리로 해보기
 {
-    socket->connectToHost(host, 8000);
-    return socket->waitForConnected();
-}
-
-
-//지워도 될 듯
-bool NetworkManager::connectToFileHost(QString host)
-{
-    socket->connectToHost(host, 8001);
-    return socket->waitForConnected();
-}
-
-
-
-
-
-
-void NetworkManager::receiveFile() //P00004 파일 2개짜리로 해보기
-{
-    downloadOrNotFlag =0;   //다운로드 중임을 알려주는 flag
+    downloadOrNotFlag =0;   // 다운로드 중임을 알려주는 flag
 
     fileSocket = dynamic_cast<QTcpSocket*>(sender());
-    qDebug("%d", __LINE__);
 
 
     allFile.append(fileSocket->readAll());
@@ -90,19 +114,19 @@ void NetworkManager::receiveFile() //P00004 파일 2개짜리로 해보기
 }
 
 
-void NetworkManager::makeFiles() //P00004 파일 2개짜리로 해보기
+void NetworkManager::makeFiles()
 {
 
     QByteArray fileInfoArray = allFile.split('|')[0];
-    qDebug() << "fileInfoArray.size: " << fileInfoArray.size(); //ex.53
+    qDebug() << "fileInfoArray.size: " << fileInfoArray.size(); // ex.53
 
     QString totalFileInfo = fileInfoArray.toStdString().c_str();
     int fileCount = totalFileInfo.split("<CR>")[0].toInt();
     QString fileInfo = totalFileInfo.split("<CR>")[1];
 
 
-    QMap<int, int> fileMap; //인덱스, 파일크기
-    QMap<int, QString> fileNameMap; //인덱스, 파일이름
+    QMap<int, int> fileMap; // 인덱스, 파일크기
+    QMap<int, QString> fileNameMap; // 인덱스, 파일이름
 
     for(int i=0; i<fileCount; i++)
     {
@@ -114,26 +138,12 @@ void NetworkManager::makeFiles() //P00004 파일 2개짜리로 해보기
         int partFileSize = partInfo.split("<f>")[1].toInt();
         qDebug() << "partFileSize"<<partFileSize;
 
-
-
         fileMap.insert(i, partFileSize);
         fileNameMap.insert(i, partFileName);
-        allFileSize += partFileSize;
-        qDebug()<< "************" <<allFileSize;
+
     }
 
-    //qDebug() <<fileInfoArray.size() +  fileMap.value(0) + fileMap.value(1) +6; //6은 |과 <FIN> 의 크기
-    //qDebug()<< allFile.sliced(fileInfoArray.size()+1, fileMap.value(0)).size();
-    //qDebug()<< allFile.sliced(fileMap.value(0)+1, fileMap.value(1)).size();
-    //+ allFile.sliced(fileInfoArray.size()+fileMap.value(0), fileInfoArray.size()+fileMap.value(0) + fileMap.value(1)-1).size();
 
-    //qDebug() << allFile.sliced(fileInfoArray.size()+1, fileInfoArray.size()+fileMap.value(0)-1);
-    //qDebug() << allFile.sliced(fileInfoArray.size()+fileMap.value(0), fileInfoArray.size()+fileMap.value(0) + fileMap.value(1)-1);
-
-
-
-
-    //QDir dir(QString("Image/%1").arg(currentPID));
     QDir dir("Image");
     if (!dir.exists())
         dir.mkpath(".");
@@ -160,318 +170,44 @@ void NetworkManager::makeFiles() //P00004 파일 2개짜리로 해보기
 
         }
 
-        //            if(i==0)
-        //                writeArray.append(allFile.sliced(fileInfoArray.size()+1, fileMap.value(0)));
-        //            else if(i==1)
-        //                writeArray.append(allFile.sliced(fileInfoArray.size()+1+fileMap.value(0), fileMap.value(1)));
-        //            else if(i==2)
-        //                writeArray.append(allFile.sliced(fileInfoArray.size()+1+fileMap.value(0) + fileMap.value(1), fileMap.value(2)));
-
-        //            else{
-        //                writeArray.append(firstArray, fileMap.value(i));
-        //                firstArray += fileMap.value(i);
-        //                //writeArray.append(allFile.sliced(fileInfoArray.size()+1+fileMap.value(0), fileMap.value(i)));
-        //            }
-
-        //qDebug()<<allFile.sliced(fileMap.value(i-1)+1, fileMap.value(i));
-
         file.write(writeArray);
 
-        qDebug("%d", __LINE__);
+
 
     }
     allFile.clear();
     downButtonClicked = 0;
-downloadOrNotFlag =1;   //다 다운로드 받았다는 flag
-    //파일이 다 write되었을 때 patientInfoManager 쪽으로 신호를 보내줌(파일이 정상적으로 끝까지 다운로드되기 전까지는 검색버튼을 다시 누르지 못하도록 만들기 위함)
-    //emit fileSendedSig(1);  //1을 보내면 파일전송완료되었다는 뜻
+    downloadOrNotFlag =1;   // 다 다운로드 받았다는 flag
 
+    qDebug() <<"make file finished!";
 
-    emit fileSendedSig(downloadOrNotFlag);  //1을 보내면 파일전송완료되었다는 뜻
+    // 파일이 다 write되었을 때 patientInfoManager 쪽으로 신호를 보내줌
+    // (파일이 정상적으로 끝까지 다운로드되기 전까지는 검색버튼을 다시 누르지 못하도록 만들기 위함)
+    emit fileSendedSig(downloadOrNotFlag);  // 1을 보내면 파일전송완료되었다는 뜻
     emit PSEDataInNET(id);
 }
 
-
+// 다른 환자의 이미지를 다운로드해도 되는 상태인지 아닌지를 판단
 void NetworkManager::downloadOrNotSlot()
 {
 
-    if(downButtonClicked != 0)  //처음 검색한 환자가 아니거나 다운로드가 끝난 후에 검색한 환자가 아닐 때(즉 다운로드 진행중일 때)
+    if(downButtonClicked != 0)  // 처음 검색한 환자가 아니거나 다운로드가 끝난 후에 검색한 환자가 아닐 때(즉 다운로드 진행중일 때)
     {
-        qDebug("%%%%%%%%%%%%%% %d downButtonClicked: %d", __LINE__, downButtonClicked);
         if(downloadOrNotFlag==0)
         {
-            qDebug("%%%%%%%%%%%%%% %d downloadOrNotFlag: %d", __LINE__, downloadOrNotFlag);
-            emit fileSendedSig(downloadOrNotFlag);  //0을 보내면 파일전송 중이라는 뜻
+            emit fileSendedSig(downloadOrNotFlag);  // 0을 보내면 파일전송 중이라는 뜻
         }
-//        else if(downloadOrNotFlag==1)
-//        {
-//            //파일이 다 write되었을 때 patientInfoManager 쪽으로 신호를 보내줌(파일이 정상적으로 끝까지 다운로드되기 전까지는 검색버튼을 다시 누르지 못하도록 만들기 위함)
-//
-//        }
     }
     downButtonClicked+=1;
 }
 
 
 
-
-
-
-
-
-/*이미지 파일을 string형태로 변환해버리면 나중에 다시 변환해줘야하는 번거로움이 있음.
-      일단은 bytearray형태로 저장해야함*/
-//    allFile.append(byte);
-//    //QByteArray fileInfoArray = allFile.split('|')[0];
-//    qDebug() << "fileInfoArray.size: " << fileInfoArray.size(); //ex.53
-
-//    QString totalFileInfo = fileInfoArray.toStdString().c_str();
-//    int fileCount = totalFileInfo.split("<CR>")[0].toInt();
-//    QString fileInfo = totalFileInfo.split("<CR>")[1];
-
-//    for(int i=0; i<fileCount; i++)
-//    {
-//        QString partInfo = fileInfo.split("<n>")[i];
-
-//        QString partFileName = partInfo.split("<f>")[0];
-//        qDebug() << "partFileName"<<partFileName;
-
-//        int partFileSize = partInfo.split("<f>")[1].toInt();
-//        qDebug() << "partFileSize"<<partFileSize;
-
-//        fileNameMap.insert(partFileName, partFileSize);
-//        allFileSize += partFileSize;
-//        qDebug()<< "************" <<allFileSize;
-
-//    }
-
-
-//qDebug()<< "@@@@@"<<fileInfoArray;
-//    //qDebug()<< fileSocket->readAll();
-//    qDebug() << allFile.size();
-
-//    if(allFile.size()==allFileSize)
-//    {
-//        makeFiles();
-//    }
-
-
-
-
-
-
-
-
-
-
-//void NetworkManager::receiveFile() //P00004 파일 2개짜리로 해보기
-//{
-
-//    fileSocket = dynamic_cast<QTcpSocket*>(sender());
-//    qDebug("%d", __LINE__);
-
-
-//    /*이미지 파일을 string형태로 변환해버리면 나중에 다시 변환해줘야하는 번거로움이 있음.
-//      일단은 bytearray형태로 저장해야함*/
-//    allFile.append(fileSocket->readAll());
-//    QByteArray fileInfoArray = allFile.split('|')[0];
-//    qDebug() << "fileInfoArray.size: " << fileInfoArray.size(); //ex.53
-
-//    QString totalFileInfo = fileInfoArray.toStdString().c_str();
-//    int fileCount = totalFileInfo.split("<CR>")[0].toInt();
-//    QString fileInfo = totalFileInfo.split("<CR>")[1];
-
-//    for(int i=0; i<fileCount; i++)
-//    {
-//        QString partInfo = fileInfo.split("<n>")[i];
-
-//        QString partFileName = partInfo.split("<f>")[0];
-//        qDebug() << "partFileName"<<partFileName;
-
-//        int partFileSize = partInfo.split("<f>")[1].toInt();
-//        qDebug() << "partFileSize"<<partFileSize;
-
-//        fileNameMap.insert(partFileName, partFileSize);
-//        allFileSize += partFileSize;
-//        qDebug()<< "************" <<allFileSize;
-
-//    }
-
-
-//qDebug()<< "@@@@@"<<fileInfoArray;
-//    //qDebug()<< fileSocket->readAll();
-//    qDebug() << allFile.size();
-
-//    if(allFile.size()==allFileSize)
-//    {
-//        makeFiles();
-//    }
-
-//}
-
-//void NetworkManager::makeFiles()
-//{
-
-
-//    QByteArray fileInfoArray = allFile.split('|')[0];
-//    qDebug() << "fileInfoArray" << fileInfoArray;
-
-//    QByteArray fileArray = allFile.split('|')[1];
-//    qDebug()<<"sdssds" <<fileArray;
-
-
-//    //QString fileInfo = fileSocket->readAll().toStdString().c_str();
-//    //qDebug() << "fileInfo" << fileInfo;
-
-
-//    //qDebug("%d", __LINE__);
-//    qDebug("%d", allFile.size());
-
-
-//    QString fileName;
-
-//    QDir dir(QString("Image/%1").arg(currentPID));
-//    if (!dir.exists())
-//        dir.mkpath(".");
-
-//    fileName = dir.path() + "/" + QString("1.png");
-//    QFile file;
-//    file.setFileName(fileName);
-//    file.open(QIODevice::WriteOnly);
-
-//    file.write(allFile);
-//    qDebug("saved");
-
-//    file.close();
-
-//    qDebug("file saved");
-//}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//void NetworkManager::receiveFile() //P00004 파일 2개짜리로 해보기
-//{
-//    fileSocket = dynamic_cast<QTcpSocket*>(sender());
-//    qDebug("%d", __LINE__);
-
-//    allFile.append(fileSocket->readAll());
-//    qDebug()<< fileSocket->readAll();
-//    //qDebug("%d", __LINE__);
-//    //qDebug("%d", allFile.size());
-
-
-//    QString fileName;
-
-//    QDir dir(QString("Image/%1").arg(currentPID));
-//    if (!dir.exists())
-//        dir.mkpath(".");
-
-//    fileName = dir.path() + "/" + QString("1.png");
-//    QFile file;
-//    file.setFileName(fileName);
-//    file.open(QIODevice::WriteOnly);
-
-//    file.write(allFile);
-//    qDebug("saved");
-
-//    file.close();
-
-//    qDebug("file saved");
-//}
-
-
-
-
-
-
-
-//void NetworkManager::receiveFile()
-//{
-//    QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
-
-//    if (fileSocket != socket) {
-//        QByteArray arr = socket->readAll();
-//        QString id = QString(arr).split("<CR>")[1];
-//        if (id == "PMS") {  //근데 여기서는 굳이 소켓을 멤버변수로 설정하지는 않아도 될 것 같음. 소켓이 하나밖에 없어서..
-//            fileSocket = socket;
-//        }
-//        return;
-//    }
-
-//    qDebug() << "@@@@@@@@@@@@@@";
-
-//    if (byteReceived == 0) {                                    // First Time(Block) , var byteReceived is always zero
-//        //checkFileName = fileName;                               // 다음 패킷부터 파일이름으로 구분하기 위해 첫 패킷에서 보낸 파일이름을 임시로 저장
-
-//        //QDataStream in(fileSocket);
-//        //in.device()->seek(0);
-//        //in >> totalSize >> byteReceived >> fileName;
-//        //if(checkFileName == fileName) return;
-
-//        QFileInfo info(fileName);
-//        currentPID = info.fileName();
-
-//        QDir dir(QString("./Image/%1").arg(currentPID.first(6)));   //ex.P00001
-//        if (!dir.exists())
-//            dir.mkpath(".");
-
-//        QString currentFileName = dir.path() + "/" +info.fileName();
-
-//qDebug() << "$$$$$$$$$$$$";
-
-//        file = new QFile(currentFileName);
-//        file->open(QFile::WriteOnly);
-//    } else {
-//        //if(checkFileName == fileName) return;
-//        inBlock = fileSocket->readAll();
-
-//        byteReceived += inBlock.size();
-//qDebug() << "inBlock: " << inBlock;
-
-//        file->write(inBlock);
-//        file->flush();
-//    }
-
-//    if (byteReceived == totalSize) {        // file sending is done
-//        qDebug() << QString("%1 receive completed").arg(fileName);
-//        inBlock.clear();
-//        byteReceived = 0;
-//        totalSize = 0;
-//        file->close();
-//        delete file;
-
-//        emit PSEDataInNET(currentPID.first(6));
-//    }
-//}
-
-//QByteArray IntToArray(qint32 source)
-//{
-//    QByteArray temp;
-//    QDataStream data(&temp, QIODevice::ReadWrite);
-//    data << source;
-//    return temp;
-//}
-
-
+// 소켓에 데이터를 적어 보내주는 부분
 bool NetworkManager::writeData(QByteArray data)
 {
     if(socket->state() == QAbstractSocket::ConnectedState)
     {
-        //socket->write(IntToArray(data.size()));
         socket->write(data); // 데이터를 보내줌
         return socket->waitForBytesWritten();
     }
@@ -481,14 +217,14 @@ bool NetworkManager::writeData(QByteArray data)
     }
 }
 
-//서버로 보내줄 데이터
+// 서버로 보내줄 데이터가 보내질 수 있는 상태인지 아닌지를 판단하고 보내주는 부분
 void NetworkManager::newDataSended(QString newData)
 {
-
-    if(fd_flag)
+    if(socket->waitForConnected())
     {
-        QString sendData = newData; //MainServer의 textEdit에 띄울 정보
-        send_flag = writeData(sendData.toStdString().c_str()); //writeData의 첫 번째 인자는 char *data와 같은 형식임
+        QString sendData = newData; // MainServer의 textEdit에 띄울 정보
+        send_flag = writeData(sendData.toStdString().c_str()); // writeData의 첫 번째 인자는 char *data와 같은 형식임
+
         if(!send_flag)
             qDebug() << "Socket send fail\n";
 
@@ -496,78 +232,82 @@ void NetworkManager::newDataSended(QString newData)
 
 }
 
-//서버에서 받아올 데이터
+// 서버에서 받아올 데이터
 void NetworkManager::receiveData()
 {
-    qDebug("%d", __LINE__);
     socket = static_cast<QTcpSocket*>(sender());
-    //buffer = buffers.value(socket);
-    qDebug("%d", __LINE__);
-    //buffer->append(socket->readAll());
     QByteArray array = socket->readAll();
-    qDebug("%d", __LINE__);
-    //    saveData = QString(buffer->data());
-    saveData = QString(array);
-    qDebug("%d", __LINE__);
 
-    if(saveData.contains("<CR", Qt::CaseInsensitive) == true)
+    saveData = QString(array);
+
+    if(saveData.contains("<CR>", Qt::CaseInsensitive) == true)
     {
-        //어떤 이벤트인지에 따라 불러올 함수 써주기(각각 이벤트에 대한 함수 만들고 if-else문 타도록 만들자)
+
+        // 어떤 이벤트인지에 따라 불러올 함수 써주기(각각 이벤트에 대한 함수 만들고 if-else문 타도록 만들자)
         QString event = saveData.split("<CR>")[0];
+        event = event.split("^")[1];
+
         id = saveData.split("<CR>")[1];
         QString data = saveData.split("<CR>")[2];
-        qDebug("%d", __LINE__);
+
         qDebug() << "event: " << event;
 
-        if(event == "PID")
+        if(event == "PID")              // 신규환자의 PID를 받아옴
         {
-            sendedPID = id;
-            qDebug() << "sendedPID: " << id;
-            emit sendNewPID(sendedPID); //enrollment 클래스로 emit
+            emit sendNewPID(id); // enrollment 클래스로 emit
+            qDebug() << "id: " << id;
         }
-        else if(event == "PSE")
+        else if(event == "PSE")         // 환자의 검색 정보를 받아옴
         {
-
-            qDebug("%d", __LINE__);
-            qDebug() << "id: "<< id;
-            qDebug() << "PSE data: " << data;
-            emit sendSearchResult(id, data);    //patientInfoManager 클래스와 medicalRecordManager 클래스 두 곳으로 모두 보내줘야 함
-
-            qDebug("%d", __LINE__);
+            qDebug() << "saveData" << saveData;
+            emit sendSearchResult(id, data);    // patientInfoManager 클래스와 medicalRecordManager 클래스 두 곳으로 모두 보내줘야 함
         }
-        else if(event == "SRQ")
+        else if(event == "SRQ")         // 촬영 의뢰: 환자SW와 뷰어SW ->촬영SW      // 촬영SW가 꺼져있으면 ERR
         {
             qDebug()<<"SRQ event Received: " << saveData;
             emit sendSRQRequest(saveData);
         }
-        else if(event == "VTS")
+        else if(event == "VTS")         // 진료 시작
         {
             qDebug()<<"VTS event Received: " << saveData;
             emit sendVTSRequest(saveData);
         }
-        else if(event == "ISV")
+        else if(event == "ISV")         // 저장 및 전송
         {
             qDebug()<<"ISV event Received: " << saveData;
             emit sendISVevent(saveData);
         }
-        else if(event == "VTF")
+        else if(event == "VTF")         // 진료 완료
         {
             qDebug()<<"VTF event Received: " << saveData;
             emit sendVTFevent(saveData);
         }
-        else if(event == "VNT")
+        else if(event == "VNT")         // 처방전 작성
         {
             qDebug()<<"VNT event Received: " << saveData;
             emit sendVNTevent(saveData);
         }
-        else if(event == "WTR")
+        else if(event == "WTR")         // 대기 목록
         {
             qDebug()<<"WTR event Received: " << saveData;
             emit sendWTRevent(saveData);
         }
+        else if(event == "MWL")         // 진료중이었던 환자 상태를 진료대기로 변경
+        {
+            qDebug()<<"MWL event Received: " << saveData;
+            emit sendMWLevent(saveData);
+        }
+        else if(event == "AWL")         // 대기 환자 추가: 뷰어가 꺼져있으면 ERR, 켜져있으면 ACK
+        {
+            qDebug()<<"AWL event Received: " << saveData;
+            emit sendAWLRequest(saveData);  // patientInfoManager 클래스로 보내서 대기명단 추가를 막아 patientStatus 클래스까지 가지 않도록 만들자
+        }
 
-
-        //    buffer->clear(); //버퍼 비워주기
     }
 }
 
+// ip와 port번호를 입력후 정상적으로 서버에 연결되었으면 정보를 멤버변수에 저장
+void NetworkManager::sendedIP(QString ip, int port)
+{
+    connectSocket(ip, port);
+}
