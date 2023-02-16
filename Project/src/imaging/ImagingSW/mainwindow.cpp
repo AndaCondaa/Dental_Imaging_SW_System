@@ -42,7 +42,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->imagingFrame->setContentsMargins(0, 0, 0, 0);
 
     // 서버 연결요청 이벤트
-    connect(this, SIGNAL(connectMainServer(QString,int)), mainNetworkManager, SLOT(connectSever(QString,int)));
+    connect(this, SIGNAL(connectMainServer(QString,int)), mainNetworkManager, SLOT(connectServer(QString,int)));
     connect(this, SIGNAL(connectSubServer(QString,int)), subNetworkManager, SLOT(connectServer(QString,int)));
 
     connect(ui->mainConnectButton, &QPushButton::clicked, this, [=](){                                      // 메인서버 연결버튼 클릭
@@ -81,6 +81,7 @@ MainWindow::MainWindow(QWidget *parent)
             ui->subConnectButton->setEnabled(false);
             ui->subConnectButton->setText("정상 연결");
 
+//            ui->pageStackedWidget->setCurrentIndex(1);
             if (!ui->mainConnectButton->isEnabled())
                 ui->pageStackedWidget->setCurrentIndex(1);
         } else if (op == false) {
@@ -121,23 +122,20 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->quitButton, SIGNAL(clicked()), qApp, SLOT(quit()));         // 프로그램 종료버튼
 
 
-
-
-
 //    ui->pageStackedWidget->setCurrentIndex(1);
-    QStringList dataList;
-    dataList << "P00001" << "김유선" << "BOTH";
-    patientManager->receiveWaitPatient(dataList);
-    dataList.clear();
-    dataList << "P00004" << "김도예" << "BOTH";
-    patientManager->receiveWaitPatient(dataList);
-    dataList.clear();
-    dataList << "P00005" << "김영희" << "BOTH";
-    patientManager->receiveWaitPatient(dataList);
+//    QStringList dataList;
+//    dataList << "P00001" << "김유선" << "PANO";
+//    patientManager->receiveWaitPatient(dataList);
+//    dataList.clear();
+//    dataList << "P00004" << "김도예" << "BOTH";
+//    patientManager->receiveWaitPatient(dataList);
+//    dataList.clear();
+//    dataList << "P00005" << "김영희" << "BOTH";
+//    patientManager->receiveWaitPatient(dataList);
 
-    QStringList test1;
-    test1 << "P00001" << "김유선" << "F" << "asdf";
-    patientManager->receivePatientInfo(test1);
+//    QStringList test1;
+//    test1 << "P00001" << "김유선" << "여성" << "1999-00-00";
+//    patientManager->receivePatientInfo(test1);
 }
 
 MainWindow::~MainWindow()

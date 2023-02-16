@@ -100,7 +100,7 @@ color:#ffffff;
        <item>
         <widget class="QPushButton" name="panoButton">
          <property name="enabled">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
@@ -158,7 +158,7 @@ color:#ffffff;
        <item>
         <widget class="QPushButton" name="cephButton">
          <property name="enabled">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">

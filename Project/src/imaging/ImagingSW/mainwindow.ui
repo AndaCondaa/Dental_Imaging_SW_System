@@ -675,7 +675,7 @@ border-radius: 5px;
            <widget class="QFrame" name="manageFrame">
             <property name="maximumSize">
              <size>
-              <width>400</width>
+              <width>410</width>
               <height>16777215</height>
              </size>
             </property>
@@ -691,19 +691,19 @@ border-radius: 5px;
             </property>
             <layout class="QVBoxLayout" name="verticalLayout">
              <property name="spacing">
-              <number>0</number>
+              <number>10</number>
              </property>
              <property name="leftMargin">
-              <number>0</number>
+              <number>5</number>
              </property>
              <property name="topMargin">
-              <number>0</number>
+              <number>10</number>
              </property>
              <property name="rightMargin">
-              <number>0</number>
+              <number>5</number>
              </property>
              <property name="bottomMargin">
-              <number>0</number>
+              <number>10</number>
              </property>
              <item>
               <widget class="QFrame" name="patientFrame">
@@ -752,7 +752,8 @@ background-color: rgb(230, 230, 230);</string>
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">border-radius: 30px;</string>
+                <string notr="true">border-radius: 30px;
+background-color: rgb(230, 230, 230);</string>
                </property>
                <property name="frameShape">
                 <enum>QFrame::NoFrame</enum>

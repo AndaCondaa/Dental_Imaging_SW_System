@@ -30,13 +30,13 @@ private slots:
     void receiveFile();
 
 private:
-    QString currentPID = "NULL";
-    QString currentType = "NULL";
-
     Protocol *protocol = nullptr;
 
     QTcpSocket *subSocket = nullptr;
     QTcpSocket *fileSocket = nullptr;
+
+    QString currentPID = "NULL";
+    QString currentType = "NULL";
 
     int count = 0;
     int countMax = 0;
