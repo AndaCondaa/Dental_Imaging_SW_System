@@ -32,6 +32,14 @@ ImagingManager::~ImagingManager()
     delete ui;
 }
 
+void ImagingManager::resizeEvent(QResizeEvent *event)
+{
+    int width = ui->viewLabel->width();
+    int height = ui->viewLabel->height();
+    QPixmap newSizePixmap = ui->viewLabel->pixmap();
+    ui->viewLabel->setPixmap(newSizePixmap.scaled(width, height, Qt::KeepAspectRatio));
+}
+
 void ImagingManager::setPID(QString pid)
 {
     currentPID = pid;
@@ -112,9 +120,12 @@ void ImagingManager::reconImage()
 
             fopen_s(&file, fileName.toStdString().c_str(), "rb");
             if (file == nullptr) {
-                qDebug() << "파일 오픈 오류";
                 delete[] buf;
                 delete[] tmpOut;
+                QMessageBox disconnectBox(QMessageBox::Warning, "ERROR",
+                                          "파일 재구성 실패",
+                                          QMessageBox::Ok);
+                disconnectBox.exec();
                 return;
             }
 
@@ -143,18 +154,9 @@ void ImagingManager::reconImage()
 
         histoStretch(out, reconRows*reconCols, 0, 10000, maxValue);
         invertImage(out, reconRows*reconCols);
-        gammaCorrection(out, reconRows*reconCols, maxValue, 2);
-        CLAHE(out, reconRows, reconCols, 40.0, 8, 8);
+        gammaCorrection(out, reconRows*reconCols, maxValue, 4);
+        CLAHE(out, reconRows, reconCols, 16.0, 8, 8);
         medianFilter(out, reconRows, reconCols, 3);
-        unsharpFilter(out, reconRows, reconCols, maxValue);
-        medianFilter(out, reconRows, reconCols, 3);
-        medianFilter(out, reconRows, reconCols, 3);
-
-
-        FILE *file;
-        fopen_s(&file, "./RECON.raw", "wb");
-        fwrite(out, sizeof(unsigned short), reconRows*reconCols, file);
-        fclose(file);
 
         viewReconImage(out, reconRows, reconCols);
         saveAsJpg(out, reconRows, reconCols);
@@ -179,9 +181,12 @@ void ImagingManager::reconImage()
 
             fopen_s(&file, fileName.toStdString().c_str(), "rb");
             if (file == nullptr) {
-                qDebug() << "파일 오픈 오류";
                 delete[] buf;
                 delete[] tmpOut;
+                QMessageBox disconnectBox(QMessageBox::Warning, "ERROR",
+                                          "파일 재구성 실패",
+                                          QMessageBox::Ok);
+                disconnectBox.exec();
                 return;
             }
             fread(buf, sizeof(unsigned short), frameRows*frameCols, file);
@@ -380,20 +385,10 @@ void ImagingManager::settingStyleSheet()
                                    "background-color: rgb(200, 200, 200);"
                                    "border-radius: 10px;"
                                    "border-style: solid;"
-                                   "}"
-                                   "QPushButton {"
-                                   "background-color: rgb(200, 200, 200);"
-                                   "border-radius: 10px;"
-                                   "border-style: solid;"
                                    "}");
 
     ui->saveButton->setStyleSheet("QPushButton:disabled {"
                                   "background-color: rgb(150, 150, 150);"
-                                  "border-radius: 10px;"
-                                  "border-style: solid;"
-                                  "}"
-                                  "QPushButton {"
-                                  "background-color: rgb(200, 200, 200);"
                                   "border-radius: 10px;"
                                   "border-style: solid;"
                                   "}"

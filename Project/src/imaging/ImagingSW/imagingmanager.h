@@ -25,6 +25,9 @@ public:
     explicit ImagingManager(QWidget *parent = nullptr);
     ~ImagingManager();
 
+protected:
+    void resizeEvent(QResizeEvent *event) override;
+
 private slots:
     void setPID(QString);                   // 현재 PID 저장
     void setType(QString);                  // 현재 촬영타입 저장

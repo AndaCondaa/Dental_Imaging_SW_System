@@ -18,7 +18,8 @@ class ImageThread : public QThread
     Q_OBJECT
 
 public:
-    explicit ImageThread(int width, int height, QString modeType, QObject *parent = nullptr);
+    explicit ImageThread(int width, int height,
+                                    QString modeType, QObject *parent = nullptr);
 
 public slots:
     void threadStop();                      // 스레드 중지 (플래그 값 변경)

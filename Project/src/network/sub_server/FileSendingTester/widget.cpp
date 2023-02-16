@@ -21,7 +21,7 @@ Widget::Widget(QWidget *parent)
 
     controlSocket = new QTcpSocket;
 
-    controlSocket->connectToHost("192.168.0.20", 8002);
+    controlSocket->connectToHost("127.0.0.1", 8002);
 
     if (controlSocket->waitForConnected()) {
 
@@ -31,7 +31,7 @@ Widget::Widget(QWidget *parent)
     }
 
     fileSocket = new QTcpSocket;
-    fileSocket->connectToHost("192.168.0.20", 8003);
+    fileSocket->connectToHost("127.0.0.1", 8003);
     if (fileSocket->waitForConnected()) {
         protocol->sendProtocol(fileSocket, "SEN", "NEW", ConnectType::MODALITY, "MODALITY");
     } else {
@@ -49,8 +49,9 @@ void Widget::receiveControl()
     protocol->receiveProtocol(socket);
     if (protocol->packetData()->type() == ControlType::START) {
         sendFile();
+    } else if (protocol->packetData()->type() == ControlType::STOP) {
+        flag = true;
     }
-
 }
 
 void Widget::buttonClicked()
@@ -77,6 +78,11 @@ void Widget::sendFile()
 
     // CEPH MODE
     for (int i = 0; i < countMax; i++) {
+        if (flag) {
+            flag = false;
+            return;
+        }
+
         if (i >= 1000)
             fileName = QString("./%1/%2.raw").arg(currentType).arg(i);
         else if (i < 1000 && i >= 100)

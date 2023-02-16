@@ -17,9 +17,6 @@
 SubNetworkManager::SubNetworkManager(QObject *parent)
     : QObject{parent}
 {
-    subSocket = new QTcpSocket(this);
-    fileSocket= new QTcpSocket(this);
-
     protocol = new Protocol();
 }
 
@@ -32,7 +29,7 @@ SubNetworkManager::~SubNetworkManager()
 void SubNetworkManager::connectServer(QString address, int port)
 {
     subSocket = new QTcpSocket(this);
-    fileSocket= new QTcpSocket(this);
+    fileSocket = new QTcpSocket(this);
 
     subSocket->connectToHost(address, port);
     fileSocket->connectToHost(address, port+1);
@@ -86,7 +83,7 @@ void SubNetworkManager::receiveControl()
         if (protocol->packetData()->event() == "CTL") {
             if (protocol->packetData()->type() == ControlType::START ||
                     protocol->packetData()->type() == ControlType::STOP) {
-//                count = 0;
+                count = 0;
                 totalData.clear();
             }
             emit buttonSignal(protocol->packetData()->type());

@@ -46,7 +46,6 @@ ControlPanel::~ControlPanel()
 
 
 // 촬영타입에 따른 버튼 조작
-// QString data: PID|TYPE (ex: P00001|PANO)
 void ControlPanel::checkTypeButton(QString data)
 {
     currentPID = data.split("|")[0];
@@ -67,7 +66,6 @@ void ControlPanel::checkTypeButton(QString data)
 }
 
 // 제어명령 요청에 따른 패킷 전송
-// QAbstractButton* button: 제어명령 버튼 (RESET, READY, START, STOP)
 void ControlPanel::controlButtonClicked(QAbstractButton* button)
 {
     if (ui->panoButton->isChecked()) {
@@ -86,11 +84,10 @@ void ControlPanel::controlButtonClicked(QAbstractButton* button)
         return;
     }
 
-    emit buttonSignal(controlButtonGroup->id(button), currentPID + "|" + currentType);
+    emit buttonSignal(controlButtonGroup->id(button), currentPID + "|" + currentType); // 제어명령 패킷 송신 요청
 }
 
-// 제어명령 패킷 수신
-// int buttonIdx : (0: RESET, 1: READY, 2: START, 3: STOP)
+// 제어명령 패킷 수신 및 동작 함수 호출
 void ControlPanel::receiveButtonControl(int buttonIdx)
 {
     switch (buttonIdx) {
@@ -98,7 +95,7 @@ void ControlPanel::receiveButtonControl(int buttonIdx)
         resetControl();
         break;
     case READY:
-        if (!readyControl()) return;
+        readyControl();
         break;
     case START:
         startControl();
@@ -112,7 +109,7 @@ void ControlPanel::receiveButtonControl(int buttonIdx)
 // RESET 동작
 void ControlPanel::resetControl()
 {   
-    modeButtonGroup->setExclusive(false);
+    modeButtonGroup->setExclusive(false);           // 버튼 셋팅을 위해 해제
     if (requestType == "PANO") {
         ui->panoButton->setEnabled(true);
         ui->cephButton->setEnabled(false);
@@ -141,7 +138,7 @@ void ControlPanel::resetControl()
         ui->panoButton->setChecked(false);
         ui->cephButton->setChecked(false);
     }
-    modeButtonGroup->setExclusive(true);
+    modeButtonGroup->setExclusive(true);          // 하나의 모드만 선택할 수 있도록 설정
 
     ui->resetButton->setEnabled(true);
     ui->readyButton->setEnabled(true);
@@ -150,14 +147,14 @@ void ControlPanel::resetControl()
 }
 
 // READY 동작
-bool ControlPanel::readyControl()
+void ControlPanel::readyControl()
 {
-    if (currentPID == "NULL") {
+    if (currentPID == "NULL") { // 촬영환자가 선택되지 않은 경우
         QMessageBox messageBox(QMessageBox::NoIcon, "NO TYPE",
                              QString("촬영환자를 선택해주세요."),
                              QMessageBox::Ok, 0, Qt::Window);
         messageBox.exec();
-        return false;
+        return;
     }
 
     if (ui->panoButton->isChecked()) {
@@ -169,20 +166,18 @@ bool ControlPanel::readyControl()
         currentType = "CEPH";
         ui->panoButton->setEnabled(false);
         ui->panoButton->setCheckable(false);
-    } else {
+    } else {    // 모드를 선택하지 않은 경우
         QMessageBox messageBox(QMessageBox::NoIcon, "NO TYPE",
                              QString("촬영타입을 선택해주세요."),
                              QMessageBox::Ok, nullptr, Qt::Window);
         messageBox.exec();
-        return false;
+        return;
     }
 
     ui->readyButton->setEnabled(false);
     ui->startButton->setEnabled(true);
 
     emit readySignal(currentType);      // 촬영타입 전송
-
-    return true;
 }
 
 // START 동작
@@ -244,6 +239,7 @@ void ControlPanel::finishSlot(QString pid, QString type)
 
     ui->panoButton->setEnabled(false);
     ui->cephButton->setEnabled(false);
+
     ui->panoButton->setCheckable(false);
     ui->cephButton->setCheckable(false);
 
