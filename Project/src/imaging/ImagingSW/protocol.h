@@ -9,7 +9,6 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
-
 class QTcpSocket;
 class PacketData;
 class QString;

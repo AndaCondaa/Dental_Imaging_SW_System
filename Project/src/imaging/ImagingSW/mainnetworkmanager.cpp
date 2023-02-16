@@ -161,7 +161,6 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
     if(fileName.length()) {
         file = new QFile(fileName);
         if (!file->open(QFile::ReadOnly)) {
-            qDebug("%d", __LINE__);
             return;
         }
 
@@ -196,7 +195,10 @@ void MainNetworkManager::sendingFile(qint64 numBytes)
     socket->write(outBlock);
 
     if (byteToWrite == 0) { // Send completed
-        qDebug("File sending completed!");
         disconnect(fileSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(sendingFile(qint64)));
+        QMessageBox disconnectBox(QMessageBox::NoIcon, "ERROR",
+                                  "파일 전송이 완료되었습니다.",
+                                  QMessageBox::Ok);
+        disconnectBox.exec();
     }
 }

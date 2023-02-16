@@ -48,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->mainConnectButton, &QPushButton::clicked, this, [=](){                                      // 메인서버 연결버튼 클릭
         emit connectMainServer(ui->mainIpEdit->text(), ui->mainPortEdit->text().toInt());
     });
+
     connect(ui->subConnectButton, &QPushButton::clicked, this, [=]() {                                      // 서브서버 연결버튼 클릭
         emit connectSubServer(ui->subIpEdit->text(), ui->subPortEdit->text().toInt());
     });
@@ -81,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent)
             ui->subConnectButton->setEnabled(false);
             ui->subConnectButton->setText("정상 연결");
 
-//            ui->pageStackedWidget->setCurrentIndex(1);
+            ui->pageStackedWidget->setCurrentIndex(1);
             if (!ui->mainConnectButton->isEnabled())
                 ui->pageStackedWidget->setCurrentIndex(1);
         } else if (op == false) {
@@ -96,26 +97,26 @@ MainWindow::MainWindow(QWidget *parent)
     });
 
     // 메인 서버 네트워크 관련 이벤트
-    connect(mainNetworkManager, SIGNAL(sendWaitList(int,QString)), patientManager, SLOT(receiveWaitList(int,QString)));     // 메인서버 연결 시, 기존 대기목록 리시브
-    connect(mainNetworkManager, SIGNAL(sendWaitPatient(QStringList)), patientManager, SLOT(receiveWaitPatient(QStringList)));   // 촬영의뢰가 들어온 경우, 환자관리 매니저에게 전송
-    connect(patientManager, SIGNAL(sendPid(QString)), mainNetworkManager, SLOT(requestPatientInfo(QString)));   // 환자준비 버튼을 누르면, pid를 서버로 전송하여 환자정보요청
-    connect(mainNetworkManager, SIGNAL(sendPatientInfo(QStringList)), patientManager, SLOT(receivePatientInfo(QStringList)));   // 요청한 환자 정보를 받음
+    connect(mainNetworkManager, SIGNAL(sendWaitList(int,QString)), patientManager, SLOT(receiveWaitList(int,QString)));             // 메인서버 연결 시, 기존 대기목록 리시브
+    connect(mainNetworkManager, SIGNAL(sendWaitPatient(QStringList)), patientManager, SLOT(receiveWaitPatient(QStringList)));       // 촬영의뢰가 들어온 경우, 환자관리 매니저에게 전송
+    connect(patientManager, SIGNAL(sendPid(QString)), mainNetworkManager, SLOT(requestPatientInfo(QString)));       // 환자준비 버튼을 누르면, pid를 서버로 전송하여 환자정보요청
+    connect(mainNetworkManager, SIGNAL(sendPatientInfo(QStringList)), patientManager, SLOT(receivePatientInfo(QStringList)));         // 요청한 환자 정보를 받음
     connect(patientManager, SIGNAL(finishSignal(QString,QString)), mainNetworkManager, SLOT(endImagingProcess(QString,QString)));     // 촬영프로세스완료 버튼 클릭 시, 소켓 전송
-    connect(imagingManager, SIGNAL(saveSignal(QString)), mainNetworkManager, SLOT(sendFile(QString)));           // 저장버튼 클릭 시, 파일 전송
+    connect(imagingManager, SIGNAL(saveSignal(QString)), mainNetworkManager, SLOT(sendFile(QString)));              // 저장버튼 클릭 시, 파일 전송
 
     // 서브 서버 네트워크 관련 이벤트
-    connect(controlPanel, SIGNAL(buttonSignal(int,QString)), subNetworkManager, SLOT(sendButtonControl(int,QString)));          // 제어명령 패킷 송신
-    connect(subNetworkManager, SIGNAL(buttonSignal(int)), controlPanel, SLOT(receiveButtonControl(int)));                       // 제어명령 패킷 수신
-    connect(subNetworkManager, SIGNAL(sendFrameImg(int)), imagingManager, SLOT(recvFrameImg(int)));                             // 프레임 데이터 수신
+    connect(controlPanel, SIGNAL(buttonSignal(int,QString)), subNetworkManager, SLOT(sendButtonControl(int,QString)));      // 제어명령 패킷 송신
+    connect(subNetworkManager, SIGNAL(buttonSignal(int)), controlPanel, SLOT(receiveButtonControl(int)));                   // 제어명령 패킷 수신
+    connect(subNetworkManager, SIGNAL(sendFrameImg(int)), imagingManager, SLOT(recvFrameImg(int)));                         // 프레임 데이터 수신
 
     // 제어명령 관련 이벤트
-    connect(patientManager, SIGNAL(sendType(QString)), controlPanel, SLOT(checkTypeButton(QString)));   // 촬영타입에 따른 버튼 조작
-    connect(patientManager, SIGNAL(sendPidToImagingManager(QString)), imagingManager, SLOT(setPID(QString)));   // 촬영준비 시, 이미징클래스에 현재환자번호 저장
-    connect(controlPanel, SIGNAL(readySignal(QString)), imagingManager, SLOT(setType(QString)));        // 촬영준비 시, 이미징클래스에 타입 전송
-    connect(controlPanel, SIGNAL(startSignal(QString,QString)), imagingManager, SLOT(startSetting(QString,QString)));   // start버튼 클릭 시, 이미징클래스에서 촬영 준비(쓰레드)
-    connect(controlPanel, SIGNAL(stopSignal()), imagingManager, SLOT(stopButtonSlot()));    // 촬영중단 시, 이미징클래스에서 스레드 종료
-    connect(imagingManager, SIGNAL(saveSignal(QString)), patientManager, SLOT(saveSlot(QString)));            // 저장버튼 클릭 시, 환자클래스에 노티
-    connect(imagingManager, SIGNAL(saveSignal(QString)), controlPanel, SLOT(saveSlot(QString)));            // 저장버튼 클릭 시, 버튼 셋팅
+    connect(patientManager, SIGNAL(sendType(QString)), controlPanel, SLOT(checkTypeButton(QString)));               // 촬영타입에 따른 버튼 조작
+    connect(patientManager, SIGNAL(sendPidToImagingManager(QString)), imagingManager, SLOT(setPID(QString)));       // 촬영준비 시, 이미징클래스에 현재환자번호 저장
+    connect(controlPanel, SIGNAL(readySignal(QString)), imagingManager, SLOT(setType(QString)));                    // 촬영준비 시, 이미징클래스에 타입 전송
+    connect(controlPanel, SIGNAL(startSignal(QString,QString)), imagingManager, SLOT(startSetting(QString,QString)));           // start버튼 클릭 시, 이미징클래스에서 촬영 준비(쓰레드)
+    connect(controlPanel, SIGNAL(stopSignal()), imagingManager, SLOT(stopButtonSlot()));                            // 촬영중단 시, 이미징클래스에서 스레드 종료
+    connect(imagingManager, SIGNAL(saveSignal(QString)), patientManager, SLOT(saveSlot(QString)));                  // 저장버튼 클릭 시, 환자클래스에 노티
+    connect(imagingManager, SIGNAL(saveSignal(QString)), controlPanel, SLOT(saveSlot(QString)));                    // 저장버튼 클릭 시, 버튼 셋팅
     connect(imagingManager, SIGNAL(shootingEndSignal(QString)), controlPanel, SLOT(shootingEndSlot(QString)));      // PANO,CEPH완료 시 , 버튼 활성화 컨트롤
     connect(patientManager, SIGNAL(finishSignal(QString,QString)), controlPanel, SLOT(finishSlot(QString,QString)));                // 촬영프로세스완료 시, 버튼 셋팅 리셋
 
@@ -123,9 +124,10 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 //    ui->pageStackedWidget->setCurrentIndex(1);
-//    QStringList dataList;
-//    dataList << "P00001" << "김유선" << "PANO";
-//    patientManager->receiveWaitPatient(dataList);
+
+    QStringList dataList;
+    dataList << "P00001" << "김유선" << "BOTH";
+    patientManager->receiveWaitPatient(dataList);
 //    dataList.clear();
 //    dataList << "P00004" << "김도예" << "BOTH";
 //    patientManager->receiveWaitPatient(dataList);
@@ -133,9 +135,9 @@ MainWindow::MainWindow(QWidget *parent)
 //    dataList << "P00005" << "김영희" << "BOTH";
 //    patientManager->receiveWaitPatient(dataList);
 
-//    QStringList test1;
-//    test1 << "P00001" << "김유선" << "여성" << "1999-00-00";
-//    patientManager->receivePatientInfo(test1);
+    QStringList test1;
+    test1 << "P00001" << "김유선" << "여성" << "1999-00-00";
+    patientManager->receivePatientInfo(test1);
 }
 
 MainWindow::~MainWindow()

@@ -18,8 +18,6 @@ ImageThread::ImageThread(int width, int height, QString modeType, QObject *paren
     this->width = width;
     this->height = height;
     this->modeType = modeType;
-    checkCount = new bool[1750];
-    memset(checkCount, false, 1750);
 }
 
 // 스레드 중지 (플래그 값 변경)
@@ -37,8 +35,12 @@ void ImageThread::setCount(int count)
     }
 }
 
+// 스레드 시작
 void ImageThread::run()
 {
+    checkCount = new bool[1750];
+    memset(checkCount, false, 1750);
+
     QPixmap pixmap(width, height);
     pixmap.fill(Qt::white);
 
@@ -89,7 +91,6 @@ void ImageThread::run()
                 for (int i = 0; i < pixels; i++) {
                     if (buf[i] * 5 > valueMax) buf[i] = valueMax;
                     else buf[i] *= 5;
-                    buf[i] = ~buf[i];
                 }
 
                 cv::Mat mat(rows, cols, CV_16UC1, buf);
@@ -99,7 +100,7 @@ void ImageThread::run()
                 double transHeight = width / 2.;
                 double offset = (height - transHeight) / 2.;    // PANO 영상 비율 2:1
 
-                QImage frameImage(rotateMat.data, rotateMat.cols, rotateMat.rows , QImage::Format_Grayscale16);
+                QImage frameImage(rotateMat.data, rotateMat.cols, rotateMat.rows, QImage::Format_Grayscale16);
                 painter.drawImage(width - currentCount*((double)width/1750.), offset, frameImage.scaledToHeight(transHeight));
                 emit processFinished(pixmap);           // 프레임데이터 한 장마다 display
                 emit processCount(currentCount);        // 진행상황 display (QProgressBar)
@@ -110,7 +111,6 @@ void ImageThread::run()
                 }
             }
         } while(!isStop);
-
         delete[] buf;
         delete[] checkCount;
     } else if (modeType == "CEPH") {
@@ -150,7 +150,6 @@ void ImageThread::run()
                 for (int i = 0; i < pixels; i++) {
                     if (buf[i] * 100 > valueMax) buf[i] = valueMax;
                     else buf[i] *= 100;
-                    buf[i] = ~buf[i];
                 }
 
                 cv::Mat mat(rows, cols, CV_16UC1, buf);
@@ -160,7 +159,8 @@ void ImageThread::run()
                 double transWidth = (double)(height * 5) / 4.;
                 double offset = width - ((width - transWidth) / 2.);    // CEPH 영상 비율 5:4
 
-                QImage frameImage(dst.data, dst.cols, dst.rows, QImage::Format_Grayscale16);
+                QImage frameImage(dst.data, dst.cols, dst.rows,
+                                  QImage::Format_Grayscale16);
                 painter.drawImage(offset - ((currentCount+1) * ((transWidth)/1250.)), 0, frameImage.scaledToHeight(height));
                 emit processFinished(pixmap);           // 프레임데이터 한 장마다 display
                 emit processCount(currentCount);        // 진행상황 display (QProgressBar)
@@ -171,7 +171,6 @@ void ImageThread::run()
                 }
             }
         } while (!isStop);
-
         delete[] buf;
         delete[] checkCount;
     }

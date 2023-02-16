@@ -32,7 +32,7 @@ private slots:
     void receiveButtonControl(int);                 // 제어명령 패킷 수신
 
     void resetControl();                        // RESET 동작
-    bool readyControl();                        // READY 동작
+    void readyControl();                        // READY 동작
     void startControl();                        // START 동작
     void stopControl();                         // STOP 동작
     void shootingEndSlot(QString);              // 촬영완료 동작 (PANO, CEPH)

@@ -29,7 +29,6 @@ void PacketData::setHeader(QString header)
     }
 }
 
-
 QString PacketData::event()
 {
     return m_event;

@@ -33,6 +33,8 @@ private:
     QFile file;
     QString fileName;
 
+    bool flag = false;
+
     int countMax = 0;
     int frameSize = 0;
 
