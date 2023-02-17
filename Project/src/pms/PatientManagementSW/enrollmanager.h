@@ -1,7 +1,19 @@
+/*
+ * 프로그램명 : PatientManagementSW
+ * 파일명 : enrollManager.h
+ * 설명 : 신규 환자 등록
+ * 작성자 : 김유선
+ * 최종 수정일 : 2023.02.16
+ */
+
+
 #ifndef ENROLLMANAGER_H
 #define ENROLLMANAGER_H
 
 #include <QWidget>
+
+#include <QtTest/QtTest>
+#include <QTest>
 
 
 namespace Ui {
@@ -17,7 +29,7 @@ public:
     ~EnrollManager();
 
 private slots:
-    void on_pushButton_clicked();
+    void enrollFinished();
     void newPIDSended(QString);
 
     void on_selectFilePushButton_clicked();
@@ -29,6 +41,9 @@ private:
 
     QString pidPhoto;
     QString fileName;
+
+
+    QPixmap *pixmap;
 
 signals:
     void sendNewData(QString);

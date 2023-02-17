@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>img/dropdown.png</file>
+        <file>img/email.png</file>
+        <file>img/enroll.png</file>
+        <file>img/help.png</file>
+        <file>img/login.png</file>
+        <file>img/man.png</file>
+        <file>img/print.png</file>
+        <file>img/search.png</file>
+    </qresource>
+</RCC>

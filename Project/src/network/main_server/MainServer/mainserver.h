@@ -1,3 +1,11 @@
+/*
+ * 프로그램명 : MainServer
+ * 파일명 : mainserver.h
+ * 설명 : PMS SW, 이미지 뷰어 SW, 촬영 SW와 연결되어 데이터를 주고받는 서버
+ * 작성자 : 김유선
+ * 최종 수정일 : 2023.02.16
+ */
+
 #ifndef MAINSERVER_H
 #define MAINSERVER_H
 
@@ -8,6 +16,9 @@
 #include <QSqlTableModel>
 #include <QTableWidget>
 
+#include <QtTest/QtTest>
+#include <QTest>
+
 class QStandardItemModel;
 
 namespace Ui {
@@ -17,65 +28,47 @@ class MainServer;
 class MainServer : public QMainWindow
 {
     Q_OBJECT
+
 public:
     explicit MainServer(QWidget *parent = nullptr);
     ~MainServer();
     void loadData();
-    void updateRecentData();
-
 
 private slots:
     void newConnection();
     void newFileConnection();
-
-
-    void disconnected();
+    void socketDisconnected();
     void receiveData();
     bool writeData(QByteArray data);
     void receiveFile();
-
-
-
-
-private slots:
-    void sendDataToClient(QString);
-
-    void goOnSend(qint64);
-
     void sendFile();
-
-
     void on_quitPushButton_clicked();
+    void fileSocketDisconnected();
 
 private:
     Ui::MainServer *ui;
     QTcpServer *server;
     QTcpServer *fileServer;
 
-    QHash<QTcpSocket*, QByteArray*> buffers; //We need a buffer to store data until block has completely received
-    QHash<QTcpSocket*, qint32*> sizes; //We need to store the size to verify if a block has received completely
     QString makeId();
     QString makeReportNo();
     QString makeImageNo();
+
     QSqlQuery *query;
     QSqlQuery *query2;
     QSqlQuery *query3;
     QSqlQuery *query4;
-    QSqlQuery *query5;
 
     QTcpSocket *socket;
 
-    QTcpSocket *pmsSocket;
-    QTcpSocket *imagingSocket;
-    QTcpSocket *viewerSocket;
+    QTcpSocket *pmsSocket = nullptr;
+    QTcpSocket *imagingSocket = nullptr;
+    QTcpSocket *viewerSocket = nullptr;
 
+    QTcpSocket *pmsFileSocket = nullptr;
+    QTcpSocket *imagingFileSocket = nullptr;
+    QTcpSocket *viewerFileSocket = nullptr;
 
-    QTcpSocket *pmsFileSocket;
-    QTcpSocket *imagingFileSocket;
-    QTcpSocket *viewerFileSocket;
-
-
-    QByteArray *buffer;
     QString saveData;
 
     QSqlTableModel *patientModel;
@@ -83,44 +76,25 @@ private:
     QSqlTableModel *imageModel;
     QSqlTableModel *reportModel;
 
-
-    bool fd_flag = false;
-    bool send_flag = false;
-
     QMap<QTcpSocket *, QString> sk; //socket
+
+    QString currentPID = "NULL";
 
     qint64 totalSize;
     qint64 byteReceived = 0;
     QFile* file;
-
     QByteArray inBlock;
-    QString fileName;                           // Receiving FileName
-    QString checkFileName;                      // Previous File Name for checking new file
-    QString currentPID = "NULL";
-    QString currentType = "NULL";
+    QString fileName;               // Receiving FileName
     qint64 byteToWrite;             // File Size per a block
     QByteArray outBlock;            // Block for sending
-    int count = 0;
     qint64 loadSize;                // File Size
-    QMap<QTcpSocket*, QString> fileSocketMap;       // <socket, SW or MODALITY>
-    QString saveFileData;
 
-    int sendFileFlag = 0; //0이면 pms로, 1이면 viewer
+    QString currentFileName;
     QString type;
 
-
-
-    QByteArray sendAllFile;
-
-
+    int sendFileFlag = 0; //0이면 pms로, 1이면 viewer로
 
     void sendWaitingList(QTcpSocket*);
-
- int tmpCount = 0;
- QString currentFileName;
-
-signals:
-    void sendNewPID(QString);
 
 };
 #endif // MAINSERVER_H

@@ -1,9 +1,19 @@
+/*
+ * 프로그램명 : PatientManagementSW
+ * 파일명 : mainWindow.h
+ * 설명 : 로그인과 PMS의 메인화면
+ * 작성자 : 김유선
+ * 최종 수정일 : 2023.02.16
+ */
+
+
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
-#include "imagemanager.h"
 #include <QMainWindow>
 
+#include <QtTest/QtTest>
+#include <QTest>
 
 namespace Ui { class MainWindow ; }
 
@@ -13,6 +23,7 @@ class MedicalRecordManager;
 class PatientInfoManager;
 class PatientStatusManager;
 class NetworkManager;
+class ChoosePatientManager;
 
 class MainWindow : public QMainWindow
 {
@@ -22,12 +33,11 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
-
-
 private slots:
-    void on_enrollButton_clicked();
-    //void sendProtocol(int, char *name);
+    void enrollClient();
+    void on_pushButton_clicked();
 
+    void changeScreenSlot(int);
 
 private:
     Ui::MainWindow *ui;
@@ -38,14 +48,14 @@ private:
     PatientInfoManager *patientInfoManager;
     PatientStatusManager *patientStatusManager;
     NetworkManager *networkManager;
+    ChoosePatientManager *choosePatientManager;
 
-
-
+    QPixmap *pixmap;
 
 
 
 signals:
-    //void enrollSignal(int, char name[10]);
     void requestPID(QString);
+    void sendIP(QString, int);
 };
 #endif // MAINWINDOW_H
