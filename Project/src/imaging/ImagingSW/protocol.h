@@ -31,12 +31,12 @@ public:
     Protocol();
     ~Protocol();
 
-    PacketData* packetData();
+    PacketData* packetData();       // 패킷 데이터 리턴
 
-    // send
+    // 패킷 전송
     void sendProtocol(QTcpSocket* socket, QString header, QString event, int type, QString msg);
 
-    // receive
+    // 패킷 수신 및 저장
     void receiveProtocol(QTcpSocket* socket);
 
 private:

@@ -23,19 +23,19 @@ class PacketData : public QObject
 public:
     explicit PacketData(QString = "", QString = "", int = 0, QString = "", QObject* parent = nullptr);
 
+    // Getter 함수
     QString header();
-    void setHeader(QString);
-
     QString event();
-    void setEvent(QString);
-
     int type();
-    void setType(int = 0);
-
     QString msg();
+
+    // Setter 함수
+    void setHeader(QString);
+    void setEvent(QString);
+    void setType(int = 0);
     void setMsg(QString);
 
-    QByteArray makeSendData();
+    QByteArray makeSendData();      // 전송패킷용 데이터 구성
 
 private:
     QString m_header;
@@ -44,6 +44,7 @@ private:
     QString m_msg;
 
 signals:
+    // 변수 변경 노티시그널
     void headerChanged();
     void eventChanged();
     void typeChanged();

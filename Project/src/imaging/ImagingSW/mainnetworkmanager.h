@@ -23,37 +23,35 @@ public:
     ~MainNetworkManager();
 
 private slots:
-    void connectServer(QString address, int port);
-    void disconnectServer();
+    void connectServer(QString address, int port);                  // 메인서버 연결
+    void disconnectServer();                                        // 서버 연결 해제
 
-    void sendPacket(QTcpSocket* socket, QString header, QString event, QString pid, QString data);
-    QStringList packetParser(QByteArray receiveArray);
-    void receivePacket();
+    void sendPacket(QTcpSocket* socket, QString header,
+                    QString event, QString pid, QString data);      // 패킷 구성 및 전송
+    QStringList packetParser(QByteArray receiveArray);              // 수신 패킷 파싱 후 저장
+    void receivePacket();                                           // 수신된 패킷에 따른 동작
 
-    void requestPatientInfo(QString pid);       // 환자매니저에서 환자준비버튼 눌렀을 때, 서버로 패킷전송
-    void endImagingProcess(QString pid, QString type);        // 이미징매니저에서 환자 촬영이 모두 끝난 경우, 서버로 패킷전송
+    void requestPatientInfo(QString pid);                           // 환자정보 요청
+    void endImagingProcess(QString pid, QString type);              // 촬영종료 노티
 
-    void sendingFile(qint64 numBytes);
-    void sendFile(QString data);            // data = pid | shoot_type
+    void sendingFile(qint64 numBytes);                              // 실제 파일내용 전송
+    void sendFile(QString data);                                    // 파일헤더 전송 (data: pid|shoot_type)
 
 private:
-    QTcpSocket *mainSocket = nullptr;
-    QTcpSocket *fileSocket = nullptr;
+    QTcpSocket *mainSocket = nullptr;       // 정보전달 소켓
+    QTcpSocket *fileSocket = nullptr;       // 파일전송 소켓
 
-    QFile* file = nullptr;                                // File Object for FileSending Protocol
-    qint64 totalSize;                           // Total size of File that clients are sending
-    qint64 byteReceived = 0;                    // size of File read currently
-    QByteArray inBlock;                         // Units divided to transfer files
-    QString fileName;                           // Receiving FileName
-    qint64 byteToWrite;                   // File Size per a block
-    QByteArray outBlock;                // Block for sending
-    QMap<int, QTcpSocket*> socketMap;   // 0: main , 1: file
+    QFile* file = nullptr;                  // 파일 전송용 파일클래스 객체
+    QString fileName;                       // 전송파일 이름
+    qint64 fileSize;                        // 전송파일 사이즈
+    qint64 remainBytes;                     // 전송된 바이트
+    QByteArray sendingArray;                // 전송하는 패킷 내용
 
 signals:
-    void connectionStatusChanged(bool);
-    void sendWaitList(int, QString);
-    void sendWaitPatient(QStringList);
-    void sendPatientInfo(QStringList);
+    void connectionStatusChanged(bool);     // 서버연결 상태 변경
+    void sendWaitList(int, QString);        // 기존 대기목록 전송
+    void sendWaitPatient(QStringList);      // 촬영요청 정보 전송
+    void sendPatientInfo(QStringList);      // 요청한 환자정보 전송
 };
 
 #endif // MAINNETWORKMANAGER_H

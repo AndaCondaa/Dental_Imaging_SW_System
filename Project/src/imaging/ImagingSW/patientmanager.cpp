@@ -130,7 +130,6 @@ void PatientManager::receivePatientInfo(QStringList dataList)           // pid -
 
 void PatientManager::saveSlot(QString data) // pid|type
 {
-//    QString savePid = data.split("|")[0];
     QString saveType = data.split("|")[1];
 
     if (saveType == "PANO") {

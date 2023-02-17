@@ -13,12 +13,26 @@
 PacketData::PacketData(QString header, QString event, int type, QString msg, QObject* parent)
     : QObject(parent), m_header(header), m_event(event), m_type(type), m_msg(msg)
 {
-
 }
 
 QString PacketData::header()
 {
     return m_header;
+}
+
+QString PacketData::event()
+{
+    return m_event;
+}
+
+int PacketData::type()
+{
+    return m_type;
+}
+
+QString PacketData::msg()
+{
+    return m_msg;
 }
 
 void PacketData::setHeader(QString header)
@@ -29,22 +43,12 @@ void PacketData::setHeader(QString header)
     }
 }
 
-QString PacketData::event()
-{
-    return m_event;
-}
-
 void PacketData::setEvent(QString event)
 {
     if (m_event != event) {
         m_event = event;
         emit eventChanged();
     }
-}
-
-int PacketData::type()
-{
-    return m_type;
 }
 
 void PacketData::setType(int type)
@@ -55,10 +59,6 @@ void PacketData::setType(int type)
     }
 }
 
-QString PacketData::msg()
-{
-    return m_msg;
-}
 
 void PacketData::setMsg(QString msg)
 {
