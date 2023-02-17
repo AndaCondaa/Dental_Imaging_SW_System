@@ -72,6 +72,10 @@ public:
 
     bool isRunning_Pano = false;
     bool isRunning_Ceph = false;
+
+    /* 환자 로딩 정보 확인 */
+    bool isLoadPano = false;
+    bool isLoadCeph = false;
     // GeometryDataType, vtkMapper
     struct MapperItem
     {
@@ -116,7 +120,6 @@ public:
     Internal(CBCTModelController* owner)
         : m_Owner(owner)
     {
-
 
     }
 
@@ -263,8 +266,14 @@ public:
 
     /* 파노라마 환자는 Sub RenderWindow 에 출력할 필요가 없으므로 데이터 세이브 */
     bool _Load_PanoPatient(const QString& path) {
+        if(isLoadPano == true)
+        {
+            return false;
+        }
         vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
-        reader->SetFileName(path.toStdString().c_str());
+
+        // reader->SetFileName(path.toStdString().c_str());
+        reader->SetFileName("./resources/Patient1.ply");
         reader->Update();
 
         m_patientPano = reader->GetOutput();
@@ -284,15 +293,21 @@ public:
         _get_render(GeometryViewType::toString(GeometryViewType::Main))->AddActor(m_patientPanoactorMain);
 
         _update_render();
-
+        isLoadPano = true;
         return true;
     }
 
 
     /* 세팔로 환자는 Main RenderWindow 에 출력할 필요가 없으므로 데이터 세이브 */
     bool _Load_CephPatient(const QString& path) {
+        if(isLoadCeph == true)
+        {
+            return false;
+        }
         vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
-        reader->SetFileName(path.toStdString().c_str());
+        //   reader->SetFileName(path.toStdString().c_str());
+        reader->SetFileName("./resources/Patient2.ply");
+
         reader->Update();
 
         m_patientCeph = reader->GetOutput();
@@ -312,47 +327,58 @@ public:
         _get_render(GeometryViewType::toString(GeometryViewType::Sub))->AddActor(m_patientCephactorSub);
 
         _update_render();
-
+        isLoadCeph = true;
         return true;
     }
 
     /* All, Main Window 에 출력된 환자 오브젝트 제거 */
     bool _Remove_PanoPatient() {
-        if (m_patientPanoactorAll == nullptr)
-            return false;
-        if (m_patientPanoactorMain == nullptr)
-            return false;
+        if(isLoadPano != true)
+             return false;
+            //   if (m_patientPanoactorAll == nullptr && m_patientPanoactorMain == nullptr)
 
+        qDebug() <<"null check panop";
         _get_render(GeometryViewType::toString(GeometryViewType::All))->RemoveActor(m_patientPanoactorAll);
         _get_render(GeometryViewType::toString(GeometryViewType::Main))->RemoveActor(m_patientPanoactorMain);
+
         _update_render();
 
+        qDebug() << "removing pano";
         // Remove 시 모두 초기화
+
+        isLoadPano = false;
         m_patientPano = nullptr;
         m_patientPanomapperAll = nullptr;
         m_patientPanoactorAll = nullptr;
         m_patientPanomapperMain = nullptr;
         m_patientPanoactorMain = nullptr;
+
+
+
+        qDebug() << m_patientPano << m_patientPanoactorAll << m_patientPanoactorMain << m_patientPanomapperAll << m_patientPanomapperMain;
         return true;
     }
 
     /* All, Sub Window 에 출력된 환자 오브젝트 제거 */
     bool _Remove_CephPatient() {
-        if (m_patientCephactorAll == nullptr)
+        if(isLoadCeph != true)
             return false;
-        if (m_patientCephactorSub == nullptr)
-            return false;
-
+        qDebug() <<"null check cephp";
         _get_render(GeometryViewType::toString(GeometryViewType::All))->RemoveActor(m_patientCephactorAll);
         _get_render(GeometryViewType::toString(GeometryViewType::Sub))->RemoveActor(m_patientCephactorSub);
-        _update_render();
 
+        _update_render();
+        qDebug() << "removing ceph";
         // Remove 시 모두 초기화
+        isLoadCeph = false;
         m_patientCeph = nullptr;
-        m_patientCephmapperAll = nullptr;
         m_patientCephactorAll = nullptr;
-        m_patientCephmapperSub = nullptr;
         m_patientCephactorSub = nullptr;
+        m_patientCephmapperAll = nullptr;
+        m_patientCephmapperSub = nullptr;
+
+        qDebug() << m_patientCeph << m_patientCephactorAll << m_patientCephactorSub << m_patientCephmapperAll << m_patientCephmapperSub;
+
         return true;
     }
 
@@ -1342,14 +1368,16 @@ void CBCTModelController::on_CephModel_Reset() {
     PData->_on_Elevation_reset();
 }
 
-bool CBCTModelController::Remove_CephPatient() {
-    return PData->_Remove_CephPatient();
-}
 
 bool CBCTModelController::Remove_PanoPatient() {
     return PData->_Remove_PanoPatient();
 
 }
+
+bool CBCTModelController::Remove_CephPatient() {
+    return PData->_Remove_CephPatient();
+}
+
 
 
 void CBCTModelController::stop() {

@@ -90,7 +90,7 @@ void MainWindow::initializeButton()
 
     /* 환자 입실, 퇴실 */
     ui->InvitePatientPushButton->setEnabled(false);
-    ui->LeavePatientPushButton->setEnabled(false);
+//    ui->LeavePatientPushButton->setEnabled(false);
 //    ui->openGLWidget_All;
 //    QVTKOpenGLStereoWidget* vtkWidgetAll = new QVTKOpenGLStereoWidget;
 //    ui->PanoCheckBox->setParent(vtkWidgetAll);
@@ -122,13 +122,13 @@ void MainWindow::connectCBCTModelCtr()
     connect(ui->InvitePatientPushButton, &QPushButton::clicked, this, [&](bool state) {
         if (ui->PanoCheckBox->isChecked())
         {
-            QString filepath = QFileDialog::getOpenFileName(this, "patient", "./resources/Patient1", "Files(*.*)");
+            QString filepath = QFileDialog::getOpenFileName(this, "patient", "./Patient1.ply", "Files(*.*)");
             if (!m_modelController->Load_PanoPatient(filepath))
                 qDebug() << "Load 실패 했습니다.";
         }
         else if(ui->CephCheckBox->isChecked())
         {
-            QString filepath = QFileDialog::getOpenFileName(this, "patient", "./resources/Patient2", "Files(*.*)");
+            QString filepath = QFileDialog::getOpenFileName(this, "patient", "./Patient2.ply", "Files(*.*)");
             if (!m_modelController->Load_CephPatient(filepath))
                 qDebug() << "Load 실패 했습니다.";
         }
@@ -136,7 +136,7 @@ void MainWindow::connectCBCTModelCtr()
     connect(ui->LeavePatientPushButton, &QPushButton::clicked, this, [&](bool state) {
         m_modelController->Remove_PanoPatient();
         m_modelController->Remove_CephPatient();
-        m_modelController->remove_Patient_Exception();
+    //    m_modelController->remove_Patient_Exception();
 
     });
 }
@@ -328,7 +328,7 @@ void MainWindow::on_CaptureResetPushButton_clicked()
     ui->AscendingPushButton->setEnabled(true);
     ui->DescendingPushButton->setEnabled(true);
     ui->InvitePatientPushButton->setEnabled(true);
-    ui->LeavePatientPushButton->setEnabled(false);
+//    ui->LeavePatientPushButton->setEnabled(false);
     ui->PanoCheckBox->setEnabled(true);
     ui->CephCheckBox->setEnabled(true);
 
@@ -356,8 +356,6 @@ void MainWindow::on_CaptureReadyPushButton_clicked()
     /* ready 버튼 클릭시 pressed 상태로 고정 후 start 버튼 활성화 */
     ui->CaptureReadyPushButton->setEnabled(false);
     ui->CaptureStartPushButton->setEnabled(true);
-    ui->AscendingPushButton->setEnabled(false);
-    ui->DescendingPushButton->setEnabled(false);
     ui->InvitePatientPushButton->setEnabled(false);
     ui->PanoCheckBox->setEnabled(false);
     ui->CephCheckBox->setEnabled(false);
@@ -366,10 +364,14 @@ void MainWindow::on_CaptureReadyPushButton_clicked()
     if (ui->PanoCheckBox->isChecked())
     {
         m_rawImageViewer->readyPanoTimer();
+        m_modelController->Load_PanoPatient(windowFilePath());
+
     }
     else if (ui->CephCheckBox->isChecked())
     {
         m_rawImageViewer->readyCephTimer();
+        m_modelController->Load_CephPatient(windowFilePath());
+
     }
 }
 
@@ -379,7 +381,7 @@ void MainWindow::on_CaptureStartPushButton_clicked()
     ui->CaptureResetPushButton->setEnabled(false);
     ui->CaptureStartPushButton->setEnabled(false);
     ui->CaptureStopPushButton->setEnabled(true);
-    ui->LeavePatientPushButton->setEnabled(true);
+ //   ui->LeavePatientPushButton->setEnabled(true);
 
 
     if (ui->PanoCheckBox->isChecked())
@@ -399,7 +401,15 @@ void MainWindow::on_CaptureStopPushButton_clicked()
     /* stop 버튼 클릭시 reset 버튼만 활성화 */
 
     ui->CaptureResetPushButton->setEnabled(true);
-    m_modelController->remove_Patient_Exception();
+    if(ui->PanoCheckBox->isChecked()){
+        qDebug()<<"m_patientPano";
+    m_modelController->Remove_PanoPatient();
+    }
+        qDebug()<<"m_patientPano";
+    if(ui->CephCheckBox->isChecked()){
+    m_modelController->Remove_CephPatient();
+    }
+//    m_modelController->remove_Patient_Exception();
     ui->CaptureReadyPushButton->setEnabled(false);
     ui->CaptureStartPushButton->setEnabled(false);
     ui->CaptureStopPushButton->setEnabled(false);
