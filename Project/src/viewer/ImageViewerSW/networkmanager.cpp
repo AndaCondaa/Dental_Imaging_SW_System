@@ -33,7 +33,7 @@ NetworkManager::NetworkManager(QObject *parent)
 }
 
 // 접속 버튼 클릭 시 서버로 전송하기
-void NetworkManager::receiveLoginToServer(QString IP)
+void NetworkManager::receiveLoginToServer(QString IP, int port)
 {    
     socket = new QTcpSocket(this);
     fileSocket = new QTcpSocket(this);

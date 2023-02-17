@@ -31,7 +31,7 @@ signals:
     void SendDoctorCheck(QString);
     void LogInSuccess(QString, QString);
     void LoginToServer();
-    void reconnect(QString);
+    void reconnect(QString,int);
 
 private:
     Ui::LoginForm *ui;
