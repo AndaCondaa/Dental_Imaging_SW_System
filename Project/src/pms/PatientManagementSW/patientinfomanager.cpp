@@ -66,7 +66,7 @@ PatientInfoManager::PatientInfoManager(QWidget *parent) :
                             "background-color: white;"
                             "selection-background-color: rgb(0, 0, 0);"
                             "border: 1px solid #FFCF77;"
-                            "border-radius: 4px;"
+                            "border-radius: 0px;"
                             "padding: 4px;"
                             "outline: 0;"
                             "color: orange;"
@@ -283,7 +283,7 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
 // 환자 삭제 버튼을 클릭했을 때 Yes를 누르면 삭제할 환자의 정보를 patientStatusManager쪽으로 보내줌(대기리스트에 있는지 없는지 확인하기 위함)
 void PatientInfoManager::on_deletePushButton_clicked()
 {
-    int delButtonNum = QMessageBox::critical(this, tr("경고"),
+    int delButtonNum = QMessageBox::critical(qmsgBox, tr("경고"),
                                              tr("해당 환자와 연관된 사진이 모두 삭제됩니다.\n"
                                                 "계속하시겠습니까?"), QMessageBox::Yes | QMessageBox::No);
 
@@ -326,13 +326,13 @@ void PatientInfoManager::delFlagSended(int delFlag)
         QFile::remove(QString("./Face/%1.png").arg(pid));
 
 
-        QMessageBox::information(this, tr("정보"), tr("환자 정보가 삭제되었습니다."));
+        QMessageBox::information(qmsgBox, tr("정보"), tr("환자 정보가 삭제되었습니다."));
 
 
     }
     else if(delFlag == 1)
     {
-        QMessageBox::warning(this, tr("경고"), \
+        QMessageBox::warning(qmsgBox, tr("경고"), \
                              tr("대기리스트에 추가되어 있는 환자의 정보는 삭제하실 수 없습니다.\n"));
     }
 }
@@ -359,7 +359,7 @@ void PatientInfoManager::inWaitListSlot(int inWaitListOrNot)
 {
     if(inWaitListOrNot == 1)
     {
-        QMessageBox::critical(this, tr("경고"), tr("이미 대기명단에 있는 환자입니다."));
+        QMessageBox::critical(qmsgBox, tr("경고"), tr("이미 대기명단에 있는 환자입니다."));
         return;
     }
     if(inWaitListOrNot == 0)
@@ -385,7 +385,7 @@ void PatientInfoManager::on_modifyPushButton_clicked()
     QString modifyData = "SEN^PMO<CR>" + pid + "<CR>" + name + "|" + sex + "|" + birthdate + "|" + tel + "|" + address + "|" + memo;
     emit sendModifyData(modifyData);
 
-    QMessageBox::information(this, tr("정보"), tr("정보가 수정되었습니다."));
+    QMessageBox::information(qmsgBox, tr("정보"), tr("정보가 수정되었습니다."));
 
 
 }
@@ -403,7 +403,7 @@ void PatientInfoManager::fileSendedSlot(int fileSendedSignal)
 
         if(fileSendedFlag==0)
         {
-            QMessageBox::critical(this, tr("경고"), tr("이전에 검색한 환자 이미지를 불러오는 중입니다.\n"
+            QMessageBox::critical(qmsgBox, tr("경고"), tr("이전에 검색한 환자 이미지를 불러오는 중입니다.\n"
                                                      "다운로드가 완료되면 다시 검색해주세요."));
             return;
         }
@@ -413,7 +413,7 @@ void PatientInfoManager::fileSendedSlot(int fileSendedSignal)
             if(pid=="NULL")
                 return;
 
-            QMessageBox::information(this, tr("정보"), tr("검색이 완료되었습니다."));
+            QMessageBox::information(qmsgBox, tr("정보"), tr("검색이 완료되었습니다."));
 
             // 환자정보 테이블에 띄울 수 있는 상태로 초기화
             searchButtonClicked=0;
@@ -495,7 +495,7 @@ void PatientInfoManager::on_changePhotoPushButton_clicked()
     ui->patientFace->setPixmap(pix.scaled(ui->patientFace->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
 
     if(changeFileName!="")
-        QMessageBox::information(this, tr("정보"), tr("사진 변경이 완료되었습니다."));
+        QMessageBox::information(qmsgBox, tr("정보"), tr("사진 변경이 완료되었습니다."));
 
 }
 
@@ -505,7 +505,7 @@ void PatientInfoManager::sendedAWLRequest(QString saveData)
     QString tempData = saveData.split("^")[0];
     if(tempData=="ERR")
     {
-        QMessageBox::critical(nullptr, tr("경고"), tr("뷰어가 켜져있지 않습니다.\n"
+        QMessageBox::critical(qmsgBox, tr("경고"), tr("뷰어가 켜져있지 않습니다.\n"
                                                     "대기명단에 환자를 추가하기 위해 뷰어를 켜 주세요."));
         waitError = 1;
     }

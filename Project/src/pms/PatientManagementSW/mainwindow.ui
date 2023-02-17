@@ -291,305 +291,409 @@ border-radius: 30px;
        </layout>
       </widget>
       <widget class="QWidget" name="page_4">
-       <widget class="QLabel" name="label_2">
-        <property name="geometry">
-         <rect>
-          <x>290</x>
-          <y>277</y>
-          <width>81</width>
-          <height>35</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>23</pointsize>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
-        </property>
-        <property name="text">
-         <string>Port:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="portLineEdit">
-        <property name="geometry">
-         <rect>
-          <x>390</x>
-          <y>282</y>
-          <width>191</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>20</pointsize>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgba(255, 170, 0, 00);
-color: rgb(100, 100, 100);
-border: rgba(255, 255, 255, 0);</string>
-        </property>
-        <property name="text">
-         <string>8000</string>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushButton">
-        <property name="geometry">
-         <rect>
-          <x>510</x>
-          <y>340</y>
-          <width>81</width>
-          <height>51</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>16</pointsize>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">border-radius:10px;
-background-color: rgb(255, 162, 0);
-color: rgb(255, 255, 255);</string>
-        </property>
-        <property name="text">
-         <string>LOGIN</string>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="ipLineEdit">
-        <property name="geometry">
-         <rect>
-          <x>390</x>
-          <y>232</y>
-          <width>191</width>
-          <height>31</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>20</pointsize>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgba(255, 170, 0, 00);
-color: rgb(100, 100, 100);
-border: rgba(255, 255, 255, 0);</string>
-        </property>
-        <property name="text">
-         <string>192.168.0.10</string>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_3">
-        <property name="geometry">
-         <rect>
-          <x>290</x>
-          <y>230</y>
-          <width>81</width>
-          <height>35</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>23</pointsize>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
-        </property>
-        <property name="text">
-         <string>IP:</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="ipLineEdit_4">
-        <property name="geometry">
-         <rect>
-          <x>380</x>
-          <y>230</y>
-          <width>211</width>
-          <height>35</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>25</pointsize>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(255, 255, 255);
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="1">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>270</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <spacer name="horizontalSpacer_2">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Preferred</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>78</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QFrame" name="frame">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>570</width>
+              <height>360</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>360</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::StyledPanel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Raised</enum>
+            </property>
+            <widget class="QLabel" name="label_2">
+             <property name="geometry">
+              <rect>
+               <x>185</x>
+               <y>191</y>
+               <width>81</width>
+               <height>35</height>
+              </rect>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>20</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+             </property>
+             <property name="text">
+              <string>Port:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_12">
+             <property name="geometry">
+              <rect>
+               <x>4</x>
+               <y>4</y>
+               <width>541</width>
+               <height>331</height>
+              </rect>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(225, 225, 225);
+border-radius: 40px;</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_3">
+             <property name="geometry">
+              <rect>
+               <x>185</x>
+               <y>144</y>
+               <width>81</width>
+               <height>35</height>
+              </rect>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>20</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+             </property>
+             <property name="text">
+              <string>IP:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_13">
+             <property name="geometry">
+              <rect>
+               <x>25</x>
+               <y>24</y>
+               <width>541</width>
+               <height>331</height>
+              </rect>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(196, 196, 196);
+border-radius: 40px;</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="portLineEdit_4">
+             <property name="geometry">
+              <rect>
+               <x>275</x>
+               <y>194</y>
+               <width>211</width>
+               <height>35</height>
+              </rect>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>25</pointsize>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
 border-radius:10px;
 color: rgb(255, 255, 255);</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QLineEdit" name="portLineEdit_4">
-        <property name="geometry">
-         <rect>
-          <x>380</x>
-          <y>280</y>
-          <width>211</width>
-          <height>35</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>25</pointsize>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(255, 255, 255);
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="ipLineEdit_4">
+             <property name="geometry">
+              <rect>
+               <x>275</x>
+               <y>144</y>
+               <width>211</width>
+               <height>35</height>
+              </rect>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>25</pointsize>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgb(255, 255, 255);
 border-radius:10px;
 color: rgb(255, 255, 255);</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_10">
-        <property name="geometry">
-         <rect>
-          <x>170</x>
-          <y>140</y>
-          <width>101</width>
-          <height>41</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <family>맑은 고딕</family>
-          <pointsize>25</pointsize>
-          <italic>false</italic>
-          <bold>true</bold>
-          <strikeout>false</strikeout>
-          <kerning>true</kerning>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgba(255, 255, 255, 255);
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="readOnly">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="ipLineEdit">
+             <property name="geometry">
+              <rect>
+               <x>285</x>
+               <y>146</y>
+               <width>191</width>
+               <height>31</height>
+              </rect>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>17</pointsize>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgba(255, 170, 0, 00);
+color: rgb(100, 100, 100);
+border: rgba(255, 255, 255, 0);</string>
+             </property>
+             <property name="text">
+              <string>192.168.0.10</string>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_10">
+             <property name="geometry">
+              <rect>
+               <x>51</x>
+               <y>40</y>
+               <width>231</width>
+               <height>50</height>
+              </rect>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>50</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>50</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>맑은 고딕</family>
+               <pointsize>23</pointsize>
+               <italic>false</italic>
+               <bold>true</bold>
+               <strikeout>false</strikeout>
+               <kerning>true</kerning>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgba(255, 255, 255, 255);
 color: rgb(255, 162, 0);
 border-radius: 15px;</string>
-        </property>
-        <property name="text">
-         <string>PMS</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_11">
-        <property name="geometry">
-         <rect>
-          <x>170</x>
-          <y>220</y>
-          <width>100</width>
-          <height>100</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
-        </property>
-        <property name="frameShadow">
-         <enum>QFrame::Plain</enum>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-        <property name="pixmap">
-         <pixmap>:/img/img/login.png</pixmap>
-        </property>
-        <property name="scaledContents">
-         <bool>true</bool>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_12">
-        <property name="geometry">
-         <rect>
-          <x>120</x>
-          <y>90</y>
-          <width>541</width>
-          <height>331</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(225, 225, 225);
-border-radius: 40px;</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-       <widget class="QLabel" name="label_13">
-        <property name="geometry">
-         <rect>
-          <x>141</x>
-          <y>110</y>
-          <width>541</width>
-          <height>331</height>
-         </rect>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(196, 196, 196);
-border-radius: 40px;</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-       <widget class="QPushButton" name="pushButton_2">
-        <property name="geometry">
-         <rect>
-          <x>515</x>
-          <y>346</y>
-          <width>81</width>
-          <height>51</height>
-         </rect>
-        </property>
-        <property name="font">
-         <font>
-          <pointsize>16</pointsize>
-          <bold>true</bold>
-         </font>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">border-radius:10px;
+             </property>
+             <property name="text">
+              <string>환자관리 SW</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+            <widget class="QLabel" name="label_11">
+             <property name="geometry">
+              <rect>
+               <x>65</x>
+               <y>134</y>
+               <width>100</width>
+               <height>100</height>
+              </rect>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Plain</enum>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="pixmap">
+              <pixmap>:/img/img/login.png</pixmap>
+             </property>
+             <property name="scaledContents">
+              <bool>true</bool>
+             </property>
+            </widget>
+            <widget class="QLineEdit" name="portLineEdit">
+             <property name="geometry">
+              <rect>
+               <x>285</x>
+               <y>196</y>
+               <width>191</width>
+               <height>31</height>
+              </rect>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>17</pointsize>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">background-color: rgba(255, 170, 0, 00);
+color: rgb(100, 100, 100);
+border: rgba(255, 255, 255, 0);</string>
+             </property>
+             <property name="text">
+              <string>8000</string>
+             </property>
+            </widget>
+            <widget class="QPushButton" name="pushButton_2">
+             <property name="geometry">
+              <rect>
+               <x>410</x>
+               <y>260</y>
+               <width>81</width>
+               <height>51</height>
+              </rect>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>16</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">border-radius:10px;
 color: rgb(255, 255, 255);
 
 background-color: rgb(249, 117, 23);</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-       <zorder>label_13</zorder>
-       <zorder>label_12</zorder>
-       <zorder>portLineEdit_4</zorder>
-       <zorder>ipLineEdit_4</zorder>
-       <zorder>label_2</zorder>
-       <zorder>portLineEdit</zorder>
-       <zorder>ipLineEdit</zorder>
-       <zorder>label_3</zorder>
-       <zorder>pushButton_2</zorder>
-       <zorder>pushButton</zorder>
-       <zorder>label_10</zorder>
-       <zorder>label_11</zorder>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+            <widget class="QPushButton" name="pushButton">
+             <property name="geometry">
+              <rect>
+               <x>405</x>
+               <y>254</y>
+               <width>81</width>
+               <height>51</height>
+              </rect>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>16</pointsize>
+               <bold>true</bold>
+              </font>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">border-radius:10px;
+background-color: rgb(255, 162, 0);
+color: rgb(255, 255, 255);</string>
+             </property>
+             <property name="text">
+              <string>접속</string>
+             </property>
+            </widget>
+            <zorder>label_13</zorder>
+            <zorder>label_12</zorder>
+            <zorder>label_2</zorder>
+            <zorder>label_3</zorder>
+            <zorder>portLineEdit_4</zorder>
+            <zorder>ipLineEdit_4</zorder>
+            <zorder>ipLineEdit</zorder>
+            <zorder>label_10</zorder>
+            <zorder>label_11</zorder>
+            <zorder>portLineEdit</zorder>
+            <zorder>pushButton_2</zorder>
+            <zorder>pushButton</zorder>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer_3">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType">
+             <enum>QSizePolicy::Preferred</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="2" column="0">
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>270</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
       </widget>
      </widget>
     </item>

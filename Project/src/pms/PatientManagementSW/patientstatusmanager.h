@@ -12,6 +12,7 @@
 
 #include <QWidget>
 #include <QTreeWidget>
+#include <QMessageBox>
 
 #include <QtTest/QtTest>
 #include <QTest>
@@ -36,6 +37,8 @@ private:
 
     QMap<int,QString> oldList;
     QString header;
+
+    QMessageBox *qmsgBox;
 
 private slots:
     void waitInfoSended(QString, QString);

@@ -22,6 +22,26 @@ NetworkManager::NetworkManager(QObject *parent)
     : QObject{parent}
 {
 
+    QString msgBoxStyle = "QMessageBox { "
+                          "background-color: rgb(255, 255, 255);"
+                          "color:#000000;"
+                          "}"
+                          "QPushButton { "
+                          "background-color: rgb(250, 250, 250);"
+                          "border-radius:2px;"
+                          "color:#ffffff;"
+                          "border-color: blue"
+                          "font-weight: bold;"
+                          "padding-top: 3px;"
+                          "padding-bottom: 3px;"
+                          "outline: 0; "
+                          "}";
+
+
+
+    qmsgBox = new QMessageBox();
+    qmsgBox->setStyleSheet(msgBoxStyle);
+
 }
 
 // 소켓을 생성해 서버와 연결을 시도하는 함수
@@ -65,6 +85,9 @@ void NetworkManager::connectSocket(QString ip, int port)
 
     connect(fileSocket, SIGNAL(readyRead()), this, SLOT(receiveFile()));
 
+
+
+
 }
 
 // 연결이 잘 되다가 끊겼을 때
@@ -72,7 +95,7 @@ void NetworkManager::disconnect()
 {
     if(connectCount == 1){
 
-        QMessageBox::critical(nullptr, tr("경고"),
+        QMessageBox::critical(qmsgBox, tr("경고"),
                               tr("서버와의 연결이 끊어졌습니다"));
         connectCount = 0;   // 로그인화면으로 돌아가니까 0으로 초기화
         emit changeScreenSignal(0);
@@ -83,7 +106,7 @@ void NetworkManager::disconnect()
     }
     else if(connectCount == 0)
     {
-        QMessageBox::critical(nullptr, tr("경고"),
+        QMessageBox::critical(qmsgBox, tr("경고"),
                               tr("서버에 연결할 수 없습니다."));
         return;
 
