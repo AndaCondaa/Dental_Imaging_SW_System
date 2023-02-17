@@ -1,0 +1,29 @@
+<RCC>
+    <qresource prefix="/Icon">
+        <file>Icon/angle.png</file>
+        <file>Icon/brush.png</file>
+        <file>Icon/capture.png</file>
+        <file>Icon/color.png</file>
+        <file>Icon/cursor.png</file>
+        <file>Icon/delete.png</file>
+        <file>Icon/ellipse.png</file>
+        <file>Icon/freehand.png</file>
+        <file>Icon/help.png</file>
+        <file>Icon/horizontal.png</file>
+        <file>Icon/Implant.png</file>
+        <file>Icon/implant2.png</file>
+        <file>Icon/implant3.png</file>
+        <file>Icon/ImplantImage.png</file>
+        <file>Icon/laser.png</file>
+        <file>Icon/leftrotate.png</file>
+        <file>Icon/length.png</file>
+        <file>Icon/login.png</file>
+        <file>Icon/printer.png</file>
+        <file>Icon/rectangle.png</file>
+        <file>Icon/reset.png</file>
+        <file>Icon/rightrotate.png</file>
+        <file>Icon/vertical.png</file>
+        <file>Icon/zoomin.png</file>
+        <file>Icon/zoomout.png</file>
+    </qresource>
+</RCC>

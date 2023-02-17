@@ -513,7 +513,7 @@ border-style: solid;
 border-radius: 0px;</string>
    </property>
    <property name="text">
-    <string>오스템</string>
+    <string>OS</string>
    </property>
    <property name="alignment">
     <set>Qt::AlignCenter</set>
