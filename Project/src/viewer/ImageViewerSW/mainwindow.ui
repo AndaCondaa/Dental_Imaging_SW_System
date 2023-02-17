@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>834</width>
-    <height>552</height>
+    <width>1158</width>
+    <height>992</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
    <string notr="true">background-color: rgb(242, 242, 242);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout_3">
+   <layout class="QGridLayout" name="gridLayout_2">
     <item row="0" column="0">
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="frameShape">
@@ -30,11 +30,13 @@
        <number>1</number>
       </property>
       <widget class="QWidget" name="page_3">
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout">
+        <item>
          <widget class="QFrame" name="frame_3">
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(255, 255, 255);</string>
+           <string notr="true">background-color: rgb(251, 225, 208);
+
+border-radius:10px;</string>
           </property>
           <property name="frameShape">
            <enum>QFrame::StyledPanel</enum>
@@ -122,37 +124,37 @@ border-radius:10px;</string>
     </item>
    </layout>
   </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>834</width>
-     <height>17</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menu">
-    <property name="title">
-     <string>도움말</string>
-    </property>
-    <addaction name="actionAbout"/>
-    <addaction name="separator"/>
-    <addaction name="actionPrinter"/>
-   </widget>
-   <addaction name="menu"/>
-  </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <action name="actionAbout">
-   <property name="text">
-    <string>도움말</string>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
    </property>
-  </action>
+   <property name="iconSize">
+    <size>
+     <width>30</width>
+     <height>30</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionPrinter"/>
+  </widget>
   <action name="actionPrinter">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/Icon/Icon/printer.png</normaloff>:/Icon/Icon/printer.png</iconset>
+   </property>
    <property name="text">
     <string>프린터</string>
    </property>
   </action>
  </widget>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

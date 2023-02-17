@@ -1,3 +1,13 @@
+/*
+프로그램명 : ImageViewerSW
+파일명 : imagealbum.h
+설명 : graphicsview, graphicsscene을 활용하여 다양한 영상처리(Sharpen, Blur, Contrast,
+Brightness, 좌우반전, 상하반전, 회전, 줌인, 줌아웃 등의 기능을 담고있는 클래스
+사용성을 위해 처방전 작성 버튼과 진료 종료 버튼은 해당 파일 내에 존재하고 있고, 진료 종료 버튼 클릭 시
+다음 환자의 진료 시작을 시작할 수 있음
+작성자 : 이정연
+최종 수정 날짜 : 2023.02.11*/
+
 #ifndef IMAGEALBUM_H
 #define IMAGEALBUM_H
 
@@ -17,12 +27,11 @@ class ImageView;
 class QGraphicsScene;
 class QListWidget;
 class QListWidgetItem;
-class QGroupBox;
 class ImageScene;
 class Prescription;
 class QChart;
 class QChartView;
-
+class QMessageBox;
 
 namespace Ui {
 class ImageAlbum;
@@ -39,39 +48,31 @@ public:
 private:
     Ui::ImageAlbum *ui;
     QListWidget* listWidget;
-    QGroupBox* groupBox;
     QGraphicsView* imageView;
     QListWidgetItem* orignal;
-    QImage* origImage;
-    QImage selectImage;
-    int Brightvalue = 0;
-    QColor paintColor;
-    int penThickness;
-    QString imageType;
-
     ImageScene* imageScene;
-    ImageScene::DrawType m_drawType;
     Prescription* m_prescription;
     QChart *chart;
     QChartView *view;
-
-    bool prescriptionCheck;
-    bool AllSendImageCheck;
-
+    QMessageBox* messagebox;
     QString DoctorID;
     QString DoctorName;
     QString PatientID;
     QString PatientName;
     QString PatientSex;
-
+    QString imageType;
+    QColor paintColor;
+    QImage selectImage;
     QImage image_Contrast;
     QImage image_brightness;
     QImage image_Gamma;
-
+    bool prescriptionCheck;
+    bool AllSendImageCheck;
+    int Brightvalue = 0;
+    int penThickness;
     void Histogram();
 
-
-public slots:
+private slots:
     void reloadImages();
     void selectItem(QListWidgetItem*);
     void ZoomIn();
@@ -102,39 +103,37 @@ public slots:
     void Capture();
     void Implant();
     void Gamma(int);
-
-    void receiveDoctorInfo(QString, QString);
+    void receiveCapturePos(QPointF, QPointF);
     void receivePatientInfo(QString, QString, QString);
+    void receiveDoctorInfo(QString, QString);
     void receivePrescriptionFinish(QString);
+    void receivePrescriptionCheck(QString);
     void receiveAllImageFileA(bool);
     void receivePrintStart();
-
-
-signals:
-    void SendBrushColor(QColor);
-    void SendThickness(int);
-    void SendType(int);
-    void sendPrescription(QString, QString, QString, QString, QString);
-    void sendPrescriptiontoServer(QString);
-    void sendEndTreatment(QString);
-    void SendText(QString);
-    void SendLength(int, int, int, int, QString);
-    void SendFontSize(int);
-    void sendEndSignal();
-    void sendImplantType(int);
-
-private slots:
+    void receivePatientTreatmentEnd();
+    void receiveCameraStart();
     void on_Prescription_clicked();
     void on_EndTreatment_clicked();
-    void ReceiveMeasurement(QString, double);
-    void ReceiveCapturePos(QPointF, QPointF);
-    void on_Fontsize_valueChanged(int arg1);
-    void receiveCameraStart();
     void on_Brightness_sliderReleased();
     void on_Contrast_sliderReleased();
     void on_Gamma_sliderReleased();
-    void on_ImplantcomboBox_activated(int index);
-    void on_tabWidget_currentChanged(int index);
+    void on_ImplantcomboBox_activated(int);
+    void on_tabWidget_currentChanged(int);
+
+signals:
+    void sendPrescription(QString, QString, QString, QString, QString);
+    void SendLength(int, int, int, int, QString);
+    void sendPrescriptiontoServer(QString);
+    void sendEndTreatment(QString);
+    void SendText(QString);
+    void sendPrescriptionYesOrNot(QString);
+    void SendBrushColor(QColor);
+    void SendThickness(int);
+    void SendType(int);
+    void SendFontSize(int);
+    void sendImplantType(int);
+    void sendEndSignal();
+
 };
 
 #endif // IMAGEALBUM_H

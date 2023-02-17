@@ -1,5 +1,5 @@
 
-QT       += core gui network charts printsupport
+QT       += core gui network charts printsupport testlib
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -51,3 +51,6 @@ INCLUDEPATH += $$PWD/../../../../../opencv/build/x64/vc15
 DEPENDPATH += $$PWD/../../../../../opencv/build/x64/vc15
 
 INCLUDEPATH += $$PWD/../../../../../opencv/build/include
+
+RESOURCES += \
+    resource.qrc
