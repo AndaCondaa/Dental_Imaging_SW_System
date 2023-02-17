@@ -83,16 +83,23 @@ public:
         QMap<QString, vtkSmartPointer<vtkActor>> m_actor;
     };
     // Member Variable Concealment.
+    vtkSmartPointer<vtkPolyData> m_patientPano;
+    vtkSmartPointer<vtkPolyData> m_patientCeph;
 private:
 
     // Pano Patient
-    vtkSmartPointer<vtkPolyData> m_patientPano;
-    vtkSmartPointer<vtkPolyDataMapper> m_patientPanomapper;
-    vtkSmartPointer<vtkActor> m_patientPanoactor;
+    vtkSmartPointer<vtkPolyDataMapper> m_patientPanomapperAll;
+    vtkSmartPointer<vtkPolyDataMapper> m_patientPanomapperMain;
+    vtkSmartPointer<vtkActor> m_patientPanoactorAll;
+    vtkSmartPointer<vtkActor> m_patientPanoactorMain;
+
     // Ceph Patient
-    vtkSmartPointer<vtkPolyData> m_patientCeph;
-    vtkSmartPointer<vtkPolyDataMapper> m_patientCephmapper;
-    vtkSmartPointer<vtkActor> m_patientCephactor;
+
+    vtkSmartPointer<vtkPolyDataMapper> m_patientCephmapperAll;
+    vtkSmartPointer<vtkPolyDataMapper> m_patientCephmapperSub;
+    vtkSmartPointer<vtkActor> m_patientCephactorAll;
+    vtkSmartPointer<vtkActor> m_patientCephactorSub;
+
 
     // GeometryDataType, vtkpolydata
     QMap <QString, vtkSmartPointer<vtkPolyData>> m_dataMap;
@@ -163,9 +170,7 @@ public:
     {
         isRunning_Pano = false;
         isRunning_Ceph = false;
-        m_parentUI->ResetPushButton->setEnabled(true);
-        m_parentUI->MainPushButton->setEnabled(false);
-        m_parentUI->SubPushButton->setEnabled(false);
+
     }
 
     void _on_AscendingPushButton_pressed() {
@@ -208,84 +213,6 @@ public:
 
             _update_render();
         }
-    }
-
-    bool _Load_PanoPatient(const QString& path) {
-        vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
-        reader->SetFileName(path.toStdString().c_str());
-        reader->Update();
-
-        m_patientPano = reader->GetOutput();
-
-        m_patientPanomapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        m_patientPanomapper->SetInputData(m_patientPano);
-        m_patientPanomapper->Update();
-
-        m_patientPanoactor = vtkSmartPointer<vtkActor>::New();
-        m_patientPanoactor->SetMapper(m_patientPanomapper);
-        _get_render(GeometryViewType::toString(GeometryViewType::All))->AddActor(m_patientPanoactor);
-        _get_render(GeometryViewType::toString(GeometryViewType::Main))->AddActor(m_patientCephactor);
-        _get_render(GeometryViewType::toString(GeometryViewType::Sub))->AddActor(m_patientCephactor);
-
-        _update_render();
-
-        return true;
-    }
-
-    bool _Load_CephPatient(const QString& path) {
-        vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
-        reader->SetFileName(path.toStdString().c_str());
-        reader->Update();
-
-        m_patientCeph = reader->GetOutput();
-
-        m_patientCephmapper = vtkSmartPointer<vtkPolyDataMapper>::New();
-        m_patientCephmapper->SetInputData(m_patientCeph);
-        m_patientCephmapper->Update();
-
-        m_patientCephactor = vtkSmartPointer<vtkActor>::New();
-        m_patientCephactor->SetMapper(m_patientCephmapper);
-
-        _get_render(GeometryViewType::toString(GeometryViewType::All))->AddActor(m_patientCephactor);
-        _get_render(GeometryViewType::toString(GeometryViewType::Main))->AddActor(m_patientCephactor);
-        _get_render(GeometryViewType::toString(GeometryViewType::Sub))->AddActor(m_patientCephactor);
-
-        _update_render();
-
-        return true;
-    }
-
-    bool _Remove_CephPatient() {
-        if (m_patientCephactor == nullptr)
-            return false;
-
-        _get_render(GeometryViewType::toString(GeometryViewType::All))->RemoveActor(m_patientCephactor);
-        _get_render(GeometryViewType::toString(GeometryViewType::Main))->RemoveActor(m_patientCephactor);
-        _get_render(GeometryViewType::toString(GeometryViewType::Sub))->RemoveActor(m_patientCephactor);
-
-        _update_render();
-
-        // Remove 시 모두 초기화
-        m_patientCeph = nullptr;
-        m_patientCephmapper = nullptr;
-        m_patientCephactor = nullptr;
-        return true;
-    }
-
-    bool _Remove_PanoPatient() {
-        if (m_patientPanoactor == nullptr)
-            return false;
-
-        _get_render(GeometryViewType::toString(GeometryViewType::All))->RemoveActor(m_patientPanoactor);
-        _get_render(GeometryViewType::toString(GeometryViewType::Main))->RemoveActor(m_patientCephactor);
-        _get_render(GeometryViewType::toString(GeometryViewType::Sub))->RemoveActor(m_patientCephactor);
-        _update_render();
-
-        // Remove 시 모두 초기화
-        m_patientPano = nullptr;
-        m_patientPanomapper = nullptr;
-        m_patientPanoactor = nullptr;
-        return true;
     }
 
     void _on_DescendingPushButton_pressed() {
@@ -333,6 +260,103 @@ public:
         }
         isRunning_Pano = false;
     }
+
+    /* 파노라마 환자는 Sub RenderWindow 에 출력할 필요가 없으므로 데이터 세이브 */
+    bool _Load_PanoPatient(const QString& path) {
+        vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
+        reader->SetFileName(path.toStdString().c_str());
+        reader->Update();
+
+        m_patientPano = reader->GetOutput();
+
+        m_patientPanomapperAll = vtkSmartPointer<vtkPolyDataMapper>::New();
+        m_patientPanomapperAll->SetInputData(m_patientPano);
+        m_patientPanomapperAll->Update();
+        m_patientPanomapperMain = vtkSmartPointer<vtkPolyDataMapper>::New();
+        m_patientPanomapperMain->SetInputData(m_patientPano);
+        m_patientPanomapperMain->Update();
+
+        m_patientPanoactorAll = vtkSmartPointer<vtkActor>::New();
+        m_patientPanoactorAll->SetMapper(m_patientPanomapperAll);
+        _get_render(GeometryViewType::toString(GeometryViewType::All))->AddActor(m_patientPanoactorAll);
+        m_patientPanoactorMain = vtkSmartPointer<vtkActor>::New();
+        m_patientPanoactorMain->SetMapper(m_patientPanomapperMain);
+        _get_render(GeometryViewType::toString(GeometryViewType::Main))->AddActor(m_patientPanoactorMain);
+
+        _update_render();
+
+        return true;
+    }
+
+
+    /* 세팔로 환자는 Main RenderWindow 에 출력할 필요가 없으므로 데이터 세이브 */
+    bool _Load_CephPatient(const QString& path) {
+        vtkSmartPointer<vtkPLYReader> reader = vtkSmartPointer<vtkPLYReader>::New();
+        reader->SetFileName(path.toStdString().c_str());
+        reader->Update();
+
+        m_patientCeph = reader->GetOutput();
+
+        m_patientCephmapperAll = vtkSmartPointer<vtkPolyDataMapper>::New();
+        m_patientCephmapperAll->SetInputData(m_patientCeph);
+        m_patientCephmapperAll->Update();
+        m_patientCephmapperSub = vtkSmartPointer<vtkPolyDataMapper>::New();
+        m_patientCephmapperSub->SetInputData(m_patientCeph);
+        m_patientCephmapperSub->Update();
+
+        m_patientCephactorAll = vtkSmartPointer<vtkActor>::New();
+        m_patientCephactorAll->SetMapper(m_patientCephmapperAll);
+        _get_render(GeometryViewType::toString(GeometryViewType::All))->AddActor(m_patientCephactorAll);
+        m_patientCephactorSub = vtkSmartPointer<vtkActor>::New();
+        m_patientCephactorSub->SetMapper(m_patientCephmapperSub);
+        _get_render(GeometryViewType::toString(GeometryViewType::Sub))->AddActor(m_patientCephactorSub);
+
+        _update_render();
+
+        return true;
+    }
+
+    /* All, Main Window 에 출력된 환자 오브젝트 제거 */
+    bool _Remove_PanoPatient() {
+        if (m_patientPanoactorAll == nullptr)
+            return false;
+        if (m_patientPanoactorMain == nullptr)
+            return false;
+
+        _get_render(GeometryViewType::toString(GeometryViewType::All))->RemoveActor(m_patientPanoactorAll);
+        _get_render(GeometryViewType::toString(GeometryViewType::Main))->RemoveActor(m_patientPanoactorMain);
+        _update_render();
+
+        // Remove 시 모두 초기화
+        m_patientPano = nullptr;
+        m_patientPanomapperAll = nullptr;
+        m_patientPanoactorAll = nullptr;
+        m_patientPanomapperMain = nullptr;
+        m_patientPanoactorMain = nullptr;
+        return true;
+    }
+
+    /* All, Sub Window 에 출력된 환자 오브젝트 제거 */
+    bool _Remove_CephPatient() {
+        if (m_patientCephactorAll == nullptr)
+            return false;
+        if (m_patientCephactorSub == nullptr)
+            return false;
+
+        _get_render(GeometryViewType::toString(GeometryViewType::All))->RemoveActor(m_patientCephactorAll);
+        _get_render(GeometryViewType::toString(GeometryViewType::Sub))->RemoveActor(m_patientCephactorSub);
+        _update_render();
+
+        // Remove 시 모두 초기화
+        m_patientCeph = nullptr;
+        m_patientCephmapperAll = nullptr;
+        m_patientCephactorAll = nullptr;
+        m_patientCephmapperSub = nullptr;
+        m_patientCephactorSub = nullptr;
+        return true;
+    }
+
+
 
     void _on_XRayModule_Ready() {
         isRunning_Ceph = true;
@@ -889,7 +913,8 @@ private:
 #ifdef USE_DISPLAY_GLOBALAXIS
         vtkSmartPointer<vtkAxesActor> axes = vtkSmartPointer<vtkAxesActor>::New();
         vtkSmartPointer<vtkTransform> axesTransform = vtkSmartPointer<vtkTransform>::New();
-
+        vtkSmartPointer<vtkLight> light = vtkSmartPointer<vtkLight>::New();
+        vtkSmartPointer<vtkCamera> cam = Renderer->GetActiveCamera();
         axes->SetTotalLength(700, 700, 700);
         axes->GetCenter();
         axes->SetUserTransform(axesTransform);
@@ -912,7 +937,13 @@ private:
                 Renderer->SetBackground2(colors->GetColor3d("Black").GetData());
                 Renderer->GradientBackgroundOn();
                 Renderer->ResetCamera();
+                Renderer->LightFollowCameraOn();
+                cam->SetViewUp(0,5000,0);
+                cam->Azimuth(340);
+                cam->Elevation(20);
+                cam->Zoom(1.6);
 
+                Renderer->ResetCameraClippingRange();
                 renderMap.insert(viewType, Renderer);
             }
         }break;
@@ -927,7 +958,14 @@ private:
                 }
                 Renderer->SetBackground(colors->GetColor3d("Black").GetData());
                 Renderer->ResetCamera();
+                Renderer->LightFollowCameraOn();
+                cam->SetViewUp(0,5000,0);
 
+                cam->Azimuth(60);
+                cam->Elevation(20);
+                cam->Zoom(3.0);
+
+                Renderer->ResetCameraClippingRange();
                 renderMap.insert(viewType, Renderer);
             }
         }break;
@@ -940,9 +978,17 @@ private:
                 {
                     Renderer->AddActor(actor.value(*it));
                 }
+
                 Renderer->SetBackground(colors->GetColor3d("Black").GetData());
                 Renderer->ResetCamera();
+                Renderer->LightFollowCameraOn();
+                cam->SetViewUp(0,5000,0);
 
+                cam->Azimuth(240);
+                cam->Elevation(10);
+                cam->Zoom(2.4);
+
+                Renderer->ResetCameraClippingRange();
                 renderMap.insert(viewType, Renderer);
             }
         }break;
@@ -1364,10 +1410,23 @@ void CBCTModelController::on_SubPushButton_clicked()
 void CBCTModelController::on_StopPushButton_clicked()
 {
     PData->_stop();
-    PData->m_parentUI->StopPushButton->setEnabled(false);
     PData->m_parentUI->ResetPushButton->setEnabled(true);
+    PData->m_parentUI->StopPushButton->setEnabled(false);
     PData->m_parentUI->AscendingPushButton->setEnabled(false);
     PData->m_parentUI->DescendingPushButton->setEnabled(false);
     PData->m_parentUI->MainPushButton->setEnabled(false);
     PData->m_parentUI->SubPushButton->setEnabled(false);
+}
+
+/* Stop 기능 작동 시 환자가 퇴실했을 때만 리셋 버튼 활성화 */
+
+void CBCTModelController::remove_Patient_Exception()
+{
+    if(PData->m_patientPano == nullptr && PData->m_patientCeph == nullptr)
+    {
+        PData->m_parentUI->CaptureResetPushButton->setEnabled(true);
+    }
+    else{
+        PData->m_parentUI->CaptureResetPushButton->setEnabled(false);
+    }
 }

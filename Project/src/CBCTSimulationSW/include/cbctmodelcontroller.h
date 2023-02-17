@@ -119,14 +119,13 @@ private slots:
 	void on_CephModel_Reset();
 
 public:
+    void remove_Patient_Exception();
 	bool initialize();
 	void on_Rotate_PanoObject(const int& val);
 	void on_Translate_CephObject(const int& val);
 	void on_XRayModule_Ready();
     void stop();
     // Stop 명령에 따라 Running 중인 Model들을 Stop한다.
-
-
 
 	// 환자 btn : 환자 obj file을 로드한다. 
 	bool Load_PanoPatient(const QString& path);
