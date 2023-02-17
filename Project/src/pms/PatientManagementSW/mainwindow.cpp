@@ -26,7 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
 
-    this->resize(800, 570);
+    this->showMaximized();
 
     // 로그인 이미지 설정
     pixmap = new QPixmap();
@@ -243,7 +243,7 @@ void MainWindow::changeScreenSlot(int flag)
 {
     if(flag == 1)
     {
-        this->showMaximized();
+
         ui->stackedWidget->setCurrentIndex(0);
 
     }

@@ -62,6 +62,25 @@ EnrollManager::EnrollManager(QWidget *parent) :
     pixmap->scaled(180,180,Qt::IgnoreAspectRatio);
     ui->enrollImageLabel->setPixmap(pixmap->scaled(ui->enrollImageLabel->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 
+
+
+    QString msgBoxStyle = "QMessageBox { "
+                          "background-color: rgb(255, 255, 255);"
+                          "color:#000000;"
+                          "}"
+                          "QPushButton { "
+                          "background-color: rgb(250, 250, 250);"
+                          "border-radius:2px;"
+                          "color:#ffffff;"
+                          "border-color: blue"
+                          "font-weight: bold;"
+                          "padding-top: 3px;"
+                          "padding-bottom: 3px;"
+                          "outline: 0; "
+                          "}";
+    qmsgBox = new QMessageBox();
+    qmsgBox->setStyleSheet(msgBoxStyle);
+
 }
 
 EnrollManager::~EnrollManager()
@@ -90,7 +109,7 @@ void EnrollManager::enrollFinished()
     // 필수사항 입력하지 않았을 때 환자 등록되지 않도록 만들기(메모 빼고는 모두 필수 입력사항)
     if(name == "" || sex == "" || date == "" || tel == "" || address == "")
     {
-        QMessageBox::critical(this, tr("경고"), tr("필수 환자 정보(*)를 모두 입력해주세요."));
+        QMessageBox::critical(qmsgBox, tr("경고"), tr("필수 환자 정보(*)를 모두 입력해주세요."));
         return;
     }
 
@@ -116,7 +135,7 @@ void EnrollManager::enrollFinished()
     emit sendNewDataForShow(newPID, showdata);
 
 
-    QMessageBox::information(this, tr("신규환자 등록"), \
+    QMessageBox::information(qmsgBox, tr("신규환자 등록"), \
                              tr("신규환자 등록이 완료되었습니다."));
 
 

@@ -64,6 +64,27 @@ PatientStatusManager::PatientStatusManager(QWidget *parent) :
     effect2->setColor(QColor(220,220,220));
     ui->label_6->setGraphicsEffect(effect2);
 
+
+    QString msgBoxStyle = "QMessageBox { "
+                          "background-color: rgb(255, 255, 255);"
+                          "color:#000000;"
+                          "}"
+                          "QPushButton { "
+                          "background-color: rgb(250, 250, 250);"
+                          "border-radius:2px;"
+                          "color:#ffffff;"
+                          "border-color: blue"
+                          "font-weight: bold;"
+                          "padding-top: 3px;"
+                          "padding-bottom: 3px;"
+                          "outline: 0; "
+                          "}";
+
+
+
+    qmsgBox = new QMessageBox();
+    qmsgBox->setStyleSheet(msgBoxStyle);
+
 }
 
 PatientStatusManager::~PatientStatusManager()
@@ -119,7 +140,7 @@ void PatientStatusManager::on_paymentPushButton_clicked()
 
     if(currentRow == -1)    // 환자 선택이 안되어있을 때
     {
-        QMessageBox::critical(this, tr("경고"), \
+        QMessageBox::critical(qmsgBox, tr("경고"), \
                               tr("수납대기 리스트에서 수납처리 할 환자를 선택해주세요."));
         return;
     }
@@ -127,7 +148,7 @@ void PatientStatusManager::on_paymentPushButton_clicked()
     ui->waitPaymentTreeWidget->takeTopLevelItem(ui->waitPaymentTreeWidget->indexOfTopLevelItem(selectedPayRow));
 
     ui->waitPaymentTreeWidget->update();                               // treeWidget 업데이트
-    QMessageBox::information(this, tr("정보"), tr("수납 처리가 완료되었습니다."));
+    QMessageBox::information(qmsgBox, tr("정보"), tr("수납 처리가 완료되었습니다."));
 
     // 메인서버로 수납완료된 환자 정보를 보내고, 메인서버에서는 대기정보 기록을 위해 만들어진 텍스트 파일에서 해당 환자의 정보를 삭제
     QString paymentFinInfo = "SEN^WPY<CR>" + payPID + "<CR>" + payName;
@@ -144,7 +165,7 @@ void PatientStatusManager::on_shootRequestPushButton_clicked()
 
     if(currentRow == -1)    // 환자 선택이 안되어있을 때
     {
-        QMessageBox::critical(this, tr("경고"), \
+        QMessageBox::critical(qmsgBox, tr("경고"), \
                               tr("진료대기 리스트에서 촬영할 환자를 선택해주세요."));
         return;
     }
@@ -163,7 +184,7 @@ void PatientStatusManager::on_shootRequestPushButton_clicked()
     }
     else
     {
-        QMessageBox::critical(this, tr("경고"), \
+        QMessageBox::critical(qmsgBox, tr("경고"), \
                               tr("CEPH/PANO 중 하나를 이상을 선택하세요."));
         return;
     }
@@ -171,7 +192,7 @@ void PatientStatusManager::on_shootRequestPushButton_clicked()
 
     if(selectedTreatRow->text(2)=="촬영중")
     {
-        QMessageBox::critical(this, tr("경고"), \
+        QMessageBox::critical(qmsgBox, tr("경고"), \
                               tr("이미 촬영 중인 환자입니다."));
         return;
     }
@@ -194,7 +215,7 @@ void PatientStatusManager::statusRequestSended(QString sendedRequestData)
 
     if(header == "ERR")
     {
-        QMessageBox::critical(this, tr("경고"), tr("촬영SW가 정상적으로 작동중이지 않습니다.\n"));
+        QMessageBox::critical(qmsgBox, tr("경고"), tr("촬영SW가 정상작동하지 않습니다.\n"));
         return;
     }
 

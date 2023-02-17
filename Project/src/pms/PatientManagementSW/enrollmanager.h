@@ -11,7 +11,7 @@
 #define ENROLLMANAGER_H
 
 #include <QWidget>
-
+#include <QMessageBox>
 #include <QtTest/QtTest>
 #include <QTest>
 
@@ -44,6 +44,8 @@ private:
 
 
     QPixmap *pixmap;
+
+    QMessageBox *qmsgBox;
 
 signals:
     void sendNewData(QString);
