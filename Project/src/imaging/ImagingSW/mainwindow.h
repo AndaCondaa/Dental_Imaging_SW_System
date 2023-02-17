@@ -30,7 +30,7 @@ public:
     ~MainWindow();
 
 private:
-    void settingStyleSheet();
+    void settingStyleSheet();                                   // 스타일시트 설정
 
     Ui::MainWindow *ui;
 
@@ -41,7 +41,7 @@ private:
     SubNetworkManager *subNetworkManager;
 
 signals:
-    void connectMainServer(QString ip, int port);
-    void connectSubServer(QString ip, int port);
+    void connectMainServer(QString ip, int port);               // 메인서버 연결 요청
+    void connectSubServer(QString ip, int port);                // 서브서버 연결 요청
 };
 #endif // MAINWINDOW_H

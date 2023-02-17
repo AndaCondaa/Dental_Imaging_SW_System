@@ -148,35 +148,35 @@ void MainNetworkManager::sendFile(QString data)     // data = pid|shoot_type
     }
 
     connect(fileSocket, SIGNAL(bytesWritten(qint64)), SLOT(sendingFile(qint64)));
+
     QString pid = data.split("|")[0];
     QString type = data.split("|")[1];
 
-    byteToWrite = 0;
-    totalSize = 0;
-    outBlock.clear();
+    remainBytes = 0;
+    fileSize = 0;
+    sendingArray.clear();
 
     QString imgName = pid + "_" + type;
     QString fileName = QString("image/recon/%1.jpg").arg(imgName);
-    qDebug() << fileName;
+
     if(fileName.length()) {
         file = new QFile(fileName);
         if (!file->open(QFile::ReadOnly)) {
             return;
         }
 
-        byteToWrite = totalSize = file->size(); // Data remained yet
-        qDebug("totalSize : %d", totalSize);
+        remainBytes = fileSize = file->size();      // Data remained yet
 
-        QDataStream out(&outBlock, QIODevice::WriteOnly);
+        QDataStream out(&sendingArray, QIODevice::WriteOnly);
         out << qint64(0) << qint64(0) << pid << type;
 
-        totalSize += outBlock.size();
-        byteToWrite += outBlock.size();
+        fileSize += sendingArray.size();
+        remainBytes += sendingArray.size();
 
         out.device()->seek(0);
-        out << totalSize << qint64(outBlock.size());
+        out << fileSize << qint64(sendingArray.size());
 
-        fileSocket->write(outBlock); // Send the read file to the socket
+        fileSocket->write(sendingArray);            // Send the read file to the socket
     }
 }
 
@@ -184,21 +184,22 @@ void MainNetworkManager::sendingFile(qint64 numBytes)
 {
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
 
-    if (byteToWrite - numBytes >= 0) {
-        byteToWrite -= numBytes; // Remaining data size
-        outBlock = file->read(numBytes);
+    if (remainBytes - numBytes >= 0) {
+        remainBytes -= numBytes;                // 남은 바이트 수 계산
+        sendingArray = file->read(numBytes);
     } else {
-        outBlock = file ->read(byteToWrite);
-        byteToWrite = 0;
+        sendingArray = file ->read(remainBytes);
+        remainBytes = 0;
     }
 
-    socket->write(outBlock);
+    socket->write(sendingArray);
 
-    if (byteToWrite == 0) { // Send completed
+    if (remainBytes == 0) { // 파일 전송 완료
         disconnect(fileSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(sendingFile(qint64)));
         QMessageBox disconnectBox(QMessageBox::NoIcon, "ERROR",
                                   "파일 전송이 완료되었습니다.",
                                   QMessageBox::Ok);
         disconnectBox.exec();
+        delete file;
     }
 }

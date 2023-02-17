@@ -40,7 +40,7 @@ private slots:
     void finishSlot(QString, QString);          // 특정 환자의 촬영프로세스 종료
 
 private:
-    void settingStyleSheet();                   // GUI 스타일시트 설정
+    void settingStyleSheet();                   // 스타일시트 설정
 
     Ui::ControlPanel *ui;
 
