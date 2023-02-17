@@ -18,8 +18,8 @@ LoginForm::LoginForm(QWidget *parent) :
     ui->setupUi(this);
 
     // 로그인 창에서 아이콘 이미지 설정
-    QPixmap pixmap(":/Icon/Icon/login.png");
-    ui->Icon->setPixmap(pixmap.scaled(200, 200));
+//    QPixmap pixmap(":/Icon/Icon/login.png");
+//    ui->Icon->setPixmap(pixmap.scaled(200, 200));
 
     ui->DoctorID->setPlaceholderText(" 아이디를 입력해주세요. . .");
     ui->DoctorName->setPlaceholderText(" 이름을 입력해주세요. . .");
@@ -39,12 +39,16 @@ LoginForm::LoginForm(QWidget *parent) :
                               "}");
 
     // 로그인 창에 그림자 효과 생성
-    QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
-    effect->setBlurRadius(5);
-    effect->setXOffset(7);
-    effect->setYOffset(7);
-    effect->setColor(QColor(190, 190, 190));
-    ui->widget->setGraphicsEffect(effect);
+//    QGraphicsDropShadowEffect *effect = new QGraphicsDropShadowEffect;
+//    effect->setBlurRadius(5);
+//    effect->setXOffset(7);
+//    effect->setYOffset(7);
+//    effect->setColor(QColor(190, 190, 190));
+//    ui->widget->setGraphicsEffect(effect);
+
+
+    ui->serverLabel->setStyleSheet("background-color: rgb(196, 196, 196);");
+    ui->logInLabel->setStyleSheet("background-color: rgb(196, 196, 196);");
 
     ui->connectToServer->setStyleSheet("QPushButton { "
                                        "background-color: #ED8817;"
@@ -52,8 +56,7 @@ LoginForm::LoginForm(QWidget *parent) :
                                        "border-radius:20px;"
                                        "color:#ffffff;"
                                        "outline: 0; "
-                                       "font-family:Malgun Gothic;"
-                                       "font-size:30px;"
+                                       "font-size:20px;"
                                        "font-weight:bold;"
                                        "}"
                                        "QPushButton:hover { "
@@ -62,8 +65,7 @@ LoginForm::LoginForm(QWidget *parent) :
                                        "border-radius:20px;"
                                        "color:#ffffff;"
                                        "outline: 0; "
-                                       "font-family:Malgun Gothic;"
-                                       "font-size:30px;"
+                                       "font-size:20px;"
                                        "font-weight:bold;"
                                        "}"
                                        "QPushButton:disabled { "
@@ -71,8 +73,7 @@ LoginForm::LoginForm(QWidget *parent) :
                                        "border-radius:20px;"
                                        "border:1px solid rgb(132,132,132);"
                                        "color:#ffffff;"
-                                       "font-family:Malgun Gothic;"
-                                       "font-size:30px;"
+                                       "font-size:20px;"
                                        "font-weight:bold;"
                                        "}");
 
@@ -82,8 +83,7 @@ LoginForm::LoginForm(QWidget *parent) :
                              "border-radius:20px;"
                              "color:#ffffff;"
                              "outline: 0; "
-                             "font-family:Malgun Gothic;"
-                             "font-size:30px;"
+                             "font-size:20px;"
                              "font-weight:bold;"
                              "}"
                              "QPushButton:hover { "
@@ -92,8 +92,7 @@ LoginForm::LoginForm(QWidget *parent) :
                              "border-radius:20px;"
                              "color:#ffffff;"
                              "outline: 0; "
-                             "font-family:Malgun Gothic;"
-                             "font-size:30px;"
+                             "font-size:20px;"
                              "font-weight:bold;"
                              "}"
                              "QPushButton:disabled { "
@@ -101,15 +100,14 @@ LoginForm::LoginForm(QWidget *parent) :
                              "border-radius:20px;"
                              "border:1px solid rgb(132,132,132);"
                              "color:#ffffff;"
-                             "font-family:Malgun Gothic;"
-                             "font-size:30px;"
+                             "font-size:20px;"
                              "font-weight:bold;"
                              "}");
 
 
     // 접속 버튼 클릭 시 서버로 접속 시도 및 소켓 생성
     connect(ui->connectToServer, &QPushButton::clicked, this, [=](){
-        emit reconnect(ui->IPNumber->text());
+        emit reconnect(ui->IPNumber->text(), ui->PortNumber->text().toInt());
     });
 }
 

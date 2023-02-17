@@ -26,7 +26,7 @@ private slots:
     void receiveFile();
     void makeFiles();
     void disconnect();
-    void receiveLoginToServer(QString);
+    void receiveLoginToServer(QString, int);
 
 private:
     QTcpSocket *socket;

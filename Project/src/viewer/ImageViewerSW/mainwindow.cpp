@@ -55,9 +55,10 @@ MainWindow::MainWindow(QWidget *parent)
     QVBoxLayout *LoginLayout = new QVBoxLayout();
     LoginLayout->addWidget(m_logIn);
     ui->frame_3->setLayout(LoginLayout);
+    m_logIn->showMaximized();
 
     // 재접속 버튼 클릭 시, 소켓 생성 및 서버와 연결
-    connect(m_logIn, SIGNAL(reconnect(QString)), m_networkManager, SLOT(receiveLoginToServer(QString)));
+    connect(m_logIn, SIGNAL(reconnect(QString,int)), m_networkManager, SLOT(receiveLoginToServer(QString,int)));
 
     // 서버와 성공적으로 연결되면 재접속 버튼 비활성화, 로그인 버튼 활성화
     connect(m_networkManager, SIGNAL(serverConnection(int)), m_logIn, SLOT(serverConnected(int)));

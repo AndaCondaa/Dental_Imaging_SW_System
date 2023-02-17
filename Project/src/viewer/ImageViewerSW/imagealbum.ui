@@ -304,7 +304,7 @@ border-bottom-color: rgb(139, 139, 139);</string>
         <enum>QTabWidget::Rounded</enum>
        </property>
        <property name="currentIndex">
-        <number>1</number>
+        <number>0</number>
        </property>
        <property name="documentMode">
         <bool>false</bool>
@@ -490,7 +490,7 @@ border-width: 1px;
 border-style: solid gray;</string>
               </property>
               <property name="text">
-               <string>흐릿하게</string>
+               <string>Blur effect</string>
               </property>
               <property name="iconSize">
                <size>
@@ -528,7 +528,8 @@ border-width: 1px;
 border-style: solid gray;</string>
               </property>
               <property name="text">
-               <string>균일하게</string>
+               <string>Histogram
+Equalization</string>
               </property>
               <property name="iconSize">
                <size>
@@ -566,7 +567,7 @@ border-width: 1px;
 border-style: solid gray;</string>
               </property>
               <property name="text">
-               <string>반전 효과</string>
+               <string>Negative effect</string>
               </property>
               <property name="iconSize">
                <size>
@@ -604,7 +605,7 @@ border-width: 1px;
 border-style: solid gray;</string>
               </property>
               <property name="text">
-               <string>선명하게</string>
+               <string>Sharpen</string>
               </property>
               <property name="iconSize">
                <size>
