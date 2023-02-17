@@ -24,6 +24,8 @@ public:
 
 private slots:
     void receiveControl();
+    void connectSubServer(QString, int);
+    void disconnectSubServer();
 
 private:
     Protocol *protocol;
@@ -49,6 +51,7 @@ private:
 
 
 signals:
+    void connectStatusChanged(bool);
     void receiveResetSignal(QString receiveMsg);
     void receiveReadySignal(QString receiveMsg);
     void receiveStartSignal(QString receiveMsg);

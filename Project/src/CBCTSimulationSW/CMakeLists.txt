@@ -24,7 +24,7 @@ include(${VTK_USE_FILE})
 set(FORMS_DIR "${CMAKE_SOURCE_DIR}/forms")
 set(INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
 set(SOURCE_DIR "${CMAKE_SOURCE_DIR}/src")
-set(RESOURCES_DIR "${CMAKE_RESOURCES_DIR}/resources")
+set(RESOURCES_DIR "${CMAKE_SOURCE_DIR}/resources")
 
 include_directories(${FORMS_DIR})
 include_directories(${INCLUDE_DIR})
