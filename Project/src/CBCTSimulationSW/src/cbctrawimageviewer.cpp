@@ -15,18 +15,18 @@
 CBCTRawImageViewer::CBCTRawImageViewer()
 {
     m_parentUI = new Ui::MainWindow;
-    QDir panoDir("C:/Qt_VTK_CT/resources/Pano_Frame(1152x64)");
+    QDir panoDir("C:/Qt_VTK_CT/RawImages/Pano_Frame(1152x64)");
 
     panoImageIterator = new QDirIterator(panoDir, QDirIterator::Subdirectories);
     panoImageTimer = new QTimer(this);
-    panoImageTimer->setInterval(1);
+    panoImageTimer->setInterval(5);
     connect(panoImageTimer, &QTimer::timeout, this, &CBCTRawImageViewer::timeoutPanoTimer);
 
-    QDir cephDir("C:/Qt_VTK_CT/resources/Ceph_Frame(48x2400)");
+    QDir cephDir("C:/Qt_VTK_CT/RawImages/Ceph_Frame(48x2400)");
 
     cephImageIterator = new QDirIterator(cephDir, QDirIterator::Subdirectories);
     cephImageTimer = new QTimer(this);
-    cephImageTimer->setInterval(1);
+    cephImageTimer->setInterval(5);
     connect(cephImageTimer, &QTimer::timeout, this, &CBCTRawImageViewer::timeoutCephTimer);
 }
 
@@ -56,7 +56,7 @@ QPixmap CBCTRawImageViewer::CephImageViewer()
 void CBCTRawImageViewer::resetPanoTimer()
 {
     qDebug() << __FUNCTION__;
-    QDir panoDir("./resources/Pano_Frame(1152x64)");
+    QDir panoDir("C:/Qt_VTK_CT/RawImages/Pano_Frame(1152x64)");
 
     panoImageIterator = new QDirIterator(panoDir, QDirIterator::Subdirectories);
     panoImageTimer->start();
@@ -66,7 +66,7 @@ void CBCTRawImageViewer::resetPanoTimer()
 void CBCTRawImageViewer::resetCephTimer()
 {
     qDebug() << __FUNCTION__;
-    QDir cephDir("./resources/Ceph_Frame(48x2400)");
+    QDir cephDir("C:/Qt_VTK_CT/RawImages/Ceph_Frame(48x2400)");
 
     cephImageIterator = new QDirIterator(cephDir, QDirIterator::Subdirectories);
     cephImageTimer->start();
@@ -133,7 +133,7 @@ void CBCTRawImageViewer::timeoutPanoTimer()
             const uchar* pData = (const uchar*)pBa.constData();;
             panoFile.close();
             panoFile.deleteLater();
-            QImage* panoImage = new QImage(pData, 740, 100, QImage::Format_RGB555);
+            QImage* panoImage = new QImage(pData, 740, 100, QImage::Format_Grayscale16);
             emit signals_panoImage(panoImage);
 
             qDebug("find bug test 2");
@@ -172,7 +172,7 @@ void CBCTRawImageViewer::timeoutCephTimer()
             const uchar* cData = (const uchar*)cBa.constData();;
             cephFile.close();
             cephFile.deleteLater();
-            QImage* cephImage = new QImage(cData, 100, 740, QImage::Format_RGB555);
+            QImage* cephImage = new QImage(cData, 100, 740, QImage::Format_Grayscale16);
             emit signals_cephImage(cephImage);
         }
         else {

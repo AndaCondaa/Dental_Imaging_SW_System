@@ -135,6 +135,9 @@ public:
 private:
 	class Internal;
 	Internal* PData;
+
+    bool * loadPanoPatient;
+    bool * loadCephPatient;;
 };
 
 #endif // CBCTMODELCONTROLLER_H
