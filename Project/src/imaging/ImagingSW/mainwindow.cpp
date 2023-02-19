@@ -124,7 +124,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->quitButton_main, SIGNAL(clicked()), qApp, SLOT(quit()));
 
 
-//    ui->pageStackedWidget->setCurrentIndex(1);
+    ui->pageStackedWidget->setCurrentIndex(1);
 
 //    QStringList dataList;
 //    dataList << "P00001" << "김유선" << "BOTH";
