@@ -138,9 +138,7 @@ void ImagingManager::reconImage()
                     tmpOut[(count+x)+(y*reconCols)] = buf[(y)+(x*frameCols)];
                 }
             }
-
             count++;
-            qDebug("%d", count);
         }
 
         cv::Mat src(reconRows, reconCols, CV_16UC1, tmpOut);
@@ -154,6 +152,7 @@ void ImagingManager::reconImage()
 
         histoStretch(out, reconRows*reconCols, 0, 10000, maxValue);
         invertImage(out, reconRows*reconCols);
+
         gammaCorrection(out, reconRows*reconCols, maxValue, 4);
         CLAHE(out, reconRows, reconCols, 16.0, 8, 8);
         medianFilter(out, reconRows, reconCols, 3);
@@ -205,7 +204,6 @@ void ImagingManager::reconImage()
                 }
             }
             count++;
-            qDebug("%d", count);
             ui->progressBar->setValue((double)(ui->progressBar->maximum() / 5.) * ((double)k/11197.0));
         }
 
@@ -385,6 +383,11 @@ void ImagingManager::settingStyleSheet()
                                    "background-color: rgb(200, 200, 200);"
                                    "border-radius: 10px;"
                                    "border-style: solid;"
+                                   "}"
+                                   "QPushButton:hover {"
+                                   "background-color:rgb(241,156,72);"
+                                   "border-radius:10px;"
+                                   "color:#ffffff;"
                                    "}");
 
     ui->saveButton->setStyleSheet("QPushButton:disabled {"
@@ -396,5 +399,10 @@ void ImagingManager::settingStyleSheet()
                                   "background-color: rgb(200, 200, 200);"
                                   "border-radius: 10px;"
                                   "border-style: solid;"
+                                  "}"
+                                  "QPushButton:hover {"
+                                  "background-color:rgb(241,156,72);"
+                                  "border-radius:10px;"
+                                  "color:#ffffff;"
                                   "}");
 }
