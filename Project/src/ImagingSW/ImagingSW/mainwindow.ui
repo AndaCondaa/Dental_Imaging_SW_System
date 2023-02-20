@@ -279,22 +279,22 @@ border-radius: 10px;
               <widget class="QPushButton" name="quitButton">
                <property name="geometry">
                 <rect>
-                 <x>400</x>
-                 <y>40</y>
-                 <width>150</width>
-                 <height>50</height>
+                 <x>520</x>
+                 <y>50</y>
+                 <width>30</width>
+                 <height>30</height>
                 </rect>
                </property>
                <property name="minimumSize">
                 <size>
-                 <width>150</width>
-                 <height>50</height>
+                 <width>30</width>
+                 <height>30</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>150</width>
-                 <height>50</height>
+                 <width>30</width>
+                 <height>30</height>
                 </size>
                </property>
                <property name="font">
@@ -304,10 +304,21 @@ border-radius: 10px;
                 </font>
                </property>
                <property name="styleSheet">
-                <string notr="true"/>
+                <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
                </property>
                <property name="text">
-                <string>QUIT</string>
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset theme="accessories-calculator">
+                 <disabledoff>:/icon/quit.png</disabledoff>
+                </iconset>
+               </property>
+               <property name="iconSize">
+                <size>
+                 <width>30</width>
+                 <height>30</height>
+                </size>
                </property>
               </widget>
               <widget class="QLineEdit" name="subIpEdit">
@@ -623,6 +634,9 @@ color: rgb(255, 255, 255);</string>
          <layout class="QVBoxLayout" name="verticalLayout_3">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="rightMargin">
+             <number>20</number>
+            </property>
             <item>
              <widget class="QLabel" name="title">
               <property name="font">
@@ -652,8 +666,14 @@ color: rgb(255, 255, 255);</string>
              <widget class="QPushButton" name="quitButton_main">
               <property name="minimumSize">
                <size>
-                <width>120</width>
-                <height>50</height>
+                <width>30</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>30</width>
+                <height>30</height>
                </size>
               </property>
               <property name="font">
@@ -662,8 +682,21 @@ color: rgb(255, 255, 255);</string>
                 <pointsize>19</pointsize>
                </font>
               </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+              </property>
               <property name="text">
-               <string>QUIT</string>
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="resource.qrc">
+                <normaloff>:/icon/quit.png</normaloff>:/icon/quit.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>30</width>
+                <height>30</height>
+               </size>
               </property>
              </widget>
             </item>
@@ -804,6 +837,8 @@ border-radius: 30px;
    </layout>
   </widget>
  </widget>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

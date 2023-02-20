@@ -4,5 +4,6 @@
         <file>icon/ceph_clicked.png</file>
         <file>icon/pano.png</file>
         <file>icon/pano_clicked.png</file>
+        <file>icon/quit.png</file>
     </qresource>
 </RCC>
