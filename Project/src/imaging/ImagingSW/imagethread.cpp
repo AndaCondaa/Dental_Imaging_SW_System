@@ -60,7 +60,7 @@ void ImageThread::run()
         maxCount = 1750;
         unsigned short *buf = new unsigned short[pixels];
 
-        do {
+        while(1) {
             if (isStop) {
                 delete[] buf;
                 delete[] checkCount;
@@ -110,7 +110,7 @@ void ImageThread::run()
                     currentCount = 0;
                 }
             }
-        } while(!isStop);
+        }
         delete[] buf;
         delete[] checkCount;
     } else if (modeType == "CEPH") {
@@ -120,7 +120,7 @@ void ImageThread::run()
         maxCount = 1250;
         unsigned short *buf = new unsigned short[pixels];
 
-        do {
+        while(1) {
             if (isStop) {
                 delete[] buf;
                 delete[] checkCount;

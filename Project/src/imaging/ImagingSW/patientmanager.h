@@ -26,7 +26,8 @@ public:
     explicit PatientManager(QWidget *parent = nullptr);
     ~PatientManager();
 
-private slots:
+//private slots:
+public slots:
     void receiveWaitList(int, QString);                 // 첫 연결 시, 이전 대기목록 리시브
     void receiveWaitPatient(QStringList dataList);      // 촬영요청 데이터 리시브
     void readyButtonSlot();                             // 환자준비 버튼 슬롯 (환자정보 요청)

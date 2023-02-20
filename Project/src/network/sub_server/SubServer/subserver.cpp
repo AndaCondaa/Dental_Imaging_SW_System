@@ -151,11 +151,10 @@ void SubServer::receiveControl()
             receiveData.clear();
         }
 
-
         ui->logEdit->append((QString("[%1] [%2] [%3_%4]").arg(date, ip, QString::number(controlType), msg)));
 
-        protocol->sendProtocol(socket, "ACK", "CTL", controlType, msg);
         protocol->sendProtocol(controlSocketMap.key(receiver), "ACK", "CTL", controlType, msg);
+        protocol->sendProtocol(socket, "ACK", "CTL", controlType, msg);
     }
 }
 

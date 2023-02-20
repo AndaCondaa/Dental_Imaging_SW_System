@@ -82,7 +82,7 @@ MainWindow::MainWindow(QWidget *parent)
             ui->subConnectButton->setEnabled(false);
             ui->subConnectButton->setText("정상 연결");
 
-//            ui->pageStackedWidget->setCurrentIndex(1);
+            ui->pageStackedWidget->setCurrentIndex(1);
             if (!ui->mainConnectButton->isEnabled())
                 ui->pageStackedWidget->setCurrentIndex(1);
         } else if (op == false) {
@@ -124,11 +124,11 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->quitButton_main, SIGNAL(clicked()), qApp, SLOT(quit()));
 
 
-//    ui->pageStackedWidget->setCurrentIndex(1);
+    ui->pageStackedWidget->setCurrentIndex(1);
 
-//    QStringList dataList;
-//    dataList << "P00001" << "김유선" << "BOTH";
-//    patientManager->receiveWaitPatient(dataList);
+    QStringList dataList;
+    dataList << "P00001" << "김유선" << "BOTH";
+    patientManager->receiveWaitPatient(dataList);
 //    dataList.clear();
 //    dataList << "P00004" << "김도예" << "BOTH";
 //    patientManager->receiveWaitPatient(dataList);
@@ -136,9 +136,9 @@ MainWindow::MainWindow(QWidget *parent)
 //    dataList << "P00005" << "김영희" << "BOTH";
 //    patientManager->receiveWaitPatient(dataList);
 
-//    QStringList test1;
-//    test1 << "P00001" << "김유선" << "여성" << "1999-00-00";
-//    patientManager->receivePatientInfo(test1);
+    QStringList test1;
+    test1 << "P00001" << "김유선" << "여성" << "1999-00-00";
+    patientManager->receivePatientInfo(test1);
 }
 
 MainWindow::~MainWindow()

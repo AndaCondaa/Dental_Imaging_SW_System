@@ -114,6 +114,8 @@ void ImagingManager::reconImage()
         unsigned short *tmpOut = new unsigned short[reconRows*reconCols];
         memset(tmpOut, 0, reconRows*reconCols);
 
+        ui->progressBar->setValue(ui->progressBar->maximum() / 5);
+
         for (int k = 1679; k >= 120; k--) { //1560
             memset(buf, 0, frameRows*frameCols);
             fileName = makeFileName(currentType, k);
@@ -141,6 +143,8 @@ void ImagingManager::reconImage()
             count++;
         }
 
+        ui->progressBar->setValue(ui->progressBar->maximum() * 2 / 5);
+
         cv::Mat src(reconRows, reconCols, CV_16UC1, tmpOut);
         reconRows = 1152;
         reconCols = 2320;
@@ -153,12 +157,18 @@ void ImagingManager::reconImage()
         histoStretch(out, reconRows*reconCols, 0, 10000, maxValue);
         invertImage(out, reconRows*reconCols);
 
+        ui->progressBar->setValue(ui->progressBar->maximum() * 3 / 5);
+
         gammaCorrection(out, reconRows*reconCols, maxValue, 4);
         CLAHE(out, reconRows, reconCols, 16.0, 8, 8);
         medianFilter(out, reconRows, reconCols, 3);
 
+        ui->progressBar->setValue(ui->progressBar->maximum() * 4 / 5);
+
         viewReconImage(out, reconRows, reconCols);
         saveAsJpg(out, reconRows, reconCols);
+
+        ui->progressBar->setValue(ui->progressBar->maximum());
 
         delete[] buf;
         delete[] tmpOut;
@@ -173,6 +183,8 @@ void ImagingManager::reconImage()
         unsigned short *buf = new unsigned short[frameRows*frameCols];
         unsigned short *tmpOut = new unsigned short[reconRows*reconCols];
         memset(tmpOut, 0, reconRows*reconCols*2);
+
+        ui->progressBar->setValue(ui->progressBar->maximum() / 6);
 
         for (int k = 1229; k > 2; k--) {
             memset(buf, 0, frameRows*frameCols);
@@ -204,8 +216,8 @@ void ImagingManager::reconImage()
                 }
             }
             count++;
-            ui->progressBar->setValue((double)(ui->progressBar->maximum() / 5.) * ((double)k/11197.0));
         }
+        ui->progressBar->setValue(ui->progressBar->maximum() * 2 / 6);
 
         cv::Mat src(reconRows, reconCols, CV_16UC1, tmpOut);
         reconRows = 2400;
@@ -219,12 +231,12 @@ void ImagingManager::reconImage()
         histoStretch(out, reconRows*reconCols, 0, 381, maxValue);
         invertImage(out, reconRows*reconCols);
 
-        ui->progressBar->setValue(ui->progressBar->maximum()*2/5.);
-
         unsigned short *tmp1 = new unsigned short[reconRows*reconCols];
         unsigned short *tmp2 = new unsigned short[reconRows*reconCols];
         memcpy(tmp1, out, reconRows*reconCols*2);
         memcpy(tmp2, out, reconRows*reconCols*2);
+
+        ui->progressBar->setValue(ui->progressBar->maximum() * 3 / 6);
 
         gammaCorrection(tmp1, reconRows*reconCols, maxValue, 15);
         gammaCorrection(tmp2, reconRows*reconCols, maxValue, 0.3);
@@ -232,7 +244,7 @@ void ImagingManager::reconImage()
         CLAHE(tmp1, reconRows, reconCols, 4000.0, 8, 8);
         medianFilter(tmp1, reconRows, reconCols, 3);
 
-        ui->progressBar->setValue(ui->progressBar->maximum()*3/5.);
+        ui->progressBar->setValue(ui->progressBar->maximum() * 4 / 6);
 
         for (int i = 0; i < reconRows*reconCols; i++) {
             out[i] = (double)(tmp1[i] * 0.8) + (double)(tmp2[i] * 0.2);
@@ -240,7 +252,10 @@ void ImagingManager::reconImage()
 
         medianFilter(out, reconRows, reconCols, 3);
 
-        ui->progressBar->setValue(ui->progressBar->maximum()*4/5.);
+
+        CLAHE(out, reconRows, reconCols, 1.0, 8, 8);
+
+        ui->progressBar->setValue(ui->progressBar->maximum() * 5 / 6);
 
         saveAsJpg(out, reconRows, reconCols);
         viewReconImage(out, reconRows, reconCols);
