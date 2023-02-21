@@ -3,7 +3,7 @@
  * 파일명 : imageManager.cpp
  * 설명 : 환자 검색 시 해당 환자의 촬영 이미지를 띄워줌
  * 작성자 : 김유선
- * 최종 수정일 : 2023.02.16
+ * 최종 수정일 : 2023.02.21
  */
 
 
@@ -36,6 +36,8 @@ ImageManager::ImageManager(QWidget *parent) :
     effect->setYOffset(5);
     effect->setColor(QColor(220,220,220));
     ui->label_4->setGraphicsEffect(effect);
+
+
 }
 
 ImageManager::~ImageManager()
@@ -52,15 +54,16 @@ void ImageManager::reloadImages(QString id)
     filters << "*.png" << "*.jpg" << "*.bmp" << "*.gif";
 
     QFileInfoList fileInfoList = dir.entryInfoList(filters, QDir::Files | QDir::NoDotAndDotDot);
-
     ui->imageListWidget->clear();
 
-    for(int i = 0; i < fileInfoList.count(); i++) {
-        QListWidgetItem* item = new QListWidgetItem(QIcon(dir.path() + "/" + fileInfoList.at(i).fileName()), NULL, ui->imageListWidget); // , QListWidgetItem::UserType);
+    for(int i = fileInfoList.count()-1; i >= 0; i--) {
+
+        QListWidgetItem* item = new QListWidgetItem(QIcon(dir.path() + "/" + fileInfoList.at(i).fileName()), fileInfoList.at(i).fileName(), ui->imageListWidget); // , QListWidgetItem::UserType);
 
         item->setStatusTip(fileInfoList.at(i).fileName());
-
+        //item->setSizeHint(QSize(320, 250));
         ui->imageListWidget->addItem(item);
+        item->setTextAlignment(Qt::AlignHCenter);
 
     };
 

@@ -98,7 +98,7 @@ color:#ffffff;</string>
           <string/>
          </property>
          <property name="icon">
-          <iconset resource="resource.qrc">
+          <iconset>
            <normaloff>:/img/img/search.png</normaloff>:/img/img/search.png</iconset>
          </property>
          <property name="iconSize">
@@ -271,7 +271,7 @@ selection-color: black;
         <number>1</number>
        </property>
        <property name="editTriggers">
-        <set>QAbstractItemView::NoEditTriggers</set>
+        <set>QAbstractItemView::DoubleClicked</set>
        </property>
        <property name="dragEnabled">
         <bool>false</bool>
@@ -380,6 +380,9 @@ selection-color: black;
           <pointsize>10</pointsize>
          </font>
         </property>
+        <property name="flags">
+         <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsDropEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+        </property>
        </item>
        <item row="1" column="0">
         <property name="text">
@@ -402,6 +405,9 @@ selection-color: black;
         </property>
        </item>
        <item row="3" column="0">
+        <property name="text">
+         <string/>
+        </property>
         <property name="font">
          <font>
           <pointsize>10</pointsize>
@@ -409,6 +415,9 @@ selection-color: black;
         </property>
        </item>
        <item row="4" column="0">
+        <property name="text">
+         <string/>
+        </property>
         <property name="font">
          <font>
           <pointsize>10</pointsize>
@@ -416,17 +425,29 @@ selection-color: black;
         </property>
        </item>
        <item row="5" column="0">
+        <property name="text">
+         <string/>
+        </property>
         <property name="font">
          <font>
           <pointsize>10</pointsize>
          </font>
         </property>
+        <property name="textAlignment">
+         <set>AlignLeading|AlignTop</set>
+        </property>
        </item>
        <item row="6" column="0">
+        <property name="text">
+         <string/>
+        </property>
         <property name="font">
          <font>
           <pointsize>10</pointsize>
          </font>
+        </property>
+        <property name="textAlignment">
+         <set>AlignLeading|AlignTop</set>
         </property>
        </item>
       </widget>
@@ -463,6 +484,9 @@ color:#ffffff;</string>
          <property name="text">
           <string>정보
 수정</string>
+         </property>
+         <property name="flat">
+          <bool>true</bool>
          </property>
         </widget>
        </item>
@@ -538,8 +562,6 @@ color:#ffffff;</string>
    </item>
   </layout>
  </widget>
- <resources>
-  <include location="resource.qrc"/>
- </resources>
+ <resources/>
  <connections/>
 </ui>

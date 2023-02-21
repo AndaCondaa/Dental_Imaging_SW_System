@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Medical Chart</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resource.qrc">
+    <normaloff>:/img/patientManagement.png</normaloff>:/img/patientManagement.png</iconset>
+  </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(255, 255, 255);
 border-radius: 10px;</string>
@@ -818,7 +822,7 @@ border-radius: 0px;</string>
    <widget class="QLabel" name="hospitalNameLabel">
     <property name="geometry">
      <rect>
-      <x>310</x>
+      <x>287</x>
       <y>720</y>
       <width>91</width>
       <height>16</height>
@@ -833,10 +837,10 @@ border-radius: 0px;</string>
      <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
     </property>
     <property name="text">
-     <string>O.S</string>
+     <string>오스템</string>
     </property>
     <property name="alignment">
-     <set>Qt::AlignCenter</set>
+     <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
     </property>
    </widget>
    <widget class="QLabel" name="label_10">
@@ -878,13 +882,15 @@ border-radius: 0px;</string>
      <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
     </property>
     <property name="text">
-     <string>치과</string>
+     <string>병원</string>
     </property>
    </widget>
   </widget>
   <zorder>frame_2</zorder>
   <zorder>printPushButton</zorder>
  </widget>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>
