@@ -153,8 +153,18 @@ void SubServer::receiveControl()
 
         ui->logEdit->append((QString("[%1] [%2] [%3_%4]").arg(date, ip, QString::number(controlType), msg)));
 
-        protocol->sendProtocol(controlSocketMap.key(receiver), "ACK", "CTL", controlType, msg);
-        protocol->sendProtocol(socket, "ACK", "CTL", controlType, msg);
+        if (controlType == ControlType::STOP) {
+            protocol->sendProtocol(controlSocketMap.key(ConnectType::SW), "ACK", "CTL", controlType, msg);
+
+            QTcpSocket *disconnectModality = new QTcpSocket(this);
+            disconnectModality = fileSocketMap.key(ConnectType::MODALITY);
+            disconnectModality->close();
+            disconnectModality->deleteLater();
+            controlSocketMap.remove(disconnectModality);
+        } else {
+            protocol->sendProtocol(controlSocketMap.key(ConnectType::SW), "ACK", "CTL", controlType, msg);
+            protocol->sendProtocol(controlSocketMap.key(ConnectType::MODALITY), "ACK", "CTL", controlType, msg);
+        }
     }
 }
 
@@ -163,7 +173,7 @@ void SubServer::receiveFile()
     QTcpSocket *socket = dynamic_cast<QTcpSocket*>(sender());
     QByteArray tempArray;
     tempArray = socket->readAll();
-    fileSocketMap.key(SW)->write(tempArray);
+    fileSocketMap.key(ConnectType::SW)->write(tempArray);
     receiveData.append(tempArray);
 
     if (receiveData.size() >= frameSize) {
@@ -186,7 +196,6 @@ void SubServer::receiveFile()
         file.close();
         receiveData.remove(0, frameSize);
         count++;
-        qDebug("%d", count);
         if (count == countMax) {
             qDebug() << QString("%1 Frame Data Send End!").arg(currentType);
             count = 0;

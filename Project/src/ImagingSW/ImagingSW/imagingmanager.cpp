@@ -10,6 +10,7 @@
 #include "ui_imagingmanager.h"
 #include "imagethread.h"
 
+#include <QDir>
 #include <QProgressDialog>
 #include <QMessageBox>
 #include <opencv2/opencv.hpp>
@@ -52,6 +53,8 @@ void ImagingManager::setType(QString type)
 
 void ImagingManager::startSetting(QString pid, QString type)
 {
+    ui->reconButton->setEnabled(true);
+
     if (type == "PANO") {
         ui->progressBar->setMaximum(1748);
     } else if (type == "CEPH") {
@@ -72,14 +75,16 @@ void ImagingManager::recvFrameImg(int count)
 
 void ImagingManager::stopButtonSlot()
 {
-    thread->threadStop();
+    if (thread != nullptr) {
+        thread->threadStop();
+        thread = nullptr;
+    }
 }
 
 void ImagingManager::isProgressMaximum(int value)
 {
     if (value == ui->progressBar->maximum()) {
         qDebug("촬영 종료");
-        ui->reconButton->setEnabled(true);
         emit shootingEndSignal(currentType);
     }
 }
@@ -251,8 +256,6 @@ void ImagingManager::reconImage()
         }
 
         medianFilter(out, reconRows, reconCols, 3);
-
-
         CLAHE(out, reconRows, reconCols, 1.0, 8, 8);
 
         ui->progressBar->setValue(ui->progressBar->maximum() * 5 / 6);
@@ -281,13 +284,13 @@ void ImagingManager::reconImage()
 QString ImagingManager::makeFileName(QString type, int count)
 {
     if (count >= 1000)
-        return QString("./image/frame/%1/%2.raw").arg(type).arg(count);
+        return QString("./image/%1/%2.raw").arg(type).arg(count);
     else if (count < 1000 && count >= 100)
-        return QString("./image/frame/%1/0%2.raw").arg(type).arg(count);
+        return QString("./image/%1/0%2.raw").arg(type).arg(count);
     else if (count < 100 && count >= 10)
-        return QString("./image/frame/%1/00%2.raw").arg(type).arg(count);
+        return QString("./image/%1/00%2.raw").arg(type).arg(count);
     else
-        return QString("./image/frame/%1/000%2.raw").arg(type).arg(count);
+        return QString("./image/%1/000%2.raw").arg(type).arg(count);
 }
 
 void ImagingManager::histoStretch(unsigned short *input, int inputSize, int min, int max, double maxValue)
@@ -325,7 +328,6 @@ void ImagingManager::medianFilter(unsigned short *input, int rows, int cols, int
     cv::Mat src(rows, cols, CV_16UC1, input);
     cv::Mat dst;
     cv::medianBlur(src, dst, ksize);
-
     memcpy(input, dst.data, rows*cols*2);
 }
 
@@ -372,7 +374,11 @@ void ImagingManager::invertImage(unsigned short *input, int inputSize)
 }
 
 void ImagingManager::saveAsJpg(unsigned short *input, int rows, int cols)
-{
+{    
+    QDir dir(QString("./image/recon/"));
+    if (!dir.exists())
+        dir.mkpath(".");
+
     QString reconName = QString("./image/recon/%1.jpg").arg(currentPID + "_" + currentType);
     cv::Mat src(rows, cols, CV_16UC1, input);
     cv::Mat dst;
