@@ -25,6 +25,10 @@
   <property name="windowTitle">
    <string>Enroll Manager</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resource.qrc">
+    <normaloff>:/img/patientManagement.png</normaloff>:/img/patientManagement.png</iconset>
+  </property>
   <property name="styleSheet">
    <string notr="true">background-color: rgb(242, 242, 242);</string>
   </property>
@@ -778,7 +782,7 @@ border-radius:7px;</string>
     <string/>
    </property>
    <property name="pixmap">
-    <pixmap resource="resource.qrc">:/img/img/man.png</pixmap>
+    <pixmap>:/img/img/man.png</pixmap>
    </property>
    <property name="scaledContents">
     <bool>true</bool>

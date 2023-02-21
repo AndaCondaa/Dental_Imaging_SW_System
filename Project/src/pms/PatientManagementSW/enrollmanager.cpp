@@ -128,6 +128,8 @@ void EnrollManager::enrollFinished()
         QFile::copy(fileName, saveFileName);
     }
 
+
+
     QString newData = "SEN^PER<CR>" + newPID + "<CR>" + name + '|' + sex + '|' + date + '|' + tel + '|' + address + '|' + memo;
     emit sendNewData(newData);
 
@@ -142,13 +144,19 @@ void EnrollManager::enrollFinished()
     // 환자 등록 후에는 enrollmanager를 숨김
     this->hide();
 
+    // 얼굴 이미지 초기화
+    pixmap = new QPixmap();
+    pixmap->load(":/img/man.png");
+    pixmap->scaled(180,180,Qt::IgnoreAspectRatio);
+    ui->enrollImageLabel->setPixmap(pixmap->scaled(ui->enrollImageLabel->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+
+
     // 등록 화면 초기화
     ui->nameLineEdit->clear();
     ui->birthDateEdit->clear();
     ui->telLineEdit->clear();
     ui->addressTextEdit->clear();
     ui->memoTextEdit->clear();
-    ui->enrollImageLabel->clear();
 
     ui->maleRadioButton->clearFocus();
     ui->maleRadioButton->setAutoExclusive(false);
@@ -177,6 +185,18 @@ void EnrollManager::on_selectFilePushButton_clicked()
     fileName = QFileDialog::getOpenFileName(this,
                                             tr("Open Image"), QString("./Face/%1").arg(pidPhoto), tr("Image Files (*.png *.jpg *.bmp)"));
     qDebug() << "fileName"<<fileName;
+
+
+    if(fileName == "")   // 파일 선택 안 되었을 때
+    {
+        pixmap = new QPixmap();
+        pixmap->load(":/img/man.png");
+        pixmap->scaled(180,180,Qt::IgnoreAspectRatio);
+        ui->enrollImageLabel->setPixmap(pixmap->scaled(ui->enrollImageLabel->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+
+        return;
+    }
+
 
     QFileDialog dialog(this);
     dialog.setNameFilter(tr("Images (*.png *.xpm *.jpg)"));
