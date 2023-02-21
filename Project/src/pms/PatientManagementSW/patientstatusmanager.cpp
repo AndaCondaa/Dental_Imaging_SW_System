@@ -3,7 +3,7 @@
  * 파일명 : patientStatusManager.cpp
  * 설명 : 대기 환자 목록 확인, 촬영요청, 수납처리
  * 작성자 : 김유선
- * 최종 수정일 : 2023.02.16
+ * 최종 수정일 : 2023.02.21
  */
 
 
@@ -38,6 +38,13 @@ PatientStatusManager::PatientStatusManager(QWidget *parent) :
                               "QPushButton:hover { "
                               "background-color: #F2A754;"
                               "border-radius:10px;"
+                              "color:#ffffff;"
+                              "outline: 0; "
+                              "}"
+                              "QPushButton:disabled { "
+                              "background-color: rgb(220, 220, 220);"
+                              "border-radius:10px;"
+                              "border:1px solid rgb(220, 220, 220);"
                               "color:#ffffff;"
                               "outline: 0; "
                               "}";
@@ -85,6 +92,10 @@ PatientStatusManager::PatientStatusManager(QWidget *parent) :
     qmsgBox = new QMessageBox();
     qmsgBox->setStyleSheet(msgBoxStyle);
 
+
+    ui->shootRequestPushButton->setDisabled(true);
+    ui->paymentPushButton->setDisabled(true);
+
 }
 
 PatientStatusManager::~PatientStatusManager()
@@ -121,6 +132,8 @@ void PatientStatusManager::on_waitPaymentTreeWidget_itemClicked(QTreeWidgetItem 
     payName = item->text(1);
 
     selectedPayRow = item;
+
+    ui->paymentPushButton->setDisabled(false);
 }
 
 // treatPID, treatName 전역변수로 만들어서 저장하고,
@@ -130,6 +143,8 @@ void PatientStatusManager::on_waitTreatmentTreeWidget_itemClicked(QTreeWidgetIte
     treatName = item->text(1);
 
     selectedTreatRow = item;
+
+    ui->shootRequestPushButton->setDisabled(false);
 }
 
 // 수납 버튼이 클릭되었을 때
@@ -188,6 +203,24 @@ void PatientStatusManager::on_shootRequestPushButton_clicked()
                               tr("CEPH/PANO 중 하나를 이상을 선택하세요."));
         return;
     }
+
+
+    int i = 0;     // 0번째 컬럼(id)
+    auto flag = Qt::MatchCaseSensitive;                    // i가 0이 아닌 값일 때는 입력한 값이 정확할 때만 검색이 되도록 만듦
+    auto items = ui->waitTreatmentTreeWidget->findItems(treatPID, flag, i);    // flag와 i값에 해당하는 정보를 searchLineEdit에 입력한 텍스트를 찾고, items에 해당 값을 저장해준다
+
+    foreach(auto i, items)
+    {
+        QTreeWidgetItem* item = static_cast<QTreeWidgetItem *>(i);
+
+        if(item->text(2)=="진료중")
+        {
+            QMessageBox::critical(qmsgBox, tr("경고"), \
+                                  tr("진료중인 환자에 대해서는 촬영요청이 불가능합니다."));
+            return;
+        }
+    }
+
 
 
     if(selectedTreatRow->text(2)=="촬영중")

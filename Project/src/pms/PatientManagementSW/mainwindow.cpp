@@ -3,7 +3,7 @@
  * 파일명 : mainWindow.cpp
  * 설명 : 로그인과 PMS의 메인화면
  * 작성자 : 김유선
- * 최종 수정일 : 2023.02.16
+ * 최종 수정일 : 2023.02.20
  */
 
 
@@ -26,7 +26,9 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
 
-    this->showMaximized();
+    //this->showMaximized();
+    this->showFullScreen();
+    this->statusBar()->hide();
 
     // 로그인 이미지 설정
     pixmap = new QPixmap();
@@ -37,6 +39,11 @@ MainWindow::MainWindow(QWidget *parent)
     // 로그인 화면에서 Enter 누르면 로그인 시도
     connect(ui->ipLineEdit, SIGNAL(returnPressed()), this, SLOT(on_pushButton_clicked()));
     connect(ui->portLineEdit, SIGNAL(returnPressed()), this, SLOT(on_pushButton_clicked()));
+
+    // X 아이콘 클릭 시 프로그램 종료
+    connect(ui->quitToolButton, SIGNAL(clicked()), qApp, SLOT(quit()));
+    connect(ui->quitToolButton_2, SIGNAL(clicked()), qApp, SLOT(quit()));
+
 
     // 로그인 버튼 설정
     ui->pushButton->setStyleSheet("QPushButton { "
@@ -250,6 +257,7 @@ void MainWindow::changeScreenSlot(int flag)
     else if(flag == 0)
     {
         ui->stackedWidget->setCurrentIndex(1);
-        this->resize(800, 575);
     }
 }
+
+

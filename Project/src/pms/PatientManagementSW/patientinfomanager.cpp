@@ -3,7 +3,7 @@
  * 파일명 : patientInfoManager.cpp
  * 설명 : 환자 정보를 검색하고 확인, 수정/삭제, 검색한 환자를 대기 목록에 추가
  * 작성자 : 김유선
- * 최종 수정일 : 2023.02.16
+ * 최종 수정일 : 2023.02.21
  */
 
 
@@ -23,6 +23,10 @@ PatientInfoManager::PatientInfoManager(QWidget *parent) :
     ui->clientInfoTableWidget->setColumnWidth(0,290);
     ui->searchPushButton->setIcon(QIcon(":/img/search.png"));
 
+    ui->clientInfoTableWidget->setRowHeight(5, 130);
+    ui->clientInfoTableWidget->setRowHeight(6, 200);
+
+
     connect(ui->searchLineEdit, SIGNAL(returnPressed()), this, SLOT(on_searchPushButton_clicked()));
 
     // 각 ui 요소들에 대한 styleSheet 저장
@@ -35,6 +39,13 @@ PatientInfoManager::PatientInfoManager(QWidget *parent) :
                                "QPushButton:hover { "
                                "background-color: #F2A754;"
                                "border-radius:10px;"
+                               "color:#ffffff;"
+                               "outline: 0; "
+                               "}"
+                               "QPushButton:disabled { "
+                               "background-color: rgb(220, 220, 220);"
+                               "border-radius:5px;"
+                               "border:1px solid rgb(220, 220, 220);"
                                "color:#ffffff;"
                                "outline: 0; "
                                "}";
@@ -51,6 +62,13 @@ PatientInfoManager::PatientInfoManager(QWidget *parent) :
                                "background-color: #FFCF77;"
                                "border-radius:10px;"
                                "color:#ffffff;"
+                               "outline: 0; "
+                               "}"
+                               "QPushButton:disabled { "
+                               "background-color: #ffffff;"
+                               "border-radius:5px;"
+                               "border:1px solid rgb(220, 220, 220);"
+                               "color:rgb(220, 220, 220);"
                                "outline: 0; "
                                "}";
 
@@ -167,6 +185,10 @@ PatientInfoManager::PatientInfoManager(QWidget *parent) :
     qmsgBox->setStyleSheet(msgBoxStyle);
 
 
+    ui->modifyPushButton->setDisabled(true);
+    ui->deletePushButton->setDisabled(true);
+    ui->WaitPushButton->setDisabled(true);
+
 }
 
 PatientInfoManager::~PatientInfoManager()
@@ -219,7 +241,11 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
 
         // 없는 환자 정보를 찾으면 환자 정보도 다 clear
         ui->searchLineEdit->clear();
-        ui->patientFace->clear();
+        pixmap = new QPixmap();
+        pixmap->load(":/img/man.png");
+        pixmap->scaled(200,180,Qt::IgnoreAspectRatio);
+        ui->patientFace->setPixmap(pixmap->scaled(ui->patientFace->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
+
 
         // 테이블도 같이 clear
         for(int i = 0 ; i<7; i++)
@@ -229,6 +255,11 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
 
         // 사진 변경 불가능하게 만들기
         ui->changePhotoPushButton->setDisabled(true);
+
+        //환자 수정삭제, 대기추가 불가능하게 만들기
+        ui->modifyPushButton->setDisabled(true);
+        ui->deletePushButton->setDisabled(true);
+        ui->WaitPushButton->setDisabled(true);
 
         // 여기에 QMessageBox 띄우기
         QMessageBox::critical(qmsgBox, tr("경고"), tr("해당 환자의 정보를 찾을 수 없습니다.\n"
@@ -242,6 +273,9 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
 
     // 있는 환자면 활성화
     ui->changePhotoPushButton->setDisabled(false);
+    ui->modifyPushButton->setDisabled(false);
+    ui->deletePushButton->setDisabled(false);
+    ui->WaitPushButton->setDisabled(false);
 
     // 환자가 있을 때는 patientInDB를 1로 만듦
     patientInDB = 1;
@@ -256,6 +290,8 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
     memo = data.split("|")[5];
 
     // 환자정보를 환자정보를 보여주는 부분에 띄워줌
+
+    //pid는 수정불가형태로 만듦
     ui->clientInfoTableWidget->setItem(0, 0, new QTableWidgetItem(pid));
     ui->clientInfoTableWidget->setItem(1, 0, new QTableWidgetItem(name));
     ui->clientInfoTableWidget->setItem(2, 0, new QTableWidgetItem(sex));
@@ -269,7 +305,7 @@ void PatientInfoManager::searchDataSended(QString id, QString data)
     pixmap->load(QString("./Face/%1.png").arg(pid));
     pixmap->scaled(200,180,Qt::IgnoreAspectRatio);
 
-    ui->patientFace->setPixmap(pixmap->scaled(ui->patientFace->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    ui->patientFace->setPixmap(pixmap->scaled(ui->patientFace->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 
     // search버튼 클릭할 때마다 1씩 추가. 1 이상일 때는 새로운 이미지 불러올 수 없음
     searchButtonClicked+=1;
@@ -325,9 +361,12 @@ void PatientInfoManager::delFlagSended(int delFlag)
         // 얼굴 사진도 삭제
         QFile::remove(QString("./Face/%1.png").arg(pid));
 
+        // 정보 수정, 삭제, 대기추가 버튼 비활성화
+        ui->modifyPushButton->setDisabled(true);
+        ui->deletePushButton->setDisabled(true);
+        ui->WaitPushButton->setDisabled(true);
 
         QMessageBox::information(qmsgBox, tr("정보"), tr("환자 정보가 삭제되었습니다."));
-
 
     }
     else if(delFlag == 1)
@@ -374,6 +413,15 @@ void PatientInfoManager::on_modifyPushButton_clicked()
 {
     // 네트워크쪽으로 정보 넘겨주도록 signal emit하고 mainwindow에서 연결하고 서버에 넘겨서 update문으로 db 테이블 수정
     qDebug()<< "modify Button clicked";
+
+    //pid 변경불가능하게 만들기
+    if(pid != ui->clientInfoTableWidget->item(0, 0)->text())
+    {
+        QMessageBox::critical(qmsgBox, tr("경고"), tr("환자 번호는 고유한 번호로 변경할 수 없습니다."));
+        ui->clientInfoTableWidget->item(0, 0)->setText(pid);
+        return;
+    }
+
     pid = ui->clientInfoTableWidget->item(0, 0)->text();
     name = ui->clientInfoTableWidget->item(1, 0)->text();
     sex = ui->clientInfoTableWidget->item(2,0)->text();
@@ -440,6 +488,7 @@ void PatientInfoManager::sendedNewDataForShow(QString id, QString data)
     // 등록이 되었을 때부터 수정이 가능하도록 만드는 부분
     ui->clientInfoTableWidget->setEditTriggers(QAbstractItemView::DoubleClicked);
     ui->changePhotoPushButton->setDisabled(false);
+
     ui->clientInfoTableWidget->setItem(0, 0, new QTableWidgetItem(pid));
     ui->clientInfoTableWidget->setItem(1, 0, new QTableWidgetItem(name));
     ui->clientInfoTableWidget->setItem(2, 0, new QTableWidgetItem(sex));
@@ -448,17 +497,42 @@ void PatientInfoManager::sendedNewDataForShow(QString id, QString data)
     ui->clientInfoTableWidget->setItem(5, 0, new QTableWidgetItem(address));
     ui->clientInfoTableWidget->setItem(6, 0, new QTableWidgetItem(memo));
 
+
+
+    QDir dir(QString("./Face"));
+
+    QStringList filters;
+    filters << QString("%1.png").arg(pid);
+    QFileInfoList fileInfoList = dir.entryInfoList(filters, QDir::Files | QDir::NoDotAndDotDot);
+
     pixmap = new QPixmap();
+
+    if(fileInfoList.count()==0)
+    {
+        pixmap->load(":/img/man.png");
+        pixmap->scaled(200,180,Qt::IgnoreAspectRatio);
+    }
+    else{
+
+
     pixmap->load(QString("./Face/%1.png").arg(pid));
     pixmap->scaled(200,180,Qt::IgnoreAspectRatio);
 
-    ui->patientFace->setPixmap(pixmap->scaled(ui->patientFace->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    }
+
+    ui->patientFace->setPixmap(pixmap->scaled(ui->patientFace->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 
     // 환자가 등록되는 당시에는 환자 이미지가 없는 상태임. 따라서 searchButtonClicked를 0으로 만들어주어야 다음의 새로운 환자 검색이 가능함
     searchButtonClicked=0;
 
     // search버튼 클릭되면 이전 환자의 이미지가 보이지 않도록 imageManager쪽으로 signal 보내줌
     emit cleanImageSignal();
+
+    // 정보 수정, 삭제, 대기추가 버튼 활성화
+    ui->modifyPushButton->setDisabled(false);
+    ui->deletePushButton->setDisabled(false);
+    ui->WaitPushButton->setDisabled(false);
+
 }
 
 // 환자 사진 변경
@@ -468,15 +542,12 @@ void PatientInfoManager::on_changePhotoPushButton_clicked()
     if (!dir.exists())
         dir.mkpath(".");
 
+
     pidPhoto = ui->clientInfoTableWidget->item(0, 0)->text();
     currentFileName = QString("./Face/%1.png").arg(pidPhoto);
     changeFileName = QFileDialog::getOpenFileName(this, tr("Open Image"),
                                                   QString("./Face/%1").arg(pidPhoto), tr("Image Files (*.png *.jpg *.bmp)"));
 
-
-
-    QFileDialog dialog(this);
-    dialog.setNameFilter(tr("Images (*.png *.xpm *.jpg)"));
 
     QString saveFileName;
 
@@ -492,7 +563,7 @@ void PatientInfoManager::on_changePhotoPushButton_clicked()
     QPixmap pix(QString("%1").arg(currentFileName));
 
     pix.scaled(150,180,Qt::IgnoreAspectRatio);
-    ui->patientFace->setPixmap(pix.scaled(ui->patientFace->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+    ui->patientFace->setPixmap(pix.scaled(ui->patientFace->size(), Qt::IgnoreAspectRatio, Qt::SmoothTransformation));
 
     if(changeFileName!="")
         QMessageBox::information(qmsgBox, tr("정보"), tr("사진 변경이 완료되었습니다."));
