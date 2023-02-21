@@ -151,7 +151,6 @@ void SubNetworkManager::receiveFile()
         totalData.remove(0, frameSize);
         emit sendFrameImg(count);
         count++;
-        qDebug("%d", count);
         if (count == countMax) {
             qDebug() << QString("%1 Frame Data Send End!").arg(currentType);
             count = 0;

@@ -69,13 +69,13 @@ void ImageThread::run()
             if (checkCount[currentCount] == true) {
 
                 if (currentCount >= 1000)
-                    fileName = QString("./image/frame/%1/%2.raw").arg(modeType).arg(currentCount);
+                    fileName = QString("./image/%1/%2.raw").arg(modeType).arg(currentCount);
                 else if (currentCount < 1000 && currentCount >= 100)
-                    fileName = QString("./image/frame/%1/0%2.raw").arg(modeType).arg(currentCount);
+                    fileName = QString("./image/%1/0%2.raw").arg(modeType).arg(currentCount);
                 else if (currentCount < 100 && currentCount >= 10)
-                    fileName = QString("./image/frame/%1/00%2.raw").arg(modeType).arg(currentCount);
+                    fileName = QString("./image/%1/00%2.raw").arg(modeType).arg(currentCount);
                 else
-                    fileName = QString("./image/frame/%1/000%2.raw").arg(modeType).arg(currentCount);
+                    fileName = QString("./image/%1/000%2.raw").arg(modeType).arg(currentCount);
 
                 fopen_s(&file, fileName.toStdString().c_str(), "rb");
 
@@ -128,13 +128,13 @@ void ImageThread::run()
             }
             if (checkCount[currentCount] == true) {
                 if (currentCount >= 1000)
-                    fileName = QString("./image/frame/%1/%2.raw").arg(modeType).arg(currentCount);
+                    fileName = QString("./image/%1/%2.raw").arg(modeType).arg(currentCount);
                 else if (currentCount < 1000 && currentCount >= 100)
-                    fileName = QString("./image/frame/%1/0%2.raw").arg(modeType).arg(currentCount);
+                    fileName = QString("./image/%1/0%2.raw").arg(modeType).arg(currentCount);
                 else if (currentCount < 100 && currentCount >= 10)
-                    fileName = QString("./image/frame/%1/00%2.raw").arg(modeType).arg(currentCount);
+                    fileName = QString("./image/%1/00%2.raw").arg(modeType).arg(currentCount);
                 else
-                    fileName = QString("./image/frame/%1/000%2.raw").arg(modeType).arg(currentCount);
+                    fileName = QString("./image/%1/000%2.raw").arg(modeType).arg(currentCount);
 
                 fopen_s(&file, fileName.toStdString().c_str(), "rb");
 

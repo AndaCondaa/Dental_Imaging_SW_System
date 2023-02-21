@@ -110,7 +110,6 @@ void MainNetworkManager::receivePacket()
     QString event = packetData[1];
     QString pid = packetData[2];
     QString data = packetData[3];
-
     QStringList dataList;
 
     if (header == "ACK") {
@@ -188,15 +187,15 @@ void MainNetworkManager::sendingFile(qint64 numBytes)
         remainBytes -= numBytes;                // 남은 바이트 수 계산
         sendingArray = file->read(numBytes);
     } else {
-        sendingArray = file ->read(remainBytes);
         remainBytes = 0;
+        sendingArray = file ->read(remainBytes);
     }
 
     socket->write(sendingArray);
 
     if (remainBytes == 0) { // 파일 전송 완료
         disconnect(fileSocket, SIGNAL(bytesWritten(qint64)), this, SLOT(sendingFile(qint64)));
-        QMessageBox disconnectBox(QMessageBox::NoIcon, "ERROR",
+        QMessageBox disconnectBox(QMessageBox::NoIcon, "Sending!",
                                   "파일 전송이 완료되었습니다.",
                                   QMessageBox::Ok);
         disconnectBox.exec();
