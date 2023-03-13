@@ -2,20 +2,6 @@
 
 <br>
 
-<h2>Network check list</h2>
-
-1차 : 1/30(월) ~ 2/3(금) 
-
-2차 : 2/13(월) ~ 2/17(금)
-
-최종 : 2/20(월) ~ 2/24(금)
-
-<p align="center"><img src="./checklist.png"></p>
-
-
-
-
-
 
 <h2>Git Management Rules</h2>
 
